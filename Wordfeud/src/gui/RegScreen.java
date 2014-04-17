@@ -12,12 +12,12 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-public class RegistrationScreen extends JPanel {
+public class RegScreen extends JPanel {
 	private JPanel buttons;
 	private JPanel dataField;
 	private MainFrame mainFrame;
 
-	public RegistrationScreen(MainFrame mainFrame) {
+	public RegScreen(MainFrame mainFrame) {
 		this.mainFrame = mainFrame;
 
 		this.setLayout(new BorderLayout());

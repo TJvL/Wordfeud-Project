@@ -12,8 +12,8 @@ import javax.swing.JPanel;
 
 public class MainFrame extends JFrame {
 	private LoginScreen loginoptionsscreen;
-	private RegistrationScreen registrationoptionsscreen;
-	private PlayerOptionsScreen playeroptionsscreen;
+	private RegScreen registrationoptionsscreen;
+	private PlayerScreen playeroptionsscreen;
 	private JMenuBar basicMenuBar;
 	private JMenuBar playerMenuBar;
 	private JMenuBar spectatorMenuBar;
@@ -22,8 +22,8 @@ public class MainFrame extends JFrame {
 
 	public MainFrame() {
 		loginoptionsscreen = new LoginScreen(this);
-		registrationoptionsscreen = new RegistrationScreen(this);
-		playeroptionsscreen = new PlayerOptionsScreen();
+		registrationoptionsscreen = new RegScreen(this);
+		playeroptionsscreen = new PlayerScreen();
 
 		this.setPreferredSize(new Dimension(1200, 700));
 		this.setResizable(false);
