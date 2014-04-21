@@ -21,14 +21,14 @@ public class FileHandler {
 	 * param = Path to the file(must be an image) in question.
 	 * return = Returns the targeted image file as a BufferedImage object or returns null if an error occured.
 	 */
-	public static BufferedImage readImage(String aFileName)
+	public BufferedImage readImage(String aFileName)
 		{
 			BufferedImage image = null;
 			try
 				{
 					image = ImageIO.read(new File(aFileName));
-					System.out.println("SUCCES: Image buffered. Path "
-							+ aFileName);
+			//		System.out.println("SUCCES: Image buffered. Path "
+			//				+ aFileName);
 					return image;
 				}
 			catch (IOException error)

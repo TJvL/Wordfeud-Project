@@ -2,49 +2,59 @@ package gui;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.Graphics;
 
 import javax.swing.JPanel;
 
-public class TilePanel extends JPanel implements MouseListener {
-	private final int size = 33;
-	private int number;
+import domein.Tile;
 
-	public TilePanel(int number) {
-		this.number = number;
-		this.setPreferredSize(new Dimension(size, size));
-		this.setBackground(Color.red);
-		this.addMouseListener(this);
+public class TilePanel extends JPanel {
+	private int size = 33;
+	private static final int PANEL_SIZE = 45;
+	private Tile tile;
+	private boolean selected;
+
+	// Every tiles has his own unique number
+	// The color is gone be changed by a image
+	// Use a paintcomponent for this
+
+	// Moeten nog een tile object kunnen toevoegen hier voor het weergeven van
+	// de letter
+	public TilePanel(Tile tile) {
+		this.tile = tile;
+		this.setPreferredSize(new Dimension(PANEL_SIZE, PANEL_SIZE));
+		this.setBackground(Color.white);
+		// this.number = number;
+
+		// this.setBackground(color);
+		this.setSelected(false);
 	}
 
-	public int getNumber() {
-		return number;
+	public void setSelected(boolean selected) {
+		this.selected = selected;
+		if (selected) {
+			size = 45;
+		} else {
+			size = 33;
+		}
+	}
+	
+	public void repaintPanel(){
+		this.repaint();
 	}
 
-	@Override
-	public void mouseClicked(MouseEvent e) { // TODO Auto-generated
-		System.out.println("Geklikt");
-		this.setBackground(Color.yellow);
-	}
+	// public int getNumber() {
+	// return number;
+	// }
 
-	@Override
-	public void mouseEntered(MouseEvent e) { // TODO Auto-generated
-		this.setBackground(Color.green);
-	}
-
-	@Override
-	public void mouseExited(MouseEvent e) { // TODO Auto-generated
-		this.setBackground(Color.black);
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) { // TODO Auto-generated
+	public void paintComponent(Graphics g) {
+		g.clearRect(0, 0, 45, 45);
+		g.drawImage(tile.getImage(), 0, 0, size, size, null);
 
 	}
 
-	@Override
-	public void mouseReleased(MouseEvent e) { // TODO
-
+	public Tile getTile() {
+		return tile;
 	}
+
 }

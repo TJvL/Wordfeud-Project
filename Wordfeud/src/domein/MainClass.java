@@ -1,6 +1,7 @@
 package domein;
 
 import gui.TempFramePanel;
+import datalaag.FileHandler;
 
 public class MainClass
 	{
