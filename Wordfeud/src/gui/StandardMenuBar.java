@@ -23,8 +23,8 @@ public class StandardMenuBar extends JMenuBar {
 		JMenuItem accountdataMenuItem = new JMenuItem("Account data");
 
 		optionsMenu.add(exitMenuItem);
-		optionsMenu.add(changeroleMenuItem);
 		optionsMenu.add(logoffMenuItem);
+		optionsMenu.add(changeroleMenuItem);
 
 		playerdataMenu.add(statisticsMenuItem);
 		playerdataMenu.add(accountdataMenuItem);
