@@ -5,8 +5,8 @@ public class MainClass
 
 		public static void main(String[] args)
 			{
-				// TODO Auto-generated method stub
-
+				Chat myChat = new Chat();
+				myChat.run();
 			}
 
 	}

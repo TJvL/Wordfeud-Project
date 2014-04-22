@@ -4,7 +4,7 @@ public class DatabaseHandler {
 
 	private static DatabaseHandler databaseHandler = new DatabaseHandler();
 	
-	private DatabaseHandler(){}
+	public DatabaseHandler(){}
 	
 	public static DatabaseHandler getInstance(){
 		return databaseHandler;
