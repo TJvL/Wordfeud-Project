@@ -160,6 +160,12 @@ public class DatabaseHandler {
 		}
 	}
 	
+	public void chatReceive(int gameID)
+	{
+		
+	}
+	
+	
 	public void createCompetition(String username, String start, String end, String summary) // works
 	{
 		//convert string to timestamp
