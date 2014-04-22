@@ -1,4 +1,5 @@
 package gui;
+
 ///als ik via een constructor mijn joincompscreen "door geef" aan een andere klasse, en ik roep in die klasse de remove object aan, wordt dit hierin ook aangepast? 
 import javax.swing.JPanel;
 
