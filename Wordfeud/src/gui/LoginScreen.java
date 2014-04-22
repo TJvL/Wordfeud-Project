@@ -37,13 +37,14 @@ public class LoginScreen extends JPanel {
 
 		registerButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				mainFrame.setRegistrationOptionsScreen();
+				mainFrame.setRegScreen();
 			}
 		});
 
 		loginButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+				mainFrame.setPlayerScreen();
+				mainFrame.setPlayerMenuBar();
 			}
 
 		});
@@ -55,8 +56,8 @@ public class LoginScreen extends JPanel {
 
 	private void createDataField() {
 		dataField = new JPanel();
-		JPanel labels = new JPanel(new GridLayout(2, 1));
-		JPanel fields = new JPanel(new GridLayout(2, 1));
+		JPanel labels = new JPanel(new GridLayout(2, 2, 0, 20));
+		JPanel fields = new JPanel(new GridLayout(2, 1, 0, 20));
 
 		JLabel usernameLabel = new JLabel("Username: ");
 		JLabel passwordLabel = new JLabel("Password: ");

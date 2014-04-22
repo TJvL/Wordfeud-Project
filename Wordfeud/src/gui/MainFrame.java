@@ -11,9 +11,11 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
 public class MainFrame extends JFrame {
-	private LoginScreen loginoptionsscreen;
-	private RegScreen registrationoptionsscreen;
-	private PlayerScreen playeroptionsscreen;
+	private LoginScreen loginscreen;
+	private RegScreen regscreen;
+	private PlayerScreen playerscreen;
+	private AdminAccScreen adminAccScreen;
+	private JoinedCompScreen joinedcompscreen;
 	private JMenuBar basicMenuBar;
 	private JMenuBar playerMenuBar;
 	private JMenuBar spectatorMenuBar;
@@ -21,9 +23,11 @@ public class MainFrame extends JFrame {
 	private JMenuBar moderatorMenuBar;
 
 	public MainFrame() {
-		loginoptionsscreen = new LoginScreen(this);
-		registrationoptionsscreen = new RegScreen(this);
-		playeroptionsscreen = new PlayerScreen();
+		loginscreen = new LoginScreen(this);
+		regscreen = new RegScreen(this);
+		playerscreen = new PlayerScreen(this);
+		joinedcompscreen = new JoinedCompScreen();
+		adminAccScreen = new AdminAccScreen();
 
 		this.setPreferredSize(new Dimension(1200, 700));
 		this.setResizable(false);
@@ -36,7 +40,7 @@ public class MainFrame extends JFrame {
 		createModeratorMenuBar();
 		createAdministratorMenuBar();
 
-		this.setContentPane(loginoptionsscreen);
+		this.setContentPane(loginscreen);
 		this.setJMenuBar(basicMenuBar);
 
 		this.pack();
@@ -64,6 +68,23 @@ public class MainFrame extends JFrame {
 
 		playerdataMenu.add(statisticsMenuItem);
 		playerdataMenu.add(accountdataMenuItem);
+		
+		mainscreenMenuItem.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				setPlayerScreen();
+			}
+		});
+		logoffMenuItem.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				setLoginScreen();
+				setBasicMenuBar();
+			}
+		});
+		exitMenuItem.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				System.exit(0);
+			}
+		});
 
 		playerMenuBar.add(optionsMenu);
 		playerMenuBar.add(playerdataMenu);
@@ -96,6 +117,18 @@ public class MainFrame extends JFrame {
 		adminoptionsMenu.add(playeroptionsMenuItem);
 		adminoptionsMenu.add(competitionoptionsMenuItem);
 
+		logoffMenuItem.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				setLoginScreen();
+				setBasicMenuBar();
+			}
+		});
+		exitMenuItem.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				System.exit(0);
+			}
+		});
+
 		administratorMenuBar.add(optionsMenu);
 		administratorMenuBar.add(playerdataMenu);
 		administratorMenuBar.add(notificationsMenu);
@@ -125,6 +158,18 @@ public class MainFrame extends JFrame {
 
 		modoptionsMenu.add(checkwordMenuItem);
 
+		logoffMenuItem.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				setLoginScreen();
+				setBasicMenuBar();
+			}
+		});
+		exitMenuItem.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				System.exit(0);
+			}
+		});
+		
 		moderatorMenuBar.add(optionsMenu);
 		moderatorMenuBar.add(playerdataMenu);
 		moderatorMenuBar.add(notificationsMenu);
@@ -151,18 +196,28 @@ public class MainFrame extends JFrame {
 		basicMenuBar.add(optionsMenu);
 	}
 
-	public void setRegistrationOptionsScreen() {
-		this.setContentPane(registrationoptionsscreen);
+	public void setRegScreen() {
+		this.setContentPane(regscreen);
 		revalidate();
 	}
 
-	public void setLoginOptionsScreen() {
-		this.setContentPane(loginoptionsscreen);
+	public void setLoginScreen() {
+		this.setContentPane(loginscreen);
+		revalidate();
+	}
+
+	public void setPlayerScreen() {
+		this.setContentPane(playerscreen);
+		revalidate();
+	}
+
+	public void setJoinedCompScreen() {
+		this.setContentPane(joinedcompscreen);
 		revalidate();
 	}
 	
-	public void setPlayerOptionsScreen(){
-		this.setContentPane(playeroptionsscreen);
+	public void setAdminAccScreen(){
+		this.setContentPane(adminAccScreen);
 		revalidate();
 	}
 

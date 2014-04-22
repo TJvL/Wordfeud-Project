@@ -1,5 +1,7 @@
 package gui;
 
-public class AdminCompScreen {
+import javax.swing.JPanel;
+
+public class AdminCompScreen extends JPanel{
 
 }
