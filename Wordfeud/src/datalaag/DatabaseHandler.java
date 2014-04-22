@@ -8,9 +8,18 @@ import java.sql.SQLException;
 
 public class DatabaseHandler {
 	final private String url = "jdbc:mysql://databases.aii.avans.nl:3306/manschou_db2";	//location of the database
-	final private String user = "";	//is the database user
-	final private String password = ""; //the password of the user
+	final private String user = "manschou";	//is the database user
+	final private String userPass = "Mschouten92"; //the password of the user
+	
+	private PreparedStatement statement = null;
+	private ResultSet result = null;
+	
 	private Connection con;
+	
+	private static java.sql.Timestamp getCurrentTimeStamp() {
+	    java.util.Date today = new java.util.Date();
+	    return new java.sql.Timestamp(today.getTime());
+	}
 	
 	private static DatabaseHandler databaseHandler = new DatabaseHandler();
 	
@@ -36,7 +45,7 @@ public class DatabaseHandler {
 		// Creating a variable for the connection
 		try
 		{
-			con = DriverManager.getConnection(url, user, password);
+			con = DriverManager.getConnection(url, user, userPass);
 		} catch (SQLException e)
 		{
 			e.printStackTrace();
@@ -49,9 +58,9 @@ public class DatabaseHandler {
 		boolean login = false;
 		try
 		{
-			PreparedStatement statement = con.prepareStatement("SELECT * FROM account WHERE naam = '" + username + "' AND wachtwoord = '" + password + "'");
+			statement = con.prepareStatement("SELECT * FROM account WHERE naam = '" + username + "' AND wachtwoord = '" + password + "'");
 			
-			ResultSet result = statement.executeQuery();
+			result = statement.executeQuery();
 			
 			if(result.next())
 			{
@@ -76,9 +85,9 @@ public class DatabaseHandler {
 		boolean registered = false;
 		try
 		{
-			PreparedStatement statement = con.prepareStatement("SELECT * FROM account WHERE naam = '" + username + "'");
+			statement = con.prepareStatement("SELECT * FROM account WHERE naam = '" + username + "'");
 			
-			ResultSet result = statement.executeQuery();
+			result = statement.executeQuery();
 			
 			if(!result.next())
 			{
@@ -87,16 +96,14 @@ public class DatabaseHandler {
 				try
 				{
 					// Here we create our query where u state which fields u want to insert data
-//					statement = con.prepareStatement("INSERT INTO account(naam.wachtwoord)VALUES(?.?)");
+					statement = con.prepareStatement("INSERT INTO account(naam, wachtwoord)VALUES(?,?)");
 //					// the ? represents anonymous values
 //							
-//					statement.setString(1, username);
-//					statement.setString(2, password);
-					
-					String sql = "INSERT INTO account " + "VALUES ('" + username + "', '" + password + "')";
-					
+					statement.setString(1, username);
+					statement.setString(2, password);
+				
 					// execute your query
-					statement.executeUpdate(sql);
+					statement.executeUpdate(); //if there is not result then u use a executeUpdate()
 							
 					// closes the statement
 					statement.close();
@@ -124,7 +131,114 @@ public class DatabaseHandler {
 		
 		return registered;
 	}
+
+	public void chatSend(String username, int gameID, String message)// it works
+	{
+		try
+		{
+			// Here we create our query where u state which fields u want to insert data
+			statement = con.prepareStatement("INSERT INTO chatregel(account_naam, spel_id, tijdstip, bericht)VALUES(?,?,?,?)");
+//			// the ? represents anonymous values
+//					
+			statement.setString(1, username);
+			statement.setInt(2, gameID);
+			statement.setTimestamp(3, getCurrentTimeStamp());
+			statement.setString(4, message);
+		
+			// execute your query
+			statement.executeUpdate();
+					
+			// closes the statement
+			statement.close();
+					
+			// closes the connection
+			con.close();
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+			System.out.println("chat message send error");
+		}
+	}
 	
+	public void createCompetition(String username, String start, String end, String summary) // works
+	{
+		//convert string to timestamp
+	    java.sql.Timestamp compStart = java.sql.Timestamp.valueOf(start);
+	    java.sql.Timestamp compEnd = java.sql.Timestamp.valueOf(end);
+		
+		try
+		{
+			// Here we create our query where u state which fields u want to insert data
+			statement = con.prepareStatement("INSERT INTO competitie(account_naam_eigenaar, start, einde, omschrijving)VALUES(?,?,?,?)", PreparedStatement.RETURN_GENERATED_KEYS);
+//			// the ? represents anonymous values
+//					
+			statement.setString(1, username);
+			statement.setTimestamp(2, compStart);
+			statement.setTimestamp(3, compEnd);
+			statement.setString(4, summary);
+		
+			// execute your query
+			statement.execute();	// needs to be execute because executeQuery doesn't work with PK retrieval
+			
+			result = statement.getGeneratedKeys(); //returns competitionID
+			
+			if(result.next())
+			{
+				int compID = result.getInt(1);
+				System.out.println("do i get the PK " + compID);
+				
+			}
+					
+			// closes the statement
+			statement.close();
+					
+			// closes the connection
+			con.close();
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+			System.out.println("create error");
+		}
+	}
+	
+	public void createGame( int competitionID, String username, String opponent)// works
+	{
+		try
+		{
+			// Here we create our query where u state which fields u want to insert data
+			statement = con.prepareStatement("INSERT INTO spel(competitie_id, account_naam_uitdager, account_naam_tegenstander, moment_uitdaging, bord_naam, letterset_naam)VALUES(?,?,?,?,?,?)", PreparedStatement.RETURN_GENERATED_KEYS);
+//			// the ? represents anonymous values
+//					
+			statement.setInt(1, competitionID);
+			statement.setString(2, username);
+			statement.setString(3, opponent);
+			statement.setTimestamp(4, getCurrentTimeStamp());
+			statement.setString(5,"Standard");
+			statement.setString(6,"NL");
+			
+			// execute your query
+			statement.execute();	// needs to be execute because executeQuery doesn't work with PK retrieval
+			
+			result = statement.getGeneratedKeys(); //returns gameID
+			
+			if(result.next())
+			{
+				int gameID = result.getInt(1);
+				System.out.println("do i get the PK " + gameID);
+				
+			}
+					
+			// closes the statement
+			statement.close();
+					
+			// closes the connection
+			con.close();
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+			System.out.println("create error");
+		}
+	}
 }
 
 
@@ -137,5 +251,10 @@ public class DatabaseHandler {
  * aangemaakt door: Michael
  * login check
  * register check and register name and password
+ * create competition, create game
+ * chat send,
+ * 
+ * 
+ * to use multiple methods con.close(); needs to be removed. otherwise u get an closed connection error.
  * 
  */
