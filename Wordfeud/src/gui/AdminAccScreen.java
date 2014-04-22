@@ -54,10 +54,12 @@ public class AdminAccScreen extends JPanel {
 		JButton getDataButton = new JButton("Player data");
 		JButton changeDataButton = new JButton("Change data");
 		JButton compScreenButton = new JButton("Competitions screen");
+		JButton addAccButton = new JButton("Create account");
 		
 		composedButtons.add(getDataButton);
 		composedButtons.add(changeDataButton);
 		composedButtons.add(compScreenButton);
+		composedButtons.add(addAccButton);
 
 		buttonsPanel.add(composedButtons, BorderLayout.WEST);
 	}

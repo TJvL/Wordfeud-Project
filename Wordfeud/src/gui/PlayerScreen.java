@@ -40,6 +40,7 @@ public class PlayerScreen extends JPanel {
 		JLabel label = new JLabel("Active games:");
 
 		scrollPane.setPreferredSize(new Dimension(800, 300));
+		
 		scrollPane
 				.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 
