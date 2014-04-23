@@ -195,21 +195,31 @@ public class DatabaseHandler
 		}
 	}
 
-	public ArrayList<String> chatReceive(int gameID, String lastMessageTimestamp)// need to be return checked!!!
+	public ArrayList<String> chatReceive(int gameID, String lastMessageTimestamp)// need
+																					// to
+																					// be
+																					// return
+																					// checked!!!
 	{
 		ArrayList<String> chat = new ArrayList<String>();
-		
-		if(lastMessageTimestamp.equals(""))
+
+		if (lastMessageTimestamp.equals(""))
 		{
 			lastMessageTimestamp = "2013-05-05 00:00:00";
 		}
-		Timestamp oldTimestamp = Timestamp.valueOf(lastMessageTimestamp); // converts String to Timestamp
+		Timestamp oldTimestamp = Timestamp.valueOf(lastMessageTimestamp); // converts
+																			// String
+																			// to
+																			// Timestamp
 
 		try
 		{
 			statement = con
 					.prepareStatement("SELECT account_naam, tijdstip, bericht FROM chatregel WHERE spel_id = '"
-							+ gameID + "' AND tijdstip >= '" + oldTimestamp + "' ORDER BY tijdstip ASC");
+							+ gameID
+							+ "' AND tijdstip >= '"
+							+ oldTimestamp
+							+ "' ORDER BY tijdstip ASC");
 
 			result = statement.executeQuery();
 
@@ -219,7 +229,8 @@ public class DatabaseHandler
 				String chatTime = result.getTimestamp(2).toString();
 				String message = result.getString(3);
 				chat.add(sender + "---" + chatTime + "---" + message);
-//				System.out.println("sender: " + sender + " Time: " + chatTime + " message: " + message);
+				// System.out.println("sender: " + sender + " Time: " + chatTime
+				// + " message: " + message);
 			}
 
 		} catch (SQLException e)
@@ -230,14 +241,13 @@ public class DatabaseHandler
 		return chat;
 	}
 
-	public int createCompetition(String username, String start, String end, String summary) // works
+	public int createCompetition(String username, String end, String summary) // works
 	{
 		// convert string to timestamp
-		java.sql.Timestamp compStart = java.sql.Timestamp.valueOf(start);
 		java.sql.Timestamp compEnd = java.sql.Timestamp.valueOf(end);
-		
-		int compID =0;
-		
+
+		int compID = 0;
+
 		try
 		{
 			// Here we create our query where u state which fields u want to
@@ -249,7 +259,7 @@ public class DatabaseHandler
 			// // the ? represents anonymous values
 			//
 			statement.setString(1, username);
-			statement.setTimestamp(2, compStart);
+			statement.setTimestamp(2, getCurrentTimeStamp());
 			statement.setTimestamp(3, compEnd);
 			statement.setString(4, summary);
 
@@ -277,7 +287,7 @@ public class DatabaseHandler
 		return compID;
 	}
 
-	public int createGame(int competitionID, String username, String opponent)// works
+	public int createGame(int competitionID, String username, String opponent, String privacy)// works
 	{
 		int gameID = 0;
 		try
@@ -286,7 +296,7 @@ public class DatabaseHandler
 			// insert data
 			statement = con
 					.prepareStatement(
-							"INSERT INTO spel(competitie_id, account_naam_uitdager, account_naam_tegenstander, moment_uitdaging, bord_naam, letterset_naam)VALUES(?,?,?,?,?,?)",
+							"INSERT INTO spel(competitie_id, account_naam_uitdager, account_naam_tegenstander, moment_uitdaging, bord_naam, letterset_naam, privacy)VALUES(?,?,?,?,?,?,?)",
 							PreparedStatement.RETURN_GENERATED_KEYS);
 			// // the ? represents anonymous values
 			//
@@ -296,6 +306,7 @@ public class DatabaseHandler
 			statement.setTimestamp(4, getCurrentTimeStamp());
 			statement.setString(5, "Standard");
 			statement.setString(6, "NL");
+			statement.setString(7, privacy);
 
 			// execute your query
 			statement.execute(); // needs to be execute because executeQuery
@@ -320,17 +331,20 @@ public class DatabaseHandler
 		}
 		return gameID;
 	}
-	
+
 	public boolean checkTurn(String username, int gameID)// works
 	{
 		boolean turn = false;
-		
+
 		try
 		{
-			statement = con.prepareStatement("SELECT * FROM beurt WHERE spel_id = '" + gameID + "' AND account_naam = '" + username + "' AND id = (SELECT max(id) FROM beurt)");
-			
+			statement = con
+					.prepareStatement("SELECT * FROM beurt WHERE spel_id = '"
+							+ gameID + "' AND account_naam = '" + username
+							+ "' AND id = (SELECT max(id) FROM beurt)");
+
 			result = statement.executeQuery();
-				
+
 			if (result.next())
 			{
 				System.out.println("it's your turn");
@@ -340,25 +354,32 @@ public class DatabaseHandler
 			{
 				System.out.println("it's not your turn");
 			}
-			
+
 		} catch (SQLException e)
 		{
 			e.printStackTrace();
 			System.out.println("Query ERROR!!!!");
 		}
-		
+
 		return turn;
 	}
 
-	public void updateTurn(int gameID, String username,int score, String action)// needs to be tested, probally works
+	public void updateTurn(int gameID, String username, int score, String action)// needs
+																					// to
+																					// be
+																					// tested,
+																					// probally
+																					// works
 	{
-		try 
+		try
 		{
-			statement = con.prepareStatement("SELECT * FROM beurt WHERE spel_id = '" + gameID + "'");
-		
+			statement = con
+					.prepareStatement("SELECT * FROM beurt WHERE spel_id = '"
+							+ gameID + "'");
+
 			result = statement.executeQuery();
-			
-			if(result.next())
+
+			if (result.next())
 			{
 				try
 				{
@@ -366,8 +387,8 @@ public class DatabaseHandler
 					// want to insert data
 					statement = con
 							.prepareStatement("INSERT INTO beurt(spel_id, account_naam, score, aktie_type)VALUES(?,?,?,?)");
-					 // the ? represents anonymous values
-					
+					// the ? represents anonymous values
+
 					statement.setInt(1, gameID);
 					statement.setString(2, username);
 					statement.setInt(3, score);
@@ -386,28 +407,102 @@ public class DatabaseHandler
 					System.out.println("insert turn ERROR!!!");
 				}
 			}
-	
+
 		} catch (SQLException e)
 		{
 			System.out.println("query ERROR!!!");
 			e.printStackTrace();
 		}
 	}
-	
-	public int score(int gameID, String username) //gets the max score of the user
+
+	public int score(int gameID, String username) // gets the max score of the
+													// user
 	{
-		int score=0;
+		int score = 0;
+
+		try
+		{
+			statement = con
+					.prepareStatement("SELECT sum(score) FROM beurt WHERE account_naam = '"
+							+ username + "' AND spel_id = '" + gameID + "'");
+
+			result = statement.executeQuery();
+
+			if (result.next())
+			{
+				score = result.getInt(1);
+			}
+
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+			System.out.println("Query ERROR!!!");
+		}
+
+		return score;
+	}
+
+	public void addTileToHand(int gameID, ArrayList<Integer> tile, int turnID)//should work
+	{
+		try
+		{
+			for (int i = 0; i < tile.size(); i++)
+			{
+				statement = con
+						.prepareStatement("INSERT INTO letterbakjeletter(spel_id, letter_id, beurt_id)VALUES(?,?,?)");
+
+				statement.setInt(1, gameID);
+				statement.setInt(2, tile.get(i));
+				statement.setInt(3, turnID);
+
+				statement.executeUpdate();
+			}
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+			System.out.println("Query Error!!!!");
+		}
+	}
+	
+	public String squareCheck(int cordX, int cordY)// should work
+	{
+		String squareValue = null;
 		
 		try
 		{
-			statement = con.prepareStatement("SELECT sum(score) FROM beurt WHERE account_naam = '"+ username +"' AND spel_id = '" + gameID + "'");
+			statement = con.prepareStatement("SELECT tegeltype_soort FROM tegel WHERE x = '" + cordX + "' AND y = '" + cordY + "'");
 			
 			result = statement.executeQuery();
 			
 			if(result.next())
 			{
-				score = result.getInt(1);
+				squareValue = result.getString(1);
 			}
+			
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+			System.out.println("Query ERROR!!!!");
+		}
+		
+		
+		return squareValue;
+	}
+	
+	public boolean checkWord(String word)// check works
+	{
+		boolean validWord = false;
+		
+		try
+		{
+			statement = con.prepareStatement("SELECT woord FROM woordenboek WHERE woord = '" + word + "'");
+			
+			result = statement.executeQuery();
+			
+			if(result.next())
+			{
+				validWord = true;
+			}			
 			
 		} catch (SQLException e)
 		{
@@ -415,27 +510,12 @@ public class DatabaseHandler
 			System.out.println("Query ERROR!!!");
 		}
 		
-		return score;
+		return validWord;
 	}
 	
-	public void addTileToJar(int gameID, String tile)
+	public void gameStatusUpdate(int gameID, String status)
 	{
-		try
-		{
-			statement = con.prepareStatement("");
-			
-			statement.executeQuery();
-			
-			
-		} catch (SQLException e)
-		{
-			e.printStackTrace();
-			System.out.println("Query Error!!!!");
-		}
-		
-		
-		
-		
+		statement = con.prepareStatement("")
 	}
 	
 }
@@ -446,13 +526,10 @@ public class DatabaseHandler
  * en aanroepen door: dbh. --------
  * 
  * aangemaakt door: Michael login check register check and register name and
- * password create competition, create game chat send,
- * checkTurn, chat Receive
+ * password create competition, create game chat send, checkTurn, chat Receive
  * 
  * 
  * 
- * all needs to be checked for the rol of the player
- * to use multiple methods con.close(); needs to be removed. otherwise u get an
- * closed connection error.
- * 
+ * all needs to be checked for the rol of the player to use multiple methods
+ * con.close(); needs to be removed. otherwise u get an closed connection error.
  */
