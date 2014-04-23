@@ -394,13 +394,21 @@ public class DatabaseHandler
 		}
 	}
 	
-	public int score(int gameID, String username)
+	public int score(int gameID, String username) //gets the max score of the user
 	{
 		int score=0;
 		
 		try
 		{
 			statement = con.prepareStatement("SELECT sum(score) FROM beurt WHERE account_naam = '"+ username +"' AND spel_id = '" + gameID + "'");
+			
+			result = statement.executeQuery();
+			
+			if(result.next())
+			{
+				score = result.getInt(1);
+			}
+			
 		} catch (SQLException e)
 		{
 			e.printStackTrace();
