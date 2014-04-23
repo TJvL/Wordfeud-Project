@@ -3,19 +3,26 @@ package domein;
 public class Word {
 	private String word;
 	private int score;
-	private int bonnus;
+	private int bonus;
 	
 	public Word(){
-		this.bonnus = 0;
+		this.bonus = 0;
 		this.word = "";
+	}
+	
+	public void addWordBonusToScore(){
+		if (bonus == 0){
+			bonus = 1;
+		}
+		score = score * bonus;
 	}
 	
 	public void addLetter(String letter){
 		word += letter;
 	}
 	
-	public void addWordBonnus(int bonnus){
-		this.bonnus = bonnus;
+	public void addWordBonus(int bonus){
+		this.bonus = bonus;
 	}
 	
 	public int getLengthWord(){
