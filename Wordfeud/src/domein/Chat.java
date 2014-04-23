@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.*;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 
 import javax.swing.Box;
@@ -29,19 +30,25 @@ public class Chat implements Runnable,ActionListener {
 	private JTextArea chatArea;
 	private JTextArea input;
 	private JButton sendButton;
-	TestGameClass testGameClass = new TestGameClass();
+	private ArrayList<String> chatMessages;
+	private Player player1;
+	private Player player2;
+	private int gameID;
+	
+	/**eventually unnecessary	*/		private TestGameClass testGameClass = new TestGameClass();
 	DatabaseHandler dbh = new DatabaseHandler();
 	
-	private String latestUpdatedMessage;
-	//private Timestamp latestTimeStamp = new Timestamp(latestDateStamp.getTime());
+	private String latestUpdatedMessageTimeDate;
+	/**already unnecessary		*/		//private Timestamp latestTimeStamp = new Timestamp(latestDateStamp.getTime());
 	
-	private TestUserClass testUser1 = new TestUserClass("Ronnie376");
+	/**eventually unnecessary	*/		private TestUserClass testUser1 = new TestUserClass("Ronnie376");
 	
 	
 	@Override
 	public void run() {
 		chatArea.append("test 1!\n");
 		chatArea.append("hopelijk staaT dit op de volgende regel!\n");
+		this.checkForMessages();
 		
 	}
 
@@ -49,7 +56,11 @@ public class Chat implements Runnable,ActionListener {
 	///////////////////////////////VRAAG VRAAG OVER BERICHTEN IN DATABASE/////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	public Chat() {
+	public Chat(Player player1, Player player2, int gameID) {				// I get the player object references and the gameID of this match from the class that invokes this constructor (Wouter, Mike)
+		this.player1 = player1;
+		this.player2 = player2;
+		this.gameID = gameID;
+		
 		testFrame = new JFrame();
 		testFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		testFrame.setPreferredSize(new Dimension(300,500));
@@ -80,7 +91,7 @@ public class Chat implements Runnable,ActionListener {
 		sendButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 		sendButton.addActionListener(this);
 		
-		latestUpdatedMessage = Long.toString(System.currentTimeMillis());
+		latestUpdatedMessageTimeDate = Long.toString(System.currentTimeMillis());
 		
 		chatPanel.setLayout(new FlowLayout());
 		
@@ -98,38 +109,53 @@ public class Chat implements Runnable,ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
+		
 		chatArea.append("knop ingedrukt\n");
 		this.sendMessage();
+		
 	}
 	
 	
 	public void sendMessage(/*Player player, String message*/) {
+		if (input.equals(null)) {
+			return;
+		} else {
+		
+		
 		int gameId = testGameClass.getSpelID();								/**||||||||||||||||||||||||||||||||||||*/
 		String message = input.getText();									/**||||||||||||||||||||||||||||||||||||*/
 		String userName = testUser1.getUserName(); 							/**||||||||||||||||||||||||||||||||||||*/
 		
 		
-		chatArea.append(userName + ": " + message + "\n"); 			//this is a   TEST line
+		//chatArea.append(userName + ": " + message + "\n"); 			//this is a   TEST line
 		 										
+		dbh.chatSend(userName, gameId, message);  						//this is the REAL line
 		
-		/**dbh.chatSend(userName, gameId, message);*/  				//this is the REAL line
-		
-		input.setText(null);										// clearing the input JTextArea for a possible new message
+		input.setText(null);											// clearing the input JTextArea for a possible new message
+		}
 		
 	}
 	
 	public void checkForMessages() {
 		
 		
-		while (true) {
+		//while (true) {
+						
+			/**chatMessages = dbh.chatRecieve(this.gameID , latestUpdatedMessageTimeDate);*/
+			chatMessages.add("Baaz456---2014-03-04 10:45:23---Ik was nog niet thuis! :D");
 			
-			// insert code here that gets messages from database
+			for (String a : chatMessages) {
+				String[] parts 			= a.split("---");
+				String senderUserName 	= parts[1];
+				String dateTime 		= parts[2];
+				String message 			= parts[3];
+				
+				System.out.println(senderUserName);
+				System.out.println(dateTime);
+				System.out.println(message);
+			}
 			
 			
-			/**dbh.chatRecieve(latestUpdatedMessage);*/
-			//parameter String latestUpdatedMessage;
-			String newMessage;
-			
-		}
+		//}
 	}
 }

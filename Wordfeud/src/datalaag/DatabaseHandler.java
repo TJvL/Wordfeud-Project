@@ -7,7 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class DatabaseHandler {
-	final private String url = "jdbc:mysql://databases.aii.avans.nl:3306/manschou_db2";	//location of the database
+ 	final private String url = "jdbc:mysql://databases.aii.avans.nl:3306/manschou_db2";	//location of the database
 	final private String user = "manschou";	//is the database user
 	final private String userPass = "Mschouten92"; //the password of the user
 	
