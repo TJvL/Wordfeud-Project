@@ -12,7 +12,7 @@ public class FieldPanel extends JPanel {
 
 	public FieldPanel() {
 		this.setPreferredSize(new Dimension(500, 500));
-		this.setBackground(Color.white);
+		this.setBackground(Color.black);
 		this.setLayout(new GridLayout(15, 15));
 		// addSquares();
 	}

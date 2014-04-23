@@ -2,21 +2,18 @@ package domein;
 
 import java.awt.image.BufferedImage;
 
-import datalaag.FileHandler;
-
 public class Square {
 	private String value;
-	private String path;
-	private FileHandler fh = FileHandler.getInstance();
 	private int x;
 	private int y;
 	private Tile tile;
+	private BufferedImage image;
 	
-	public Square(int x, int y, String value, String path){
+	public Square(int x, int y, String value, BufferedImage image){
 		this.x=x;
 		this.y=y;
-		this.path = path;
 		this.value = value;
+		this.image = image;
 	}
 	
 	public int getXPos(){
@@ -33,7 +30,7 @@ public class Square {
 	
 	public BufferedImage getImage(){
 	//	FileHandler fh = FileHandler.getInstance();
-		BufferedImage image = fh.readImage(path);
+	//	BufferedImage image = ;
 		return image;
 	}
 	

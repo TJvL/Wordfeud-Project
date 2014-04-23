@@ -1,14 +1,16 @@
 package domein;
 
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
+import datalaag.FileHandler;
 import datalaag.ScoreCalculator;
 
 public class Board {
 
 	private Square[][] field;
-	private ArrayList<Tile> justPlayedTiles;
 	private ScoreCalculator calculator;
+	private FileHandler fh;
 
 	// Hier moet gekeken of er een nieuwe bord wordt aangemaakt
 	// Of het spel al bezig is het bord laden
@@ -17,12 +19,13 @@ public class Board {
 	public Board() {
 		calculator = ScoreCalculator.getInstance();
 		field = new Square[15][15];
-		justPlayedTiles = new ArrayList<Tile>();
+		fh = FileHandler.getInstance();
 
 		// Tijdelijk vullen van het bord
+		BufferedImage image = fh.readImage("Plaatjes/board.png");
 		for (int y = 0; y < 15; y++) {
 			for (int x = 0; x < 15; x++) {
-				field[x][y] = new Square(x, y, "board", "Plaatjes/board.png");
+				field[x][y] = new Square(x, y, "board", image);
 			}
 		}
 
@@ -55,17 +58,18 @@ public class Board {
 		int y;
 
 		// plaatsen van de star
-		field[7][7] = new Square(7, 7, "star", "Plaatjes/star.png");
+		image = fh.readImage("Plaatjes/star.png");
+		field[7][7] = new Square(7, 7, "star", image);
 
 		// plaatsen van alle bonusSquares
 		for (int i = 0; i < typeSquares.length; i++) {
 			// voor alle typeSquares
+			image = fh.readImage("Plaatjes/" + paths[i]);
 			for (int number = 0; number < amounts[i]; number++) {
 				// voor het aantal keer dat de typeSquare voorkomt op het bord
 				x = xValues[i][number] - 1;
 				y = yValues[i][number] - 1;
-				field[x][y] = new Square(x, y, typeSquares[i], "Plaatjes/"
-						+ paths[i]);
+				field[x][y] = new Square(x, y, typeSquares[i], image);
 			}
 		}
 	}
@@ -76,26 +80,24 @@ public class Board {
 		// Zie addSquares();
 	}
 
-	// method to add the just played tiles to a seprate array
-	// and add then to the board
-	// param a tile
-	public void addTileToBoard(Tile t) {
-		justPlayedTiles.add(t);
-		field[t.getXValue()][t.getYValue()].addTile(t);
+	public void addTileToSquare(Tile t, int x, int y) {
+		field[x][y].addTile(t);
+	}
+
+	public void removeTileFromSquare(int x, int y) {
+		field[x][y].removeTile();
 	}
 
 	// Start signal to add the squares to the calculator
 	// and start it when it's done
 	public boolean startCalculating() {
 		/*
-		for (int y = 0; y < 15; y++) {
-			for (int x = 0; x < 15; x++) {
-				calculator.addSquaresToBoard(field[x][y]);
-			}
-		}*/
-		
+		 * for (int y = 0; y < 15; y++) { for (int x = 0; x < 15; x++) {
+		 * calculator.addSquaresToBoard(field[x][y]); } }
+		 */
+
 		calculator.addSquaresToBoard(field);
-		
+
 		boolean possible = false;
 		int score = calculator.startCalculating();
 		if (score > 0) {
@@ -110,16 +112,9 @@ public class Board {
 					}
 				}
 			}
-			justPlayedTiles.clear();
 			System.out.println("Woord was goed");
 			possible = true;
-
 		} else {
-			for (Tile tile : justPlayedTiles) {
-				field[tile.getXValue()][tile.getYValue()].removeTile();
-
-			}
-			justPlayedTiles.clear();
 			System.out.println("Woord was fout");
 		}
 		return possible;

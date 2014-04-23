@@ -13,11 +13,10 @@ import domein.Tile;
 public class SquarePanel extends JPanel {
 
 	private static final int SIZE = 33;
-	private BufferedImage image;
+	private BufferedImage squareImage;
+	private BufferedImage tileImage;
 	private int x;
 	private int y;
-	private Square square;
-	private Tile tile;
 
 	// Er moet een mogelijkheid komen om tiles toe te voegen aan de squarepanel
 	// Er kan dan een check komen of er een tile in de square panel zit of niet
@@ -26,13 +25,13 @@ public class SquarePanel extends JPanel {
 	// je de square value kunt laten zien.
 
 	// public SquarePanel(int x, int y, Color color) {
-	public SquarePanel(int x, int y, Square square) {
-		this.square = square;
-		this.image = square.getImage();
-		this.x = x;
-		this.y = y;
+	public SquarePanel(Square square) {
+		this.squareImage = square.getImage();
+		this.tileImage = null;
+		this.x = square.getXPos();
+		this.y = square.getYPos();
 		this.setPreferredSize(new Dimension(SIZE, SIZE));
-		// this.setBackground(Color.yellow);
+		//this.setBackground(Color.red);
 	}
 
 	// public void setBackgroundColor(Color color){
@@ -40,21 +39,17 @@ public class SquarePanel extends JPanel {
 	// }
 
 	// toevoegen en verwijderen van een tile
-	public void addTile(Tile t) {
-		this.tile = t;
+	public void addImage(BufferedImage tileImage) {
+		this.tileImage = tileImage;
 	}
 
-	public void removeTile() {
-		this.tile = null;
+	public void removeImage() {
+		this.tileImage = null;
 	}
-
-	public Tile getTile() {
-		return tile;
-	}
-
+	
 	// kijken of er een tile opligt of niet
 	public boolean getOccupied() {
-		if (tile != null) {
+		if (tileImage != null) {
 			return true;
 		} else {
 			return false;
@@ -70,10 +65,10 @@ public class SquarePanel extends JPanel {
 	}
 
 	public void paintComponent(Graphics g) {
-		if (tile == null) {
-			g.drawImage(square.getImage(), 0, 0, null);
+		if (tileImage == null) {
+			g.drawImage(squareImage, 0, 0, 33, 33, null);
 		} else {
-			g.drawImage(tile.getImage(), 0, 0, null);
+			g.drawImage(tileImage, 0, 0, 33, 33, null);
 		}
 	}
 

@@ -1,13 +1,17 @@
 package domein;
 
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+
+import datalaag.FileHandler;
 
 public class Jar {
 	private ArrayList<Tile> tiles = new ArrayList<Tile>();
 	private Tile tile;
+	private FileHandler fh;
 
 	public Jar() {
-
+		fh = FileHandler.getInstance();
 	}
 
 	// methode vul Jar aan de hand van stenen in de pot (database)
@@ -35,9 +39,10 @@ public class Jar {
 		// hard coded contence of Jar
 
 		for (int i = 0; i < alphabet.length; i++) {
+			BufferedImage image = fh.readImage("Plaatjes/" + alphabet[i]
+					+ ".png");
 			for (int k = 0; k < numberOfTiles[i]; k++) {
-				tiles.add(tile = new Tile(alphabet[i], tileValue[i],
-						"Plaatjes/" + alphabet[i] + ".png"));
+				tiles.add(tile = new Tile(alphabet[i], tileValue[i], image));
 			}
 		}
 	}

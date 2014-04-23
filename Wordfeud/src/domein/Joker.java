@@ -1,5 +1,7 @@
 package domein;
 
+import java.awt.image.BufferedImage;
+
 public class Joker extends Tile{
 
 	private String letter;
@@ -9,7 +11,7 @@ public class Joker extends Tile{
 	
 	// Joker moet nog worden gemaakt, alleen een normale tile bestaat nu
 	
-	public Joker(String letter, int value, String path) {
+	public Joker(String letter, int value, BufferedImage path) {
 		super(letter, value, path);
 		// TODO Auto-generated constructor stub
 	}

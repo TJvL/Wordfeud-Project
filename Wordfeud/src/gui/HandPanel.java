@@ -10,7 +10,7 @@ public class HandPanel extends JPanel{
 	private ArrayList<TilePanel> tiles = new ArrayList<TilePanel>();
 	
 	public HandPanel(){
-		this.setBackground(Color.white);
+		this.setBackground(Color.LIGHT_GRAY);
 		this.setPreferredSize(new Dimension(500,50));
 	}
 	
