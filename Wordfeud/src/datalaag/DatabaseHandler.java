@@ -35,7 +35,7 @@ public class DatabaseHandler
 		return databaseHandler;
 	}
 
-	public DatabaseHandler()
+	private DatabaseHandler()
 	{
 		// Accessing driver from the JAR file
 		try
@@ -418,7 +418,25 @@ public class DatabaseHandler
 		return score;
 	}
 	
-	
+	public void addTileToJar(int gameID, String tile)
+	{
+		try
+		{
+			statement = con.prepareStatement("");
+			
+			statement.executeQuery();
+			
+			
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+			System.out.println("Query Error!!!!");
+		}
+		
+		
+		
+		
+	}
 	
 }
 
