@@ -58,10 +58,8 @@ public class SpecScreen extends JPanel
 		DefaultListCellRenderer renderer = (DefaultListCellRenderer) activeGamesList
 				.getCellRenderer();
 		renderer.setHorizontalAlignment(JLabel.CENTER);
-		//
-		// activeGamesList.setCellRenderer(myAGLCR);
 		activeGamesList.setModel(myListModel);
-		// //
+		
 
 		listScrollPane = new JScrollPane(activeGamesList);
 		listScrollPane
