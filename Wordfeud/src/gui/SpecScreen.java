@@ -111,6 +111,7 @@ public class SpecScreen extends JPanel
 		textAreaScrollPane = new JScrollPane(myTextArea);
 		myTextArea.setWrapStyleWord(true);
 		myTextArea.setLineWrap(true);
+		
 
 		textAreaScrollPane
 				.setVerticalScrollBarPolicy(textAreaScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
