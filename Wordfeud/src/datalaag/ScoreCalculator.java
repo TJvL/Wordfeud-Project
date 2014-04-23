@@ -51,7 +51,7 @@ public class ScoreCalculator {
 				if (playedTilesConnected()) {
 					// alle gelegde tiles liggen aan elkaar
 					System.out.println("alle checks zijn geslaagd");
-				//	score = calculateScore();
+					score = calculateScore();
 				}
 			}
 		}
@@ -149,9 +149,9 @@ public class ScoreCalculator {
 	// Calculates the score
 	// Checks if they are connected to a just played tile
 	// Adds the words to a new String
-	/*
 	public int calculateScore() {
 		int score = 0;
+		String direction = "";
 
 		if (wordHorizontal) {
 			// woord is horizontaal
@@ -172,111 +172,196 @@ public class ScoreCalculator {
 							if (field[x][y].getXPos() == testingXValue) {
 								// de tile heeft dezelfde x waarde als de net
 								// geplaatste tile
-								if (!field[x][y].getTile().getJustPlayed()) {
-									if (isConnected(field[x][y], sq)) {
-										// de tile is verbonden met de net
-										// geplaatste tile
-										word.increaseScore(score);
-										score = score
-												+ field[x][y].getTile()
-														.getValue();
-										word.addLetter(field[x][y].getTile()
-														.getLetter());
-										System.out.println("Letter: "
-												+ field[x][y].getTile()
-														.getLetter());
-									}
-								} else {
-									word = word
-											+ field[x][y].getTile().getLetter();
+								if (isConnected(field[x][y], sq, "")) {
+									// if
+									// (!field[x][y].getTile().getJustPlayed())
+									// {
+
+									// de tile is verbonden met de net
+									// geplaatste tile
+									word.increaseScore(field[x][y].getTile()
+											.getValue());
+									// score = score
+									// + field[x][y].getTile()
+									// .getValue();
+									word.addLetter(field[x][y].getTile()
+											.getLetter());
 									System.out
 											.println("Letter: "
 													+ field[x][y].getTile()
 															.getLetter());
-
 								}
+								// }
+								// dit zijn de just played tiles dus
+								/*
+								 * else {
+								 * word.increaseScore(field[x][y].getTile()
+								 * .getValue());
+								 * word.addLetter(field[x][y].getTile()
+								 * .getLetter()); System.out .println("Letter: "
+								 * + field[x][y].getTile() .getLetter());
+								 * 
+								 * }
+								 */
 							}
 						}
 					}
 				}
-				if (word.length() > 1) {
+				if (word.getLengthWord() > 1 && word != null) {
 					playedWords.add(word);
 				}
 			}
+			// waarde berekende horizontaal
+			word = new Word();
 			for (int x = 0; x < 15; x++) {
 				if (field[x][testingYValue1].getTile() != null) {
 					// er ligt een tile op de square
-					if (!field[x][testingYValue1].getTile().getJustPlayed()) {
-						if (isConnected(field[x][testingYValue1],
-								field[x][testingYValue1])) {
-							word = word
-									+ field[x][testingYValue1].getTile().getLetter();
-						}
+					if (isConnected(field[x][testingYValue1],
+							field[justPlayedTiles.get(0).getXPos()][testingYValue1],
+							"horizontal")) {
+						// if
+						// (!field[x][testingYValue1].getTile().getJustPlayed())
+						// {
+						System.out
+								.println("Letter: "
+										+ field[x][testingYValue1].getTile()
+												.getLetter()
+										+ " waarde: "
+										+ field[x][testingYValue1].getTile()
+												.getValue());
+						word.addLetter(field[x][testingYValue1].getTile()
+								.getLetter());
+						word.increaseScore(field[x][testingYValue1].getTile()
+								.getValue());
+
 					}
 				}
 			}
+			playedWords.add(word);
 		} else {
 			// woord is verticaal
 			int testingYValue;
+			int testingXValue1 = 0;
 
 			for (Square sq : justPlayedTiles) {
 				testingYValue = sq.getYPos();
-				word = "";
-				for (int x = 0; x < 15; x++) {
+				testingXValue1 = sq.getXPos();
+				word = new Word();
 
+				for (int x = 0; x < 15; x++) {
 					for (int y = 0; y < 15; y++) {
 						if (field[x][y].getTile() != null) {
 							// er ligt een tile op de square
 
 							if (field[x][y].getYPos() == testingYValue) {
-								// de tile heeft dezelfde x waarde als de net
+								// de tile heeft dezelfde y waarde als de net
 								// geplaatste tile
-								if (!field[x][y].getTile().getJustPlayed()) {
-									if (isConnected(field[x][y], sq)) {
-										// de tile is verbonden met de net
-										// geplaatste tile
-
-										score = score
-												+ field[x][y].getTile()
-														.getValue();
-										word = word
-												+ field[x][y].getTile()
-														.getLetter();
-										System.out.println("Letter: "
-												+ field[x][y].getTile()
-														.getLetter());
-									}
-								} else {
-									word = word
-											+ field[x][y].getTile().getLetter();
+								// if (!field[x][y].getTile().getJustPlayed()) {
+								if (isConnected(field[x][y], sq, "horizontal")) {
+									// de tile is verbonden met de net
+									// geplaatste tile
+									word.increaseScore(field[x][y].getTile()
+											.getValue());
+									// score = score
+									// + field[x][y].getTile()
+									// .getValue();
+									word.addLetter(field[x][y].getTile()
+											.getLetter());
 									System.out
 											.println("Letter: "
 													+ field[x][y].getTile()
 															.getLetter());
-
 								}
 							}
 						}
 					}
 				}
-				if (word.length() > 1) {
+				if (word.getLengthWord() > 1 && word != null) {
 					playedWords.add(word);
 				}
 			}
+			// waarde berekenen verticaal
+			word = new Word();
+			for (int y = 0; y < 15; y++) {
+				if (field[testingXValue1][y].getTile() != null) {
+					// er ligt een tile op de square
+
+					if (isConnected(field[testingXValue1][y],
+							field[testingXValue1][justPlayedTiles.get(0)
+									.getYPos()], "")) {
+						// if
+						// (!field[testingXValue1][y].getTile().getJustPlayed())
+						// {
+						System.out
+								.println("Letter: "
+										+ field[testingXValue1][y].getTile()
+												.getLetter()
+										+ " waarde: "
+										+ field[testingXValue1][y].getTile()
+												.getValue());
+						word.addLetter(field[testingXValue1][y].getTile()
+								.getLetter());
+						word.increaseScore(field[testingXValue1][y].getTile()
+								.getValue());
+					}
+					// }
+				}
+			}
+			playedWords.add(word);
+
 		}
+
 		// alle aanliggende woorden zijn berekend
 
 		// score van gelegde letters toevoegen aan score
-		for (Square sq : justPlayedTiles) {
-			score = score + sq.getTile().getValue();
+		/*
+		 * for (Square sq : justPlayedTiles) { score = score +
+		 * sq.getTile().getValue(); }
+		 */
+
+		score = 0;
+		for (Word word : playedWords) {
+			score = score + word.getScore();
 		}
+
 		return score;
 	}
 
-*/
-	public boolean isConnected(Square testSq, Square playedSq) {
+	public boolean isConnected(Square testSq, Square playedSq, String direction) {
 		boolean connected = true;
+		if (testSq != playedSq) {
+			if (direction.equals("horizontal")) {
+				int i = testSq.getXPos() - playedSq.getXPos();
+				if (i > 0) {
+					// testSq ligt rechts van de playedSq
+					System.out.println(testSq.getTile().getLetter()
+							+ " ligt rechts van de "
+							+ playedSq.getTile().getLetter());
+					for (i = testSq.getXPos() - 1; i > playedSq.getXPos(); i--) {
 
+						if (field[i][testSq.getYPos()].getTile() == null) {
+							connected = false;
+							System.out.println("Connected if " + connected);
+						}
+					}
+
+				} else if (i < 0) {
+					// testSq ligt links van de playedSq
+					System.out.println(testSq.getTile().getLetter()
+							+ " ligt links van de "
+							+ playedSq.getTile().getLetter());
+					for (i = testSq.getXPos() + 1; i < playedSq.getXPos(); i++) {
+
+						if (field[i][testSq.getYPos()].getTile() == null) {
+							connected = false;
+							System.out.println("Connected if " + connected);
+						}
+					}
+
+				}
+			} 
+		}
+		System.out.println("De tegels zijn: " + connected);
 		return connected;
 	}
 

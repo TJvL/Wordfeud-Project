@@ -7,10 +7,11 @@ public class Word {
 	
 	public Word(){
 		this.bonnus = 0;
+		this.word = "";
 	}
 	
 	public void addLetter(String letter){
-		
+		word += letter;
 	}
 	
 	public void addWordBonnus(int bonnus){
