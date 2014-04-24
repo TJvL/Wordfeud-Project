@@ -2,6 +2,8 @@ package domein;
 
 import java.util.Scanner;
 
+import datalaag.DatabaseHandler;
+
 public class User {
 
 	private String userName;
@@ -15,11 +17,9 @@ public class User {
 		System.out.println("Voer wachtwoord in:");
 		String passwordInput = reader.next();
 		
-		// leg connectie met database
-		// TODO: Controleer of username voor komt in de database
-		// Controleer of het wachtwoord bij de username hoort
-		// Controleer of de gebruiker niet verbannen is
-		// Set username van de gebruiker: username = "";
+		datalaag.DatabaseHandler.getInstance().login(userNameInput, passwordInput);
+		
+		
 		
 		
 		
@@ -30,18 +30,18 @@ public class User {
 	
 		System.out.println("Voer gebruikersnaam in:");
 		String userNameInput = reader.next();
-		// controleer of de gebruikersnaam tussen de 3 en 20 tekens is
-		while (userNameInput.length() < 3 || userNameInput.length() > 20) {
+		// controleer of de gebruikersnaam tussen de 3 en 15 tekens is
+		while (userNameInput.length() < 3 || userNameInput.length() > 15) {
 			System.out
-					.println("De gebruikersnaam moet tussen de 3 en de 20 tekens bevatten. Vul het opnieuw in:");
+					.println("De gebruikersnaam moet tussen de 3 en de 15 tekens bevatten. Vul het opnieuw in:");
 			userNameInput = reader.next();
 		}
 		System.out.println("Voer wachtwoord in:");
 		String passwordInput = reader.next();
-		// Controleer of wachtwoord tussen de 6 en 20 tekens is
-		while (passwordInput.length() < 6 || passwordInput.length() > 20) {
+		// Controleer of wachtwoord tussen de 6 en 15 tekens is
+		while (passwordInput.length() < 6) {
 			System.out
-					.println("Het wachtwoord moet tussen de 6 en de 20 tekens bevatten. Vul het opnieuw in:");
+					.println("Het wachtwoord moet minimaal 6 tekens bevatten. Vul het opnieuw in:");
 			passwordInput = reader.next();
 		}
 		System.out.println("Herhaal uw wachtwoord:");
@@ -55,7 +55,7 @@ public class User {
 			// Controleer of wachtwoord tussen de 6 en 20 tekens is
 			while (passwordInput.length() < 6 || passwordInput.length() > 20) {
 				System.out
-						.println("Het wachtwoord moet tussen de 6 en de 20 tekens bevatten. Vul het opnieuw in:");
+						.println("Het wachtwoord moet minimaal 6 tekens bevatten. Vul het opnieuw in:");
 				passwordInput = reader.next();
 			}
 			
@@ -64,11 +64,11 @@ public class User {
 			passwordConfirmation = reader.next();
 		}
 
-		// Leg connectie met de database
+		// Voer de gebruiker in in de database
 		
+
 		
-		// "INSERT INTO user(username.password.isbanned)VALUES(userNameInput.passwordInput."false")"
-		System.out.println("U bent succesvol geregistreerd.");
+		datalaag.DatabaseHandler.getInstance().register(userNameInput, passwordInput);
 
 	}
 
