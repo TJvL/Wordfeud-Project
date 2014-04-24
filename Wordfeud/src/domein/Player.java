@@ -1,8 +1,10 @@
 package domein;
 
+
 import java.util.ArrayList;
 
-public class Player extends Role{
+public class Player extends User{
+
 	private String name;
 	private Hand hand;
 	

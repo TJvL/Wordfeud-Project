@@ -1,5 +1,5 @@
 package domein;
 
-public class Administrator extends Role{
+public class Administrator extends User{
 
 }
