@@ -94,17 +94,19 @@ public class DatabaseHandler
 			{
 				System.out.println("username + password correct");
 				login = true;
+				result.close();
 			}
 			else
 			{
 				System.out.println("username or password incorrect");
 			}
-
+			statement.close();
 		} catch (SQLException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			System.out.println("Query ERROR!!!!");
 		}
+		
 		return login;
 	}
 
@@ -144,6 +146,16 @@ public class DatabaseHandler
 
 					// closes the statement
 					statement.close();
+					
+					statement = con
+							.prepareStatement("INSERT INTO accountrol(account_naam, rol_type)VALUES(?,?)");
+
+					statement.setString(1, username);
+					statement.setString(2, "Player");
+
+					statement.executeUpdate();
+
+					statement.close();
 
 				} catch (SQLException e)
 				{
@@ -157,7 +169,7 @@ public class DatabaseHandler
 			{
 				System.out.println("username = not available");
 			}
-
+			
 		} catch (SQLException e)
 		{
 			e.printStackTrace();
@@ -202,7 +214,8 @@ public class DatabaseHandler
 																					// checked!!!
 	{
 		ArrayList<String> chat = new ArrayList<String>();
-
+		chat.clear();
+		
 		if (lastMessageTimestamp.equals(""))
 		{
 			lastMessageTimestamp = "2013-05-05 00:00:00";
@@ -513,11 +526,143 @@ public class DatabaseHandler
 		return validWord;
 	}
 	
-	public void gameStatusUpdate(int gameID, String status)
+	public void gameStatusUpdate(int gameID, String status)// works
 	{
-		statement = con.prepareStatement("")
+		try
+		{
+			statement = con.prepareStatement("UPDATE spel SET toestand_type = '" + status + "' WHERE id ='" + gameID + "'");
+			
+			statement.executeUpdate();
+			
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+			System.out.println("QUERY ERROR!!!");
+		}
 	}
 	
+	public String gameStatusValue(int gameID)
+	{
+		String gameStatus = null;
+		
+		try
+		{
+			statement = con.prepareStatement("SELECT toestand_type FROM spel WHERE id ='" + gameID + "'");
+			
+			result = statement.executeQuery();
+			
+			if(result.next())
+			{
+				gameStatus = result.getString(1);
+			}
+			
+		} catch (SQLException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return gameStatus;
+	}
+
+	public String opponentName(int gameID)
+	{
+		String opponent = null;
+		
+		try
+		{
+			statement = con.prepareStatement("SELECT account_naam_tegenstander FROM spel WHERE id ='" + gameID + "'");
+			
+			result = statement.executeQuery();
+			
+			if(result.next())
+			{
+				opponent = result.getString(1);
+			}
+			
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+			System.out.println("Query error!!!");
+		}
+		
+		return opponent;
+	}
+
+	public ArrayList<Integer> jarContent(int gameID)
+	{
+		ArrayList<Integer> jarContents = new ArrayList<Integer>();
+		
+		try
+		{
+			statement = con.prepareStatement("SELECT letter_id FROM pot WHERE spel_id ='" + gameID + "'");
+			
+			result = statement.executeQuery();
+			
+			while(result.next())
+			{
+				jarContents.add(result.getInt(1));
+			}
+			
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+			System.out.println("Query ERROR!!!!");
+		}
+		
+		return jarContents;
+	}
+
+	public String handContent(int gameID, int turnID)
+	{
+		String handContent = null;
+		
+		try
+		{
+			statement = con.prepareStatement("SELECT inhoud FROM plankje WHERE spel_id = '" + gameID + "' AND beurt_id = '" + turnID + "'");
+		
+			result = statement.executeQuery();
+			
+			if(result.next())
+			{
+				handContent = result.getString(1);
+			}
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+			System.out.println("Query ERROR!!");
+		}
+		
+		return handContent;
+	}
+
+	public void tileToBoard(int gameID, int turnID, int tileID, String blankTile, int cordX, int cordY)
+	{
+		try
+		{
+			statement = con.prepareStatement("INSERT INTO gelegdeletter(letter_id, spel_id, beurt_id, tegel_x, tegel_y, tegel_bord_naam, blancoletterkarakter)VALUES(?,?,?,?,?,?,?");
+			
+			statement.setInt(1, tileID);
+			statement.setInt(1, gameID);
+			statement.setInt(2, turnID);
+			statement.setInt(4, cordX);
+			statement.setInt(5, cordY);
+			statement.setString(6, "Standard");
+			
+			if (blankTile != null)
+			{
+			statement.setString(7, blankTile);
+			}
+			
+			statement.executeUpdate();
+			
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+			System.out.println("Query ERROR!!!");
+		}
+	}
+
 }
 
 /*
@@ -527,7 +672,7 @@ public class DatabaseHandler
  * 
  * aangemaakt door: Michael login check register check and register name and
  * password create competition, create game chat send, checkTurn, chat Receive
- * 
+ * jarcontent
  * 
  * 
  * all needs to be checked for the rol of the player to use multiple methods

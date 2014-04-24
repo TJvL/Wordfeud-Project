@@ -1,12 +1,14 @@
 package domein;
 
+import datalaag.DatabaseHandler;
+
 public class MainClass
 	{
 
 		public static void main(String[] args)
 			{
-				// TODO Auto-generated method stub
-
+				DatabaseHandler dbh = DatabaseHandler.getInstance();
+//				dbh.login("michael", "mans");
 			}
 
 	}
