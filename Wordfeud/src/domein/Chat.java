@@ -30,26 +30,40 @@ public class Chat implements Runnable,ActionListener {
 	private JTextArea chatArea;
 	private JTextArea input;
 	private JButton sendButton;
-	private ArrayList<String> chatMessages;
+	private ArrayList<String> chatMessages = new ArrayList<String>();
 	private Player player1;
 	private Player player2;
 	private int gameID;
+	private String latestUpdatedMessageTimeDate;
+	private String latestUpdatedMessage;
+	
+	private Thread runner;
+	
+	DatabaseHandler dbh = DatabaseHandler.getInstance();
 	
 	/**eventually unnecessary	*/		private TestGameClass testGameClass = new TestGameClass();
-	DatabaseHandler dbh = new DatabaseHandler();
 	
-	private String latestUpdatedMessageTimeDate;
-	/**already unnecessary		*/		//private Timestamp latestTimeStamp = new Timestamp(latestDateStamp.getTime());
+	/**ALREADY unnecessary		*/		//private Timestamp latestTimeStamp = new Timestamp(latestDateStamp.getTime());
 	
 	/**eventually unnecessary	*/		private TestUserClass testUser1 = new TestUserClass("Ronnie376");
 	
+	private void start() {
+		if (runner == null ) {
+			runner = new Thread(this);
+			runner.start();
+		}
+	}
 	
 	@Override
 	public void run() {
-		chatArea.append("test 1!\n");
-		chatArea.append("hopelijk staaT dit op de volgende regel!\n");
-		this.checkForMessages();
+						chatArea.append("test 1!\n");										//TEST CODE
+						chatArea.append("hopelijk staaT dit op de volgende regel!\n");		//TEST CODE
+						/** 	 */		// REAL CODE // it recieves every message from this match that have ever been sent (all messages)
 		
+		while (true) {
+			this.checkForMessages();
+			try { Thread.sleep(5000); } catch (Exception e) {}
+		}
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -60,6 +74,8 @@ public class Chat implements Runnable,ActionListener {
 		this.player1 = player1;
 		this.player2 = player2;
 		this.gameID = gameID;
+		
+		latestUpdatedMessageTimeDate = "";
 		
 		testFrame = new JFrame();
 		testFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -86,12 +102,13 @@ public class Chat implements Runnable,ActionListener {
 		chatScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		chatScrollPane.setPreferredSize(new Dimension(280,330));
 		
+		//dbh.chatRecieve(this.gameID , latestUpdatedMessageTimeDate);						// REAL CODE!
 		
 		sendButton = new JButton("Send");
 		sendButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 		sendButton.addActionListener(this);
 		
-		latestUpdatedMessageTimeDate = Long.toString(System.currentTimeMillis());
+		//latestUpdatedMessageTimeDate = Long.toString(System.currentTimeMillis());			// possibly wrong!
 		
 		chatPanel.setLayout(new FlowLayout());
 		
@@ -137,25 +154,48 @@ public class Chat implements Runnable,ActionListener {
 	}
 	
 	public void checkForMessages() {
-		
-		
-		//while (true) {
-						
-			/**chatMessages = dbh.chatRecieve(this.gameID , latestUpdatedMessageTimeDate);*/
-			chatMessages.add("Baaz456---2014-03-04 10:45:23---Ik was nog niet thuis! :D");
+		//chatMessages = dbh.chatReceive(this.gameID , latestUpdatedMessageTimeDate); 			// REAL CODE
 			
-			for (String a : chatMessages) {
-				String[] parts 			= a.split("---");
-				String senderUserName 	= parts[1];
-				String dateTime 		= parts[2];
-				String message 			= parts[3];
-				
-				System.out.println(senderUserName);
-				System.out.println(dateTime);
-				System.out.println(message);
+		for (String a : chatMessages) {
+			System.out.println("latest updated message time date: " + latestUpdatedMessageTimeDate);
+			System.out.println("latest updated message: "+ latestUpdatedMessage);
+			String[] parts 			= a.split("---");
+			String senderUserName 	= parts[0];
+			String dateTime 		= parts[1];
+			String message 			= parts[2];
+			System.out.println("new message's dateTime: " + dateTime);
+			System.out.println("new message: " + message);
+			
+			if ((latestUpdatedMessageTimeDate.equals(""))) {					//if it IS the first incoming message since startup of application				
+				chatArea.append(senderUserName + ": ");	
+				chatArea.append(" \"" + message + "\" ");
+				chatArea.append("(" + dateTime + ")" + "\n");
+			
+				latestUpdatedMessageTimeDate = dateTime;
+				latestUpdatedMessage = message;
+				System.out.println("this is the first message");
+				System.out.println("");
 			}
 			
-			
-		//}
+			else {																//if it's NOT the first incoming message since startup of application
+				System.out.println("this is NOT the first message");
+				if (!latestUpdatedMessageTimeDate.equals(dateTime) && !latestUpdatedMessage.equals(message)) { 		//if the incoming message is NOT already in the chatscreen
+					System.out.println("datetime and message are new");
+					chatArea.append(senderUserName + ": ");
+					chatArea.append(" \"" + message + "\" ");
+					chatArea.append("(" + dateTime + ")" + "\n");
+				
+					latestUpdatedMessageTimeDate = dateTime;
+					latestUpdatedMessage = message;
+					System.out.println("latest timeDate: " + latestUpdatedMessageTimeDate);
+					System.out.println("latest message: " + latestUpdatedMessage);
+					System.out.println("");
+				}
+				else {							//EXTRA CODE FOR TESTING
+					System.out.println("the incoming message is already in the chatscreen");	//EXTRA CODE FOR TESTING
+					System.out.println("");		//EXTRA CODE FOR TESTING
+				}								//EXTRA CODE FOR TESTING
+			}
+		}
 	}
 }
