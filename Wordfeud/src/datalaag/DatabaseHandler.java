@@ -286,7 +286,13 @@ public class DatabaseHandler
 			{
 				compID = result.getInt(1);
 				System.out.println("do i get the PK " + compID);
-
+				
+				
+				statement = con.prepareStatement("INSERT INTO deelnemer(account_naam, competitie_id)VALUES(?,?)");
+				
+				statement.setString(1, username);
+				statement.setInt(2, compID);
+				statement.executeUpdate();
 			}
 
 			// closes the statement
@@ -663,6 +669,79 @@ public class DatabaseHandler
 		}
 	}
 
+	public void surrender(int gameID, int turnID, String username)
+	{
+		try
+		{
+			statement = con.prepareStatement("SELECT * FROM spel WHERE id = '" + gameID + "'");
+			
+			result = statement.executeQuery();
+			
+			if(result.next())
+			{
+				statement = con.prepareStatement("UPDATE spel SET toestand_type = 'Resigned' WHERE toestand_type = 'Playing'");
+				
+				statement.executeUpdate();
+				statement.close();
+			}
+			
+			statement = con.prepareStatement("SELECT * FROM beurt WHERE spel_id ='" + gameID + "'");
+			
+			result = statement.executeQuery();
+			
+			if(result.next())
+			{
+				statement = con.prepareStatement("INSERT INTO beurt(id, spel_id, account_naam, score, aktie_type) VALUES(?,?,?,?,?)");
+				
+				statement.setInt(1, turnID);
+				statement.setInt(2, gameID);
+				statement.setString(3, username);
+				statement.setInt(4, 0);
+				statement.setString(5, "End");
+				
+				statement.executeUpdate();
+			}
+			
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+			
+		}
+	}
+
+	public ArrayList<String> competitionOwner(String username)// seems to work
+	{
+		ArrayList<String> myCompetitions = new ArrayList<String>();
+		
+		try
+		{
+			statement = con.prepareStatement("SELECT id, start, einde, omschrijving FROM competitie");
+			
+			result = statement.executeQuery();
+			
+			while(result.next())
+			{
+				int compID = result.getInt(1);
+				String startTime = result.getTimestamp(2).toString();
+				String endTime = result.getTimestamp(3).toString();
+				String summary = result.getString(4);
+				
+				String myComps = compID + "---" + startTime + "---" + endTime + "---" + summary;
+				myCompetitions.add(myComps);
+				
+			}
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+		
+		return myCompetitions;
+	}
+
+	
+	
+	
+	
 }
 
 /*
