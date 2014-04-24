@@ -35,10 +35,19 @@ public class ScoreCalculator {
 	public int startCalculating() {
 
 		int score = 0;
-		this.getJustPlayedTiles();
+		this.setJustPlayedTiles();
 		this.checkFirstWordOnStart();
 		boolean runScoreCalculator = true;
 
+		// Checks if a joker is on the board with no value
+		for (Square tiles: justPlayedTiles){
+			if (tiles.getTile().getValue() == 0){
+				runScoreCalculator = false;
+				System.err.println("ER LIGT EEN LEGE JOKER OP HET VELD!");
+			}
+		}
+		
+		
 		// Checks if the board is empty, the first word is placed on the star
 		if (!checkIfBoardNotEmpty()) {
 			if (checkFirstWordOnStart()) {
@@ -119,9 +128,15 @@ public class ScoreCalculator {
 		playedWords.clear();
 		System.err.println("/////////////// De score: " + score
 				+ "\\\\\\\\\\\\\\\\\\");
+		System.out.println("/////////////// De score: " + score
+				+ "\\\\\\\\\\\\\\\\\\");
 		return score;
 	}
 
+	public ArrayList<Word> getJustPlayedTiles(){
+		return playedWords;
+	}
+	
 	// Method to check if the board is empty except the just played wordes
 	public boolean checkIfBoardNotEmpty() {
 		boolean boardEmpty = true;
@@ -244,6 +259,7 @@ public class ScoreCalculator {
 			}
 		}
 		if (word.getLengthWord() > 1 && word != null) {
+			word.addWordBonusToScore();
 			playedWords.add(word);
 		}
 
@@ -267,6 +283,7 @@ public class ScoreCalculator {
 			}
 		}
 		if (word.getLengthWord() > 1 && word != null) {
+			word.addWordBonusToScore();
 			playedWords.add(word);
 		}
 		for (Word word : playedWords) {
@@ -276,7 +293,7 @@ public class ScoreCalculator {
 	}
 
 	// Takes all the just played tiles form the board and adds then to a list
-	public void getJustPlayedTiles() {
+	public void setJustPlayedTiles() {
 		for (Square[] s : field) {
 			for (Square sq : s) {
 				if (sq.getTile() != null) {
@@ -506,7 +523,7 @@ public class ScoreCalculator {
 							+ " ligt onder de "
 							+ playedSq.getTile().getLetter());
 					for (i = playedSq.getYPos() - 1; i > playedSq.getYPos(); i--) {
-						if (field[i][testSq.getXPos()].getTile() == null) {
+						if (field[testSq.getXPos()][i].getTile() == null) {
 							connected = false;
 							System.out.println("Connected if " + connected);
 						}
@@ -517,7 +534,7 @@ public class ScoreCalculator {
 							+ " ligt boven de "
 							+ playedSq.getTile().getLetter());
 					for (i = testSq.getYPos() + 1; i < playedSq.getYPos(); i++) {
-						if (field[i][testSq.getXPos()].getTile() == null) {
+						if (field[testSq.getXPos()][i].getTile() == null) {
 							connected = false;
 							System.out.println("Connected if " + connected);
 						}
@@ -525,7 +542,7 @@ public class ScoreCalculator {
 				}
 			}
 		}
-		System.out.println("De tegels zijn: " + connected);
+		System.out.println("De tegels zijn: " + connected + " test " + testSq.getTile().getLetter() + " " + playedSq.getTile().getLetter());
 		return connected;
 	}
 

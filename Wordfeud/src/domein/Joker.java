@@ -2,6 +2,8 @@ package domein;
 
 import java.awt.image.BufferedImage;
 
+// ---------- De classe wordt niet meer gebruikt! ------------- //
+
 public class Joker extends Tile{
 
 	private String letter;

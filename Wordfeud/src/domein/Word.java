@@ -22,7 +22,7 @@ public class Word {
 	}
 	
 	public void addWordBonus(int bonus){
-		this.bonus = bonus;
+		this.bonus = this.bonus + bonus;
 	}
 	
 	public int getLengthWord(){

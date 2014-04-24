@@ -31,18 +31,24 @@ public class Jar {
 	public void fillJar() {
 		String[] alphabet = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J",
 				"K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V",
-				"W", "X", "Y", "Z", "empty" };
+				"W", "X", "Y", "Z", "?" };
 		int[] numberOfTiles = { 10, 2, 2, 5, 12, 2, 3, 3, 9, 1, 1, 4, 2, 6, 7,
 				2, 1, 6, 5, 7, 4, 2, 2, 1, 2, 1, 2 };
+		// Laatste waard moet 2 zijn - nu zijn er 100 jokers
 		int[] tileValue = { 1, 4, 4, 2, 1, 4, 3, 4, 1, 10, 5, 1, 3, 1, 1, 4,
 				10, 1, 1, 1, 2, 4, 4, 8, 4, 10, 0 };
 		// hard coded contence of Jar
 
 		for (int i = 0; i < alphabet.length; i++) {
-			BufferedImage image = fh.readImage("Plaatjes/" + alphabet[i]
-					+ ".png");
+			BufferedImage image;
+			image = fh.readImage("Plaatjes/" + alphabet[i] + ".png");
 			for (int k = 0; k < numberOfTiles[i]; k++) {
-				tiles.add(tile = new Tile(alphabet[i], tileValue[i], image));
+				if (alphabet[i].equals("?")) {
+					tiles.add(tile = new Tile(alphabet[i], 0, fh
+							.readImage("Plaatjes/Joker.png")));
+				} else {
+					tiles.add(tile = new Tile(alphabet[i], tileValue[i], image));
+				}
 			}
 		}
 	}

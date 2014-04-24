@@ -104,20 +104,38 @@ public class Board {
 			// Hier moet de optie komen om de tiles uit justPlayedTile aan de
 			// database toetevoegen
 			// Hier ook gelijk de score update en beurt update
-
-			for (int y = 0; y < 15; y++) {
-				for (int x = 0; x < 15; x++) {
-					if (field[x][y].getTile() != null) {
-						field[x][y].getTile().setJustPlayed(false);
-					}
-				}
-			}
 			System.out.println("Woord was goed");
 			possible = true;
 		} else {
 			System.out.println("Woord was fout");
 		}
 		return possible;
+	}
+
+	public boolean checkWords() {
+		boolean allWordsExist = true;
+		ArrayList<Word> words = calculator.getJustPlayedTiles();
+		for (Word word: words){
+			//  woord geven aan de database
+			// als woord niet bestaat allWordsExist = false
+			// false returns en gamebutton
+			// bij gamebutton aan match geven en match laten vragen of de speler
+			// het wordt wil submitten of niet
+			// niet - dan geen score
+			
+		}
+		
+		return allWordsExist;
+	}
+
+	public void setTilesPlayed() {
+		for (int y = 0; y < 15; y++) {
+			for (int x = 0; x < 15; x++) {
+				if (field[x][y].getTile() != null) {
+					field[x][y].getTile().setJustPlayed(false);
+				}
+			}
+		}
 	}
 
 	// Methode voor laden van een spel wat al aan de gang is

@@ -2,6 +2,8 @@ package domein;
 
 import java.util.ArrayList;
 
+import javax.swing.JOptionPane;
+
 import gui.GameFieldPanel;
 import gui.TilePanel;
 
@@ -63,8 +65,29 @@ public class Match {
 	// Add the tile to the board
 	public void moveTileFromHandToBoard(int x, int y) {
 		tile.setJustPlayed(true);
+		if (tile.getValue() == 0) {
+
+			String[] choices = { "A", "B", "C", "D", "E", "F", "G", "H", "I",
+					"J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U",
+					"V", "W", "X", "Y", "Z" };
+			String input = (String) JOptionPane.showInputDialog(null,
+					"Select your letter below...", "Choose you letter",
+					JOptionPane.QUESTION_MESSAGE, null, choices, choices[0]);
+			System.out.println(input);
+			tile.setBlancoLetterValue(input);
+			tile.setLetter(input);
+
+			/*
+			 * String input = JOptionPane.showInputDialog(
+			 * "Enter the letter you want the Joker to be:"); if (input !=
+			 * null){ System.out.println(input);
+			 * tile.setBlancoLetterValue(input); }
+			 */
+			// Hier moet de methode komen voor input vanuit de joker
+		}
 		player.removeTileFromHand(tile);
 		board.addTileToSquare(tile, x, y);
+		startCalculating();
 		gameField.repaintBoard();
 	}
 
@@ -74,9 +97,14 @@ public class Match {
 	public void moveTileFromBoardToHand(int x, int y) {
 		Tile t = board.getSquare(x, y).getTile();
 		t.setJustPlayed(false);
+		if (t.getValue() == 0){
+			t.setBlancoLetterValue(null);
+			t.setLetter("?");
+		}
 		player.addTileToHand(t);
 		board.removeTileFromSquare(x, y);
 		gameField.addTileToHand(t);
+		startCalculating();
 		gameField.repaintBoard();
 	}
 
@@ -93,6 +121,8 @@ public class Match {
 				}
 			}
 		}
+		startCalculating();
+		gameField.repaintBoard();
 	}
 
 	// Fills the hand back to 7
@@ -117,13 +147,10 @@ public class Match {
 		return board.getSquare(x, y);
 	}
 
-
-
 	// Stores the selected tile
 	public void selectedTile(Tile t) {
 		this.tile = t;
 	}
-
 
 	// Gets the selected tile back
 	public Tile getSelectedTile() {
@@ -140,4 +167,11 @@ public class Match {
 		return board.startCalculating();
 	}
 
+	public void setTilesPlayed(){
+		board.setTilesPlayed();
+	}
+	
+	public boolean checkWords(){
+		return board.checkWords();
+	}
 }

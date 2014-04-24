@@ -107,7 +107,14 @@ public class GameButtonPanel extends JPanel {
 
 		if (match.startCalculating()) {
 			// if this is true, a score will be calculated
-			match.fillHand();
+			if (match.checkWords()){
+				match.setTilesPlayed();
+				match.fillHand();
+			} else {
+				System.err.println("WOORDEN ZIJN FOUT");
+				// hier moet de optie komen om ze te laten keuren
+			}
+			
 		}
 		/*
 		 * boardP.playTiles(); if (ScoreCalculator.getInstance().getScore() > 0)
