@@ -21,7 +21,7 @@ public class FileHandler {
 	 * param = Path to the file(must be an image) in question.
 	 * return = Returns the targeted image file as a BufferedImage object or returns null if an error occured.
 	 */
-	public static BufferedImage readImage(String aFileName)
+	public BufferedImage readImage(String aFileName)
 		{
 			BufferedImage image = null;
 			try
