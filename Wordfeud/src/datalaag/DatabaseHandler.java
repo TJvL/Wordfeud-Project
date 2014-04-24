@@ -8,6 +8,8 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 
+
+
 public class DatabaseHandler
 {
 	final private String url = "jdbc:mysql://databases.aii.avans.nl:3306/manschou_db2"; // location
@@ -17,26 +19,36 @@ public class DatabaseHandler
 	final private String user = "manschou"; // is the database user
 	final private String userPass = "Mschouten92"; // the password of the user
 
+
 	private PreparedStatement statement = null;
 	private ResultSet result = null;
 
 	private Connection con;
 
+
 	private static java.sql.Timestamp getCurrentTimeStamp()
 	{
 		java.util.Date today = new java.util.Date();
 		return new java.sql.Timestamp(today.getTime());
+
 	}
 
 	private static DatabaseHandler databaseHandler = new DatabaseHandler();
 
 	public static DatabaseHandler getInstance()
 	{
+
 		return databaseHandler;
+	}
+
+
+	public void changeTurn() {
+		// zet de turn naar de tegenstander
 	}
 
 	private DatabaseHandler()
 	{
+
 		// Accessing driver from the JAR file
 		try
 		{
@@ -349,6 +361,9 @@ public class DatabaseHandler
 			e.printStackTrace();
 			System.out.println("create error");
 		}
+
+	
+
 		return gameID;
 	}
 
@@ -796,18 +811,33 @@ public class DatabaseHandler
 		return myParticipations;
 	}
 
+
 }
 
 /*
  * aanmaken door: DatabaseHandler dbh = DatabaseHandler.getInstance();
  * 
+<<<<<<< HEAD
+<<<<<<< HEAD
  * en aanroepen door: dbh. --------
+=======
+ * en aanroepen door:
+ * dbh. --------
+=======
+ * en aanroepen door: dbh. --------
+>>>>>>> refs/remotes/Kleinedruif/master-development
  * 
  * aangemaakt door: Michael login check register check and register name and
  * password create competition, create game chat send, checkTurn, chat Receive
  * jarcontent
  * 
  * 
+<<<<<<< HEAD
+ * to use multiple methods con.close(); needs to be removed. otherwise u get an closed connection error.
+ * 
+>>>>>>> refs/remotes/Kleinedruif/master-development
+=======
  * all needs to be checked for the rol of the player to use multiple methods
  * con.close(); needs to be removed. otherwise u get an closed connection error.
+>>>>>>> refs/remotes/Kleinedruif/master-development
  */

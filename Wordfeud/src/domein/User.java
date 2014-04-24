@@ -5,6 +5,16 @@ import java.util.Scanner;
 import datalaag.DatabaseHandler;
 
 public class User {
+	private Player player;
+	
+	public User(){
+		player = new Player("Klaas");
+	}
+	
+	public Player getPlayer(){
+		return player;
+	}
+
 
 	private String userName;
 	private boolean isBanned;
@@ -71,5 +81,4 @@ public class User {
 		datalaag.DatabaseHandler.getInstance().register(userNameInput, passwordInput);
 
 	}
-
 }
