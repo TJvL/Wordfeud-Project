@@ -1,5 +1,5 @@
 package domein;
 
-public class Spectator extends Role{
+public class Spectator extends User{
 
 }
