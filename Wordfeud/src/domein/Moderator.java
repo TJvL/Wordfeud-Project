@@ -1,5 +1,5 @@
 package domein;
 
-public class Moderator extends Role {
+public class Moderator extends User {
 
 }

@@ -1,5 +1,5 @@
 package domein;
 
-public class Player extends Role{
+public class Player extends User{
 
 }
