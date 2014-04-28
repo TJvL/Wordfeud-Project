@@ -3,7 +3,10 @@ package domein;
 
 import java.util.ArrayList;
 
-public class Player extends User{
+
+// Played deed user extend
+// was een oneindige loop
+public class Player{
 
 	private String name;
 	private Hand hand;

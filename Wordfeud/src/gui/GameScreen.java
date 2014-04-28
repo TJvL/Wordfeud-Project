@@ -11,29 +11,39 @@ import domein.SecondThread;
 public class GameScreen extends JPanel {
 	private GameFieldPanel boardPanel;
 	private GameButtonPanel buttonPanel;
+	private ScorePanel scorePanel;
+	private SecondThread secondThread;
 
-	public GameScreen(){
-		//this.setLayout(new BorderLayout());
+	public GameScreen() {
+		// this.setLayout(new BorderLayout());
 		this.setBackground(Color.white);
 		this.setLayout(null);
 		boardPanel = new GameFieldPanel();
 		boardPanel.setBounds(15, 10, 500, 550);
 		this.add(boardPanel);
 		buttonPanel = new GameButtonPanel(boardPanel);
-		buttonPanel.setBounds(15, 559, 500, 50);
+		buttonPanel.setBounds(15, 565, 500, 35);
 		this.add(buttonPanel);
-		
-		// Second thread for running the chat funcion and who's turn it is
-		//SecondThread secondThread = new SecondThread(match, boardP, buttonP);
-		//secondThread.start();
+		scorePanel = new ScorePanel(boardPanel);
+		scorePanel.setBounds(530, 515, 500, 85);
+		this.add(scorePanel);		
 	}
 
 	public void setMatch(Match match) {
 		buttonPanel.setMatch(match);
 		boardPanel.setMatch(match);
+		scorePanel.setMatch(match);
+		
+		// Second thread for running the chat funcion and who's turn it is 
+		secondThread = new SecondThread(match, boardPanel, buttonPanel, scorePanel);
+		secondThread.start();
+	}
+
+	public GameFieldPanel getGameFieldPanel() {
+		return boardPanel;
 	}
 	
-	public GameFieldPanel getGameFieldPanel(){
-		return boardPanel;
+	public void disableThread(){
+	//	secondThread.
 	}
 }

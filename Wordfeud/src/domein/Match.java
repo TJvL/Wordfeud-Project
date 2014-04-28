@@ -34,6 +34,23 @@ public class Match {
 		fillHand();
 	}
 
+	// Return the player names
+	public String getOwnName(){
+		if (player.getName() != null){
+		return player.getName();
+		} else {
+			return "No-Name";
+		}
+	}
+	
+	public String getEnemyName(){
+		if (enemy.getName() != null){
+		return enemy.getName();
+		} else {
+			return "No-Name";
+		}
+	}
+	
 	// Jar gedeelte
 	public void fillJar() {
 		// checke of er al een pot is
@@ -173,5 +190,10 @@ public class Match {
 	
 	public boolean checkWords(){
 		return board.checkWords();
+	}
+	
+	// Get the score of the just placed tiles
+	public int getScore(){
+		return board.getScore();
 	}
 }

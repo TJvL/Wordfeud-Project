@@ -1,6 +1,7 @@
 package domein;
 
-import gui.TempFramePanel;
+
+import gui.MainFrame;
 import datalaag.DatabaseHandler;
 
 
@@ -11,6 +12,7 @@ public class MainClass
 			{
 				// TODO Auto-generated method stub
 				new WordFeud();
+				//new MainFrame();
 				DatabaseHandler dbh = DatabaseHandler.getInstance();
 //				dbh.login("michael", "mans");
 			}

@@ -3,6 +3,7 @@ package domein;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
+import datalaag.DatabaseHandler;
 import datalaag.FileHandler;
 import datalaag.ScoreCalculator;
 
@@ -11,6 +12,8 @@ public class Board {
 	private Square[][] field;
 	private ScoreCalculator calculator;
 	private FileHandler fh;
+	private DatabaseHandler dbh;
+	private int score;
 
 	// Hier moet gekeken of er een nieuwe bord wordt aangemaakt
 	// Of het spel al bezig is het bord laden
@@ -20,6 +23,7 @@ public class Board {
 		calculator = ScoreCalculator.getInstance();
 		field = new Square[15][15];
 		fh = FileHandler.getInstance();
+		dbh = DatabaseHandler.getInstance();
 
 		// Tijdelijk vullen van het bord
 		BufferedImage image = fh.readImage("Plaatjes/board.png");
@@ -99,7 +103,7 @@ public class Board {
 		calculator.addSquaresToBoard(field);
 
 		boolean possible = false;
-		int score = calculator.startCalculating();
+		score = calculator.startCalculating();
 		if (score > 0) {
 			// Hier moet de optie komen om de tiles uit justPlayedTile aan de
 			// database toetevoegen
@@ -111,10 +115,15 @@ public class Board {
 		}
 		return possible;
 	}
+	
+	public int getScore(){
+		return score;
+	}
 
 	public boolean checkWords() {
 		boolean allWordsExist = true;
 		ArrayList<Word> words = calculator.getJustPlayedTiles();
+		System.out.println(words.size() + " DE SIZE VAN DE TEGEELS");
 		for (Word word: words){
 			//  woord geven aan de database
 			// als woord niet bestaat allWordsExist = false
@@ -122,6 +131,12 @@ public class Board {
 			// bij gamebutton aan match geven en match laten vragen of de speler
 			// het wordt wil submitten of niet
 			// niet - dan geen score
+			if (dbh.checkWord(word.getWord())){
+				System.out.println("WOORD BESTAAT IN WOORDENBOEK");
+			} else {
+				System.out.println("WOORD BESTAAT NIET IN HET WOORDENBOEK");
+				return false;
+			}
 			
 		}
 		

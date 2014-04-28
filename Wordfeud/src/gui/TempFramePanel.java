@@ -16,7 +16,8 @@ public class TempFramePanel extends JFrame {
 	public TempFramePanel() {
 		gameScreen = new GameScreen();
 		this.setResizable(false);
-		this.setPreferredSize(new Dimension(1200,700));
+		// Deze waardes waaren 1200 bij 700
+		this.setPreferredSize(new Dimension(1050,640));
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		

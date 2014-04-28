@@ -33,6 +33,18 @@ public class GameButtonPanel extends JPanel {
 	public void setMatch(Match match) {
 		this.match = match;
 	}
+	
+	public synchronized void setTurn(boolean turn){
+		if (turn){
+			swap.setEnabled(true);
+			play.setEnabled(true);
+			pass.setEnabled(true);
+		} else {
+			swap.setEnabled(false);
+			play.setEnabled(false);
+			pass.setEnabled(false);
+		}
+	}
 
 	public void addButtons() {
 		swap = new JButton("Swap");
@@ -107,9 +119,11 @@ public class GameButtonPanel extends JPanel {
 
 		if (match.startCalculating()) {
 			// if this is true, a score will be calculated
+			System.err.println("De score is berekent");
 			if (match.checkWords()){
 				match.setTilesPlayed();
 				match.fillHand();
+				System.err.println("Het is door de woordcheck gekomen");
 			} else {
 				System.err.println("WOORDEN ZIJN FOUT");
 				// hier moet de optie komen om ze te laten keuren

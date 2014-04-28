@@ -15,25 +15,32 @@ public class ScoreCalculator {
 	private Word word;
 	private ArrayList<Square> justPlayedTiles;
 	private ArrayList<Word> playedWords;
+	private ArrayList<Word> wordsToCheck;
 
 	private ScoreCalculator() {
 		field = new Square[15][15];
 		justPlayedTiles = new ArrayList<Square>();
+		wordsToCheck = new ArrayList<Word>();
 		wordHorizontal = true;
 		playedWords = new ArrayList<Word>();
 	}
 
+	// Returns de calculator
 	public static ScoreCalculator getInstance() {
 		return scoreCalculator;
 	}
 
+	// Adds the sqaures from the bord with justplayed true
+	// to a seprate arraylist
 	public void addSquaresToBoard(Square[][] field) {
 		// field[square.getXPos()][square.getYPos()] = square;
 		this.field = field;
 	}
 
+	// Method with a few checks and leads the calculating
 	public int startCalculating() {
-
+		wordsToCheck.clear();
+		
 		int score = 0;
 		this.setJustPlayedTiles();
 		this.checkFirstWordOnStart();
@@ -44,6 +51,7 @@ public class ScoreCalculator {
 			if (tiles.getTile().getValue() == 0){
 				runScoreCalculator = false;
 				System.err.println("ER LIGT EEN LEGE JOKER OP HET VELD!");
+				System.out.println("ER LIGT EEN LEGE JOKER OP HET VELD!");
 			}
 		}
 		
@@ -121,6 +129,7 @@ public class ScoreCalculator {
 		// worden opgeslagen in playedWords
 		for (Word word : playedWords) {
 			System.out.println("Gespeeld: " + word.getWord());
+			wordsToCheck.add(word);
 		}
 
 		// clear all the list and prints the score
@@ -133,8 +142,9 @@ public class ScoreCalculator {
 		return score;
 	}
 
+	// Returns the words that were just played on the field
 	public ArrayList<Word> getJustPlayedTiles(){
-		return playedWords;
+		return wordsToCheck;
 	}
 	
 	// Method to check if the board is empty except the just played wordes

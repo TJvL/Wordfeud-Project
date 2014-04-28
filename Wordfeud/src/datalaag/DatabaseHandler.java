@@ -8,10 +8,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 
-
-
-public class DatabaseHandler
-{
+public class DatabaseHandler {
 	final private String url = "jdbc:mysql://databases.aii.avans.nl:3306/manschou_db2"; // location
 																						// of
 																						// the
@@ -19,15 +16,12 @@ public class DatabaseHandler
 	final private String user = "manschou"; // is the database user
 	final private String userPass = "Mschouten92"; // the password of the user
 
-
 	private PreparedStatement statement = null;
 	private ResultSet result = null;
 
 	private Connection con;
 
-
-	private static java.sql.Timestamp getCurrentTimeStamp()
-	{
+	private static java.sql.Timestamp getCurrentTimeStamp() {
 		java.util.Date today = new java.util.Date();
 		return new java.sql.Timestamp(today.getTime());
 
@@ -35,40 +29,32 @@ public class DatabaseHandler
 
 	private static DatabaseHandler databaseHandler = new DatabaseHandler();
 
-	public static DatabaseHandler getInstance()
-	{
+	public static DatabaseHandler getInstance() {
 
 		return databaseHandler;
 	}
-
 
 	public void changeTurn() {
 		// zet de turn naar de tegenstander
 	}
 
-	private DatabaseHandler()
-	{
+	private DatabaseHandler() {
 
 		// Accessing driver from the JAR file
-		try
-		{
+		try {
 			Class.forName("com.mysql.jdbc.Driver");
-		} catch (ClassNotFoundException e)
-		{
+		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 			System.out.println("Driver not found");
 		}
 		connection();
 	}
 
-	public void connection()
-	{
+	public void connection() {
 		// Creating a variable for the connection
-		try
-		{
+		try {
 			con = DriverManager.getConnection(url, user, userPass);
-		} catch (SQLException e)
-		{
+		} catch (SQLException e) {
 			e.printStackTrace();
 			System.out.println("kan geen verbinding maken");
 		}
@@ -76,12 +62,10 @@ public class DatabaseHandler
 
 	public void closeConnection() // closes the connection to the database
 	{
-		try
-		{
+		try {
 			// closes the connection
 			con.close();
-		} catch (SQLException e)
-		{
+		} catch (SQLException e) {
 			e.printStackTrace();
 			System.out.println("ERROR in closing connection");
 		}
@@ -93,8 +77,7 @@ public class DatabaseHandler
 															// to be applied
 	{
 		boolean login = false;
-		try
-		{
+		try {
 			statement = con
 					.prepareStatement("SELECT * FROM account WHERE naam = '"
 							+ username + "' AND wachtwoord = '" + password
@@ -102,23 +85,19 @@ public class DatabaseHandler
 
 			result = statement.executeQuery();
 
-			if (result.next())
-			{
+			if (result.next()) {
 				System.out.println("username + password correct");
 				login = true;
 				result.close();
-			}
-			else
-			{
+			} else {
 				System.out.println("username or password incorrect");
 			}
 			statement.close();
-		} catch (SQLException e)
-		{
+		} catch (SQLException e) {
 			e.printStackTrace();
 			System.out.println("Query ERROR!!!!");
 		}
-		
+
 		return login;
 	}
 
@@ -129,20 +108,17 @@ public class DatabaseHandler
 																// applied
 	{
 		boolean registered = false;
-		try
-		{
+		try {
 			statement = con
 					.prepareStatement("SELECT * FROM account WHERE naam = '"
 							+ username + "'");
 
 			result = statement.executeQuery();
 
-			if (!result.next())
-			{
+			if (!result.next()) {
 				System.out.println("username is available");
 
-				try
-				{
+				try {
 					// Here we create our query where u state which fields u
 					// want to insert data
 					statement = con
@@ -158,7 +134,7 @@ public class DatabaseHandler
 
 					// closes the statement
 					statement.close();
-					
+
 					statement = con
 							.prepareStatement("INSERT INTO accountrol(account_naam, rol_type)VALUES(?,?)");
 
@@ -169,21 +145,17 @@ public class DatabaseHandler
 
 					statement.close();
 
-				} catch (SQLException e)
-				{
+				} catch (SQLException e) {
 					e.printStackTrace();
 					System.out.println("account register error");
 				}
 
 				registered = true;
-			}
-			else
-			{
+			} else {
 				System.out.println("username = not available");
 			}
-			
-		} catch (SQLException e)
-		{
+
+		} catch (SQLException e) {
 			e.printStackTrace();
 			System.out.println("query error!!!");
 		}
@@ -193,8 +165,7 @@ public class DatabaseHandler
 
 	public void chatSend(String username, int gameID, String message)// it works
 	{
-		try
-		{
+		try {
 			// Here we create our query where u state which fields u want to
 			// insert data
 			statement = con
@@ -212,8 +183,7 @@ public class DatabaseHandler
 			// closes the statement
 			statement.close();
 
-		} catch (SQLException e)
-		{
+		} catch (SQLException e) {
 			e.printStackTrace();
 			System.out.println("chat message send error");
 		}
@@ -227,9 +197,8 @@ public class DatabaseHandler
 	{
 		ArrayList<String> chat = new ArrayList<String>();
 		chat.clear();
-		
-		if (lastMessageTimestamp.equals(""))
-		{
+
+		if (lastMessageTimestamp.equals("")) {
 			lastMessageTimestamp = "2013-05-05 00:00:00";
 		}
 		Timestamp oldTimestamp = Timestamp.valueOf(lastMessageTimestamp); // converts
@@ -237,8 +206,7 @@ public class DatabaseHandler
 																			// to
 																			// Timestamp
 
-		try
-		{
+		try {
 			statement = con
 					.prepareStatement("SELECT account_naam, tijdstip, bericht FROM chatregel WHERE spel_id = '"
 							+ gameID
@@ -248,8 +216,7 @@ public class DatabaseHandler
 
 			result = statement.executeQuery();
 
-			while (result.next())
-			{
+			while (result.next()) {
 				String sender = result.getString(1);
 				String chatTime = result.getTimestamp(2).toString();
 				String message = result.getString(3);
@@ -258,8 +225,7 @@ public class DatabaseHandler
 				// + " message: " + message);
 			}
 
-		} catch (SQLException e)
-		{
+		} catch (SQLException e) {
 			e.printStackTrace();
 			System.out.println("query error!!!!");
 		}
@@ -273,8 +239,7 @@ public class DatabaseHandler
 
 		int compID = 0;
 
-		try
-		{
+		try {
 			// Here we create our query where u state which fields u want to
 			// insert data
 			statement = con
@@ -294,14 +259,13 @@ public class DatabaseHandler
 
 			result = statement.getGeneratedKeys(); // returns competitionID
 
-			if (result.next())
-			{
+			if (result.next()) {
 				compID = result.getInt(1);
 				System.out.println("do i get the PK " + compID);
-				
-				
-				statement = con.prepareStatement("INSERT INTO deelnemer(account_naam, competitie_id)VALUES(?,?)");
-				
+
+				statement = con
+						.prepareStatement("INSERT INTO deelnemer(account_naam, competitie_id)VALUES(?,?)");
+
 				statement.setString(1, username);
 				statement.setInt(2, compID);
 				statement.executeUpdate();
@@ -310,19 +274,18 @@ public class DatabaseHandler
 			// closes the statement
 			statement.close();
 
-		} catch (SQLException e)
-		{
+		} catch (SQLException e) {
 			e.printStackTrace();
 			System.out.println("create error");
 		}
 		return compID;
 	}
 
-	public int createGame(int competitionID, String username, String opponent, String privacy)// works
+	public int createGame(int competitionID, String username, String opponent,
+			String privacy)// works
 	{
 		int gameID = 0;
-		try
-		{
+		try {
 			// Here we create our query where u state which fields u want to
 			// insert data
 			statement = con
@@ -345,8 +308,7 @@ public class DatabaseHandler
 
 			result = statement.getGeneratedKeys(); // returns gameID
 
-			if (result.next())
-			{
+			if (result.next()) {
 				gameID = result.getInt(1);
 				System.out.println("do i get the PK " + gameID);
 
@@ -355,13 +317,10 @@ public class DatabaseHandler
 			// closes the statement
 			statement.close();
 
-		} catch (SQLException e)
-		{
+		} catch (SQLException e) {
 			e.printStackTrace();
 			System.out.println("create error");
 		}
-
-	
 
 		return gameID;
 	}
@@ -370,8 +329,7 @@ public class DatabaseHandler
 	{
 		boolean turn = false;
 
-		try
-		{
+		try {
 			statement = con
 					.prepareStatement("SELECT * FROM beurt WHERE spel_id = '"
 							+ gameID + "' AND account_naam = '" + username
@@ -379,18 +337,14 @@ public class DatabaseHandler
 
 			result = statement.executeQuery();
 
-			if (result.next())
-			{
+			if (result.next()) {
 				System.out.println("it's your turn");
 				turn = true;
-			}
-			else
-			{
+			} else {
 				System.out.println("it's not your turn");
 			}
 
-		} catch (SQLException e)
-		{
+		} catch (SQLException e) {
 			e.printStackTrace();
 			System.out.println("Query ERROR!!!!");
 		}
@@ -405,18 +359,15 @@ public class DatabaseHandler
 																					// probally
 																					// works
 	{
-		try
-		{
+		try {
 			statement = con
 					.prepareStatement("SELECT * FROM beurt WHERE spel_id = '"
 							+ gameID + "'");
 
 			result = statement.executeQuery();
 
-			if (result.next())
-			{
-				try
-				{
+			if (result.next()) {
+				try {
 					// Here we create our query where u state which fields u
 					// want to insert data
 					statement = con
@@ -435,15 +386,13 @@ public class DatabaseHandler
 					// closes the statement
 					statement.close();
 
-				} catch (SQLException e)
-				{
+				} catch (SQLException e) {
 					e.printStackTrace();
 					System.out.println("insert turn ERROR!!!");
 				}
 			}
 
-		} catch (SQLException e)
-		{
+		} catch (SQLException e) {
 			System.out.println("query ERROR!!!");
 			e.printStackTrace();
 		}
@@ -454,21 +403,18 @@ public class DatabaseHandler
 	{
 		int score = 0;
 
-		try
-		{
+		try {
 			statement = con
 					.prepareStatement("SELECT sum(score) FROM beurt WHERE account_naam = '"
 							+ username + "' AND spel_id = '" + gameID + "'");
 
 			result = statement.executeQuery();
 
-			if (result.next())
-			{
+			if (result.next()) {
 				score = result.getInt(1);
 			}
 
-		} catch (SQLException e)
-		{
+		} catch (SQLException e) {
 			e.printStackTrace();
 			System.out.println("Query ERROR!!!");
 		}
@@ -476,12 +422,11 @@ public class DatabaseHandler
 		return score;
 	}
 
-	public void addTileToHand(int gameID, ArrayList<Integer> tile, int turnID)//should work
+	public void addTileToHand(int gameID, ArrayList<Integer> tile, int turnID)// should
+																				// work
 	{
-		try
-		{
-			for (int i = 0; i < tile.size(); i++)
-			{
+		try {
+			for (int i = 0; i < tile.size(); i++) {
 				statement = con
 						.prepareStatement("INSERT INTO letterbakjeletter(spel_id, letter_id, beurt_id)VALUES(?,?,?)");
 
@@ -491,265 +436,250 @@ public class DatabaseHandler
 
 				statement.executeUpdate();
 			}
-		} catch (SQLException e)
-		{
+		} catch (SQLException e) {
 			e.printStackTrace();
 			System.out.println("Query Error!!!!");
 		}
 	}
-	
+
 	public String squareCheck(int cordX, int cordY)// should work
 	{
 		String squareValue = null;
-		
-		try
-		{
-			statement = con.prepareStatement("SELECT tegeltype_soort FROM tegel WHERE x = '" + cordX + "' AND y = '" + cordY + "'");
-			
+
+		try {
+			statement = con
+					.prepareStatement("SELECT tegeltype_soort FROM tegel WHERE x = '"
+							+ cordX + "' AND y = '" + cordY + "'");
+
 			result = statement.executeQuery();
-			
-			if(result.next())
-			{
+
+			if (result.next()) {
 				squareValue = result.getString(1);
 			}
-			
-		} catch (SQLException e)
-		{
+
+		} catch (SQLException e) {
 			e.printStackTrace();
 			System.out.println("Query ERROR!!!!");
 		}
-		
-		
+
 		return squareValue;
 	}
-	
+
 	public boolean checkWord(String word)// check works
 	{
 		boolean validWord = false;
-		
-		try
-		{
-			statement = con.prepareStatement("SELECT woord FROM woordenboek WHERE woord = '" + word + "'");
-			
+
+		try {
+			statement = con
+					.prepareStatement("SELECT woord FROM woordenboek WHERE woord = '"
+							+ word + "'");
+
 			result = statement.executeQuery();
-			
-			if(result.next())
-			{
+
+			if (result.next()) {
 				validWord = true;
-			}			
-			
-		} catch (SQLException e)
-		{
+			}
+
+		} catch (SQLException e) {
 			e.printStackTrace();
 			System.out.println("Query ERROR!!!");
 		}
-		
+
 		return validWord;
 	}
-	
+
 	public void gameStatusUpdate(int gameID, String status)// works
 	{
-		try
-		{
-			statement = con.prepareStatement("UPDATE spel SET toestand_type = '" + status + "' WHERE id ='" + gameID + "'");
-			
+		try {
+			statement = con
+					.prepareStatement("UPDATE spel SET toestand_type = '"
+							+ status + "' WHERE id ='" + gameID + "'");
+
 			statement.executeUpdate();
-			
-		} catch (SQLException e)
-		{
+
+		} catch (SQLException e) {
 			e.printStackTrace();
 			System.out.println("QUERY ERROR!!!");
 		}
 	}
-	
-	public String gameStatusValue(int gameID)
-	{
+
+	public String gameStatusValue(int gameID) {
 		String gameStatus = null;
-		
-		try
-		{
-			statement = con.prepareStatement("SELECT toestand_type FROM spel WHERE id ='" + gameID + "'");
-			
+
+		try {
+			statement = con
+					.prepareStatement("SELECT toestand_type FROM spel WHERE id ='"
+							+ gameID + "'");
+
 			result = statement.executeQuery();
-			
-			if(result.next())
-			{
+
+			if (result.next()) {
 				gameStatus = result.getString(1);
 			}
-			
-		} catch (SQLException e)
-		{
+
+		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		return gameStatus;
 	}
 
-	public String opponentName(int gameID)
-	{
+	public String opponentName(int gameID) {
 		String opponent = null;
-		
-		try
-		{
-			statement = con.prepareStatement("SELECT account_naam_tegenstander FROM spel WHERE id ='" + gameID + "'");
-			
+
+		try {
+			statement = con
+					.prepareStatement("SELECT account_naam_tegenstander FROM spel WHERE id ='"
+							+ gameID + "'");
+
 			result = statement.executeQuery();
-			
-			if(result.next())
-			{
+
+			if (result.next()) {
 				opponent = result.getString(1);
 			}
-			
-		} catch (SQLException e)
-		{
+
+		} catch (SQLException e) {
 			e.printStackTrace();
 			System.out.println("Query error!!!");
 		}
-		
+
 		return opponent;
 	}
 
-	public ArrayList<Integer> jarContent(int gameID)
-	{
+	public ArrayList<Integer> jarContent(int gameID) {
 		ArrayList<Integer> jarContents = new ArrayList<Integer>();
-		
-		try
-		{
-			statement = con.prepareStatement("SELECT letter_id FROM pot WHERE spel_id ='" + gameID + "'");
-			
+
+		try {
+			statement = con
+					.prepareStatement("SELECT letter_id FROM pot WHERE spel_id ='"
+							+ gameID + "'");
+
 			result = statement.executeQuery();
-			
-			while(result.next())
-			{
+
+			while (result.next()) {
 				jarContents.add(result.getInt(1));
 			}
-			
-		} catch (SQLException e)
-		{
+
+		} catch (SQLException e) {
 			e.printStackTrace();
 			System.out.println("Query ERROR!!!!");
 		}
-		
+
 		return jarContents;
 	}
 
-	public String handContent(int gameID, int turnID)
-	{
+	public String handContent(int gameID, int turnID) {
 		String handContent = null;
-		
-		try
-		{
-			statement = con.prepareStatement("SELECT inhoud FROM plankje WHERE spel_id = '" + gameID + "' AND beurt_id = '" + turnID + "'");
-		
+
+		try {
+			statement = con
+					.prepareStatement("SELECT inhoud FROM plankje WHERE spel_id = '"
+							+ gameID + "' AND beurt_id = '" + turnID + "'");
+
 			result = statement.executeQuery();
-			
-			if(result.next())
-			{
+
+			if (result.next()) {
 				handContent = result.getString(1);
 			}
-		} catch (SQLException e)
-		{
+		} catch (SQLException e) {
 			e.printStackTrace();
 			System.out.println("Query ERROR!!");
 		}
-		
+
 		return handContent;
 	}
 
-	public void tileToBoard(int gameID, int turnID, int tileID, String blankTile, int cordX, int cordY)
-	{
-		try
-		{
-			statement = con.prepareStatement("INSERT INTO gelegdeletter(letter_id, spel_id, beurt_id, tegel_x, tegel_y, tegel_bord_naam, blancoletterkarakter)VALUES(?,?,?,?,?,?,?");
-			
+	public void tileToBoard(int gameID, int turnID, int tileID,
+			String blankTile, int cordX, int cordY) {
+		try {
+			statement = con
+					.prepareStatement("INSERT INTO gelegdeletter(letter_id, spel_id, beurt_id, tegel_x, tegel_y, tegel_bord_naam, blancoletterkarakter)VALUES(?,?,?,?,?,?,?");
+
 			statement.setInt(1, tileID);
 			statement.setInt(1, gameID);
 			statement.setInt(2, turnID);
 			statement.setInt(4, cordX);
 			statement.setInt(5, cordY);
 			statement.setString(6, "Standard");
-			
-			if (blankTile != null)
-			{
-			statement.setString(7, blankTile);
+
+			if (blankTile != null) {
+				statement.setString(7, blankTile);
 			}
-			
+
 			statement.executeUpdate();
-			
-		} catch (SQLException e)
-		{
+
+		} catch (SQLException e) {
 			e.printStackTrace();
 			System.out.println("Query ERROR!!!");
 		}
 	}
 
-	public void surrender(int gameID, int turnID, String username)
-	{
-		try
-		{
-			statement = con.prepareStatement("SELECT * FROM spel WHERE id = '" + gameID + "'");
-			
+	public void surrender(int gameID, int turnID, String username) {
+		try {
+			statement = con.prepareStatement("SELECT * FROM spel WHERE id = '"
+					+ gameID + "'");
+
 			result = statement.executeQuery();
-			
-			if(result.next())
-			{
-				statement = con.prepareStatement("UPDATE spel SET toestand_type = 'Resigned' WHERE toestand_type = 'Playing'");
-				
+
+			if (result.next()) {
+				statement = con
+						.prepareStatement("UPDATE spel SET toestand_type = 'Resigned' WHERE toestand_type = 'Playing'");
+
 				statement.executeUpdate();
 				statement.close();
 			}
-			
-			statement = con.prepareStatement("SELECT * FROM beurt WHERE spel_id ='" + gameID + "'");
-			
+
+			statement = con
+					.prepareStatement("SELECT * FROM beurt WHERE spel_id ='"
+							+ gameID + "'");
+
 			result = statement.executeQuery();
-			
-			if(result.next())
-			{
-				statement = con.prepareStatement("INSERT INTO beurt(id, spel_id, account_naam, score, aktie_type) VALUES(?,?,?,?,?)");
-				
+
+			if (result.next()) {
+				statement = con
+						.prepareStatement("INSERT INTO beurt(id, spel_id, account_naam, score, aktie_type) VALUES(?,?,?,?,?)");
+
 				statement.setInt(1, turnID);
 				statement.setInt(2, gameID);
 				statement.setString(3, username);
 				statement.setInt(4, 0);
 				statement.setString(5, "End");
-				
+
 				statement.executeUpdate();
 			}
-			
-		} catch (SQLException e)
-		{
+
+		} catch (SQLException e) {
 			e.printStackTrace();
-			
+
 		}
 	}
 
 	public ArrayList<String> competitionOwner(String username)// seems to work
 	{
 		ArrayList<String> myCompetitions = new ArrayList<String>();
-		
-		try
-		{
-			statement = con.prepareStatement("SELECT id, start, einde, omschrijving FROM competitie");
-			
+
+		try {
+			statement = con
+					.prepareStatement("SELECT id, start, einde, omschrijving FROM competitie");
+
 			result = statement.executeQuery();
-			
-			while(result.next())
-			{
+
+			while (result.next()) {
 				int compID = result.getInt(1);
 				String startTime = result.getTimestamp(2).toString();
 				String endTime = result.getTimestamp(3).toString();
 				String summary = result.getString(4);
-				
-				String myComps = compID + "---" + startTime + "---" + endTime + "---" + summary;
+
+				String myComps = compID + "---" + startTime + "---" + endTime
+						+ "---" + summary;
 				myCompetitions.add(myComps);
-				
+
 			}
-		} catch (SQLException e)
-		{
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+
 		return myCompetitions;
 	}
 }
@@ -757,27 +687,20 @@ public class DatabaseHandler
 /*
  * aanmaken door: DatabaseHandler dbh = DatabaseHandler.getInstance();
  * 
-<<<<<<< HEAD
-<<<<<<< HEAD
- * en aanroepen door: dbh. --------
-=======
- * en aanroepen door:
- * dbh. --------
-=======
- * en aanroepen door: dbh. --------
->>>>>>> refs/remotes/Kleinedruif/master-development
+ * <<<<<<< HEAD <<<<<<< HEAD en aanroepen door: dbh. -------- ======= en
+ * aanroepen door: dbh. -------- ======= en aanroepen door: dbh. --------
+ * >>>>>>> refs/remotes/Kleinedruif/master-development
  * 
  * aangemaakt door: Michael login check register check and register name and
  * password create competition, create game chat send, checkTurn, chat Receive
  * jarcontent
  * 
  * 
-<<<<<<< HEAD
- * to use multiple methods con.close(); needs to be removed. otherwise u get an closed connection error.
+ * <<<<<<< HEAD to use multiple methods con.close(); needs to be removed.
+ * otherwise u get an closed connection error.
  * 
->>>>>>> refs/remotes/Kleinedruif/master-development
-=======
- * all needs to be checked for the rol of the player to use multiple methods
- * con.close(); needs to be removed. otherwise u get an closed connection error.
->>>>>>> refs/remotes/Kleinedruif/master-development
+ * >>>>>>> refs/remotes/Kleinedruif/master-development ======= all needs to be
+ * checked for the rol of the player to use multiple methods con.close(); needs
+ * to be removed. otherwise u get an closed connection error. >>>>>>>
+ * refs/remotes/Kleinedruif/master-development
  */

@@ -6,8 +6,10 @@ import datalaag.DatabaseHandler;
 
 public class User {
 	private Player player;
+	private String userName;
 	
 	public User(){
+		System.out.println("TESTTEST");
 		player = new Player("Klaas");
 	}
 	
@@ -15,10 +17,8 @@ public class User {
 		return player;
 	}
 
-
-	private String userName;
+	
 	private boolean isBanned;
-
 	public void login(){
 		Scanner reader = new Scanner(System.in);
 		System.out.println("Voer gebruikersnaam in:");
