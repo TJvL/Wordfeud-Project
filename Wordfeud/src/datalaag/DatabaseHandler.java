@@ -15,13 +15,11 @@ public class DatabaseHandler
 	final private static String URL = "jdbc:mysql://databases.aii.avans.nl:3306/manschou_db2"; // location of the database
 	final private static String USER = "manschou"; // is the database user
 	final private static String USERPASS = "Mschouten92"; // the password of the user
-
-
+	
 	private PreparedStatement statement = null;
 	private ResultSet result = null;
 
 	private Connection con;
-
 
 	private static java.sql.Timestamp getCurrentTimeStamp()
 	{
@@ -416,7 +414,7 @@ public class DatabaseHandler
 		try
 		{
 			statement = con
-					.prepareStatement("SELECT sum(score) FROM beurt WHERE account_naam = '"
+					.prepareStatement("SELECT totaalscore FROM score WHERE account_naam = '"
 							+ username + "' AND spel_id = '" + gameID + "'");
 
 			result = statement.executeQuery();
@@ -482,14 +480,14 @@ public class DatabaseHandler
 		return squareValue;
 	}
 
-	public boolean checkWord(String word)// check works
+	public boolean checkWord(String word, String language)// check works
 	{
 		boolean validWord = false;
 
 		try
 		{
 			statement = con
-					.prepareStatement("SELECT woord FROM woordenboek WHERE woord = '" + word + "'");
+					.prepareStatement("SELECT woord FROM woordenboek WHERE woord = '" + word + "' AND letterset_code = '" + language + "' AND status = 'accepted'");
 
 			result = statement.executeQuery();
 
@@ -900,6 +898,127 @@ public class DatabaseHandler
 		return numOfPeopleInCompetition;
 	}
 
+	public void requestWord(String word, String language)
+	{
+		try
+		{
+			statement = con.prepareStatement("INSERT INTO woordenboek(woord, letterset_code, status)VALUES(?,?,?)");
+			
+			statement.setString(1, word);
+			statement.setString(2, language);
+			statement.setString(3, "Pending");
+			
+			statement.executeUpdate();
+			
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+			System.out.println("QUERY ERROR!!!!!");
+		}
+	}
+
+	public void acceptDeniedWord(String word, String language, String status)
+	{
+		try
+		{
+			statement = con.prepareStatement("UPDATE woordenboek SET status = '" + status + "' WHERE woord = '" + word + "' AND letterset_code = '" + language + "'");
+		
+			statement.executeUpdate();
+			
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+			System.out.println("QUERY ERROR!!!");
+		}
+	}
+
+	public ArrayList<String> pendingWords()
+	{
+		ArrayList<String> pendingWord = new ArrayList<String>();
+		String word = null;
+		String language = null;
+				
+		try
+		{
+			statement = con.prepareStatement("SELECT woord, letterset_code FROM woordenboek WHERE status = 'Pending'");
+			
+			result = statement.executeQuery();
+			
+			while(result.next())
+			{
+				word = result.getString(1);
+				language = result.getString(2);
+				
+				String pendWord = word + "---" + language;
+				
+				pendingWord.add(pendWord);
+			}
+			
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+			System.out.println("QUERRY ERROR!!!!");
+		}
+		
+		return pendingWord;
+	}
+
+	public void setRole(String username, String role)
+	{
+		try
+		{
+			statement = con.prepareStatement("INSERT INTO accountrol(account_naam, rol_type)VALUES(?,?)");
+			
+			statement.setString(1, username);
+			statement.setString(2, role);
+			
+			statement.executeUpdate();
+			
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+			System.out.println("QUERRY ERROR!!!");
+		}
+	}
+
+	public ArrayList<String> getRole(String username)
+	{
+		ArrayList<String> userRoles = new ArrayList<String>();
+		
+		try
+		{
+			statement = con.prepareStatement("SELECT rol_type FROM accountrol WHERE account_naam = '" + username + "' ORDER BY rol_type ASC");
+			
+			result = statement.executeQuery();
+			
+			while(result.next())
+			{
+				userRoles.add(result.getString(1));
+			}
+			
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+			System.out.println("QUERRY ERRROR!!!!");
+		}
+		return userRoles;
+	}
+
+	public void banPlayer(String username)
+	{
+		try
+		{
+			statement = con.prepareStatement("DELETE FROM accountrol WHERE account_naam = '" + username + "' AND rol_type = 'Player'");
+		
+			statement.executeQuery();
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+			System.out.println("QUERRY ERROR!!!");
+		}
+	}
+
+
 }
 
 /*
@@ -910,6 +1029,7 @@ public class DatabaseHandler
  * aangemaakt door: Michael login check register check and register name and
  * password create competition, create game chat send, checkTurn, chat Receive
  * jarcontent
+ * set/getRole, ban player, add/rejectWords
  * 
  * 
  * to use multiple methods con.close(); needs to be removed. otherwise u get an closed connection error. 
