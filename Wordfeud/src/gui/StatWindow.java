@@ -1,6 +1,5 @@
 package gui;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -76,19 +75,6 @@ public class StatWindow extends JFrame
 		mostValuableWordValue.setText("value");
 		mostValuableWordValue.setFont(new Font("Serif", Font.PLAIN, 17));
 		
-		
-		
-		
-//		playedGames.setForeground(Color.GRAY);
-//		playedGamesValue.setForeground(Color.GRAY);
-//		gamesWon.setForeground(Color.GRAY);
-//		gamesWonValue.setForeground(Color.GRAY);
-//		compsWon.setForeground(Color.GRAY);
-//		compsWonValue.setForeground(Color.GRAY);
-//		highScore.setForeground(Color.GRAY);
-//		highScoreValue.setForeground(Color.GRAY);
-//	    mostValuableWord.setForeground(Color.GRAY);
-//		mostValuableWordValue.setForeground(Color.GRAY);
 		
 		this.add(playedGames);
 		
