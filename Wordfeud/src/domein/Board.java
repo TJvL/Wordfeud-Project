@@ -14,6 +14,8 @@ public class Board {
 	private FileHandler fh;
 	private DatabaseHandler dbh;
 	private int score;
+	private String submittedWord;
+	private boolean checkingWord;
 
 	// Hier moet gekeken of er een nieuwe bord wordt aangemaakt
 	// Of het spel al bezig is het bord laden
@@ -24,6 +26,7 @@ public class Board {
 		field = new Square[15][15];
 		fh = FileHandler.getInstance();
 		dbh = DatabaseHandler.getInstance();
+		submittedWord = "*";
 
 		// Tijdelijk vullen van het bord
 		BufferedImage image = fh.readImage("Plaatjes/board.png");
@@ -115,32 +118,60 @@ public class Board {
 		}
 		return possible;
 	}
-	
-	public int getScore(){
+
+	// Gets the score for the score panel
+	public int getScore() {
 		return score;
+	}
+
+	// Resets the score for the score panel
+	public void setScore() {
+		score = 0;
 	}
 
 	public boolean checkWords() {
 		boolean allWordsExist = true;
 		ArrayList<Word> words = calculator.getJustPlayedTiles();
 		System.out.println(words.size() + " DE SIZE VAN DE TEGEELS");
-		for (Word word: words){
-			//  woord geven aan de database
+		for (Word word : words) {
+			// woord geven aan de database
 			// als woord niet bestaat allWordsExist = false
 			// false returns en gamebutton
 			// bij gamebutton aan match geven en match laten vragen of de speler
 			// het wordt wil submitten of niet
 			// niet - dan geen score
-			if (dbh.checkWord(word.getWord())){
+			if (dbh.checkWord(word.getWord())) {
 				System.out.println("WOORD BESTAAT IN WOORDENBOEK");
+				submittedWord = "*";
+				checkingWord = false;
 			} else {
 				System.out.println("WOORD BESTAAT NIET IN HET WOORDENBOEK");
-				return false;
+				/*
+				 * submittedWord = word.getWord(); while (!checkingWord){
+				 * submittedWord = "*"; checkingWord = false;
+				 * 
+				 * if (dbh.checkWord(word.getWord())){
+				 * System.out.println("WOORD BESTAAT IN WOORDENBOEK"); } else {
+				 * System
+				 * .out.println("HET WOORD IS AFGEKEURD OF TERUGGETROKKEN"); }
+				 * 
+				 * }
+				 */
+
+				// return false;
 			}
-			
+
 		}
-		
+
 		return allWordsExist;
+	}
+
+	public String getWord() {
+		return submittedWord;
+	}
+
+	public void checkWord() {
+		this.checkingWord = true;
 	}
 
 	public void setTilesPlayed() {
@@ -156,8 +187,11 @@ public class Board {
 	// Methode voor laden van een spel wat al aan de gang is
 	public void addSquares() {
 		// Hier moeten de square worden opgevraagd aan de database
-		// for (int y = 0; y < 15; y++){
-		// for (int x = 0; x < 15; x++){
+		for (int y = 0; y < 15; y++) {
+			for (int x = 0; x < 15; x++) {
+				dbh.squareCheck(x, y);
+			}
+		}
 		// hier uit de database (heet tegel) x - y halen/ de borden staan
 		// opgeslagen
 		// in de database.

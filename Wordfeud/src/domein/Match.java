@@ -15,14 +15,23 @@ public class Match {
 	private Player player;
 	@SuppressWarnings("unused")
 	private Player enemy;
+	private int gameID;
 
-	public Match(Player player) {
-		this.player = player;
+	// /////////////////////////////////////////////////////////////////
+	// Spelers nog toevoegen aan een spel ////////////////////////////
+	// /////////////////////////////////////////////////////////////////
 
+	public Match(int gameID, Player player) {
+		this.gameID = gameID;
 		board = new Board();
 		jar = new Jar();
+		this.player = player;
 		// Load the enemy from the database and add is as a new player
 		// this.enemy = new enemy(stuff to make a new enemy)
+	}
+
+	public int getGameID() {
+		return gameID;
 	}
 
 	public void startNewGame(GameFieldPanel gameFieldPanel) {
@@ -34,23 +43,47 @@ public class Match {
 		fillHand();
 	}
 
+	public void loadGame(GameFieldPanel gameFieldPanel) {
+		this.gameField = gameFieldPanel;
+
+		// aanroepen van board.addSquares()
+		// daar worden de squares gevuld met tegels
+
+		// Zelfde doen voor vullen van de hand
+		// Zo kun je je eigen tiles opvragen en de pot vullen
+		// jar.addNewTile(t);
+		// player.addTileToHand(t);
+
+		// Moet er ook nog tussenkomen
+		// gameField.addSquares();
+		// gameField.repaintBoard();
+
+	}
+
+	// Spectator only uses match to board to load up the squares
+	// And uses the hands
+	// Uses a seprate panel
+	public void loadSpecateGame() {
+
+	}
+
 	// Return the player names
-	public String getOwnName(){
-		if (player.getName() != null){
-		return player.getName();
+	public String getOwnName() {
+		if (player.getName() != null) {
+			return player.getName();
 		} else {
 			return "No-Name";
 		}
 	}
-	
-	public String getEnemyName(){
-		if (enemy.getName() != null){
-		return enemy.getName();
+
+	public String getEnemyName() {
+		if (enemy.getName() != null) {
+			return enemy.getName();
 		} else {
 			return "No-Name";
 		}
 	}
-	
+
 	// Jar gedeelte
 	public void fillJar() {
 		// checke of er al een pot is
@@ -104,7 +137,7 @@ public class Match {
 		}
 		player.removeTileFromHand(tile);
 		board.addTileToSquare(tile, x, y);
-		startCalculating();
+		board.startCalculating();
 		gameField.repaintBoard();
 	}
 
@@ -114,14 +147,14 @@ public class Match {
 	public void moveTileFromBoardToHand(int x, int y) {
 		Tile t = board.getSquare(x, y).getTile();
 		t.setJustPlayed(false);
-		if (t.getValue() == 0){
+		if (t.getValue() == 0) {
 			t.setBlancoLetterValue(null);
 			t.setLetter("?");
 		}
 		player.addTileToHand(t);
 		board.removeTileFromSquare(x, y);
 		gameField.addTileToHand(t);
-		startCalculating();
+		board.startCalculating();
 		gameField.repaintBoard();
 	}
 
@@ -138,7 +171,7 @@ public class Match {
 				}
 			}
 		}
-		startCalculating();
+		board.startCalculating();
 		gameField.repaintBoard();
 	}
 
@@ -148,6 +181,7 @@ public class Match {
 			getTileFromJar();
 			gameField.repaintBoard();
 		}
+		board.setScore();
 	}
 
 	// Swapping tiles from the hand back to the jar
@@ -178,22 +212,41 @@ public class Match {
 	public void changeTurn() {
 		// verander van beurt
 	}
-
-	// A method to start calculating
-	public boolean startCalculating() {
-		return board.startCalculating();
-	}
-
-	public void setTilesPlayed(){
-		board.setTilesPlayed();
-	}
 	
-	public boolean checkWords(){
-		return board.checkWords();
-	}
-	
+
 	// Get the score of the just placed tiles
-	public int getScore(){
+	public int getScore() {
 		return board.getScore();
+	}
+
+	// When the play button is pressed
+	// This method does the word
+	public void playWord() {
+		if (board.startCalculating()) {
+			// if this is true, a score will be calculated
+			System.err.println("De score is berekend");
+			if (board.checkWords()) {
+				board.setTilesPlayed();
+				fillHand();
+
+				// ///////////////////////////////////////////////////
+				// Beurt update in database - tijd update ///////////
+				// Tegen bord zeggen om de letters aan de database toe te voegen
+				// //////////////////////////////////////////////////
+				
+			} else {
+				System.err.println("WOORDEN ZIJN FOUT");
+				// hier moet de optie komen om ze te laten keuren
+			}
+		}
+	}
+
+	// A method for the secondThread to see if a word is submitted
+	public synchronized String getSubmittedWord(){
+		return board.getWord();
+	}
+	
+	public synchronized void checkWord(){
+		board.checkWord();
 	}
 }

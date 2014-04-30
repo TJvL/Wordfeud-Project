@@ -102,43 +102,7 @@ public class GameButtonPanel extends JPanel {
 	// ////////////////////////////////////
 	private void playTiles() {
 		// if score > 0
-
-		// Moet worden bijgewerkt
-		// moet verwijzen naar match.playTiles
-		// Daar moet alles worden geregeld
-		/*
-		 * 
-		 * boardP.playTiles();
-		 * 
-		 * for (int y = 0; y < 15; y++) { for (int x = 0; x < 15; x++) { if
-		 * (boardP.getTileFromBoard(x, y).getOccupied()) { //
-		 * System.out.println(boardP.getTileFromBoard(x, // y).getLetter());
-		 * match.addPlayedTilesToBoard(boardP.getTileFromBoard(x, y)
-		 * .getTile()); } } }
-		 */
-
-		if (match.startCalculating()) {
-			// if this is true, a score will be calculated
-			System.err.println("De score is berekent");
-			if (match.checkWords()){
-				match.setTilesPlayed();
-				match.fillHand();
-				System.err.println("Het is door de woordcheck gekomen");
-			} else {
-				System.err.println("WOORDEN ZIJN FOUT");
-				// hier moet de optie komen om ze te laten keuren
-			}
-			
-		}
-		/*
-		 * boardP.playTiles(); if (ScoreCalculator.getInstance().getScore() > 0)
-		 * { // woord komt voor in database?
-		 * 
-		 * // if true // tel score van player op met de score // 4. zet alle
-		 * tiles op played = true // vul hand aan tot 7 (of meest haalbare) //
-		 * verander van beurt } else { JOptionPane .showMessageDialog(null,
-		 * "The tiles you have placed don't seem to be giving you a score."); }
-		 */
+		match.playWord();
 	}
 
 	private void skipTurn() {
