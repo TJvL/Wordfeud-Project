@@ -324,7 +324,16 @@ public class DatabaseHandler
 
 			// closes the statement
 			statement.close();
-
+			
+			statement = con.prepareStatement("INSERT INTO beurt(id, spel_id, account_naam, aktie_type)VALUES(?,?,?,?)");
+			
+			statement.setInt(1, 1);
+			statement.setInt(2, gameID);
+			statement.setString(3, username);
+			statement.setString(4, "Begin");
+			
+			statement.executeUpdate();
+			
 		} catch (SQLException e)
 		{
 			e.printStackTrace();
@@ -333,26 +342,33 @@ public class DatabaseHandler
 		return gameID;
 	}
 
-	public boolean checkTurn(String username, int gameID)//checks who's turn it is, works
+	public String checkTurn(String username, int gameID)//checks who's turn it is, works
 	{
-		boolean turn = false;
+		String turn = null;
+		boolean myTurn = false;
+		int turnID = 0;
 
 		try
 		{
 			statement = con
-					.prepareStatement("SELECT * FROM beurt WHERE spel_id = '" + gameID + "' AND account_naam = '" + username
-							+ "' AND id = (SELECT max(id) FROM beurt)");
+					.prepareStatement("SELECT account_naam, id FROM beurt WHERE spel_id = '" + gameID + "' AND id = (SELECT max(id) FROM beurt)");
 
 			result = statement.executeQuery();
 
 			if (result.next())
 			{
-				System.out.println("it's your turn");
-				turn = true;
-			}
-			else
-			{
-				System.out.println("it's not your turn");
+				if(result.getString(1).equals(username))
+				{
+					System.out.println("it's not your turn");
+					turnID = result.getInt(2);
+				}
+				else
+				{
+					System.out.println("it's your turn");
+					myTurn = true;
+					turnID = result.getInt(2) + 1;
+				}		
+				turn = myTurn + "---" + turnID;
 			}
 
 		} catch (SQLException e)
@@ -363,7 +379,7 @@ public class DatabaseHandler
 		return turn;
 	}
 
-	public void updateTurn(int beurtID, int gameID, String username, int score, String action)// needs to be tested, probally works
+	public void updateTurn(int turnID, int gameID, String username, int score, String action)// needs to be tested, probally works
 	{
 		try
 		{
@@ -381,7 +397,7 @@ public class DatabaseHandler
 							.prepareStatement("INSERT INTO beurt(id, spel_id, account_naam, score, aktie_type)VALUES(?,?,?,?,?)");
 					// the ? represents anonymous values
 
-					statement.setInt(1, beurtID);
+					statement.setInt(1, turnID);
 					statement.setInt(2, gameID);
 					statement.setString(3, username);
 					statement.setInt(4, score);
@@ -469,6 +485,7 @@ public class DatabaseHandler
 			if (result.next())
 			{
 				squareValue = result.getString(1);
+				System.out.println(squareValue);
 			}
 
 		} catch (SQLException e)
@@ -829,27 +846,27 @@ public class DatabaseHandler
 		return playedWord;
 	}
 
-	public int getTurn(int gameID, String username)
-	{
-		int turn = 0;
-		
-		try
-		{
-			statement = con.prepareStatement("SELECT max(id) FROM beurt WHERE spel_id = '" + gameID + "' AND account_naam = '" + username + "'");
-			
-			result = statement.executeQuery();
-			
-			if(result.next())
-			{
-				turn = result.getInt(1);
-			}
-		} catch (SQLException e)
-		{
-			e.printStackTrace();
-			System.out.println("QUERY ERROR!!!");
-		}
-		return turn;
-	}
+//	public int getTurn(int gameID, String username)
+//	{
+//		int turn = 0;
+//		
+//		try
+//		{
+//			statement = con.prepareStatement("SELECT max(id) FROM beurt WHERE spel_id = '" + gameID + "' AND account_naam = '" + username + "'");
+//			
+//			result = statement.executeQuery();
+//			
+//			if(result.next())
+//			{
+//				turn = result.getInt(1);
+//			}
+//		} catch (SQLException e)
+//		{
+//			e.printStackTrace();
+//			System.out.println("QUERY ERROR!!!");
+//		}
+//		return turn;
+//	}
 
 	public void joinCompetition(int compID, String username)
 	{
@@ -1018,7 +1035,70 @@ public class DatabaseHandler
 		}
 	}
 
+	public void acceptRejectGame(int turnID, int gameID, String username,String reaction)
+	{
+		
+		try
+		{
+			if(reaction.equalsIgnoreCase("Accepted"))
+			{
+				statement = con.prepareStatement("UPDATE spel SET toestand_type = 'Playing', reactie = 'Accepted', moment_reaktie = '" + getCurrentTimeStamp() + "' WHERE id = '" + gameID + "'");
+				
+				statement.executeUpdate();
+				statement.close();
+				
+				statement = con.prepareStatement("INSERT INTO beurt(id, spel_id, account_naam, aktie_type)VALUES(?,?,?,?)");
+				
+				statement.setInt(1, turnID);
+				statement.setInt(2, gameID);
+				statement.setString(3, username);
+				statement.setString(4, "Begin");
+				
+				statement.executeUpdate();
+			}
+			else if(reaction.equalsIgnoreCase("Rejected"))
+			{
+				statement = con.prepareStatement("UPDATE spel SET toestand_type = 'Resigned', reactie = 'Rejected', moment_reaktie = '" + getCurrentTimeStamp() + "' WHERE id = '" + gameID + "'");
+			
+				statement. executeUpdate();
+				statement.close();
+				
+				statement = con.prepareStatement("INSERT INTO beurt(id, spel_id, account_naam, aktie_type)VALUES(?,?,?,?)");
+				
+				statement.setInt(1, turnID);
+				statement.setInt(2, gameID);
+				statement.setString(3, username);
+				statement.setString(4, "resign");
+				
+				statement.executeUpdate();
+			}
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+			System.out.println("QUERRY ERROR!!!");
+		}
+	}
 
+	public int letterValue(String language, String letter)
+	{
+		int value = 0;
+		try
+		{
+			statement = con.prepareStatement("SELECT waarde FROM lettertype WHERE karakter = '" + letter + "' AND letterset_code = '" + language + "'");
+		
+			result = statement.executeQuery();
+			
+			if(result.next())
+			{
+				value = result.getInt(1);
+			}
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+			System.out.println("QUERRY ERROR");
+		}
+		return value;
+	}
 }
 
 /*
