@@ -7,8 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-
-
+import java.util.HashMap;
 
 public class DatabaseHandler
 {
@@ -34,11 +33,6 @@ public class DatabaseHandler
 	{
 
 		return databaseHandler;
-	}
-
-
-	public void changeTurn() {
-		// zet de turn naar de tegenstander
 	}
 
 	private DatabaseHandler()
@@ -127,7 +121,9 @@ public class DatabaseHandler
 			if (!result.next())
 			{
 				System.out.println("username is available");
-
+				result.close();
+				statement.close();
+				
 				try
 				{
 					// Here we create our query where u state which fields u want to insert data
@@ -164,6 +160,7 @@ public class DatabaseHandler
 			else
 			{
 				System.out.println("username = not available");
+				statement.close();
 			}
 
 		} catch (SQLException e)
@@ -229,6 +226,8 @@ public class DatabaseHandler
 				// System.out.println("sender: " + sender + " Time: " + chatTime
 				// + " message: " + message);
 			}
+			result.close();
+			statement.close();
 
 		} catch (SQLException e)
 		{
@@ -321,7 +320,7 @@ public class DatabaseHandler
 				gameID = result.getInt(1);
 //				System.out.println("do i get the PK " + gameID);
 			}
-
+			result.close();
 			// closes the statement
 			statement.close();
 			
@@ -333,6 +332,8 @@ public class DatabaseHandler
 			statement.setString(4, "Begin");
 			
 			statement.executeUpdate();
+			
+			statement.close();
 			
 		} catch (SQLException e)
 		{
@@ -370,6 +371,8 @@ public class DatabaseHandler
 				}		
 				turn = myTurn + "---" + turnID;
 			}
+			result.close();
+			statement.close();
 
 		} catch (SQLException e)
 		{
@@ -390,6 +393,7 @@ public class DatabaseHandler
 
 			if (result.next())
 			{
+				statement.close();
 				try
 				{
 					// Here we create our query where u state which fields u want to insert data
@@ -406,6 +410,7 @@ public class DatabaseHandler
 					// execute your query
 					statement.executeUpdate(); // if there is not result then u use a executeUpdate()
 
+					result.close(); //check if works
 					// closes the statement
 					statement.close();
 
@@ -439,6 +444,8 @@ public class DatabaseHandler
 			{
 				score = result.getInt(1);
 			}
+			result.close();
+			statement.close();
 
 		} catch (SQLException e)
 		{
@@ -451,18 +458,19 @@ public class DatabaseHandler
 	public void addTileToHand(int gameID, ArrayList<Integer> tile, int turnID)// should work
 	{
 		try
-		{
+		{	
+			statement = con.prepareStatement("INSERT INTO letterbakjeletter(spel_id, letter_id, beurt_id)VALUES(?,?,?)");
 			for (int i = 0; i < tile.size(); i++)
 			{
-				statement = con
-						.prepareStatement("INSERT INTO letterbakjeletter(spel_id, letter_id, beurt_id)VALUES(?,?,?)");
-
 				statement.setInt(1, gameID);
 				statement.setInt(2, tile.get(i));
 				statement.setInt(3, turnID);
 
-				statement.executeUpdate();
+				statement.addBatch();
 			}
+			statement.executeBatch();
+			
+			statement.close();
 		} catch (SQLException e)
 		{
 			e.printStackTrace();
@@ -487,6 +495,8 @@ public class DatabaseHandler
 				squareValue = result.getString(1);
 				System.out.println(squareValue);
 			}
+			result.close();
+			statement.close();
 
 		} catch (SQLException e)
 		{
@@ -512,6 +522,8 @@ public class DatabaseHandler
 			{
 				validWord = true;
 			}
+			result.close();
+			statement.close();
 
 		} catch (SQLException e)
 		{
@@ -529,6 +541,8 @@ public class DatabaseHandler
 					.prepareStatement("UPDATE spel SET toestand_type = '" + status + "' WHERE id ='" + gameID + "'");
 
 			statement.executeUpdate();
+			
+			statement.close();
 
 		} catch (SQLException e)
 		{
@@ -552,7 +566,9 @@ public class DatabaseHandler
 			{
 				gameStatus = result.getString(1);
 			}
-
+			result.close();
+			statement.close();
+			
 		} catch (SQLException e)
 		{
 			e.printStackTrace();
@@ -576,6 +592,8 @@ public class DatabaseHandler
 			{
 				opponent = result.getString(1);
 			}
+			result.close();
+			statement.close();
 
 		} catch (SQLException e)
 		{
@@ -585,22 +603,22 @@ public class DatabaseHandler
 		return opponent;
 	}
 
-	public ArrayList<Integer> jarContent(int gameID)
+	public HashMap<Integer, String> jarContent(int gameID)
 	{
-		ArrayList<Integer> jarContents = new ArrayList<Integer>();
-
+		HashMap<Integer, String> jarContents = new HashMap<Integer, String>();
 		try
 		{
 			statement = con
-					.prepareStatement("SELECT letter_id FROM pot WHERE spel_id ='" + gameID + "'");
+					.prepareStatement("SELECT letter_id, karakter FROM pot WHERE spel_id ='" + gameID + "'");
 
 			result = statement.executeQuery();
 
 			while (result.next())
 			{
-				jarContents.add(result.getInt(1));
+				jarContents.put(result.getInt(1), result.getString(2));
 			}
-
+			result.close();
+			statement.close();
 		} catch (SQLException e)
 		{
 			e.printStackTrace();
@@ -615,8 +633,7 @@ public class DatabaseHandler
 
 		try
 		{
-			statement = con
-					.prepareStatement("SELECT inhoud FROM plankje WHERE spel_id = '"
+			statement = con.prepareStatement("SELECT inhoud FROM plankje WHERE spel_id = '"
 							+ gameID + "' AND beurt_id = '" + turnID + "'");
 
 			result = statement.executeQuery();
@@ -625,12 +642,13 @@ public class DatabaseHandler
 			{
 				handContent = result.getString(1);
 			}
+			result.close();
+			statement.close();
 		} catch (SQLException e)
 		{
 			e.printStackTrace();
 			System.out.println("Query ERROR!!");
 		}
-
 		return handContent;
 	}
 
@@ -654,6 +672,8 @@ public class DatabaseHandler
 			}
 
 			statement.executeUpdate();
+			
+			statement.close();
 
 		} catch (SQLException e)
 		{
@@ -684,6 +704,8 @@ public class DatabaseHandler
 				statement.setString(5, "End");
 
 				statement.executeUpdate();
+				
+				result.close();
 				statement.close();
 			}
 			
@@ -698,6 +720,7 @@ public class DatabaseHandler
 						.prepareStatement("UPDATE spel SET toestand_type = 'Resigned' WHERE toestand_type = 'Playing'");
 
 				statement.executeUpdate();
+				result.close();
 				statement.close();
 			}
 
@@ -733,6 +756,8 @@ public class DatabaseHandler
 				myCompetitions.add(myComps);
 
 			}
+			result.close();
+			statement.close();
 		} catch (SQLException e)
 		{
 			e.printStackTrace();
@@ -764,6 +789,8 @@ public class DatabaseHandler
 				String participaticonRow = user + "---" + compID + "---" + owner + "---" + startTime + "---" + endTime + "---" + summary;
 				myParticipations.add(participaticonRow);
 			}
+			result.close();
+			statement.close();
 		} catch (SQLException e)
 		{
 			e.printStackTrace();
@@ -772,7 +799,7 @@ public class DatabaseHandler
 		return myParticipations;
 	}
 
-	public ArrayList<String> createPot(int gameID, String language)
+	public ArrayList<String> createJar(int gameID, String language)
 	{
 		ArrayList<String> newPot = new ArrayList<String>();
 		int numOfTiles = 0;
@@ -796,18 +823,23 @@ public class DatabaseHandler
 				System.out.println(letter + "---" + numOfTiles);
 //				System.out.println(newPot.size());
 			}
+			result.close();
+			statement.close();
 			
+			statement = con.prepareStatement("INSERT INTO letter(id, spel_id, lettertype_letterset_code, lettertype_karakter)VALUES(?,?,?,?)");
+				
 			for(int i =0; i < newPot.size(); i++)
 			{
-				statement = con.prepareStatement("INSERT INTO letter(id, spel_id, lettertype_letterset_code, lettertype_karakter)VALUES(?,?,?,?)");
 				
-				statement.setInt(1, (i));
+				statement.setInt(1, (i + 1));
 				statement.setInt(2, gameID);
 				statement.setString(3, language);
 				statement.setString(4, newPot.get(i));
 				
-				statement.executeUpdate();
+				statement.addBatch();
 			}
+				statement.executeBatch();
+				statement.close();
 			
 		} catch (SQLException e)
 		{
@@ -838,6 +870,8 @@ public class DatabaseHandler
 				
 				playedWord.add(word + "---" + xPos + "---" + yPos);
 			}
+			result.close();
+			statement.close();
 		} catch (SQLException e)
 		{
 			e.printStackTrace();
@@ -845,28 +879,6 @@ public class DatabaseHandler
 		}
 		return playedWord;
 	}
-
-//	public int getTurn(int gameID, String username)
-//	{
-//		int turn = 0;
-//		
-//		try
-//		{
-//			statement = con.prepareStatement("SELECT max(id) FROM beurt WHERE spel_id = '" + gameID + "' AND account_naam = '" + username + "'");
-//			
-//			result = statement.executeQuery();
-//			
-//			if(result.next())
-//			{
-//				turn = result.getInt(1);
-//			}
-//		} catch (SQLException e)
-//		{
-//			e.printStackTrace();
-//			System.out.println("QUERY ERROR!!!");
-//		}
-//		return turn;
-//	}
 
 	public void joinCompetition(int compID, String username)
 	{
@@ -907,6 +919,8 @@ public class DatabaseHandler
 				
 				numOfPeopleInCompetition.add(compID + "---" + numOfPeople);
 			}
+			result.close();
+			statement.close();
 		} catch (SQLException e)
 		{
 			e.printStackTrace();
@@ -927,6 +941,7 @@ public class DatabaseHandler
 			
 			statement.executeUpdate();
 			
+			statement.close();
 		} catch (SQLException e)
 		{
 			e.printStackTrace();
@@ -941,7 +956,7 @@ public class DatabaseHandler
 			statement = con.prepareStatement("UPDATE woordenboek SET status = '" + status + "' WHERE woord = '" + word + "' AND letterset_code = '" + language + "'");
 		
 			statement.executeUpdate();
-			
+			statement.close();
 		} catch (SQLException e)
 		{
 			e.printStackTrace();
@@ -970,6 +985,8 @@ public class DatabaseHandler
 				
 				pendingWord.add(pendWord);
 			}
+			result.close();
+			statement.close();
 			
 		} catch (SQLException e)
 		{
@@ -990,7 +1007,7 @@ public class DatabaseHandler
 			statement.setString(2, role);
 			
 			statement.executeUpdate();
-			
+			statement.close();
 		} catch (SQLException e)
 		{
 			e.printStackTrace();
@@ -1012,7 +1029,8 @@ public class DatabaseHandler
 			{
 				userRoles.add(result.getString(1));
 			}
-			
+			result.close();
+			statement.close();
 		} catch (SQLException e)
 		{
 			e.printStackTrace();
@@ -1028,6 +1046,7 @@ public class DatabaseHandler
 			statement = con.prepareStatement("DELETE FROM accountrol WHERE account_naam = '" + username + "' AND rol_type = 'Player'");
 		
 			statement.executeQuery();
+			statement.close();
 		} catch (SQLException e)
 		{
 			e.printStackTrace();
@@ -1055,6 +1074,7 @@ public class DatabaseHandler
 				statement.setString(4, "Begin");
 				
 				statement.executeUpdate();
+				statement.close();
 			}
 			else if(reaction.equalsIgnoreCase("Rejected"))
 			{
@@ -1071,6 +1091,7 @@ public class DatabaseHandler
 				statement.setString(4, "resign");
 				
 				statement.executeUpdate();
+				statement.close();
 			}
 		} catch (SQLException e)
 		{
@@ -1092,6 +1113,8 @@ public class DatabaseHandler
 			{
 				value = result.getInt(1);
 			}
+			result.close();
+			statement.close();
 		} catch (SQLException e)
 		{
 			e.printStackTrace();
@@ -1099,6 +1122,32 @@ public class DatabaseHandler
 		}
 		return value;
 	}
+
+	public HashMap<Integer, String> gameTiles(int gameID)
+	{
+		HashMap<Integer, String> tileContent = new HashMap<Integer, String>();
+		
+		try
+		{
+			statement = con.prepareStatement("SELECT id, lettertype_karakter FROM letter WHERE spel_id = '" + gameID + "'");
+			
+			result = statement.executeQuery();
+			
+			while(result.next())
+			{
+				tileContent.put(result.getInt(1), result.getString(2));
+			}
+			result.close();
+			statement.close();
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+			System.out.println("QUERRY ERROR!!!!");
+		}
+		return tileContent ;
+	}
+	
+	
 }
 
 /*
