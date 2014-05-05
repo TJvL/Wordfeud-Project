@@ -12,6 +12,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.ScrollPaneConstants;
 
 @SuppressWarnings("serial")
 public class SpecScreen extends JPanel
@@ -115,7 +116,7 @@ public class SpecScreen extends JPanel
 		myTextArea.setLineWrap(true);
 
 		textAreaScrollPane
-				.setVerticalScrollBarPolicy(textAreaScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+				.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		textAreaScrollPane.setPreferredSize(new Dimension(500, 1200));
 		spectatorScreenTextareaPanel.add(textAreaScrollPane,
 				BorderLayout.CENTER);
