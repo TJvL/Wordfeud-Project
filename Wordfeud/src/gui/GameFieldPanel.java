@@ -53,6 +53,9 @@ public class GameFieldPanel extends JPanel {
 				SquarePanel squarePanel;
 
 				squarePanel = new SquarePanel(match.getSquare(x, y));
+				if (match.getSquare(x, y).getTile() != null){
+					squarePanel.addImage(match.getSquare(x, y).getTile() .getImage());
+				}
 				squaresPanels[x][y] = squarePanel;
 				// j = !j;
 				// square.setBackground(Color.red);

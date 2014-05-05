@@ -2,20 +2,52 @@ package domein;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import datalaag.FileHandler;
 
 public class Jar {
-	private ArrayList<Tile> tiles = new ArrayList<Tile>();
+	private ArrayList<Tile> tiles;
+	private HashMap<String, BufferedImage> images;
 	private Tile tile;
 	private FileHandler fh;
+	private int gameID;
 
 	public Jar() {
 		fh = FileHandler.getInstance();
+		tiles = new ArrayList<Tile>();
+		images = new HashMap<String, BufferedImage>();
+		String[] alphabet = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J",
+				"K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V",
+				"W", "X", "Y", "Z", "?" };
+		for (String letters : alphabet) {
+			if (letters.equals("?")) {
+				images.put(letters, fh.readImage("Plaatjes/Joker.png"));
+			} else {
+				images.put(letters,
+						fh.readImage("Plaatjes/" + letters + ".png"));
+			}
+		}
+	}
+	
+	// Get the size of the Jar
+	public int getJarSize(){
+		return tiles.size();
+	}
+
+	public void setGameID(int gameID) {
+		this.gameID = gameID;
 	}
 
 	// methode vul Jar aan de hand van stenen in de pot (database)
 	// Als nieuwe game is - database vullen
+
+	public Tile createTile(String letter, int value) {
+		tile = new Tile(letter, value, images.get(letter));
+		return tile;
+	}
+	
+	
 
 	public Tile getNewTile() {
 		int randomTile = (int) (0 + (Math.random()) * ((tiles.size() - 0)));
@@ -28,6 +60,7 @@ public class Jar {
 		return tile;
 	}
 
+	/*
 	public void fillJar() {
 		String[] alphabet = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J",
 				"K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V",
@@ -40,18 +73,11 @@ public class Jar {
 		// hard coded contence of Jar
 
 		for (int i = 0; i < alphabet.length; i++) {
-			BufferedImage image;
-			image = fh.readImage("Plaatjes/" + alphabet[i] + ".png");
 			for (int k = 0; k < numberOfTiles[i]; k++) {
-				if (alphabet[i].equals("?")) {
-					tiles.add(tile = new Tile(alphabet[i], 0, fh
-							.readImage("Plaatjes/Joker.png")));
-				} else {
-					tiles.add(tile = new Tile(alphabet[i], tileValue[i], image));
-				}
+				tiles.add(tile = new Tile(alphabet[i], tileValue[i], images.get(alphabet[i])));
 			}
 		}
-	}
+	}*/
 
 	public void addNewTile(Tile t) {
 		tiles.add(t);

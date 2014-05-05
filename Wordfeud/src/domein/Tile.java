@@ -13,12 +13,14 @@ public class Tile {
 	private int x = 1111;
 	private int y = 1111;
 	private BufferedImage image;
+	private int tileID;
 
 	public Tile(String letter, int value, BufferedImage image) {
 		this.letter = letter;
 		this.value = value;
 		this.justPlayed = false;
 		this.image = image;
+		//this.tileID = tileID;
 	}
 
 	// Als een letter wordt gelegd en bevestigt dam slaat de gelegde letter ook
@@ -77,5 +79,9 @@ public class Tile {
 
 	public int getYValue() {
 		return y;
+	}
+	
+	public int getTileID(){
+		return tileID;
 	}
 }

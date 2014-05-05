@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class DatabaseHandler {
 	final private static String URL = "jdbc:mysql://databases.aii.avans.nl:3306/manschou_db2"; // location
@@ -52,7 +53,6 @@ public class DatabaseHandler {
 
 	public void connection() {
 		// Creating a variable for the connection
-
 		try {
 			con = DriverManager.getConnection(URL, USER, USERPASS);
 		} catch (SQLException e) {
@@ -154,8 +154,8 @@ public class DatabaseHandler {
 			} else {
 				System.out.println("username = not available");
 			}
-		} catch (SQLException e) {
 
+		} catch (SQLException e) {
 			e.printStackTrace();
 			System.out.println("query error!!!");
 		}
@@ -167,7 +167,6 @@ public class DatabaseHandler {
 		try {
 			// Here we create our query where u state which fields u want to
 			// insert data
-
 			statement = con
 					.prepareStatement("INSERT INTO chatregel(account_naam, spel_id, tijdstip, bericht)VALUES(?,?,?,?)");
 			// the ? represents anonymous values
@@ -264,7 +263,6 @@ public class DatabaseHandler {
 
 			if (result.next()) {
 				compID = result.getInt(1);
-
 				// System.out.println("do i get the PK " + compID);
 
 				statement = con
@@ -285,12 +283,30 @@ public class DatabaseHandler {
 		return compID;
 	}
 
+	public HashMap<Integer, String> gameTiles(int gameID) {
+		HashMap<Integer, String> tileContent = new HashMap<Integer, String>();
+
+		try {
+			statement = con
+					.prepareStatement("SELECT id, lettertype_karakter FROM letter WHERE spel_id = '"
+							+ gameID + "'");
+
+			result = statement.executeQuery();
+
+			while (result.next()) {
+				tileContent.put(result.getInt(1), result.getString(2));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("QUERRY ERROR!!!!");
+		}
+		return tileContent;
+	}
+
 	public int createGame(int competitionID, String username, String opponent,
 			String privacy, String language)// works
-
 	{
-		int gameID = 0;
-
+		int gameID = 96;
 		try {
 			// Here we create our query where u state which fields u want to
 			// insert data
@@ -322,32 +338,47 @@ public class DatabaseHandler {
 			// closes the statement
 			statement.close();
 
+			statement = con
+					.prepareStatement("INSERT INTO beurt(id, spel_id, account_naam, aktie_type)VALUES(?,?,?,?)");
+
+			statement.setInt(1, 1);
+			statement.setInt(2, gameID);
+			statement.setString(3, username);
+			statement.setString(4, "Begin");
+
+			statement.executeUpdate();
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 			System.out.println("create error");
 		}
-
 		return gameID;
 	}
 
-	public boolean checkTurn(String username, int gameID)// checks who's turn it
-															// is, works
+	public String checkTurn(String username, int gameID)// checks who's turn it
+														// is, works
 	{
-		boolean turn = false;
+		String turn = null;
+		boolean myTurn = false;
+		int turnID = 0;
 
 		try {
 			statement = con
-					.prepareStatement("SELECT * FROM beurt WHERE spel_id = '"
-							+ gameID + "' AND account_naam = '" + username
-							+ "' AND id = (SELECT max(id) FROM beurt)");
+					.prepareStatement("SELECT account_naam, id FROM beurt WHERE spel_id = '"
+							+ gameID + "' ORDER BY id DESC LIMIT 1");
 
 			result = statement.executeQuery();
 
 			if (result.next()) {
-				System.out.println("it's your turn");
-				turn = true;
-			} else {
-				System.out.println("it's not your turn");
+				if (result.getString(1).equals(username)) {
+			//		System.out.println("it's not your turn");
+					turnID = result.getInt(2);
+				} else {
+			//		System.out.println("it's your turn");
+					myTurn = true;
+					turnID = result.getInt(2) + 1;
+				}
+				turn = myTurn + "---" + turnID;
 			}
 
 		} catch (SQLException e) {
@@ -357,7 +388,7 @@ public class DatabaseHandler {
 		return turn;
 	}
 
-	public void updateTurn(int beurtID, int gameID, String username, int score,
+	public void updateTurn(int turnID, int gameID, String username, int score,
 			String action)// needs to be tested, probally works
 	{
 		try {
@@ -375,7 +406,7 @@ public class DatabaseHandler {
 							.prepareStatement("INSERT INTO beurt(id, spel_id, account_naam, score, aktie_type)VALUES(?,?,?,?,?)");
 					// the ? represents anonymous values
 
-					statement.setInt(1, beurtID);
+					statement.setInt(1, turnID);
 					statement.setInt(2, gameID);
 					statement.setString(3, username);
 					statement.setInt(4, score);
@@ -407,7 +438,7 @@ public class DatabaseHandler {
 
 		try {
 			statement = con
-					.prepareStatement("SELECT sum(score) FROM beurt WHERE account_naam = '"
+					.prepareStatement("SELECT totaalscore FROM score WHERE account_naam = '"
 							+ username + "' AND spel_id = '" + gameID + "'");
 
 			result = statement.executeQuery();
@@ -425,7 +456,6 @@ public class DatabaseHandler {
 
 	public void addTileToHand(int gameID, ArrayList<Integer> tile, int turnID)// should
 																				// work
-
 	{
 		try {
 			for (int i = 0; i < tile.size(); i++) {
@@ -449,7 +479,6 @@ public class DatabaseHandler {
 		String squareValue = null;
 
 		try {
-
 			statement = con
 					.prepareStatement("SELECT tegeltype_soort FROM tegel WHERE x = '"
 							+ cordX + "' AND y = '" + cordY + "'");
@@ -457,12 +486,11 @@ public class DatabaseHandler {
 			result = statement.executeQuery();
 
 			if (result.next()) {
-
 				squareValue = result.getString(1);
+				// System.out.println(squareValue);
 			}
 
 		} catch (SQLException e) {
-
 			e.printStackTrace();
 			System.out.println("Query ERROR!!!!");
 		}
@@ -470,34 +498,33 @@ public class DatabaseHandler {
 		return squareValue;
 	}
 
-	public boolean checkWord(String word)// check works
+	public boolean checkWord(String word, String language)// check works
 	{
 		boolean validWord = false;
 
 		try {
 			statement = con
 					.prepareStatement("SELECT woord FROM woordenboek WHERE woord = '"
-							+ word + "'");
+							+ word
+							+ "' AND letterset_code = '"
+							+ language
+							+ "' AND status = 'accepted'");
 
 			result = statement.executeQuery();
 
 			if (result.next()) {
-
 				validWord = true;
 			}
 
 		} catch (SQLException e) {
-
 			e.printStackTrace();
 			System.out.println("Query ERROR!!!");
 		}
-
 		return validWord;
 	}
 
 	public void gameStatusUpdate(int gameID, String status)// works
 	{
-
 		try {
 			statement = con
 					.prepareStatement("UPDATE spel SET toestand_type = '"
@@ -506,14 +533,12 @@ public class DatabaseHandler {
 			statement.executeUpdate();
 
 		} catch (SQLException e) {
-
 			e.printStackTrace();
 			System.out.println("QUERY ERROR!!!");
 		}
 	}
 
 	public String gameStatusValue(int gameID) {
-
 		String gameStatus = null;
 
 		try {
@@ -524,16 +549,13 @@ public class DatabaseHandler {
 			result = statement.executeQuery();
 
 			if (result.next()) {
-
 				gameStatus = result.getString(1);
 			}
 
 		} catch (SQLException e) {
-
 			e.printStackTrace();
 			System.out.println("Query ERROR!!!");
 		}
-
 		return gameStatus;
 	}
 
@@ -548,39 +570,33 @@ public class DatabaseHandler {
 			result = statement.executeQuery();
 
 			if (result.next()) {
-
 				opponent = result.getString(1);
 			}
 
 		} catch (SQLException e) {
-
 			e.printStackTrace();
 			System.out.println("Query error!!!");
 		}
 		return opponent;
 	}
 
-	public ArrayList<Integer> jarContent(int gameID) {
-		ArrayList<Integer> jarContents = new ArrayList<Integer>();
-
+	public HashMap<Integer, String> jarContent(int gameID) {
+		HashMap<Integer, String> jarContents = new HashMap<Integer, String>();
 		try {
 			statement = con
-					.prepareStatement("SELECT letter_id FROM pot WHERE spel_id ='"
+					.prepareStatement("SELECT letter_id, karakter FROM pot WHERE spel_id ='"
 							+ gameID + "'");
 
 			result = statement.executeQuery();
 
 			while (result.next()) {
-
-				jarContents.add(result.getInt(1));
+				jarContents.put(result.getInt(1), result.getString(2));
 			}
 
 		} catch (SQLException e) {
-
 			e.printStackTrace();
 			System.out.println("Query ERROR!!!!");
 		}
-
 		return jarContents;
 	}
 
@@ -588,7 +604,6 @@ public class DatabaseHandler {
 		String handContent = null;
 
 		try {
-
 			statement = con
 					.prepareStatement("SELECT inhoud FROM plankje WHERE spel_id = '"
 							+ gameID + "' AND beurt_id = '" + turnID + "'");
@@ -596,7 +611,6 @@ public class DatabaseHandler {
 			result = statement.executeQuery();
 
 			if (result.next()) {
-
 				handContent = result.getString(1);
 			}
 		} catch (SQLException e) {
@@ -621,7 +635,6 @@ public class DatabaseHandler {
 			statement.setString(6, "Standard");
 
 			if (blankTile != null) {
-
 				statement.setString(7, blankTile);
 			}
 
@@ -645,7 +658,6 @@ public class DatabaseHandler {
 			result = statement.executeQuery();
 
 			if (result.next()) {
-
 				statement = con
 						.prepareStatement("INSERT INTO beurt(id, spel_id, account_naam, score, aktie_type) VALUES(?,?,?,?,?)");
 
@@ -673,11 +685,8 @@ public class DatabaseHandler {
 			}
 
 		} catch (SQLException e) {
-
 			e.printStackTrace();
-
 			System.out.println("Query ERROR!!!");
-
 		}
 	}
 
@@ -692,26 +701,22 @@ public class DatabaseHandler {
 			result = statement.executeQuery();
 
 			while (result.next()) {
-
 				int compID = result.getInt(1);
 				String startTime = result.getTimestamp(2).toString();
 				String endTime = result.getTimestamp(3).toString();
 				String summary = result.getString(4);
-
 				int minParticipants = result.getInt(5);
 				int maxParticipants = result.getInt(6);
 
 				String myComps = compID + "---" + startTime + "---" + endTime
 						+ "---" + summary + "---" + minParticipants + "---"
 						+ maxParticipants;
-
 				myCompetitions.add(myComps);
 
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
 		return myCompetitions;
 	}
 
@@ -749,7 +754,7 @@ public class DatabaseHandler {
 		return myParticipations;
 	}
 
-	public ArrayList<String> createPot(int gameID, String language) {
+	public ArrayList<String> createJar(int gameID, String language) {
 		ArrayList<String> newPot = new ArrayList<String>();
 		int numOfTiles = 0;
 		String letter = null;
@@ -768,21 +773,25 @@ public class DatabaseHandler {
 					newPot.add(letter);
 
 				}
-				System.out.println(letter + "---" + numOfTiles);
+				// System.out.println(letter + "---" + numOfTiles);
 				// System.out.println(newPot.size());
 			}
+			statement.close();
+
+			statement = con
+					.prepareStatement("INSERT INTO letter(id, spel_id, lettertype_letterset_code, lettertype_karakter)VALUES(?,?,?,?)");
 
 			for (int i = 0; i < newPot.size(); i++) {
-				statement = con
-						.prepareStatement("INSERT INTO letter(id, spel_id, lettertype_letterset_code, lettertype_karakter)VALUES(?,?,?,?)");
 
-				statement.setInt(1, (i));
+				statement.setInt(1, (i + 1));
 				statement.setInt(2, gameID);
 				statement.setString(3, language);
 				statement.setString(4, newPot.get(i));
 
-				statement.executeUpdate();
+				statement.addBatch();
 			}
+			statement.executeBatch();
+			statement.close();
 
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -817,28 +826,29 @@ public class DatabaseHandler {
 		return playedWord;
 	}
 
-	public int getTurn(int gameID, String username) {
-		int turn = 0;
-
-		try {
-			statement = con
-					.prepareStatement("SELECT max(id) FROM beurt WHERE spel_id = '"
-							+ gameID
-							+ "' AND account_naam = '"
-							+ username
-							+ "'");
-
-			result = statement.executeQuery();
-
-			if (result.next()) {
-				turn = result.getInt(1);
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-			System.out.println("QUERY ERROR!!!");
-		}
-		return turn;
-	}
+	// public int getTurn(int gameID, String username)
+	// {
+	// int turn = 0;
+	//
+	// try
+	// {
+	// statement =
+	// con.prepareStatement("SELECT max(id) FROM beurt WHERE spel_id = '" +
+	// gameID + "' AND account_naam = '" + username + "'");
+	//
+	// result = statement.executeQuery();
+	//
+	// if(result.next())
+	// {
+	// turn = result.getInt(1);
+	// }
+	// } catch (SQLException e)
+	// {
+	// e.printStackTrace();
+	// System.out.println("QUERY ERROR!!!");
+	// }
+	// return turn;
+	// }
 
 	public void joinCompetition(int compID, String username) {
 		try {
@@ -882,34 +892,199 @@ public class DatabaseHandler {
 		return numOfPeopleInCompetition;
 	}
 
+	public void requestWord(String word, String language) {
+		try {
+			statement = con
+					.prepareStatement("INSERT INTO woordenboek(woord, letterset_code, status)VALUES(?,?,?)");
+
+			statement.setString(1, word);
+			statement.setString(2, language);
+			statement.setString(3, "Pending");
+
+			statement.executeUpdate();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("QUERY ERROR!!!!!");
+		}
+	}
+
+	public void acceptDeniedWord(String word, String language, String status) {
+		try {
+			statement = con
+					.prepareStatement("UPDATE woordenboek SET status = '"
+							+ status + "' WHERE woord = '" + word
+							+ "' AND letterset_code = '" + language + "'");
+
+			statement.executeUpdate();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("QUERY ERROR!!!");
+		}
+	}
+
+	public ArrayList<String> pendingWords() {
+		ArrayList<String> pendingWord = new ArrayList<String>();
+		String word = null;
+		String language = null;
+
+		try {
+			statement = con
+					.prepareStatement("SELECT woord, letterset_code FROM woordenboek WHERE status = 'Pending'");
+
+			result = statement.executeQuery();
+
+			while (result.next()) {
+				word = result.getString(1);
+				language = result.getString(2);
+
+				String pendWord = word + "---" + language;
+
+				pendingWord.add(pendWord);
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("QUERRY ERROR!!!!");
+		}
+
+		return pendingWord;
+	}
+
+	public void setRole(String username, String role) {
+		try {
+			statement = con
+					.prepareStatement("INSERT INTO accountrol(account_naam, rol_type)VALUES(?,?)");
+
+			statement.setString(1, username);
+			statement.setString(2, role);
+
+			statement.executeUpdate();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("QUERRY ERROR!!!");
+		}
+	}
+
+	public ArrayList<String> getRole(String username) {
+		ArrayList<String> userRoles = new ArrayList<String>();
+
+		try {
+			statement = con
+					.prepareStatement("SELECT rol_type FROM accountrol WHERE account_naam = '"
+							+ username + "' ORDER BY rol_type ASC");
+
+			result = statement.executeQuery();
+
+			while (result.next()) {
+				userRoles.add(result.getString(1));
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("QUERRY ERRROR!!!!");
+		}
+		return userRoles;
+	}
+
+	public void banPlayer(String username) {
+		try {
+			statement = con
+					.prepareStatement("DELETE FROM accountrol WHERE account_naam = '"
+							+ username + "' AND rol_type = 'Player'");
+
+			statement.executeQuery();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("QUERRY ERROR!!!");
+		}
+	}
+
+	public void acceptRejectGame(int turnID, int gameID, String username,
+			String reaction) {
+
+		try {
+			if (reaction.equalsIgnoreCase("Accepted")) {
+				statement = con
+						.prepareStatement("UPDATE spel SET toestand_type = 'Playing', reactie = 'Accepted', moment_reaktie = '"
+								+ getCurrentTimeStamp()
+								+ "' WHERE id = '"
+								+ gameID + "'");
+
+				statement.executeUpdate();
+				statement.close();
+
+				statement = con
+						.prepareStatement("INSERT INTO beurt(id, spel_id, account_naam, aktie_type)VALUES(?,?,?,?)");
+
+				statement.setInt(1, turnID);
+				statement.setInt(2, gameID);
+				statement.setString(3, username);
+				statement.setString(4, "Begin");
+
+				statement.executeUpdate();
+			} else if (reaction.equalsIgnoreCase("Rejected")) {
+				statement = con
+						.prepareStatement("UPDATE spel SET toestand_type = 'Resigned', reactie = 'Rejected', moment_reaktie = '"
+								+ getCurrentTimeStamp()
+								+ "' WHERE id = '"
+								+ gameID + "'");
+
+				statement.executeUpdate();
+				statement.close();
+
+				statement = con
+						.prepareStatement("INSERT INTO beurt(id, spel_id, account_naam, aktie_type)VALUES(?,?,?,?)");
+
+				statement.setInt(1, turnID);
+				statement.setInt(2, gameID);
+				statement.setString(3, username);
+				statement.setString(4, "resign");
+
+				statement.executeUpdate();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("QUERRY ERROR!!!");
+		}
+	}
+
+	public int letterValue(String language, String letter) {
+		int value = 0;
+		try {
+			statement = con
+					.prepareStatement("SELECT waarde FROM lettertype WHERE karakter = '"
+							+ letter
+							+ "' AND letterset_code = '"
+							+ language
+							+ "'");
+
+			result = statement.executeQuery();
+
+			if (result.next()) {
+				value = result.getInt(1);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("QUERRY ERROR");
+		}
+		return value;
+	}
 }
 
 /*
- * aanmaken door: DatabaseHandler dbh = DatabaseHandler.getInstance(); <<<<<<<
- * HEAD
+ * aanmaken door: DatabaseHandler dbh = DatabaseHandler.getInstance();
  * 
- * <<<<<<< HEAD <<<<<<< HEAD en aanroepen door: dbh. -------- ======= en
- * aanroepen door: dbh. -------- ======= en aanroepen door: dbh. --------
- * >>>>>>> refs/remotes/Kleinedruif/master-development =======
- * 
- * en aanroepen door: dbh. -------- >>>>>>>
- * refs/remotes/Kleinedruif/master-development
+ * en aanroepen door: dbh. --------
  * 
  * aangemaakt door: Michael login check register check and register name and
  * password create competition, create game chat send, checkTurn, chat Receive
- * jarcontent
+ * jarcontent set/getRole, ban player, add/rejectWords
  * 
- * <<<<<<< HEAD
- * 
- * <<<<<<< HEAD to use multiple methods con.close(); needs to be removed.
- * otherwise u get an closed connection error.
- * 
- * >>>>>>> refs/remotes/Kleinedruif/master-development ======= all needs to be
- * checked for the rol of the player to use multiple methods con.close(); needs
- * to be removed. otherwise u get an closed connection error. >>>>>>>
- * refs/remotes/Kleinedruif/master-development =======
  * 
  * to use multiple methods con.close(); needs to be removed. otherwise u get an
  * closed connection error. all needs to be checked for the rol of the player to
- * use multiple methods >>>>>>> refs/remotes/Kleinedruif/master-development
+ * use multiple methods
  */

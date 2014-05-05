@@ -102,7 +102,7 @@ public class ScoreCalculator {
 		if (runScoreCalculator) {
 			// Check if the played word is longer then 1
 			if (justPlayedTiles.size() > 1) {
-				System.out.println(justPlayedTiles.size() + " grote van");
+	//			System.out.println(justPlayedTiles.size() + " grote van");
 				if (tilesInOneLine()) {
 					// alle gelegde tiles liggen op dezelfde lijn
 
@@ -112,7 +112,7 @@ public class ScoreCalculator {
 
 						if (playedTilesConnected()) {
 							// alle gelegde tiles liggen aan elkaar
-							System.out.println("alle checks zijn geslaagd");
+	//						System.out.println("alle checks zijn geslaagd");
 							score = calculateScore();
 						}
 					}
@@ -120,7 +120,7 @@ public class ScoreCalculator {
 			}
 			// If the played word is 1 long
 			else if (justPlayedTiles.size() == 1) {
-				System.out.println("TEST");
+	//			System.out.println("TEST");
 				score = calculateScoreOneTile();
 			}
 		}
@@ -166,9 +166,9 @@ public class ScoreCalculator {
 
 	// Method to check if the first word placed is on the star
 	public boolean checkFirstWordOnStart() {
-		boolean firstWordOnStar = false;
+		boolean firstWordOnStar = false;		
 		for (Square sq : justPlayedTiles) {
-			if (sq.getValue().equals("star")) {
+			if (sq.getValue().equals("*")) {
 				firstWordOnStar = true;
 			}
 		}
@@ -189,8 +189,6 @@ public class ScoreCalculator {
 			for (int x = 0; x < 15 && !stopLoop; x++) {
 				if (field[x][y].getTile() != null) {
 					if (field[x][y].getTile().getJustPlayed()) {
-						System.out.println(x + " " + y + " "
-								+ field[x][y].getTile().getJustPlayed());
 						if (firstY) {
 							tempY = field[x][y].getYPos();
 							firstY = false;
@@ -198,11 +196,11 @@ public class ScoreCalculator {
 							if (tempY != field[x][y].getYPos()) {
 								stopLoop = true;
 								wordHorizontal = false;
-								System.out.println("Woord is niet horizontaal");
+	//							System.out.println("Woord is niet horizontaal");
 								result = false;
 							} else {
 								wordHorizontal = true;
-								System.out.println("Woord is horizontaal");
+	//							System.out.println("Woord is horizontaal");
 								result = true;
 							}
 						}
@@ -226,12 +224,12 @@ public class ScoreCalculator {
 							} else {
 								if (tempX != field[x][y].getXPos()) {
 									stopLoop = true;
-									System.out
-											.println("Woord is niet verticaal");
+	//								System.out
+	//										.println("Woord is niet verticaal");
 									result = false;
 								} else {
 									wordHorizontal = false;
-									System.out.println("Woord is verticaal");
+	//								System.out.println("Woord is verticaal");
 									result = true;
 								}
 							}
@@ -255,10 +253,6 @@ public class ScoreCalculator {
 			if (field[x][square.getYPos()].getTile() != null) {
 				if (isConnected(field[x][square.getYPos()],
 						field[square.getXPos()][square.getYPos()], "horizontal")) {
-					System.out.println("Letter: "
-							+ field[x][square.getYPos()].getTile().getLetter()
-							+ " waarde: "
-							+ field[x][square.getYPos()].getTile().getValue());
 					word.addLetter(field[x][square.getYPos()].getTile()
 							.getLetter());
 					word.increaseScore(checkBonusOffSquare(
@@ -280,10 +274,10 @@ public class ScoreCalculator {
 
 				if (isConnected(field[square.getXPos()][y],
 						field[square.getXPos()][square.getYPos()], "vertical")) {
-					System.out.println("Letter: "
-							+ field[square.getXPos()][y].getTile().getLetter()
-							+ " waarde: "
-							+ field[square.getXPos()][y].getTile().getValue());
+	//				System.out.println("Letter: "
+	//						+ field[square.getXPos()][y].getTile().getLetter()
+	//						+ " waarde: "
+	//						+ field[square.getXPos()][y].getTile().getValue());
 					word.addLetter(field[square.getXPos()][y].getTile()
 							.getLetter());
 					word.increaseScore(checkBonusOffSquare(
@@ -321,7 +315,7 @@ public class ScoreCalculator {
 	public int calculateScore() {
 		if (wordHorizontal) {
 			// woord is horizontaal
-			System.out.println("---- woord is horizontaal");
+	//		System.out.println("---- woord is horizontaal");
 			int testingXValue;
 			int testingYValue1 = 0;
 
@@ -344,10 +338,10 @@ public class ScoreCalculator {
 													.getTile().getValue()));
 									word.addLetter(field[x][y].getTile()
 											.getLetter());
-									System.out
-											.println("Letter: "
-													+ field[x][y].getTile()
-															.getLetter());
+	//								System.out
+	//										.println("Letter: "
+	//												+ field[x][y].getTile()
+	//														.getLetter());
 								}
 							}
 						}
@@ -367,13 +361,13 @@ public class ScoreCalculator {
 							field[x][testingYValue1],
 							field[justPlayedTiles.get(0).getXPos()][testingYValue1],
 							"horizontal")) {
-						System.out
-								.println("Letter: "
-										+ field[x][testingYValue1].getTile()
-												.getLetter()
-										+ " waarde: "
-										+ field[x][testingYValue1].getTile()
-												.getValue());
+	//					System.out
+	//							.println("Letter: "
+	//									+ field[x][testingYValue1].getTile()
+	//											.getLetter()
+	//									+ " waarde: "
+	//									+ field[x][testingYValue1].getTile()
+	//											.getValue());
 						word.addLetter(field[x][testingYValue1].getTile()
 								.getLetter());
 						word.increaseScore(checkBonusOffSquare(
@@ -412,10 +406,10 @@ public class ScoreCalculator {
 													.getTile().getValue()));
 									word.addLetter(field[x][y].getTile()
 											.getLetter());
-									System.out
-											.println("Letter: "
-													+ field[x][y].getTile()
-															.getLetter());
+	//								System.out
+	//										.println("Letter: "
+	//												+ field[x][y].getTile()
+	//														.getLetter());
 								}
 							}
 						}
@@ -435,13 +429,13 @@ public class ScoreCalculator {
 					if (isConnected(field[testingXValue1][y],
 							field[testingXValue1][justPlayedTiles.get(0)
 									.getYPos()], "vertical")) {
-						System.out
-								.println("Letter: "
-										+ field[testingXValue1][y].getTile()
-												.getLetter()
-										+ " waarde: "
-										+ field[testingXValue1][y].getTile()
-												.getValue());
+	//					System.out
+	//							.println("Letter: "
+	//									+ field[testingXValue1][y].getTile()
+	//											.getLetter()
+	//									+ " waarde: "
+	//									+ field[testingXValue1][y].getTile()
+	//											.getValue());
 						word.addLetter(field[testingXValue1][y].getTile()
 								.getLetter());
 						// checking for bonussen
@@ -500,27 +494,27 @@ public class ScoreCalculator {
 				int i = testSq.getXPos() - playedSq.getXPos();
 				if (i > 0) {
 					// testSq ligt rechts van de playedSq
-					System.out.println(testSq.getTile().getLetter()
-							+ " ligt rechts van de "
-							+ playedSq.getTile().getLetter());
+	//				System.out.println(testSq.getTile().getLetter()
+	//						+ " ligt rechts van de "
+	//						+ playedSq.getTile().getLetter());
 					for (i = testSq.getXPos() - 1; i > playedSq.getXPos(); i--) {
 
 						if (field[i][testSq.getYPos()].getTile() == null) {
 							connected = false;
-							System.out.println("Connected if " + connected);
+	//						System.out.println("Connected if " + connected);
 						}
 					}
 
 				} else if (i < 0) {
 					// testSq ligt links van de playedSq
-					System.out.println(testSq.getTile().getLetter()
-							+ " ligt links van de "
-							+ playedSq.getTile().getLetter());
+	//				System.out.println(testSq.getTile().getLetter()
+	//						+ " ligt links van de "
+	//						+ playedSq.getTile().getLetter());
 					for (i = testSq.getXPos() + 1; i < playedSq.getXPos(); i++) {
 
 						if (field[i][testSq.getYPos()].getTile() == null) {
 							connected = false;
-							System.out.println("Connected if " + connected);
+	//						System.out.println("Connected if " + connected);
 						}
 					}
 
@@ -529,30 +523,30 @@ public class ScoreCalculator {
 				int i = testSq.getYPos() - playedSq.getYPos();
 				if (i > 0) {
 					// testSq onder de playedSq
-					System.out.println(testSq.getTile().getLetter()
-							+ " ligt onder de "
-							+ playedSq.getTile().getLetter());
+	//				System.out.println(testSq.getTile().getLetter()
+	//						+ " ligt onder de "
+	//						+ playedSq.getTile().getLetter());
 					for (i = playedSq.getYPos() - 1; i > playedSq.getYPos(); i--) {
 						if (field[testSq.getXPos()][i].getTile() == null) {
 							connected = false;
-							System.out.println("Connected if " + connected);
+	//						System.out.println("Connected if " + connected);
 						}
 					}
 				} else if (i < 0) {
 					// testSq boven de playedSq
-					System.out.println(testSq.getTile().getLetter()
-							+ " ligt boven de "
-							+ playedSq.getTile().getLetter());
+	//				System.out.println(testSq.getTile().getLetter()
+	//						+ " ligt boven de "
+	//						+ playedSq.getTile().getLetter());
 					for (i = testSq.getYPos() + 1; i < playedSq.getYPos(); i++) {
 						if (field[testSq.getXPos()][i].getTile() == null) {
 							connected = false;
-							System.out.println("Connected if " + connected);
+	//						System.out.println("Connected if " + connected);
 						}
 					}
 				}
 			}
 		}
-		System.out.println("De tegels zijn: " + connected + " test " + testSq.getTile().getLetter() + " " + playedSq.getTile().getLetter());
+	//	System.out.println("De tegels zijn: " + connected + " test " + testSq.getTile().getLetter() + " " + playedSq.getTile().getLetter());
 		return connected;
 	}
 

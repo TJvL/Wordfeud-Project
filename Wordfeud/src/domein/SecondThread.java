@@ -16,6 +16,7 @@ public class SecondThread extends Thread {
 	private DatabaseHandler dbh;
 	private ScorePanel scorePanel;
 	private int storeScore;
+	private boolean running = true;
 
 	public SecondThread(Match match, GameFieldPanel fieldPanel,
 			GameButtonPanel buttonPanel, ScorePanel scorePanel) {
@@ -28,29 +29,25 @@ public class SecondThread extends Thread {
 	}
 
 	public void run() {
-		int counter = 0;
-		while (true) {
-
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	
+		while (running) {
+			running = true;
 			// Aan match vragen wat de GameID is voor database updates - Dit
 			// constant doen
 			// Dan is er meer een thread voor alle games
+			int gameID = match.getGameID();
 
 			// Hier komt de methode die the naam opvraagt van de tegenstander
 			// Geeft de score aan de score panel
 			// Idem voor eigen score
-			counter++;
-			scorePanel.setOwnScore(counter);
-
-			// Hier komt een methode die constant de beurt opvraagd
-			// Als je aan de beurt bent dan op true zetten
-			// De beurt knoppen worden dan gedisabled
-			// Else op false zetten
-
-			// Bij het veranderen van de beurt - WordValue resetten
-			/*
-			 * if (counter > 5){ buttonPanel.setTurn(false); } else {
-			 * buttonPanel.setTurn(true); }
-			 */
+			scorePanel.setEnemyScore(dbh.score(gameID, match.getEnemyName()));
+			scorePanel.setOwnScore(dbh.score(gameID, match.getOwnName()));
 
 			// Method die kijkt of er al 72 uur geen woord is gespeeld
 			// Zoja - spel op non actief zetten
@@ -70,13 +67,30 @@ public class SecondThread extends Thread {
 				storeScore = currentScore;
 			}
 
-			// fieldPanel update wie er aan de beurt is
-			// buttonPanel update wie er aan de beurt is
-			// gegevens opvragen via match
+			try {
+				if (!dbh.gameStatusValue(gameID).equals("Finished")
+						|| !dbh.gameStatusValue(gameID).equals("Resigned")) {
+					match.getMaxTurnID();
+					if (match.getMyTurn()) {
+						buttonPanel.setTurn(true);
+					} else {
+						buttonPanel.setTurn(false);
+					}
+				} else {
+					buttonPanel.setTurn(false);
+					buttonPanel.disableSurrender();
+					running = false;
+				}
+				// fieldPanel update wie er aan de beurt is
+				// buttonPanel update wie er aan de beurt is
+				// gegevens opvragen via match
 
-			// Refreshes the scorePanel
-			scorePanel.updatePanel();
+				// Refreshes the scorePanel
+				scorePanel.updatePanel();
 
+			} catch (NullPointerException e) {
+
+			}
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
@@ -85,4 +99,9 @@ public class SecondThread extends Thread {
 			}
 		}
 	}
+	
+	public void setRunning(boolean running){
+		this.running = running;
+	}
+
 }

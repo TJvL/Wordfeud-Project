@@ -34,11 +34,16 @@ public class GameButtonPanel extends JPanel {
 		this.match = match;
 	}
 	
+	public synchronized void disableSurrender(){
+		surr.setEnabled(false);
+	}
+	
 	public synchronized void setTurn(boolean turn){
 		if (turn){
 			swap.setEnabled(true);
 			play.setEnabled(true);
 			pass.setEnabled(true);
+			surr.setEnabled(true);
 		} else {
 			swap.setEnabled(false);
 			play.setEnabled(false);
@@ -107,6 +112,7 @@ public class GameButtonPanel extends JPanel {
 
 	private void skipTurn() {
 		// DatabaseHandler.getInstance().changeTurn();
+		match.skipTurn();
 	}
 
 	private void shuffleTiles() {
@@ -155,6 +161,6 @@ public class GameButtonPanel extends JPanel {
 
 	private void surrenderGame() {
 		// pop-up maken met score e.d.
-		System.exit(0);
+		match.surrenderGame();	
 	}
 }

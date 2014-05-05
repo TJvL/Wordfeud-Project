@@ -2,6 +2,7 @@ package domein;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import datalaag.DatabaseHandler;
 import datalaag.FileHandler;
@@ -13,9 +14,11 @@ public class Board {
 	private ScoreCalculator calculator;
 	private FileHandler fh;
 	private DatabaseHandler dbh;
+	private HashMap<String, BufferedImage> images;
 	private int score;
 	private String submittedWord;
 	private boolean checkingWord;
+	private int gameID;
 
 	// Hier moet gekeken of er een nieuwe bord wordt aangemaakt
 	// Of het spel al bezig is het bord laden
@@ -27,14 +30,26 @@ public class Board {
 		fh = FileHandler.getInstance();
 		dbh = DatabaseHandler.getInstance();
 		submittedWord = "*";
+		images = new HashMap<String, BufferedImage>();
+		images.put("DL", fh.readImage("Plaatjes/DL.png"));
+		images.put("TL", fh.readImage("Plaatjes/TL.png"));
+		images.put("DW", fh.readImage("Plaatjes/DW.png"));
+		images.put("TW", fh.readImage("Plaatjes/TW.png"));
+		images.put("*", fh.readImage("Plaatjes/star.png"));
+		images.put("--", fh.readImage("Plaatjes/board.png"));
+	}
 
-		// Tijdelijk vullen van het bord
-		BufferedImage image = fh.readImage("Plaatjes/board.png");
-		for (int y = 0; y < 15; y++) {
-			for (int x = 0; x < 15; x++) {
-				field[x][y] = new Square(x, y, "board", image);
-			}
-		}
+	public void setGameID(int gameID) {
+		this.gameID = gameID;
+	}
+
+	// Methode voor aanmaken van een new board
+	public void addSquaresNewBoard(int x, int y, String value) {
+		field[x][y] = new Square(x, y, value, images.get(value));
+		// Zie addSquares();
+	}
+
+	public void createBoard() {
 
 		// coordinaten en namen van de te plaatsen squares
 		String[] typeSquares = { "dl", "tl", "dw", "tw" };
@@ -65,26 +80,19 @@ public class Board {
 		int y;
 
 		// plaatsen van de star
-		image = fh.readImage("Plaatjes/star.png");
-		field[7][7] = new Square(7, 7, "star", image);
+		field[7][7] = new Square(7, 7, "star", images.get("star"));
 
 		// plaatsen van alle bonusSquares
 		for (int i = 0; i < typeSquares.length; i++) {
 			// voor alle typeSquares
-			image = fh.readImage("Plaatjes/" + paths[i]);
 			for (int number = 0; number < amounts[i]; number++) {
 				// voor het aantal keer dat de typeSquare voorkomt op het bord
 				x = xValues[i][number] - 1;
 				y = yValues[i][number] - 1;
-				field[x][y] = new Square(x, y, typeSquares[i], image);
+				field[x][y] = new Square(x, y, typeSquares[i],
+						images.get("Plaatjes/" + paths[i]));
 			}
 		}
-	}
-
-	// Methode voor aanmaken van een new board
-	public void addSquaresNewBoard() {
-
-		// Zie addSquares();
 	}
 
 	public void addTileToSquare(Tile t, int x, int y) {
@@ -111,10 +119,10 @@ public class Board {
 			// Hier moet de optie komen om de tiles uit justPlayedTile aan de
 			// database toetevoegen
 			// Hier ook gelijk de score update en beurt update
-			System.out.println("Woord was goed");
+		//	System.out.println("Woord was goed");
 			possible = true;
 		} else {
-			System.out.println("Woord was fout");
+		//	System.out.println("Woord was fout");
 		}
 		return possible;
 	}
@@ -132,7 +140,7 @@ public class Board {
 	public boolean checkWords() {
 		boolean allWordsExist = true;
 		ArrayList<Word> words = calculator.getJustPlayedTiles();
-		System.out.println(words.size() + " DE SIZE VAN DE TEGEELS");
+	//	System.out.println(words.size() + " DE SIZE VAN DE TEGEELS");
 		for (Word word : words) {
 			// woord geven aan de database
 			// als woord niet bestaat allWordsExist = false
@@ -140,12 +148,13 @@ public class Board {
 			// bij gamebutton aan match geven en match laten vragen of de speler
 			// het wordt wil submitten of niet
 			// niet - dan geen score
-			if (dbh.checkWord(word.getWord())) {
+			if (dbh.checkWord(word.getWord(), "EN")) {
 				System.out.println("WOORD BESTAAT IN WOORDENBOEK");
 				submittedWord = "*";
 				checkingWord = false;
 			} else {
 				System.out.println("WOORD BESTAAT NIET IN HET WOORDENBOEK");
+				allWordsExist = false;
 				/*
 				 * submittedWord = word.getWord(); while (!checkingWord){
 				 * submittedWord = "*"; checkingWord = false;
@@ -184,14 +193,26 @@ public class Board {
 		}
 	}
 
+	public ArrayList<Tile> addtilesToDatabase(){
+		ArrayList<Tile> justPlayedLetters = new ArrayList<Tile>();
+		for (int y = 0; y < 15; y++) {
+			for (int x = 0; x < 15; x++) {
+				if (field[x][y].getTile().getJustPlayed()){
+					justPlayedLetters.add(field[x][y].getTile());
+				}
+			}
+		}
+		return justPlayedLetters;
+	}
+	
 	// Methode voor laden van een spel wat al aan de gang is
 	public void addSquares() {
 		// Hier moeten de square worden opgevraagd aan de database
-		for (int y = 0; y < 15; y++) {
-			for (int x = 0; x < 15; x++) {
-				dbh.squareCheck(x, y);
-			}
-		}
+		/*
+		 * for (int y = 0; y < 15; y++) { for (int x = 0; x < 15; x++) {
+		 * dbh.squareCheck(x, y); } }
+		 */
+
 		// hier uit de database (heet tegel) x - y halen/ de borden staan
 		// opgeslagen
 		// in de database.

@@ -26,7 +26,7 @@ public class GameScreen extends JPanel {
 		this.add(buttonPanel);
 		scorePanel = new ScorePanel(boardPanel);
 		scorePanel.setBounds(530, 515, 500, 85);
-		this.add(scorePanel);		
+		this.add(scorePanel);	
 	}
 
 	public void setMatch(Match match) {
@@ -35,15 +35,21 @@ public class GameScreen extends JPanel {
 		scorePanel.setMatch(match);
 		
 		// Second thread for running the chat funcion and who's turn it is 
+		try {
+		setThreadStatus(false);
+		} catch (NullPointerException e){
+			
+		}
 		secondThread = new SecondThread(match, boardPanel, buttonPanel, scorePanel);
 		secondThread.start();
 	}
 
-	public GameFieldPanel getGameFieldPanel() {
+	public GameFieldPanel getGameFieldPanel(boolean running) {
+		setThreadStatus(running);
 		return boardPanel;
 	}
 	
-	public void disableThread(){
-	//	secondThread.
+	public void setThreadStatus(boolean running){
+		secondThread.setRunning(running);
 	}
 }

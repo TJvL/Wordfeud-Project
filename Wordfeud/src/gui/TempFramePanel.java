@@ -31,6 +31,6 @@ public class TempFramePanel extends JFrame {
 	}
 	
 	public GameFieldPanel getGameFieldPanel(){
-		return gameScreen.getGameFieldPanel();
+		return gameScreen.getGameFieldPanel(true);
 	}
 }
