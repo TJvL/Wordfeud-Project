@@ -50,8 +50,8 @@ public class LoginScreen extends JPanel {
 
 		loginButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				mainFrame.setPlayerScreen();
-				mainFrame.setPlayerMenuBar();
+				mainFrame.setAdminAccScreen();
+				mainFrame.setAdminMenuBar();
 			}
 
 		});
