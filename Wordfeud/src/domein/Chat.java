@@ -47,7 +47,7 @@ public class Chat implements Runnable,ActionListener {
 	
 	/**		ALREADY unnecessary		*/		//private Timestamp latestTimeStamp = new Timestamp(latestDateStamp.getTime());
 	
-	/**		eventually unnecessary	*/		private TestUserClass testUser1 = new TestUserClass("Ronnie376");
+	/**		eventually unnecessary	*/		//private TestUserClass testUser1 = new TestUserClass();
 	
 	private void start() {
 		if (runner == null ) {
@@ -69,7 +69,7 @@ public class Chat implements Runnable,ActionListener {
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	///////////////////////////////VRAAG VRAAG OVER BERICHTEN IN DATABASE/////////////////////////////////////////
+	///////////////////////////////VRAAG VRAAG OVER BERICHTEN IN DATABASE- waarschijnlijk opgelost////////////////
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	public Chat(TestUserClass user1, TestUserClass user2, int gameID) {				// I get the player object references and the gameID of this match from the class that invokes this constructor (Wouter, Mike)
@@ -129,7 +129,7 @@ public class Chat implements Runnable,ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		
-		chatArea.append("knop ingedrukt\n");
+										//chatArea.append("knop ingedrukt\n");			TESTCODE
 		this.sendMessage();
 		
 	}
@@ -141,9 +141,9 @@ public class Chat implements Runnable,ActionListener {
 		} else {
 		
 		
-		int gameId = testGameClass.getSpelID();								/**||||||||||||||||||||||||||||||||||||*/
+		int gameId = this.gameID;								/**||||||||||||||||||||||||||||||||||||*/
 		String message = input.getText();									/**||||||||||||||||||||||||||||||||||||*/
-		String userName = testUser1.getUserName(); 							/**||||||||||||||||||||||||||||||||||||*/
+		String userName = user1.getName(); 							/**||||||||||||||||||||||||||||||||||||*/
 		
 		
 		//chatArea.append(userName + ": " + message + "\n"); 			//this is a   TEST line
@@ -156,17 +156,17 @@ public class Chat implements Runnable,ActionListener {
 	}
 	
 	public void checkForMessages() {
-		//chatMessages = dbh.chatReceive(this.gameID , latestUpdatedMessageTimeDate); 			// REAL CODE
+		chatMessages = dbh.chatReceive(this.gameID , latestUpdatedMessageTimeDate); 			// REAL CODE
 			
 		for (String a : chatMessages) {
-			System.out.println("latest updated message time date: " + latestUpdatedMessageTimeDate);
-			System.out.println("latest updated message: "+ latestUpdatedMessage);
+						//System.out.println("latest updated message time date: " + latestUpdatedMessageTimeDate); TEST CODE
+						//System.out.println("latest updated message: "+ latestUpdatedMessage);		TEST CODE
 			String[] parts 			= a.split("---");
 			String senderUserName 	= parts[0];
 			String dateTime 		= parts[1];
 			String message 			= parts[2];
-			System.out.println("new message's dateTime: " + dateTime);
-			System.out.println("new message: " + message);
+						//System.out.println("new message's dateTime: " + dateTime);		TEST CODE	
+						//System.out.println("new message: " + message);		TEST CODE
 			
 			if ((latestUpdatedMessageTimeDate.equals(""))) {					//if it IS the first incoming message since startup of application				
 				chatArea.append(senderUserName + ": ");	
@@ -175,27 +175,27 @@ public class Chat implements Runnable,ActionListener {
 			
 				latestUpdatedMessageTimeDate = dateTime;
 				latestUpdatedMessage = message;
-				System.out.println("this is the first message");
-				System.out.println("");
+							//System.out.println("this is the first message");			TEST CODE
+							//System.out.println("");									TEST CODE
 			}
 			
 			else {																//if it's NOT the first incoming message since startup of application
-				System.out.println("this is NOT the first message");
+								//System.out.println("this is NOT the first message");		TEST CODE
 				if (!latestUpdatedMessageTimeDate.equals(dateTime) && !latestUpdatedMessage.equals(message)) { 		//if the incoming message is NOT already in the chatscreen
-					System.out.println("datetime and message are new");
+											//System.out.println("datetime and message are new");		TEST CODE
 					chatArea.append(senderUserName + ": ");
 					chatArea.append(" \"" + message + "\" ");
 					chatArea.append("(" + dateTime + ")" + "\n");
 				
 					latestUpdatedMessageTimeDate = dateTime;
 					latestUpdatedMessage = message;
-					System.out.println("latest timeDate: " + latestUpdatedMessageTimeDate);
-					System.out.println("latest message: " + latestUpdatedMessage);
-					System.out.println("");
+								//System.out.println("latest timeDate: " + latestUpdatedMessageTimeDate);		TEST CODE
+								//System.out.println("latest message: " + latestUpdatedMessage);				TEST CODE
+								//System.out.println("");
 				}
 				else {							//EXTRA CODE FOR TESTING
-					System.out.println("the incoming message is already in the chatscreen");	//EXTRA CODE FOR TESTING
-					System.out.println("");		//EXTRA CODE FOR TESTING
+								//System.out.println("the incoming message is already in the chatscreen");	//EXTRA CODE FOR TESTING
+								//System.out.println("");		//EXTRA CODE FOR TESTING
 				}								//EXTRA CODE FOR TESTING
 			}
 		}
