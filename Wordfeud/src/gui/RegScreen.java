@@ -16,6 +16,15 @@ public class RegScreen extends JPanel {
 	private JPanel buttons;
 	private JPanel dataField;
 	private MainFrame mainFrame;
+	private String username;
+	private String password;
+	private String repPassword;
+	private String email;
+	private JTextField usernameField = new JTextField(20);
+	private JPasswordField passwordField = new JPasswordField(20);
+	private JPasswordField confirmPasswordField = new JPasswordField(20);
+	private JTextField emailField = new JTextField(20);
+	
 
 	public RegScreen(MainFrame mainFrame) {
 		this.mainFrame = mainFrame;
@@ -39,30 +48,26 @@ public class RegScreen extends JPanel {
 
 		cancelButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				mainFrame.setLoginOptionsScreen();
+				mainFrame.setLoginScreen();
 			}
 		});
 
 		confirmButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				register();
 			}
 		});
 	}
 
 	private void createDataField() {
 		dataField = new JPanel();
-		JPanel labels = new JPanel(new GridLayout(4, 1));
-		JPanel fields = new JPanel(new GridLayout(4, 1));
+		JPanel labels = new JPanel(new GridLayout(4, 1, 0, 20));
+		JPanel fields = new JPanel(new GridLayout(4, 1, 0, 20));
 		
 		JLabel usernameLabel = new JLabel("Username:");
 		JLabel passwordLabel = new JLabel("Password:");
 		JLabel confirmPasswordLabel = new JLabel("Confirm Password:");
 		JLabel emailLabel = new JLabel("Email adres:");
-		
-		JTextField usernameField = new JTextField(20);
-		JPasswordField passwordField = new JPasswordField(20);
-		JPasswordField confirmPasswordField = new JPasswordField(20);
-		JTextField emailField = new JTextField(20);
 		
 		labels.add(usernameLabel);
 		labels.add(passwordLabel);
@@ -76,5 +81,12 @@ public class RegScreen extends JPanel {
 		
 		dataField.add(labels);
 		dataField.add(fields);
+	}
+	
+	private void register(){
+		this.username = usernameField.getText();
+		this.password = passwordField.getPassword().toString();
+		this.repPassword = confirmPasswordField.getPassword().toString();
+		this.email = emailField.getText();
 	}
 }
