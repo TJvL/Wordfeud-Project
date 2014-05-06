@@ -11,7 +11,7 @@ public class User {
 	private Moderator mod;
 
 	private String name;
-	private boolean isBanned;
+	
 
 	public User() {
 		player = new Player(false);
@@ -51,6 +51,15 @@ public class User {
 		datalaag.DatabaseHandler.getInstance().login(userNameInput,
 				passwordInput);
 
+		boolean isLoggedIn = datalaag.DatabaseHandler.getInstance().login(userNameInput, passwordInput);
+
+		if(isLoggedIn == true){
+			// set Username in User Class
+			name = userNameInput;
+			
+			System.out.println("Je bent ingelogd!");
+		}
+		
 		reader.close();
 
 	}
