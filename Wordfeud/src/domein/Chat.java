@@ -27,12 +27,14 @@ import datalaag.DatabaseHandler;
 public class Chat implements Runnable,ActionListener {
 	private JFrame testFrame;
 	private JPanel chatPanel;
+	JScrollPane inputScrollPane;
+	JScrollPane chatScrollPane;
 	private JTextArea chatArea;
 	private JTextArea input;
 	private JButton sendButton;
 	private ArrayList<String> chatMessages = new ArrayList<String>();
-	private Player player1;
-	private Player player2;
+	private TestUserClass user1;
+	private TestUserClass user2;
 	private int gameID;
 	private String latestUpdatedMessageTimeDate;
 	private String latestUpdatedMessage;
@@ -41,11 +43,11 @@ public class Chat implements Runnable,ActionListener {
 	
 	DatabaseHandler dbh = DatabaseHandler.getInstance();
 	
-	/**eventually unnecessary	*/		private TestGameClass testGameClass = new TestGameClass();
+	/**		eventually unnecessary	*/		private TestGameClass testGameClass = new TestGameClass();
 	
-	/**ALREADY unnecessary		*/		//private Timestamp latestTimeStamp = new Timestamp(latestDateStamp.getTime());
+	/**		ALREADY unnecessary		*/		//private Timestamp latestTimeStamp = new Timestamp(latestDateStamp.getTime());
 	
-	/**eventually unnecessary	*/		private TestUserClass testUser1 = new TestUserClass("Ronnie376");
+	/**		eventually unnecessary	*/		private TestUserClass testUser1 = new TestUserClass("Ronnie376");
 	
 	private void start() {
 		if (runner == null ) {
@@ -70,9 +72,9 @@ public class Chat implements Runnable,ActionListener {
 	///////////////////////////////VRAAG VRAAG OVER BERICHTEN IN DATABASE/////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	public Chat(Player player1, Player player2, int gameID) {				// I get the player object references and the gameID of this match from the class that invokes this constructor (Wouter, Mike)
-		this.player1 = player1;
-		this.player2 = player2;
+	public Chat(TestUserClass user1, TestUserClass user2, int gameID) {				// I get the player object references and the gameID of this match from the class that invokes this constructor (Wouter, Mike)
+		this.user1 = user1;
+		this.user2 = user2;
 		this.gameID = gameID;
 		
 		latestUpdatedMessageTimeDate = "";
@@ -94,11 +96,11 @@ public class Chat implements Runnable,ActionListener {
 		input.setAlignmentX(Component.CENTER_ALIGNMENT);
 		input.setLineWrap(true);
 		
-		JScrollPane inputScrollPane = new JScrollPane(input);
+		inputScrollPane = new JScrollPane(input);
 		inputScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		inputScrollPane.setPreferredSize(new Dimension(250,90));
 		
-		JScrollPane chatScrollPane = new JScrollPane(chatArea);
+		chatScrollPane = new JScrollPane(chatArea);
 		chatScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		chatScrollPane.setPreferredSize(new Dimension(280,330));
 		
@@ -133,7 +135,7 @@ public class Chat implements Runnable,ActionListener {
 	}
 	
 	
-	public void sendMessage(/*Player player, String message*/) {
+	public void sendMessage() {
 		if (input.equals(null)) {
 			return;
 		} else {
