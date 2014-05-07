@@ -13,13 +13,13 @@ public class ScoreCalculator {
 	private Square[][] field;
 	private boolean wordHorizontal;
 	private Word word;
-	private ArrayList<Square> justPlayedTiles;
+	private ArrayList<Square> justFilledSquares;
 	private ArrayList<Word> playedWords;
 	private ArrayList<Word> wordsToCheck;
 
 	private ScoreCalculator() {
 		field = new Square[15][15];
-		justPlayedTiles = new ArrayList<Square>();
+		justFilledSquares = new ArrayList<Square>();
 		wordsToCheck = new ArrayList<Word>();
 		wordHorizontal = true;
 		playedWords = new ArrayList<Word>();
@@ -42,13 +42,13 @@ public class ScoreCalculator {
 		wordsToCheck.clear();
 
 		int score = 0;
-		this.setJustPlayedTiles();
+		this.setjustFilledSquares();
 		this.checkFirstWordOnStart();
 		boolean runScoreCalculator = true;
 
 		// Checks if a joker is on the board with no value
-		for (Square tiles : justPlayedTiles) {
-			if (tiles.getTile().getValue() == 0) {
+		for (Square tiles : justFilledSquares) {
+			if (tiles.getTile().getBlancoLetterValue().equals("?")) {
 				runScoreCalculator = false;
 				System.err.println("ER LIGT EEN LEGE JOKER OP HET VELD!");
 				System.out.println("ER LIGT EEN LEGE JOKER OP HET VELD!");
@@ -68,26 +68,34 @@ public class ScoreCalculator {
 		// tile
 		else {
 			boolean oneConected = false;
-			for (Square square : justPlayedTiles) {
-				if (field[square.getXPos() - 1][square.getYPos()].getTile() != null
-						&& !field[square.getXPos() - 1][square.getYPos()]
-								.getTile().getJustPlayed()) {
-					oneConected = true;
+			for (Square square : justFilledSquares) {
+				if (square.getXPos() - 1 >= 0) {
+					if (field[square.getXPos() - 1][square.getYPos()].getTile() != null
+							&& !field[square.getXPos() - 1][square.getYPos()]
+									.getTile().getJustPlayed()) {
+						oneConected = true;
+					}
 				}
-				if (field[square.getXPos() + 1][square.getYPos()].getTile() != null
-						&& !field[square.getXPos() + 1][square.getYPos()]
-								.getTile().getJustPlayed()) {
-					oneConected = true;
+				if (square.getXPos() + 1 <= 14) {
+					if (field[square.getXPos() + 1][square.getYPos()].getTile() != null
+							&& !field[square.getXPos() + 1][square.getYPos()]
+									.getTile().getJustPlayed()) {
+						oneConected = true;
+					}
 				}
-				if (field[square.getXPos()][square.getYPos() - 1].getTile() != null
-						&& !field[square.getXPos()][square.getYPos() - 1]
-								.getTile().getJustPlayed()) {
-					oneConected = true;
+				if (square.getYPos() - 1 >= 0) {
+					if (field[square.getXPos()][square.getYPos() - 1].getTile() != null
+							&& !field[square.getXPos()][square.getYPos() - 1]
+									.getTile().getJustPlayed()) {
+						oneConected = true;
+					}
 				}
-				if (field[square.getXPos()][square.getYPos() + 1].getTile() != null
-						&& !field[square.getXPos()][square.getYPos() + 1]
-								.getTile().getJustPlayed()) {
-					oneConected = true;
+				if (square.getYPos() + 1 <= 14) {
+					if (field[square.getXPos()][square.getYPos() + 1].getTile() != null
+							&& !field[square.getXPos()][square.getYPos() + 1]
+									.getTile().getJustPlayed()) {
+						oneConected = true;
+					}
 				}
 
 			}
@@ -100,12 +108,12 @@ public class ScoreCalculator {
 		// Check to be sure the first placed word is on the star
 		if (runScoreCalculator) {
 			// Check if the played word is longer then 1
-			if (justPlayedTiles.size() > 1) {
-				// System.out.println(justPlayedTiles.size() + " grote van");
+			if (justFilledSquares.size() > 1) {
+				// System.out.println(justFilledSquares.size() + " grote van");
 				if (tilesInOneLine()) {
 					// alle gelegde tiles liggen op dezelfde lijn
 
-					if (justPlayedTiles.size() > 1) {
+					if (justFilledSquares.size() > 1) {
 
 						// er is meer dan 1 tile gelegd
 
@@ -118,7 +126,7 @@ public class ScoreCalculator {
 				}
 			}
 			// If the played word is 1 long
-			else if (justPlayedTiles.size() == 1) {
+			else if (justFilledSquares.size() == 1) {
 				// System.out.println("TEST");
 				score = calculateScoreOneTile();
 			}
@@ -132,7 +140,7 @@ public class ScoreCalculator {
 		}
 
 		// clear all the list and prints the score
-		justPlayedTiles.clear();
+		justFilledSquares.clear();
 		playedWords.clear();
 		System.err.println("/////////////// De score: " + score
 				+ "\\\\\\\\\\\\\\\\\\");
@@ -142,7 +150,7 @@ public class ScoreCalculator {
 	}
 
 	// Returns the words that were just played on the field
-	public ArrayList<Word> getJustPlayedTiles() {
+	public ArrayList<Word> getjustPlayedWords() {
 		return wordsToCheck;
 	}
 
@@ -157,7 +165,7 @@ public class ScoreCalculator {
 				}
 			}
 		}
-		if (countOfTilesOnBoard == justPlayedTiles.size()) {
+		if (countOfTilesOnBoard == justFilledSquares.size()) {
 			boardEmpty = false;
 		}
 		return boardEmpty;
@@ -166,7 +174,7 @@ public class ScoreCalculator {
 	// Method to check if the first word placed is on the star
 	public boolean checkFirstWordOnStart() {
 		boolean firstWordOnStar = false;
-		for (Square sq : justPlayedTiles) {
+		for (Square sq : justFilledSquares) {
 			if (sq.getValue().equals("*")) {
 				firstWordOnStar = true;
 			}
@@ -244,7 +252,7 @@ public class ScoreCalculator {
 	// returns the score
 	public int calculateScoreOneTile() {
 		int score = 0;
-		Square square = justPlayedTiles.get(0);
+		Square square = justFilledSquares.get(0);
 
 		// Horizontal direction
 		word = new Word();
@@ -296,12 +304,12 @@ public class ScoreCalculator {
 	}
 
 	// Takes all the just played tiles form the board and adds then to a list
-	public void setJustPlayedTiles() {
+	public void setjustFilledSquares() {
 		for (Square[] s : field) {
 			for (Square sq : s) {
 				if (sq.getTile() != null) {
 					if (sq.getTile().getJustPlayed()) {
-						justPlayedTiles.add(sq);
+						justFilledSquares.add(sq);
 					}
 				}
 			}
@@ -318,7 +326,7 @@ public class ScoreCalculator {
 			int testingXValue;
 			int testingYValue1 = 0;
 
-			for (Square sq : justPlayedTiles) {
+			for (Square sq : justFilledSquares) {
 				testingXValue = sq.getXPos();
 				testingYValue1 = sq.getYPos();
 				word = new Word();
@@ -358,7 +366,7 @@ public class ScoreCalculator {
 					// er ligt een tile op de square
 					if (isConnected(
 							field[x][testingYValue1],
-							field[justPlayedTiles.get(0).getXPos()][testingYValue1],
+							field[justFilledSquares.get(0).getXPos()][testingYValue1],
 							"horizontal")) {
 						// System.out
 						// .println("Letter: "
@@ -383,7 +391,7 @@ public class ScoreCalculator {
 			int testingYValue;
 			int testingXValue1 = 0;
 
-			for (Square sq : justPlayedTiles) {
+			for (Square sq : justFilledSquares) {
 				testingYValue = sq.getYPos();
 				testingXValue1 = sq.getXPos();
 				word = new Word();
@@ -426,7 +434,7 @@ public class ScoreCalculator {
 					// er ligt een tile op de square
 
 					if (isConnected(field[testingXValue1][y],
-							field[testingXValue1][justPlayedTiles.get(0)
+							field[testingXValue1][justFilledSquares.get(0)
 									.getYPos()], "vertical")) {
 						// System.out
 						// .println("Letter: "
@@ -466,16 +474,16 @@ public class ScoreCalculator {
 		int y = square.getYPos();
 		if (field[x][y].getTile().getJustPlayed()) {
 			if (field[x][y].getValue() != null) {
-				if (field[x][y].getValue().equals("dl")) {
+				if (field[x][y].getValue().equals("DL")) {
 					score = score * 2;
 					System.out.println("***DL bonnus***");
-				} else if (field[x][y].getValue().equals("tl")) {
+				} else if (field[x][y].getValue().equals("TL")) {
 					score = score * 3;
 					System.out.println("***TL bonnus***");
-				} else if (field[x][y].getValue().equals("tw")) {
+				} else if (field[x][y].getValue().equals("TW")) {
 					word.addWordBonus(3);
 					System.out.println("***TW bonnus***");
-				} else if (field[x][y].getValue().equals("dw")) {
+				} else if (field[x][y].getValue().equals("DW")) {
 					word.addWordBonus(2);
 					System.out.println("***DW bonnus***");
 				}
@@ -525,7 +533,7 @@ public class ScoreCalculator {
 					// System.out.println(testSq.getTile().getLetter()
 					// + " ligt onder de "
 					// + playedSq.getTile().getLetter());
-					for (i = playedSq.getYPos() - 1; i > playedSq.getYPos(); i--) {
+					for (i = testSq.getYPos() - 1; i > playedSq.getYPos(); i--) {
 						if (field[testSq.getXPos()][i].getTile() == null) {
 							connected = false;
 							// System.out.println("Connected if " + connected);
@@ -556,15 +564,15 @@ public class ScoreCalculator {
 		boolean result = true;
 		boolean running = true;
 		if (wordHorizontal == true) {
-			int testingYValue = justPlayedTiles.get(0).getYPos();
+			int testingYValue = justFilledSquares.get(0).getYPos();
 			// de y variabelen zijn opvolgend
-			for (int i = 1; i < justPlayedTiles.size(); i++) {
-				// System.out.println(justPlayedTiles.get(i).getXPos() + " ! = "
-				// + (justPlayedTiles.get(i - 1).getXPos() + 1));
-				if (justPlayedTiles.get(i).getXPos() != (justPlayedTiles.get(
+			for (int i = 1; i < justFilledSquares.size(); i++) {
+				// System.out.println(justFilledSquares.get(i).getXPos() + " ! = "
+				// + (justFilledSquares.get(i - 1).getXPos() + 1));
+				if (justFilledSquares.get(i).getXPos() != (justFilledSquares.get(
 						i - 1).getXPos() + 1)) {
 					for (int p = 1; p < 15 && running; p++) {
-						int x = justPlayedTiles.get(i).getXPos();
+						int x = justFilledSquares.get(i).getXPos();
 						if (field[x - p][testingYValue].getTile() == null) {
 							result = false;
 							running = false;
@@ -580,12 +588,12 @@ public class ScoreCalculator {
 		}
 
 		else {
-			int testingXValue = justPlayedTiles.get(0).getXPos();
+			int testingXValue = justFilledSquares.get(0).getXPos();
 			// de x variabelen zijn opvolgend
-			for (int i = 1; i < justPlayedTiles.size(); i++) {
-				if (justPlayedTiles.get(i).getYPos() != (justPlayedTiles.get(
+			for (int i = 1; i < justFilledSquares.size(); i++) {
+				if (justFilledSquares.get(i).getYPos() != (justFilledSquares.get(
 						i - 1).getYPos() + 1)) {
-					int y = justPlayedTiles.get(i).getYPos();
+					int y = justFilledSquares.get(i).getYPos();
 					for (int p = 1; p < 15 && running; p++) {
 						if (field[testingXValue][y - p].getTile() == null) {
 							result = false;

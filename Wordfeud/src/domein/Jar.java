@@ -11,7 +11,6 @@ public class Jar {
 	private HashMap<String, BufferedImage> images;
 	private Tile tile;
 	private FileHandler fh;
-	private int gameID;
 
 	public Jar() {
 		fh = FileHandler.getInstance();
@@ -37,10 +36,6 @@ public class Jar {
 	// Get the size of the Jar
 	public int getJarSize(){
 		return tiles.size();
-	}
-
-	public void setGameID(int gameID) {
-		this.gameID = gameID;
 	}
 
 	// methode vul Jar aan de hand van stenen in de pot (database)

@@ -83,9 +83,12 @@ public class Match {
 				Tile t = jar.createTile(letters[p], value);
 				board.addTileToSquare(t, Integer.parseInt(xPos[p]) - 1,
 						Integer.parseInt(yPos[p]) - 1);
+				System.out.println("tile " + t.getLetter() + " placed at x " + (Integer.parseInt(xPos[p]) - 1) + " and at y " + (Integer.parseInt(yPos[p]) - 1));
+				gameField.addSquarePanel(Integer.parseInt(xPos[p]) - 1, Integer.parseInt(yPos[p]) - 1, t.getImage());
 			}
 		}
 
+		gameField.repaintBoard();
 		jar.resetJar();
 		tilesForJar = dbh.jarContent(gameID);
 		// Creating the jar - This loads the jar from the database
@@ -101,6 +104,7 @@ public class Match {
 		this.gameField = gameFieldPanel;
 
 		getMaxTurnID();
+		dbh.connection();
 		// vullen van de jar - een nieuwe jar aanmaken
 		// opvragen van het bord
 		for (int y = 1; y < 16; y++) {
@@ -108,6 +112,7 @@ public class Match {
 				board.addSquaresNewBoard(x - 1, y - 1, dbh.squareCheck(x, y));
 			}
 		}
+		dbh.closeConnection();
 
 		// Method to add the tiles to the jar
 		System.out.println(gameID + " DE GAME ID");
@@ -135,10 +140,6 @@ public class Match {
 
 		// tijdelijk voor het zetten van een beurt van de tegenstander
 		// ***** dbh.updateTurn(maxTurn + 1, gameID, getEnemyName(), 0, "Begin");
-
-		jar.setGameID(gameID);
-		board.setGameID(gameID);
-
 		gameField.addSquares();
 		gameField.repaintBoard();
 	}
@@ -148,15 +149,15 @@ public class Match {
 		this.gameField = gameFieldPanel;
 		tilesForJar = dbh.jarContent(gameID);
 		getMaxTurnID();
-		jar.setGameID(gameID);
-		board.setGameID(gameID);
 
+		dbh.connection();
 		// Creating the board
 		for (int y = 1; y < 16; y++) {
 			for (int x = 1; x < 16; x++) {
 				board.addSquaresNewBoard(x - 1, y - 1, dbh.squareCheck(x, y));
 			}
 		}
+		dbh.closeConnection();
 		// Creating the jar - This loads the jar from the database
 		for (String tiles : tilesForJar) {
 			String[] splits = tiles.split("---");
@@ -165,6 +166,7 @@ public class Match {
 			jar.addNewTile(t);
 		}
 
+		gameField.addSquares();
 		// Checks if the game being loaded has not started and the player was
 		// invited
 		// The enemy then started so there are no words to load or hand to load
@@ -182,6 +184,7 @@ public class Match {
 					Tile t = jar.createTile(letters[p], value);
 					board.addTileToSquare(t, Integer.parseInt(xPos[p]) - 1,
 							Integer.parseInt(yPos[p]) - 1);
+					gameField.addSquarePanel(Integer.parseInt(xPos[p]) - 1, Integer.parseInt(yPos[p]) - 1, t.getImage());
 				}
 			}
 
@@ -190,12 +193,13 @@ public class Match {
 					|| !dbh.getGameStatusValue(gameID).equals("Resigned")) {
 				ArrayList<String> handTiles;
 				if (myTurn) {
-					handTiles = dbh.handContent(gameID, maxTurn);
-				} else {
 					handTiles = dbh.handContent(gameID, maxTurn - 1);
-				}
+				} else {
+					handTiles = dbh.handContent(gameID, maxTurn);
+				}		
+				
 				for (int z = 0; z < handTiles.size(); z++) {
-					String[] tiles = handTiles.get(z).split(",");
+					String[] tiles = handTiles.get(z).split("---");
 					Tile t = jar.createTile(Integer.parseInt(tiles[0]),
 							tiles[1], Integer.parseInt(tiles[2]));
 					addTileToHand(t);
@@ -207,12 +211,13 @@ public class Match {
 
 		// Method of fill the hand at the beginning of a game
 		else {
-		//	fillHand();
+			
+			fillHand();
 		}
 		// Method when the game has not really started
 
 		// Moet er ook nog tussenkomen
-		gameField.addSquares();
+	
 		gameField.repaintBoard();
 
 	}
@@ -232,13 +237,14 @@ public class Match {
 		 */
 
 		// De usernaam moet nog ergens worden opgevraagd
-		//return "marijntje42";
-		return "jager684";
+		return "marijntje42";
+		
 	}
 
 	public synchronized String getEnemyName() {
 		// if (enemy.getName() != null) {
-		return dbh.opponentName(gameID);
+		return "jager684";
+		//return dbh.opponentName(gameID);
 		// } else {
 		// return "No-Name";
 		// }
@@ -317,7 +323,7 @@ public class Match {
 		Tile t = board.getSquare(x, y).getTile();
 		t.setJustPlayed(false);
 		if (t.getValue() == 0) {
-			t.setBlancoLetterValue(null);
+			t.setBlancoLetterValue("?");
 			t.setLetter("?");
 		}
 		player.addTileToHand(t);
@@ -346,6 +352,13 @@ public class Match {
 
 	// Fills the hand back to 7
 	public void fillHand() {
+		
+		if (maxTurn == 1 && myTurn) {
+			dbh.updateTurn(maxTurn, gameID, getOwnName(), 0, "Begin");
+		} else if (maxTurn == 2 && myTurn) {
+			dbh.updateTurn(maxTurn, gameID, getOwnName(), 0, "Begin");
+		}
+		
 		// ArrayList<Integer> tileID = new ArrayList<Integer>();
 		while (player.getHandSize() < 7 && jar.getJarSize() > 0) {
 			int id = getTileFromJar();
@@ -371,11 +384,7 @@ public class Match {
 		// tiles
 
 		// dbh.addTileToHand(gameID, tileID, maxTurn);
-		if (maxTurn == 1 && myTurn) {
-			dbh.updateTurn(maxTurn, gameID, getOwnName(), 0, "Begin");
-		} else if (maxTurn == 2 && myTurn) {
-			dbh.updateTurn(maxTurn, gameID, getOwnName(), 0, "Begin");
-		}
+		
 		board.setScore();
 	}
 
@@ -427,11 +436,19 @@ public class Match {
 			System.err.println("De score is berekend");
 			if (board.checkWords()) {
 				
+				JOptionPane.showInputDialog(null,"Words checked","Your word(s) are correct \n WordValue: " + board.getScore() ,JOptionPane.OK_OPTION);  
+				board.setScore();
 				dbh.updateTurn(maxTurn, gameID, getOwnName(), getScore(),
 						"Word");
 				
 				ArrayList<Tile> justPlayedTiles = board.addtilesToDatabase();
 				for (Tile tiles : justPlayedTiles) {
+					try {
+						Thread.sleep(10);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					dbh.tileToBoard(gameID, maxTurn, tiles.getTileID(),
 							tiles.getBlancoLetterValue(), tiles.getXValue() + 1,
 							tiles.getYValue() + 1);
@@ -449,6 +466,11 @@ public class Match {
 			} else {
 				System.err.println("WOORDEN ZIJN FOUT");
 				// hier moet de optie komen om ze te laten keuren
+				
+				
+				
+				JOptionPane.showInputDialog(null,"Words checked","Your word(s) are incorrect \n",JOptionPane.OK_OPTION);  
+				
 			}
 		}
 	}
@@ -475,7 +497,7 @@ public class Match {
 			dbh.surrender(gameID, maxTurn + 1, getOwnName(), getEnemyName());
 		}
 		System.out.println("JE HEBT GESURRENDERD!");
-		dbh.gameStatusUpdate(gameID, "Resgined");
+		dbh.gameStatusUpdate(gameID, "Resigned");
 
 		// System.exit(0);
 	}

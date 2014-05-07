@@ -17,9 +17,7 @@ public class Board {
 	private HashMap<String, BufferedImage> images;
 	private int score;
 	private String submittedWord;
-	private boolean checkingWord;
-	private int gameID;
-
+	private ArrayList<String> checkedWords;
 	// Hier moet gekeken of er een nieuwe bord wordt aangemaakt
 	// Of het spel al bezig is het bord laden
 	// Standaard bord laden of random bord laden
@@ -29,6 +27,7 @@ public class Board {
 		field = new Square[15][15];
 		fh = FileHandler.getInstance();
 		dbh = DatabaseHandler.getInstance();
+		checkedWords = new ArrayList<String>();
 		submittedWord = "*";
 		images = new HashMap<String, BufferedImage>();
 		images.put("DL", fh.readImage("Plaatjes/DL.png"));
@@ -37,10 +36,6 @@ public class Board {
 		images.put("TW", fh.readImage("Plaatjes/TW.png"));
 		images.put("*", fh.readImage("Plaatjes/star.png"));
 		images.put("--", fh.readImage("Plaatjes/board.png"));
-	}
-
-	public void setGameID(int gameID) {
-		this.gameID = gameID;
 	}
 
 	// Methode voor aanmaken van een new board
@@ -139,7 +134,7 @@ public class Board {
 
 	public boolean checkWords() {
 		boolean allWordsExist = true;
-		ArrayList<Word> words = calculator.getJustPlayedTiles();
+		ArrayList<Word> words = calculator.getjustPlayedWords();
 		// System.out.println(words.size() + " DE SIZE VAN DE TEGEELS");
 		for (Word word : words) {
 			// woord geven aan de database
@@ -150,11 +145,13 @@ public class Board {
 			// niet - dan geen score
 			if (dbh.checkWord(word.getWord(), "EN")) {
 				System.out.println("WOORD BESTAAT IN WOORDENBOEK");
+				checkedWords.add(word.getWord() + " exixts");
 				submittedWord = "*";
-				checkingWord = false;
 			} else {
 				System.out.println("WOORD BESTAAT NIET IN HET WOORDENBOEK");
 				allWordsExist = false;
+				//submittedWord = "*";
+				checkedWords.add(word.getWord() + " does NOT exixt");
 				/*
 				 * submittedWord = word.getWord(); while (!checkingWord){
 				 * submittedWord = "*"; checkingWord = false;
@@ -175,14 +172,18 @@ public class Board {
 		return allWordsExist;
 	}
 
+	public void checkWord(){
+		// moet iets doen?
+	}
+	
 	public String getWord() {
 		return submittedWord;
 	}
 
-	public void checkWord() {
-		this.checkingWord = true;
+	public ArrayList<String> getPlayedWords(){
+		return checkedWords;
 	}
-
+	
 	public void setTilesPlayed() {
 		for (int y = 0; y < 15; y++) {
 			for (int x = 0; x < 15; x++) {

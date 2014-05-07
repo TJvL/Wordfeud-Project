@@ -31,7 +31,7 @@ public class SecondThread extends Thread {
 
 	public void run() {
 		try {
-			Thread.sleep(3500);
+			Thread.sleep(3000);
 		} catch (InterruptedException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -70,7 +70,7 @@ public class SecondThread extends Thread {
 
 			try {
 				if (!dbh.getGameStatusValue(gameID).equals("Finished")
-						|| !dbh.getGameStatusValue(gameID).equals("Resigned")) {
+						&& !dbh.getGameStatusValue(gameID).equals("Resigned")) {
 					match.getMaxTurnID();
 					if (match.getMyTurn()) {	
 						buttonPanel.setTurn(true);
@@ -101,7 +101,7 @@ public class SecondThread extends Thread {
 
 			}
 			try {
-				Thread.sleep(1000);
+				Thread.sleep(2000);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

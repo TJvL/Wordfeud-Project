@@ -3,8 +3,11 @@ package gui;
 import java.awt.BorderLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+
 import javax.swing.JPanel;
+
 import domein.Match;
 import domein.Tile;
 
@@ -237,6 +240,11 @@ public class GameFieldPanel extends JPanel {
 		}
 	}
 
+	
+	public void addSquarePanel(int x, int y, BufferedImage image){
+		squaresPanels[x][y].addImage(image);
+	}
+	
 	// Var to see if swapping is enabled
 	// parm if it's true or false
 	public void setSwapPressed(boolean pressed) {
@@ -293,6 +301,7 @@ public class GameFieldPanel extends JPanel {
 	public void repaintBoard() {
 		this.repaint();
 		this.revalidate();
+		this.repaint();
 	}
 
 	// Get tiles that were just placed on the board to calculate score
