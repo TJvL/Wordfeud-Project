@@ -119,10 +119,10 @@ public class Board {
 			// Hier moet de optie komen om de tiles uit justPlayedTile aan de
 			// database toetevoegen
 			// Hier ook gelijk de score update en beurt update
-		//	System.out.println("Woord was goed");
+			// System.out.println("Woord was goed");
 			possible = true;
 		} else {
-		//	System.out.println("Woord was fout");
+			// System.out.println("Woord was fout");
 		}
 		return possible;
 	}
@@ -140,7 +140,7 @@ public class Board {
 	public boolean checkWords() {
 		boolean allWordsExist = true;
 		ArrayList<Word> words = calculator.getJustPlayedTiles();
-	//	System.out.println(words.size() + " DE SIZE VAN DE TEGEELS");
+		// System.out.println(words.size() + " DE SIZE VAN DE TEGEELS");
 		for (Word word : words) {
 			// woord geven aan de database
 			// als woord niet bestaat allWordsExist = false
@@ -193,18 +193,25 @@ public class Board {
 		}
 	}
 
-	public ArrayList<Tile> addtilesToDatabase(){
+	public ArrayList<Tile> addtilesToDatabase() {
 		ArrayList<Tile> justPlayedLetters = new ArrayList<Tile>();
 		for (int y = 0; y < 15; y++) {
 			for (int x = 0; x < 15; x++) {
-				if (field[x][y].getTile().getJustPlayed()){
-					justPlayedLetters.add(field[x][y].getTile());
+				try {
+					if (field[x][y].getTile().getJustPlayed()) {
+						Tile t = field[x][y].getTile();
+						t.setXValue(x);
+						t.setYValue(y);
+						justPlayedLetters.add(t);
+					}
+				} catch (NullPointerException e) {
+
 				}
 			}
 		}
 		return justPlayedLetters;
 	}
-	
+
 	// Methode voor laden van een spel wat al aan de gang is
 	public void addSquares() {
 		// Hier moeten de square worden opgevraagd aan de database

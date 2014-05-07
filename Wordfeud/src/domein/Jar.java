@@ -30,6 +30,10 @@ public class Jar {
 		}
 	}
 	
+	public void resetJar(){
+		tiles.clear();
+	}
+	
 	// Get the size of the Jar
 	public int getJarSize(){
 		return tiles.size();
@@ -42,11 +46,15 @@ public class Jar {
 	// methode vul Jar aan de hand van stenen in de pot (database)
 	// Als nieuwe game is - database vullen
 
+	public Tile createTile(int id, String letter, int value) {
+		tile = new Tile(id, letter, value, images.get(letter));
+		return tile;
+	}
+	
 	public Tile createTile(String letter, int value) {
 		tile = new Tile(letter, value, images.get(letter));
 		return tile;
 	}
-	
 	
 
 	public Tile getNewTile() {

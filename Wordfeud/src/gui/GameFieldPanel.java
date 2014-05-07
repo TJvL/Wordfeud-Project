@@ -61,7 +61,8 @@ public class GameFieldPanel extends JPanel {
 				// square.setBackground(Color.red);
 				squarePanel.addMouseListener(new MouseAdapter() {
 
-					public void mouseClicked(MouseEvent e) {
+					@Override
+					public void mousePressed(MouseEvent e) {
 						SquarePanel sq = (SquarePanel) e.getSource();
 						String output = "" + sq.getXValue() + " | "
 								+ sq.getYValue();
@@ -103,26 +104,6 @@ public class GameFieldPanel extends JPanel {
 							}
 						}
 					}
-
-					@Override
-					public void mouseEntered(MouseEvent e) {
-					}
-
-					@Override
-					public void mouseExited(MouseEvent e) {
-						// this.setBackground(Color.black);
-					}
-
-					@Override
-					public void mousePressed(MouseEvent e) {
-
-					}
-
-					@Override
-					public void mouseReleased(MouseEvent e) { // TODO
-
-					}
-
 				});
 
 				fieldPanel.addSquare(squarePanel);
@@ -137,9 +118,8 @@ public class GameFieldPanel extends JPanel {
 		TilePanel tilePanel = new TilePanel(tile);
 
 		tilePanel.addMouseListener(new MouseAdapter() {
-
-			public void mouseClicked(MouseEvent e) {
-
+			@Override
+			public void mousePressed(MouseEvent e) {
 				// kijken of je niet aan het swappen bent
 				if (!swapPressed) {
 					TilePanel tilePanel = (TilePanel) e.getSource();
@@ -191,27 +171,7 @@ public class GameFieldPanel extends JPanel {
 						tilePanel.repaintPanel();
 					}
 				}
-
 			}
-
-			@Override
-			public void mouseEntered(MouseEvent e) {
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-				// this.setBackground(Color.black);
-			}
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-
-			}
-
-			@Override
-			public void mouseReleased(MouseEvent e) {
-			}
-
 		});
 
 		return tilePanel;

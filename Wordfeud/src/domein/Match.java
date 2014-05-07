@@ -22,7 +22,7 @@ public class Match {
 	private Player enemy;
 	private int gameID;
 	// private Map<Integer, String> jarTiles;
-	private Map<Integer, String> tileIndex;
+	// private Map<Integer, String> tileIndex;
 	private ArrayList<String> tilesForJar;
 	private boolean myTurn;
 	private int maxTurn;
@@ -69,6 +69,34 @@ public class Match {
 		// maxTurn);
 	}
 
+	public synchronized void updateField() {
+
+		ArrayList<String> playedWords = dbh.playedWords(gameID);
+		for (String played : playedWords) {
+			String[] splits = played.split("---");
+			String[] letters = splits[0].split(",");
+			String[] xPos = splits[1].split(",");
+			String[] yPos = splits[2].split(",");
+
+			for (int p = 0; p < letters.length; p++) {
+				int value = dbh.letterValue("EN", letters[p]);
+				Tile t = jar.createTile(letters[p], value);
+				board.addTileToSquare(t, Integer.parseInt(xPos[p]) - 1,
+						Integer.parseInt(yPos[p]) - 1);
+			}
+		}
+
+		jar.resetJar();
+		tilesForJar = dbh.jarContent(gameID);
+		// Creating the jar - This loads the jar from the database
+		for (String tiles : tilesForJar) {
+			String[] splits = tiles.split("---");
+			Tile t = jar.createTile(Integer.parseInt(splits[0]), splits[1],
+					Integer.parseInt(splits[2]));
+			jar.addNewTile(t);
+		}
+	}
+
 	public void startNewGame(GameFieldPanel gameFieldPanel) {
 		this.gameField = gameFieldPanel;
 
@@ -83,11 +111,15 @@ public class Match {
 
 		// Method to add the tiles to the jar
 		System.out.println(gameID + " DE GAME ID");
-		tilesForJar = dbh.createJar(gameID, "EN");
+		dbh.createJar(gameID, "EN");
+		tilesForJar = dbh.jarContent(gameID);
+		// Creating the jar - This loads the jar from the database
 		for (String tiles : tilesForJar) {
-			int value = dbh.letterValue("EN", tiles);
-			Tile t = jar.createTile(tiles, value);
+			String[] splits = tiles.split("---");
+			Tile t = jar.createTile(Integer.parseInt(splits[0]), splits[1],
+					Integer.parseInt(splits[2]));
 			jar.addNewTile(t);
+			// System.out.println("IETS" + splits[0] + splits[1] + splits[2]);
 		}
 		/*
 		 * jarTiles = dbh.jarContent(gameID); for (Entry<Integer, String> entry
@@ -98,33 +130,23 @@ public class Match {
 		 * // ... }
 		 */
 
-		tileIndex = dbh.gameTiles(gameID);
+		tilesForJar = dbh.jarContent(gameID);
 		fillHand();
 
 		// tijdelijk voor het zetten van een beurt van de tegenstander
-		dbh.updateTurn(maxTurn + 1, gameID, getEnemyName(), 0, "Begin");
+		// ***** dbh.updateTurn(maxTurn + 1, gameID, getEnemyName(), 0, "Begin");
 
-		// Ik heb nog een letter id nodig hiervoor
-		/*
-		 * for (Integer tiles: jarTiles){ int value = dbh.letterValue("EN",
-		 * tiles); Tile t = jar.createTile(tiles, value); jar.addNewTile(t);
-		 * 
-		 * }
-		 */
 		jar.setGameID(gameID);
 		board.setGameID(gameID);
 
-		// hier moet nog handvullen komen ------ fillHand();
-
 		gameField.addSquares();
 		gameField.repaintBoard();
-
 	}
 
 	// Load a game from the database
 	public void loadGame(GameFieldPanel gameFieldPanel) {
 		this.gameField = gameFieldPanel;
-		tileIndex = dbh.gameTiles(gameID);
+		tilesForJar = dbh.jarContent(gameID);
 		getMaxTurnID();
 		jar.setGameID(gameID);
 		board.setGameID(gameID);
@@ -136,14 +158,11 @@ public class Match {
 			}
 		}
 		// Creating the jar - This loads the jar from the database
-		for (Entry<Integer, String> entry : tileIndex.entrySet()) {
-			Integer letterID = entry.getKey();
-			String letter = entry.getValue();
-			int value = dbh.letterValue("EN", letter);
-			Tile t = jar.createTile(letter, value);
+		for (String tiles : tilesForJar) {
+			String[] splits = tiles.split("---");
+			Tile t = jar.createTile(Integer.parseInt(splits[0]), splits[1],
+					Integer.parseInt(splits[2]));
 			jar.addNewTile(t);
-
-			// ...
 		}
 
 		// Checks if the game being loaded has not started and the player was
@@ -167,18 +186,18 @@ public class Match {
 			}
 
 			// Loads the player hand
-			if (!dbh.gameStatusValue(gameID).equals("Finished")
-					|| !dbh.gameStatusValue(gameID).equals("Resigned")) {
-				String handTiles;
+			if (!dbh.getGameStatusValue(gameID).equals("Finished")
+					|| !dbh.getGameStatusValue(gameID).equals("Resigned")) {
+				ArrayList<String> handTiles;
 				if (myTurn) {
 					handTiles = dbh.handContent(gameID, maxTurn);
 				} else {
 					handTiles = dbh.handContent(gameID, maxTurn - 1);
 				}
-				String[] tiles = handTiles.split(",");
-				for (int p = 0; p < tiles.length; p++) {
-					int value = dbh.letterValue("EN", tiles[p]);
-					Tile t = jar.createTile(tiles[p], value);
+				for (int z = 0; z < handTiles.size(); z++) {
+					String[] tiles = handTiles.get(z).split(",");
+					Tile t = jar.createTile(Integer.parseInt(tiles[0]),
+							tiles[1], Integer.parseInt(tiles[2]));
 					addTileToHand(t);
 				}
 			} else {
@@ -188,7 +207,7 @@ public class Match {
 
 		// Method of fill the hand at the beginning of a game
 		else {
-			fillHand();
+		//	fillHand();
 		}
 		// Method when the game has not really started
 
@@ -245,18 +264,10 @@ public class Match {
 	public int getTileFromJar() {
 		Tile t = jar.getNewTile();
 		// addTileToHand(t);
-		for (Entry<Integer, String> entry : tileIndex.entrySet()) {
-			Integer letterID = entry.getKey();
-			String letter = entry.getValue();
-			if (t.getLetter().equals(letter)) {
-				player.addTileToHand(t);
-				gameField.addTileToHand(t);
-				gameField.repaintBoard();
-				tileIndex.remove(letterID);
-				return letterID;
-			}
-		}
-		return -1;
+		player.addTileToHand(t);
+		gameField.addTileToHand(t);
+		gameField.repaintBoard();
+		return t.getTileID();
 	}
 
 	// Add a tile to the jar
@@ -334,21 +345,31 @@ public class Match {
 
 	// Fills the hand back to 7
 	public void fillHand() {
-		//ArrayList<Integer> tileID = new ArrayList<Integer>();
+		// ArrayList<Integer> tileID = new ArrayList<Integer>();
 		while (player.getHandSize() < 7 && jar.getJarSize() > 0) {
 			int id = getTileFromJar();
 			if (id != -1) {
-		//		tileID.add(id);
+				// tileID.add(id);
 			} else {
 				System.out.println("ER IS IETS FOUT GEGAAN BY FILLHAND");
 			}
 			gameField.repaintBoard();
 		}
+		if (player.getHandSize() < 7 && jar.getJarSize() == 0){
+			System.out.println("POT IS LEEG, GEEN NIEUWE LETTERS MEER!");
+		}
 		ArrayList<Tile> tilesInHand = player.getHand();
+		ArrayList<Integer> tilesNumber = new ArrayList<Integer>();
+		for (Tile tile : tilesInHand) {
+			tilesNumber.add(tile.getTileID());
+		}
+		getMaxTurnID();
+		System.out.println(gameID + " " +  tilesNumber.size() + " " + maxTurn);
+		dbh.addTileToHand(gameID, tilesNumber, maxTurn);	
+		// Dit kan dus nog niet - we hebben de tile id nog niet opgeslagen in
+		// tiles
 
-		// Dit kan dus nog niet - we hebben de tile id nog niet opgeslagen in tiles
-		
-		//dbh.addTileToHand(gameID, tileID, maxTurn);
+		// dbh.addTileToHand(gameID, tileID, maxTurn);
 		if (maxTurn == 1 && myTurn) {
 			dbh.updateTurn(maxTurn, gameID, getOwnName(), 0, "Begin");
 		} else if (maxTurn == 2 && myTurn) {
@@ -362,10 +383,18 @@ public class Match {
 		for (TilePanel tile : tilesToSwap) {
 			addTileToJar(tile.getTile());
 		}
+		dbh.updateTurn(maxTurn, gameID, getOwnName(), 0, "Swap");
 		tilesToSwap.clear();
 		fillHand();
 
-		dbh.updateTurn(maxTurn, gameID, getOwnName(), 0, "Swap");
+		
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		// ***** dbh.updateTurn(maxTurn + 1, gameID, getEnemyName(), 25, "Pass");
 	}
 
 	// Gets a square from the board on x,y
@@ -396,23 +425,25 @@ public class Match {
 			// if this is true, a score will be calculated
 			System.err.println("De score is berekend");
 			if (board.checkWords()) {
-				// ArrayList<Tile> justPlayedTiles = board.addtilesToDatabase();
-				/*
-				 * for (Tile tiles: justPlayedTiles){
-				 * tileIndex.get(tiles.getLetter()); dbh.tileToBoard(gameID,
-				 * maxTurn, tiles.getTileID(), tiles.getBlancoLetterValue(),
-				 * tiles.getXValue(), tiles.getYValue()); }
-				 */
+				
+				dbh.updateTurn(maxTurn, gameID, getOwnName(), getScore(),
+						"Word");
+				
+				ArrayList<Tile> justPlayedTiles = board.addtilesToDatabase();
+				for (Tile tiles : justPlayedTiles) {
+					dbh.tileToBoard(gameID, maxTurn, tiles.getTileID(),
+							tiles.getBlancoLetterValue(), tiles.getXValue() + 1,
+							tiles.getYValue() + 1);
+				}
 
 				board.setTilesPlayed();
 
-				dbh.updateTurn(maxTurn, gameID, getOwnName(), getScore(),
-						"Word");
+				
 
 				fillHand();
 
 				// Tijdelijke reactie van de tegenstander
-				dbh.updateTurn(maxTurn + 1, gameID, getEnemyName(), 0, "Pass");
+				// ***** 	dbh.updateTurn(maxTurn + 1, gameID, getEnemyName(), 25, "Pass");
 
 			} else {
 				System.err.println("WOORDEN ZIJN FOUT");
@@ -436,11 +467,14 @@ public class Match {
 		// dbh.surrender(gameID, getMaxTurnID(), "Klaas");
 
 		if (myTurn) {
-			dbh.updateTurn(maxTurn, gameID, getOwnName(), 0, "Resign");
+			// dbh.updateTurn(maxTurn, gameID, getOwnName(), 0, "Resign");
+			dbh.surrender(gameID, maxTurn, getOwnName(), getEnemyName());
 		} else {
-			dbh.updateTurn(maxTurn + 1, gameID, getOwnName(), 0, "Resign");
+			// dbh.updateTurn(maxTurn + 1, gameID, getOwnName(), 0, "Resign");
+			dbh.surrender(gameID, maxTurn + 1, getOwnName(), getEnemyName());
 		}
 		System.out.println("JE HEBT GESURRENDERD!");
+		dbh.gameStatusUpdate(gameID, "Resgined");
 
 		// System.exit(0);
 	}

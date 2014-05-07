@@ -17,6 +17,7 @@ public class SecondThread extends Thread {
 	private ScorePanel scorePanel;
 	private int storeScore;
 	private boolean running = true;
+	private boolean turnSwap = true;
 
 	public SecondThread(Match match, GameFieldPanel fieldPanel,
 			GameButtonPanel buttonPanel, ScorePanel scorePanel) {
@@ -30,12 +31,12 @@ public class SecondThread extends Thread {
 
 	public void run() {
 		try {
-			Thread.sleep(5000);
+			Thread.sleep(3500);
 		} catch (InterruptedException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-	
+
 		while (running) {
 			running = true;
 			// Aan match vragen wat de GameID is voor database updates - Dit
@@ -68,19 +69,27 @@ public class SecondThread extends Thread {
 			}
 
 			try {
-				if (!dbh.gameStatusValue(gameID).equals("Finished")
-						|| !dbh.gameStatusValue(gameID).equals("Resigned")) {
+				if (!dbh.getGameStatusValue(gameID).equals("Finished")
+						|| !dbh.getGameStatusValue(gameID).equals("Resigned")) {
 					match.getMaxTurnID();
-					if (match.getMyTurn()) {
+					if (match.getMyTurn()) {	
 						buttonPanel.setTurn(true);
+						if (turnSwap){
+							match.updateField();				
+							System.out.println("WORDT DIT AANGEROEPEN?");
+						}
+						turnSwap = false;
 					} else {
+					//	System.out.println("NIET MIJN BEURT");
 						buttonPanel.setTurn(false);
+						turnSwap = true;
 					}
 				} else {
 					buttonPanel.setTurn(false);
 					buttonPanel.disableSurrender();
 					running = false;
 				}
+
 				// fieldPanel update wie er aan de beurt is
 				// buttonPanel update wie er aan de beurt is
 				// gegevens opvragen via match
@@ -99,8 +108,8 @@ public class SecondThread extends Thread {
 			}
 		}
 	}
-	
-	public void setRunning(boolean running){
+
+	public void setRunning(boolean running) {
 		this.running = running;
 	}
 
