@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+
 import java.util.HashMap;
 
 public class DatabaseHandler
@@ -27,6 +28,7 @@ public class DatabaseHandler
 
 	}
 
+
 	private static DatabaseHandler databaseHandler = new DatabaseHandler();
 
 	public static DatabaseHandler getInstance()
@@ -35,7 +37,7 @@ public class DatabaseHandler
 		return databaseHandler;
 	}
 
-	private DatabaseHandler()
+	public DatabaseHandler()
 	{
 		// Accessing driver from the JAR file
 		try
