@@ -615,9 +615,9 @@ public class DatabaseHandler
 
 			result = statement.executeQuery();
 	
-			if (result.next())
+			while (result.next())
 			{
-				jar = result.getString(1) + "---" + result.getString(2) + "---" + result.getString(3);
+		//		jar = result.getString(1) + "---" + result.getString(2) + "---" + result.getString(3);
 				System.out.println(jar);
 				jarContent.add(jar);
 			}

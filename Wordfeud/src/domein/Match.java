@@ -232,6 +232,7 @@ public class Match {
 		 */
 
 		// De usernaam moet nog ergens worden opgevraagd
+		//return "marijntje42";
 		return "jager684";
 	}
 
