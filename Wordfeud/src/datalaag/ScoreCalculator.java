@@ -48,10 +48,12 @@ public class ScoreCalculator {
 
 		// Checks if a joker is on the board with no value
 		for (Square tiles : justFilledSquares) {
-			if (tiles.getTile().getBlancoLetterValue().equals("?")) {
-				runScoreCalculator = false;
-				System.err.println("ER LIGT EEN LEGE JOKER OP HET VELD!");
-				System.out.println("ER LIGT EEN LEGE JOKER OP HET VELD!");
+			if (tiles.getTile().getBlancoLetterValue() != null) {
+				if (tiles.getTile().getBlancoLetterValue().equals("?")) {
+					runScoreCalculator = false;
+					System.err.println("ER LIGT EEN LEGE JOKER OP HET VELD!");
+					System.out.println("ER LIGT EEN LEGE JOKER OP HET VELD!");
+				}
 			}
 		}
 
@@ -567,10 +569,11 @@ public class ScoreCalculator {
 			int testingYValue = justFilledSquares.get(0).getYPos();
 			// de y variabelen zijn opvolgend
 			for (int i = 1; i < justFilledSquares.size(); i++) {
-				// System.out.println(justFilledSquares.get(i).getXPos() + " ! = "
+				// System.out.println(justFilledSquares.get(i).getXPos() +
+				// " ! = "
 				// + (justFilledSquares.get(i - 1).getXPos() + 1));
-				if (justFilledSquares.get(i).getXPos() != (justFilledSquares.get(
-						i - 1).getXPos() + 1)) {
+				if (justFilledSquares.get(i).getXPos() != (justFilledSquares
+						.get(i - 1).getXPos() + 1)) {
 					for (int p = 1; p < 15 && running; p++) {
 						int x = justFilledSquares.get(i).getXPos();
 						if (field[x - p][testingYValue].getTile() == null) {
@@ -591,8 +594,8 @@ public class ScoreCalculator {
 			int testingXValue = justFilledSquares.get(0).getXPos();
 			// de x variabelen zijn opvolgend
 			for (int i = 1; i < justFilledSquares.size(); i++) {
-				if (justFilledSquares.get(i).getYPos() != (justFilledSquares.get(
-						i - 1).getYPos() + 1)) {
+				if (justFilledSquares.get(i).getYPos() != (justFilledSquares
+						.get(i - 1).getYPos() + 1)) {
 					int y = justFilledSquares.get(i).getYPos();
 					for (int p = 1; p < 15 && running; p++) {
 						if (field[testingXValue][y - p].getTile() == null) {

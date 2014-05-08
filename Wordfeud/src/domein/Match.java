@@ -139,7 +139,8 @@ public class Match {
 		fillHand();
 
 		// tijdelijk voor het zetten van een beurt van de tegenstander
-		// ***** dbh.updateTurn(maxTurn + 1, gameID, getEnemyName(), 0, "Begin");
+		// ***** 
+		dbh.updateTurn(maxTurn + 1, gameID, getEnemyName(), 0, "Begin");
 		gameField.addSquares();
 		gameField.repaintBoard();
 	}
@@ -436,7 +437,7 @@ public class Match {
 			System.err.println("De score is berekend");
 			if (board.checkWords()) {
 				
-				JOptionPane.showInputDialog(null,"Words checked","Your word(s) are correct \n WordValue: " + board.getScore() ,JOptionPane.OK_OPTION);  
+				JOptionPane.showMessageDialog(null,"Your word(s) are correct \n WordValue: " + board.getScore() ," Words checked " ,JOptionPane.OK_OPTION);  
 				board.setScore();
 				dbh.updateTurn(maxTurn, gameID, getOwnName(), getScore(),
 						"Word");
@@ -461,15 +462,19 @@ public class Match {
 				fillHand();
 
 				// Tijdelijke reactie van de tegenstander
-				// ***** 	dbh.updateTurn(maxTurn + 1, gameID, getEnemyName(), 25, "Pass");
+				// ***** 	
+				dbh.updateTurn(maxTurn + 1, gameID, getEnemyName(), 25, "Pass");
 
 			} else {
 				System.err.println("WOORDEN ZIJN FOUT");
 				// hier moet de optie komen om ze te laten keuren
+				String printString = "";
+				ArrayList<String> playedWords = board.getPlayedWords();
+				for (String playedWord: playedWords){
+					printString += playedWord + "\n";
+				}
 				
-				
-				
-				JOptionPane.showInputDialog(null,"Words checked","Your word(s) are incorrect \n",JOptionPane.OK_OPTION);  
+				JOptionPane.showMessageDialog(null," Your word(s) are incorrect \n" + printString," Words checked",JOptionPane.OK_OPTION);  
 				
 			}
 		}
