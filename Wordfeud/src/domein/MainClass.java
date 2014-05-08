@@ -14,10 +14,10 @@ public class MainClass {
 		null, "Please enter your GameID: ");
 		if (name == null){
 			int gameID = dbh.createGame(1, "jager684", "marijntje42", "openbaar","EN");
-			wf.startGame(gameID, false, false);
+			wf.startGame(gameID, false, true);
 		} else {
 			int gameID = Integer.parseInt(name);
-			wf.startGame(gameID, false, true);
+			wf.startGame(gameID, false, false);
 		}
 	
 		// TODO Auto-generated method stub
