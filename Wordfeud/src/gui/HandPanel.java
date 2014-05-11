@@ -12,6 +12,7 @@ public class HandPanel extends JPanel{
 	public HandPanel(){
 		this.setBackground(Color.white);
 		this.setPreferredSize(new Dimension(500,50));
+		this.setBackground(Color.blue);
 	}
 	
 

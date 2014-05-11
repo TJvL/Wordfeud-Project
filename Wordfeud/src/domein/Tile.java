@@ -30,6 +30,11 @@ public class Tile {
 		this.image = image;
 	}
 
+	// NIEUW //
+	public Tile(BufferedImage image){
+		this.image = image;
+	}
+			
 	// Als een letter wordt gelegd en bevestigt dam slaat de gelegde letter ook
 	// zijn positie op
 

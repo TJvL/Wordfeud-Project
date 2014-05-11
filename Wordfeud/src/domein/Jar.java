@@ -29,6 +29,12 @@ public class Jar {
 		}
 	}
 	
+	// NIEUW //
+	public BufferedImage getImage(String letter){
+		return images.get(letter);
+	}
+	// NIEUW TOT HIER //
+	
 	public void resetJar(){
 		tiles.clear();
 	}

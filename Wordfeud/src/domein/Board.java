@@ -44,6 +44,23 @@ public class Board {
 		// Zie addSquares();
 	}
 
+	
+	// NIEUW //
+	public void clearField(){
+		for (int y = 0; y < 15; y++) {
+			for (int x = 0; x < 15; x++) {
+				field[x][y].removeTile();		
+			}
+		}
+	}
+	
+	public BufferedImage getImage(int x, int y){
+		return field[x][y].getImage();
+	}
+	
+	// NIEUW tot hier//
+	
+	
 	public void createBoard() {
 
 		// coordinaten en namen van de te plaatsen squares

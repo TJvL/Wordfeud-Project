@@ -84,6 +84,10 @@ public class WordFeud {
 	}
 
 	public void spectateMatch(int gameID) {
-		match.loadSpecateGame(gameID);
+		
+		// NIEUW //
+		match = new Match(gameID);
+		framePanel.setMatchSpecScreen(match);
+		match.loadSpecateGame(framePanel.getSpecScreen());
 	}
 }
