@@ -5,10 +5,15 @@ import javax.swing.JFrame;
 
 public class MainFrame extends JFrame {
 	private LoginScreen loginscreen;
+	private SpecScreen specscreen;
 	private RegScreen regscreen;
 	private PlayerScreen playerscreen;
-	private AdminAccScreen adminAccscreen;
+	private GameScreen gamescreen;
+	private AdminAccScreen adminaccscreen;
+	private AdminCompScreen admincompscreen;
+	private JoinCompScreen joincompscreen;
 	private JoinedCompScreen joinedcompscreen;
+	private ModScreen modscreen;
 	private StartMenuBar startMenuBar;
 	private PlayerMenuBar playerMenuBar;
 	private SpecMenuBar specMenuBar;
@@ -22,10 +27,15 @@ public class MainFrame extends JFrame {
 		modMenuBar = new ModMenuBar(this);
 		adminMenuBar = new AdminMenuBar(this);
 		loginscreen = new LoginScreen(this);
+		specscreen = new SpecScreen();
 		regscreen = new RegScreen(this);
 		playerscreen = new PlayerScreen(this);
+		gamescreen = new GameScreen();
+		joincompscreen = new JoinCompScreen();
 		joinedcompscreen = new JoinedCompScreen();
-		adminAccscreen = new AdminAccScreen();
+		adminaccscreen = new AdminAccScreen(this);
+		admincompscreen = new AdminCompScreen(this);
+		modscreen = new ModScreen();
 
 		this.setPreferredSize(new Dimension(1200, 700));
 		this.setResizable(false);
@@ -54,6 +64,21 @@ public class MainFrame extends JFrame {
 		this.setContentPane(playerscreen);
 		revalidate();
 	}
+	
+	public void setGameScreen(){
+		this.setContentPane(gamescreen);
+		revalidate();
+	}
+	
+	public void setSpecScreen(){
+		this.setContentPane(specscreen);
+		revalidate();
+	}
+	
+	public void setJoinCompScreen(){
+		this.setContentPane(joincompscreen);
+		revalidate();
+	}
 
 	public void setJoinedCompScreen() {
 		this.setContentPane(joinedcompscreen);
@@ -61,7 +86,17 @@ public class MainFrame extends JFrame {
 	}
 
 	public void setAdminAccScreen() {
-		this.setContentPane(adminAccscreen);
+		this.setContentPane(adminaccscreen);
+		revalidate();
+	}
+	
+	public void setAdminCompScreen(){
+		this.setContentPane(admincompscreen);
+		revalidate();
+	}
+	
+	public void setModScreen(){
+		this.setContentPane(modscreen);
 		revalidate();
 	}
 

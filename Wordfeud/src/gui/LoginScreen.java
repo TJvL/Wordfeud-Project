@@ -40,20 +40,19 @@ public class LoginScreen extends JPanel {
 				mainFrame.setRegScreen();
 			}
 		});
-		
-		spectateButton.addActionListener(new ActionListener(){
+
+		spectateButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				mainFrame.setSpecScreen();
 				mainFrame.setSpecMenuBar();
 			}
-			
 		});
 
 		loginButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				mainFrame.setAdminAccScreen();
-				mainFrame.setAdminMenuBar();
+				mainFrame.setModMenuBar();
+				mainFrame.setModScreen();
 			}
-
 		});
 
 		buttons.add(registerButton);

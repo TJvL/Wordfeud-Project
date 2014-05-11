@@ -19,8 +19,10 @@ public class PlayerScreen extends JPanel {
 	private JList<String> gameList;
 	private JPanel listPanel;
 	private JPanel buttonsPanel;
+	private CreateCompWindow createcompwindow;
 
 	public PlayerScreen(MainFrame mainFrame) {
+		createcompwindow = new CreateCompWindow();
 		this.mainFrame = mainFrame;
 
 		this.setLayout(new BorderLayout());
@@ -52,7 +54,7 @@ public class PlayerScreen extends JPanel {
 		buttonsPanel = new JPanel();
 		JPanel composedButtons = new JPanel();
 
-		JButton ownCompButton = new JButton(getOwnCompButtonName());
+		JButton createCompButton = new JButton("Create competition");
 		JButton openGameButton = new JButton("Open game");
 		JButton joinCompButton = new JButton("Join Competition");
 		JButton joinedCompButton = new JButton("Joined competitions");
@@ -65,24 +67,28 @@ public class PlayerScreen extends JPanel {
 
 		openGameButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				mainFrame.setGameScreen();
 			}
 		});
-
 		joinedCompButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				mainFrame.setJoinedCompScreen();
 			}
 		});
+		joinCompButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				mainFrame.setJoinCompScreen();
+			}});
+		createCompButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				createcompwindow.createCompFrame();
+			}});
 
-		composedButtons.add(ownCompButton);
+		composedButtons.add(createCompButton);
 		composedButtons.add(openGameButton);
 		composedButtons.add(joinedCompButton);
 		composedButtons.add(joinCompButton);
 
 		buttonsPanel.add(composedButtons, BorderLayout.WEST);
-	}
-
-	private String getOwnCompButtonName() {
-		return "Create competition";
 	}
 }

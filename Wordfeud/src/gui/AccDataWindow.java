@@ -54,8 +54,8 @@ public class AccDataWindow extends JFrame
 		this.add(labelPanel, BorderLayout.CENTER);
 
 		this.pack();
+		this.setLocationRelativeTo(null);
 		this.setVisible(true);
-
 	}
 
 	public void createButtonPanel()

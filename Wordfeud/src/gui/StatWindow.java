@@ -23,9 +23,8 @@ public class StatWindow extends JFrame {
 
 	public void showStats() {
 
-		this.setLayout(new GridLayout(6, 2, 20, 20));
-		this.setPreferredSize(new Dimension(800, 800));
-		this.setDefaultCloseOperation(this.EXIT_ON_CLOSE);
+		this.setLayout(new GridLayout(6, 2, 10, 10));
+		this.setPreferredSize(new Dimension(500, 500));
 		this.setResizable(false);
 		this.setTitle(" PlayerName's Statistics");
 		createLabels();

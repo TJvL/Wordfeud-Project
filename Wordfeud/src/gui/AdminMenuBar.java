@@ -7,6 +7,10 @@ public class AdminMenuBar extends StandardMenuBar{
 
 	public AdminMenuBar(MainFrame mainFrame) {
 		super(mainFrame);
+	}
+
+	/*public AdminMenuBar(MainFrame mainFrame) {
+		super(mainFrame);
 		
 		JMenu adminoptionsMenu = new JMenu("Administrator options");
 		JMenuItem playeroptionsMenuItem = new JMenuItem("Player options");
@@ -17,6 +21,6 @@ public class AdminMenuBar extends StandardMenuBar{
 		adminoptionsMenu.add(competitionoptionsMenuItem);
 
 		this.add(adminoptionsMenu);
-	}
+	}*/
 
 }

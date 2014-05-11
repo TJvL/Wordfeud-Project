@@ -3,6 +3,8 @@ package gui;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -12,11 +14,13 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 public class JoinedCompScreen extends JPanel {
+	private RankingWindow rankingwindow;
 	private JPanel listPanel;
 	private JPanel buttonsPanel;
 	private String comps[] = { "lol" };
 
 	public JoinedCompScreen() {
+		rankingwindow = new RankingWindow();
 		this.setLayout(new BorderLayout());
 
 		createCompList();
@@ -47,6 +51,11 @@ public class JoinedCompScreen extends JPanel {
 		JPanel composedButtons = new JPanel();
 		
 		JButton infoButton = new JButton("Ranglist");
+		
+		infoButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent arg0) {
+				rankingwindow.showRanking();
+			}});
 		
 		composedButtons.setLayout(new GridLayout(4, 1, 0, 50));
 		

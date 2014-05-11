@@ -3,6 +3,8 @@ package gui;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -12,11 +14,18 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 public class AdminAccScreen extends JPanel {
+	private AccDataWindow accdatawindow;
+	private AdminCreatePlayerWindow admincreateplayerwindow;
+	private MainFrame mainFrame;
 	private JPanel listPanel;
 	private JPanel buttonsPanel;
 	private String players[] = { "palyer" };
 
-	public AdminAccScreen() {
+	public AdminAccScreen(MainFrame mainFrame) {
+		accdatawindow = new AccDataWindow();
+		admincreateplayerwindow = new AdminCreatePlayerWindow();
+		this.mainFrame = mainFrame;
+		
 		this.setLayout(new BorderLayout());
 		
 		createPlayerList();
@@ -52,14 +61,25 @@ public class AdminAccScreen extends JPanel {
 		buttonsPanel.setPreferredSize(new Dimension(300, 300));
 
 		JButton getDataButton = new JButton("Player data");
-		JButton changeDataButton = new JButton("Change data");
 		JButton compScreenButton = new JButton("Competitions screen");
 		JButton addAccButton = new JButton("Create account");
 		
+		getDataButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				accdatawindow.showAccData();
+			}});
+		addAccButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent arg0) {
+				admincreateplayerwindow.ShowAdminCreatePlayer();
+			}});
+		compScreenButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				mainFrame.setAdminCompScreen();
+			}});
+		
 		composedButtons.add(getDataButton);
-		composedButtons.add(changeDataButton);
-		composedButtons.add(compScreenButton);
 		composedButtons.add(addAccButton);
+		composedButtons.add(compScreenButton);
 
 		buttonsPanel.add(composedButtons, BorderLayout.WEST);
 	}

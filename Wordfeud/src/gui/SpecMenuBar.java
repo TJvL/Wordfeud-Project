@@ -12,6 +12,7 @@ public class SpecMenuBar extends JMenuBar{
 		JMenu optionsMenu = new JMenu("Options");
 		JMenuItem exitMenuItem = new JMenuItem("Exit");
 		JMenuItem regMenuItem = new JMenuItem("Register");
+		JMenuItem loginMenuItem = new JMenuItem("Login");
 		
 		exitMenuItem.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
@@ -23,11 +24,17 @@ public class SpecMenuBar extends JMenuBar{
 				mainFrame.setRegScreen();
 				mainFrame.setStartMenuBar();
 			}
-			
+		});
+		loginMenuItem.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				mainFrame.setLoginScreen();
+				mainFrame.setStartMenuBar();
+			}			
 		});
 		
 		optionsMenu.add(exitMenuItem);
 		optionsMenu.add(regMenuItem);
+		optionsMenu.add(loginMenuItem);
 		
 		this.add(optionsMenu);
 	}
