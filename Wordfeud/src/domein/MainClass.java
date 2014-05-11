@@ -10,6 +10,7 @@ public class MainClass {
 	public static void main(String[] args) {
 		
 		WordFeud wf = new WordFeud();
+		
 		/*
 		DatabaseHandler dbh = DatabaseHandler.getInstance();	
 		String name = JOptionPane.showInputDialog(

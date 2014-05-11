@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Observable;
+import java.util.Observer;
 
 import javax.swing.JOptionPane;
 
@@ -14,7 +16,7 @@ import gui.GameSpecScreen;
 import gui.SpecScreen;
 import gui.TilePanel;
 
-public class Match {
+public class Match implements Observer{
 	private Tile selectedTile;
 	private Jar jar;
 	private Board board;
@@ -46,7 +48,7 @@ public class Match {
 		// this.enemy = new enemy(stuff to make a new enemy)
 	}
 
-	// NIEUW - voor spectaten//
+	// NIEUW - voor spectaten ***************************************//
 	public Match(int gameID) {
 		this.gameID = gameID;
 		board = new Board();
@@ -131,7 +133,19 @@ public class Match {
 
 		gameSpec.repaintBoard();
 	}
-
+	
+	@Override
+	public void update(Observable o, Object arg) {
+		String direction = (String) arg;
+		System.out.println("OBSERVER TEST: " + direction);
+		if (direction.equals("forward")){
+			updateSpecTurn(true);
+		}else {
+			updateSpecTurn(false);
+		}
+		//updateSpecTurn()
+	}
+	
 	public void updateSpecTurn(boolean forward) {
 		String names = dbh.opponentName(gameID);
 		String[] playerNames = names.split("---");
@@ -208,7 +222,7 @@ public class Match {
 	public BufferedImage getImage(int x, int y) {
 		return board.getImage(x, y);
 	}
-	// NIEUW TOT HIER//
+	// NIEUW TOT HIER **************************************//
 	
 	public int getGameID() {
 		return gameID;

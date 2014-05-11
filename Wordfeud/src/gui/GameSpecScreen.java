@@ -8,6 +8,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -16,7 +18,7 @@ import datalaag.FileHandler;
 import domein.Match;
 import domein.Tile;
 
-public class GameSpecScreen extends JPanel {
+public class GameSpecScreen extends JPanel{
 	private Match match;
 	private SquarePanel[][] squaresPanels;
 	private FieldPanel fieldPanel;
@@ -58,7 +60,8 @@ public class GameSpecScreen extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
-				match.updateSpecTurn(true);
+			//	new ObserverButtons("forward");
+				match.updateSpecTurn(true);			
 			}
 		});
 		this.add(forward);
@@ -67,12 +70,13 @@ public class GameSpecScreen extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
+			//	new ObserverButtons("backwards");
 				match.updateSpecTurn(false);
 			}
 		});
 		this.add(backward);
 	}
-
+	
 	public void setMatch(Match match) {
 		this.match = match;
 	}
@@ -180,5 +184,13 @@ public class GameSpecScreen extends JPanel {
 		this.repaint();
 		this.revalidate();
 		this.repaint();
+	}
+}
+
+class ObserverButtons extends Observable {
+	public ObserverButtons(String direction){
+		System.out.println("OBSERVER TEST: " + direction);
+		this.setChanged();
+		this.notifyObservers(direction);
 	}
 }
