@@ -136,9 +136,17 @@ public class Match implements Observer{
 	
 	@Override
 	public void update(Observable o, Object arg) {
-		String direction = (String) arg;
-		System.out.println("OBSERVER TEST: " + direction);
-		if (direction.equals("forward")){
+		String requestedAction = (String) arg;
+		System.out.println("OBSERVER TEST: " + requestedAction);
+		if(requestedAction.equals("play")){
+			this.playWord();
+		} else if(requestedAction.equals("pass")){
+			this.skipTurn();
+		} else if(requestedAction.equals("clear")){
+			this.clearTilesFromBoard();
+		} else if(requestedAction.equals("surrender")){
+			this.surrenderGame();
+		} else if (requestedAction.equals("forward")){
 			updateSpecTurn(true);
 		}else {
 			updateSpecTurn(false);

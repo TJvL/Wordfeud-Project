@@ -3,6 +3,9 @@ package gui;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Observable;
+import java.util.Observer;
+
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -13,7 +16,6 @@ public class GameButtonPanel extends JPanel {
 
 	private static final long serialVersionUID = -1759296107629262333L;
 
-	private Match match;
 	private GameFieldPanel boardP;
 	private boolean swapPressed;
 	private JButton swap;
@@ -22,24 +24,26 @@ public class GameButtonPanel extends JPanel {
 	private JButton surr;
 	private JButton clear;
 	private JButton shuffle;
+	private ObserverButtons observerButtons;
 
 	public GameButtonPanel(GameFieldPanel boardP) {
 		this.boardP = boardP;
 		this.setBackground(Color.green);
 		this.addButtons();
 		this.swapPressed = false;
+		observerButtons = new ObserverButtons();
+	}
+	
+	public void addObserverToObserverButtons(Observer observer){
+		observerButtons.addObserver(observer);
 	}
 
-	public void setMatch(Match match) {
-		this.match = match;
-	}
-	
-	public synchronized void disableSurrender(){
+	public synchronized void disableSurrender() {
 		surr.setEnabled(false);
 	}
-	
-	public synchronized void setTurn(boolean turn){
-		if (turn){
+
+	public synchronized void setTurn(boolean turn) {
+		if (turn) {
 			swap.setEnabled(true);
 			play.setEnabled(true);
 			pass.setEnabled(true);
@@ -107,12 +111,14 @@ public class GameButtonPanel extends JPanel {
 	// ////////////////////////////////////
 	private void playTiles() {
 		// if score > 0
-		match.playWord();
+//		match.playWord();
+		observerButtons.changeActionRequest("play");
 	}
 
 	private void skipTurn() {
 		// DatabaseHandler.getInstance().changeTurn();
-		match.skipTurn();
+//		match.skipTurn();
+		observerButtons.changeActionRequest("pass");
 	}
 
 	private void shuffleTiles() {
@@ -157,11 +163,21 @@ public class GameButtonPanel extends JPanel {
 	}
 
 	private void clearTiles() {
-		match.clearTilesFromBoard();
+//		match.clearTilesFromBoard();
+		observerButtons.changeActionRequest("clear");
 	}
 
 	private void surrenderGame() {
 		// pop-up maken met score e.d.
-		match.surrenderGame();	
+//		match.surrenderGame();
+		observerButtons.changeActionRequest("surrender");
+	}
+
+	class ObserverButtons extends Observable {
+		public void changeActionRequest(String actionRequest) {
+			System.out.println("action requested: " + actionRequest);
+			this.setChanged();
+			this.notifyObservers(actionRequest);
+		}
 	}
 }

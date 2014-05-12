@@ -27,8 +27,6 @@ public class FileHandler {
 			try
 				{
 					image = ImageIO.read(new File(aFileName));
-					System.out.println("SUCCES: Image buffered. Path "
-							+ aFileName);
 					return image;
 				}
 			catch (IOException error)

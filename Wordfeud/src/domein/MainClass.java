@@ -11,7 +11,7 @@ public class MainClass {
 		
 		WordFeud wf = new WordFeud();
 		
-		/*
+		
 		DatabaseHandler dbh = DatabaseHandler.getInstance();	
 		String name = JOptionPane.showInputDialog(
 		null, "Please enter your GameID: ");
@@ -26,8 +26,8 @@ public class MainClass {
 		} else {
 			int gameID = Integer.parseInt(name);
 			wf.startGame(gameID, false, false);
-		}*/
-		wf.startGame(511, true, false);
+		}
+		//wf.startGame(511, true, false);
 	
 		// TODO Auto-generated method stub
 		

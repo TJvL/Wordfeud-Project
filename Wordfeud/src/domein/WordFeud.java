@@ -47,6 +47,7 @@ public class WordFeud {
 		// Wel - nieuwe generen etc.
 		match = new Match(gameID, getUserPlayer());
 		framePanel.setMatch(match);
+		this.addObservers();
 		match.startNewGame(framePanel.getGameFieldPanel());
 
 		// hiermee kun je een game aanmaken - ik denk dat die moet gebeuren
@@ -89,5 +90,9 @@ public class WordFeud {
 		match = new Match(gameID);
 		framePanel.setMatchSpecScreen(match);
 		match.loadSpecateGame(framePanel.getSpecScreen());
+	}
+	
+	public void addObservers(){
+		framePanel.addObservers(match);
 	}
 }

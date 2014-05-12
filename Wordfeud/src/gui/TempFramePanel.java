@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.Dimension;
+import java.util.Observer;
 
 import javax.swing.JFrame;
 
@@ -23,10 +24,14 @@ public class TempFramePanel extends JFrame {
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		//this.setContentPane(gameScreen);
-		this.setContentPane(specScreen);
+		this.setContentPane(gameScreen); ////////////////////////////////////------------------------
 		//this.add(gameScreen);
 		this.pack();	
 		this.setVisible(true);
+	}
+	
+	public void addObservers(Observer observer){
+		gameScreen.addObservers(observer);
 	}
 	
 	public void setMatch(Match match){

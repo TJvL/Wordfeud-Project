@@ -2,6 +2,7 @@ package gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.util.Observer;
 
 import javax.swing.JPanel;
 
@@ -28,9 +29,13 @@ public class GameScreen extends JPanel {
 		scorePanel.setBounds(530, 515, 500, 85);
 		this.add(scorePanel);	
 	}
+	
+	public void addObservers(Observer observer){
+		buttonPanel.addObserverToObserverButtons(observer);
+	}
 
 	public void setMatch(Match match) {
-		buttonPanel.setMatch(match);
+//		buttonPanel.setMatch(match);
 		boardPanel.setMatch(match);
 		scorePanel.setMatch(match);
 		
