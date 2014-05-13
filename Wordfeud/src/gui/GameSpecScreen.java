@@ -1,11 +1,8 @@
 package gui;
 
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Observable;
@@ -14,12 +11,10 @@ import java.util.Observer;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
-import datalaag.FileHandler;
 import domein.Match;
 import domein.Tile;
 
-public class GameSpecScreen extends JPanel{
-	private Match match;
+public class GameSpecScreen extends JPanel {
 	private SquarePanel[][] squaresPanels;
 	private FieldPanel fieldPanel;
 	private ArrayList<TilePanel> tilesP1;
@@ -31,6 +26,7 @@ public class GameSpecScreen extends JPanel{
 	private TilePanel tilePanel;
 	private JButton forward;
 	private JButton backward;
+	private ObserverButtons observerButtons;
 
 	public GameSpecScreen() {
 		squaresPanels = new SquarePanel[15][15];
@@ -60,8 +56,8 @@ public class GameSpecScreen extends JPanel{
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
-			//	new ObserverButtons("forward");
-				match.updateSpecTurn(true);			
+				// new ObserverButtons("forward");
+				observerButtons.changeActionRequest("forward");
 			}
 		});
 		this.add(forward);
@@ -70,19 +66,15 @@ public class GameSpecScreen extends JPanel{
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
-			//	new ObserverButtons("backwards");
-				match.updateSpecTurn(false);
+				// new ObserverButtons("backwards");
+				observerButtons.changeActionRequest("backward");
 			}
 		});
 		this.add(backward);
 	}
-	
-	public void setMatch(Match match) {
-		this.match = match;
-	}
 
 	// Creating the field
-	public void createField() {
+	public void createField(Match match) {
 		for (int y = 0; y < 15; y++) {
 			for (int x = 0; x < 15; x++) {
 				SquarePanel squarePanel;
@@ -97,7 +89,7 @@ public class GameSpecScreen extends JPanel{
 	}
 
 	// Restting the board
-	public void resestField() {
+	public void resestField(Match match) {
 		for (int y = 0; y < 15; y++) {
 			for (int x = 0; x < 15; x++) {
 				if (match.getSquare(x, y).getTile() != null) {
@@ -185,12 +177,16 @@ public class GameSpecScreen extends JPanel{
 		this.revalidate();
 		this.repaint();
 	}
+
+	public void addObserverToObserverButtons(Observer observer) {
+		observerButtons.addObserver(observer);
+	}
 }
 
 class ObserverButtons extends Observable {
-	public ObserverButtons(String direction){
-		System.out.println("OBSERVER TEST: " + direction);
+	public void changeActionRequest(String actionRequest) {
+		System.out.println("action requested: " + actionRequest);
 		this.setChanged();
-		this.notifyObservers(direction);
+		this.notifyObservers(actionRequest);
 	}
 }

@@ -5,7 +5,6 @@ import java.util.Observer;
 
 import javax.swing.JFrame;
 
-import domein.Match;
 
 public class TempFramePanel extends JFrame {
 
@@ -24,27 +23,28 @@ public class TempFramePanel extends JFrame {
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		//this.setContentPane(gameScreen);
-		this.setContentPane(gameScreen); ////////////////////////////////////------------------------
+		//this.setContentPane(specScreen); ////////////////////////////////////------------------------
 		//this.add(gameScreen);
 		this.pack();	
 		this.setVisible(true);
 	}
 	
-	public void addObservers(Observer observer){
-		gameScreen.addObservers(observer);
-	}
-	
-	public void setMatch(Match match){
-		gameScreen.setMatch(match);
+	public void addObservers(Observer observer, boolean spectator){
+		if(spectator){
+			this.setContentPane(specScreen);
+			specScreen.addObserverToObserverButtons(observer);	
+		} else {
+			this.setContentPane(gameScreen);
+			gameScreen.addObservers(observer);
+		}
 	}
 	
 	public GameFieldPanel getGameFieldPanel(){
 		return gameScreen.getGameFieldPanel(true);
 	}
 	
-	// NIEUW //
-	public void setMatchSpecScreen(Match match){
-		specScreen.setMatch(match);
+	public GameScreen getGameScreen(){
+		return gameScreen;
 	}
 	
 	public GameSpecScreen getSpecScreen(){

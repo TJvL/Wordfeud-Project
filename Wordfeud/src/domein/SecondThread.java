@@ -19,8 +19,7 @@ public class SecondThread extends Thread {
 	private boolean running = true;
 	private boolean turnSwap = true;
 
-	public SecondThread(Match match, GameFieldPanel fieldPanel,
-			GameButtonPanel buttonPanel, ScorePanel scorePanel) {
+	public SecondThread(Match match, GameFieldPanel fieldPanel,GameButtonPanel buttonPanel, ScorePanel scorePanel) {
 		super("thread");
 		this.match = match;
 		this.fieldPanel = fieldPanel;

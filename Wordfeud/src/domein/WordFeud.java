@@ -3,6 +3,7 @@ package domein;
 import gui.TempFramePanel;
 
 import java.util.ArrayList;
+import java.util.Observer;
 
 import datalaag.DatabaseHandler;
 
@@ -11,12 +12,14 @@ public class WordFeud {
 	private Match match;
 	private ArrayList<Match> matches;
 	private DatabaseHandler dbh;
+	private SecondThread secondThread;
 
 	// Has to be changed to the correct FramePanel
 	private TempFramePanel framePanel;
 
 	public WordFeud() {
 		user = new User();
+		match = new Match(0);
 		matches = new ArrayList<Match>();
 		framePanel = new TempFramePanel();
 		dbh = DatabaseHandler.getInstance();
@@ -46,8 +49,8 @@ public class WordFeud {
 		// Zoniet - dan meegeven aan match
 		// Wel - nieuwe generen etc.
 		match = new Match(gameID, getUserPlayer());
-		framePanel.setMatch(match);
-		this.addObservers();
+		this.addObservers(match,false);
+		createSecondThread(match);
 		match.startNewGame(framePanel.getGameFieldPanel());
 
 		// hiermee kun je een game aanmaken - ik denk dat die moet gebeuren
@@ -70,7 +73,7 @@ public class WordFeud {
 			if (match.getGameID() == gameID) {
 				exists = true;
 				match = new Match(gameID, getUserPlayer());
-				framePanel.setMatch(match);
+				createSecondThread(match);
 				match.loadGame(framePanel.getGameFieldPanel());
 
 			}
@@ -78,21 +81,36 @@ public class WordFeud {
 		if (!exists) {
 			// krijgen GameID wanneer wordfeud word aangeroepen
 			match = new Match(gameID, getUserPlayer());
-			framePanel.setMatch(match);
+			createSecondThread(match);
 			match.loadGame(framePanel.getGameFieldPanel());
 		}
 
+	}
+	
+	public void createSecondThread(Match match) {
+		// Second thread for running the chat funcion and who's turn it is 
+		try {
+		setThreadStatus(false);
+		} catch (NullPointerException e){
+			System.out.println("nullPointer - WordFeud");
+		}
+		secondThread = new SecondThread(match, framePanel.getGameScreen().getBoardPanel(), framePanel.getGameScreen().getButtonPanel(), framePanel.getGameScreen().getScorePanel());
+		secondThread.start();
+	}
+	
+	public void setThreadStatus(boolean running){
+		secondThread.setRunning(running);
 	}
 
 	public void spectateMatch(int gameID) {
 		
 		// NIEUW //
 		match = new Match(gameID);
-		framePanel.setMatchSpecScreen(match);
 		match.loadSpecateGame(framePanel.getSpecScreen());
+		this.addObservers(match, true);
 	}
 	
-	public void addObservers(){
-		framePanel.addObservers(match);
+	public void addObservers(Observer observer, boolean spectator){
+		framePanel.addObservers(observer, spectator);
 	}
 }

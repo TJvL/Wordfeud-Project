@@ -63,7 +63,6 @@ public class Match implements Observer{
 	// Uses a separate panel
 	public void loadSpecateGame(GameSpecScreen gameSpecScreen) {
 		this.gameSpec = gameSpecScreen;
-
 		dbh.connection();
 		// vullen van de jar - een nieuwe jar aanmaken
 		// opvragen van het bord
@@ -73,7 +72,7 @@ public class Match implements Observer{
 			}
 		}
 		dbh.closeConnection();
-		gameSpec.createField();
+		gameSpec.createField(this);
 
 		ArrayList<String> playedWords = dbh.playedWords(gameID);
 		for (String played : playedWords) {
@@ -146,7 +145,13 @@ public class Match implements Observer{
 			this.clearTilesFromBoard();
 		} else if(requestedAction.equals("surrender")){
 			this.surrenderGame();
-		} else if (requestedAction.equals("forward")){
+		} else if(requestedAction.equals("swap")){
+			this.swapTiles(gameField.getTilesToSwap());
+		}
+			
+			
+			
+			if (requestedAction.equals("forward")){
 			updateSpecTurn(true);
 		}else {
 			updateSpecTurn(false);
@@ -202,7 +207,7 @@ public class Match implements Observer{
 		}
 
 		board.clearField();
-		gameSpec.resestField();
+		gameSpec.resestField(this);
 		
 		ArrayList<String> playedWords = dbh.playedWords(gameID);
 		for (String played : playedWords) {
@@ -334,7 +339,7 @@ public class Match implements Observer{
 		// tijdelijk voor het zetten van een beurt van de tegenstander
 		// *****
 		dbh.updateTurn(maxTurn + 1, gameID, getEnemyName(), 0, "Begin");
-		gameField.addSquares();
+		gameField.addSquares(this);
 		gameField.repaintBoard();
 	}
 
@@ -360,7 +365,7 @@ public class Match implements Observer{
 			jar.addNewTile(t);
 		}
 
-		gameField.addSquares();
+		gameField.addSquares(this);
 		// Checks if the game being loaded has not started and the player was
 		// invited
 		// The enemy then started so there are no words to load or hand to load
@@ -419,19 +424,15 @@ public class Match implements Observer{
 
 	// Return the player names
 	public synchronized String getOwnName() {
-		/*
-		 * if (player.getName() != null) { return player.getName(); } else {
-		 * return "No-Name"; }
-		 */
-
+		//jager684 is de uitdager
 		// De usernaam moet nog ergens worden opgevraagd
-		return "marijntje42";
+		return "jager684"; 
 
 	}
 
 	public synchronized String getEnemyName() {
 		// if (enemy.getName() != null) {
-		return "jager684";
+		return "marijntje42";
 		// return dbh.opponentName(gameID);
 		// } else {
 		// return "No-Name";
@@ -450,7 +451,7 @@ public class Match implements Observer{
 	// Method for loading games to add tiles to hand
 	public void addTileToHand(Tile t) {
 		player.addTileToHand(t);
-		gameField.addTileToHand(t);
+		gameField.addTileToHand(t, this);
 		gameField.repaintBoard();
 	}
 
@@ -460,7 +461,7 @@ public class Match implements Observer{
 		Tile t = jar.getNewTile();
 		// addTileToHand(t);
 		player.addTileToHand(t);
-		gameField.addTileToHand(t);
+		gameField.addTileToHand(t, this);
 		gameField.repaintBoard();
 		return t.getTileID();
 	}
@@ -516,7 +517,7 @@ public class Match implements Observer{
 		}
 		player.addTileToHand(t);
 		board.removeTileFromSquare(x, y);
-		gameField.addTileToHand(t);
+		gameField.addTileToHand(t, this);
 		board.startCalculating();
 		gameField.repaintBoard();
 	}
@@ -583,6 +584,7 @@ public class Match implements Observer{
 		}
 		dbh.updateTurn(maxTurn, gameID, getOwnName(), 0, "Swap");
 		tilesToSwap.clear();
+		gameField.swapTiles();
 		fillHand();
 
 		try {
@@ -629,10 +631,10 @@ public class Match implements Observer{
 						"Your word(s) are correct \n WordValue: "
 								+ board.getScore(), " Words checked ",
 						JOptionPane.OK_OPTION);
-				board.setScore();
+				
 				dbh.updateTurn(maxTurn, gameID, getOwnName(), getScore(),
 						"Word");
-
+				board.setScore();
 				ArrayList<Tile> justPlayedTiles = board.addtilesToDatabase();
 				for (Tile tiles : justPlayedTiles) {
 					try {
@@ -670,6 +672,7 @@ public class Match implements Observer{
 
 			}
 		}
+		board.resetPlayedWords();
 	}
 
 	// A method for the secondThread to see if a word is submitted

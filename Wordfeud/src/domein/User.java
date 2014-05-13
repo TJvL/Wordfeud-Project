@@ -9,7 +9,6 @@ public class User {
 	private String userName;
 	
 	public User(){
-		System.out.println("TESTTEST");
 		player = new Player("Klaas");
 	}
 	

@@ -7,24 +7,23 @@ import java.awt.Graphics;
 
 import javax.swing.JPanel;
 
+import datalaag.DatabaseHandler;
 import domein.Match;
 
 public class ScorePanel extends JPanel {
-	private Match match;
-	private GameFieldPanel boardPanel;
+//	private Match match;
+//	private GameFieldPanel boardPanel;
 	private int wordValue;
 	private int enemyScore;
 	private int ownScore;
+	private DatabaseHandler dbh;
 
 	public ScorePanel(GameFieldPanel boardpanel) {
 		this.setPreferredSize(new Dimension(500, 100));
 		// this.setBackground(Color.yellow);
 		this.setLayout(null);
-		this.boardPanel = boardPanel;
-	}
-
-	public void setMatch(Match match) {
-		this.match = match;
+//		this.boardPanel = boardPanel;
+		dbh = DatabaseHandler.getInstance();
 	}
 
 	public void paintComponent(Graphics g) {
@@ -42,7 +41,7 @@ public class ScorePanel extends JPanel {
 		// Here is a try and catch because getEnemyName is often null
 		// This catch stops the nullpointer
 		try {
-			g.drawString(match.getEnemyName(), 300, 70);
+			g.drawString(/*dbh.getEnemyName()*/ "ScorePanel - paintComponent", 300, 70);
 		} catch (NullPointerException e) {
 
 		}

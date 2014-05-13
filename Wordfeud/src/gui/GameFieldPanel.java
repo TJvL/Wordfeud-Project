@@ -19,7 +19,7 @@ public class GameFieldPanel extends JPanel {
 	private ArrayList<TilePanel> tiles;
 	private FieldPanel fieldPanel;
 	private HandPanel handPanel;
-	private Match match;
+//	private Match match;
 	private boolean swapPressed;
 	private ArrayList<TilePanel> tilesToSwap;
 
@@ -35,18 +35,10 @@ public class GameFieldPanel extends JPanel {
 		this.add(handPanel, BorderLayout.SOUTH);
 	}
 
-	// Method to set the match loaded now
-	public void setMatch(Match match) {
-		this.match = match;
-	}
 
-	public void startNewGame() {
-		this.addSquares();
-	}
-
-	public void addSquares() {
+	public void addSquares(Match givenMatch) {
 		// boolean j = true;
-
+		final Match match = givenMatch;
 		for (int y = 0; y < 15; y++) {
 			for (int x = 0; x < 15; x++) {
 
@@ -70,13 +62,6 @@ public class GameFieldPanel extends JPanel {
 						String output = "" + sq.getXValue() + " | "
 								+ sq.getYValue();
 						System.out.println(output);
-
-						if (sq.getOccupied()) {
-							System.out.println(match
-									.getSquare(sq.getXValue(), sq.getYValue())
-									.getTile().getJustPlayed()
-									+ " is net gespeeld");
-						}
 
 						if (!swapPressed) {
 							// Deze methode moet eigenlijk naar de match
@@ -115,9 +100,12 @@ public class GameFieldPanel extends JPanel {
 		}
 	}
 
-	private TilePanel makeTilePanel(Tile tile) {
+	private TilePanel makeTilePanel(Tile tile, Match givenMatch) {
+		final Match match = givenMatch;
 		tile.setXValue(1111);
 		tile.setYValue(1111);
+		
+		
 		TilePanel tilePanel = new TilePanel(tile);
 
 		tilePanel.addMouseListener(new MouseAdapter() {
@@ -206,9 +194,9 @@ public class GameFieldPanel extends JPanel {
 
 	// You give it a tile to be add to the hand
 	// The param is the tile to be add
-	public void addTileToHand(Tile t) {
+	public void addTileToHand(Tile t, Match givenMatch) {
 		TilePanel tile;
-		tiles.add(tile = makeTilePanel(t));
+		tiles.add(tile = makeTilePanel(t, givenMatch));
 
 		handPanel.disposeTiles();
 		for (TilePanel tp : tiles) {
@@ -256,12 +244,16 @@ public class GameFieldPanel extends JPanel {
 	// it will give a message that allows you to
 	// select some tiles to be swapped
 	public void swapTiles() {
-		match.swapTiles(tilesToSwap);
+		//match.swapTiles(tilesToSwap);
 		tilesToSwap.clear();
 		for (TilePanel t : tiles) {
 			t.setSelected(false);
 		}
 		repaintBoard();
+	}
+	
+	public ArrayList<TilePanel> getTilesToSwap(){
+		return tilesToSwap;
 	}
 
 	public boolean getOccupied(int x, int y) {

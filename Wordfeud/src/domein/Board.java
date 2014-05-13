@@ -54,6 +54,10 @@ public class Board {
 		}
 	}
 	
+	public void resetPlayedWords(){
+		checkedWords.clear();
+	}
+	
 	public BufferedImage getImage(int x, int y){
 		return field[x][y].getImage();
 	}

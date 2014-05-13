@@ -134,7 +134,8 @@ public class GameButtonPanel extends JPanel {
 			swap.setText("Swap");
 			boardP.setSwapPressed(false);
 			// Method in panel to swapTiles
-			boardP.swapTiles();
+//			boardP.swapTiles();
+			observerButtons.changeActionRequest("swap");
 			swapPressed = false;
 			surr.setEnabled(true);
 			play.setEnabled(true);
