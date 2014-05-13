@@ -1,4 +1,5 @@
 package gui;
+
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -20,12 +21,13 @@ import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 
 /////this screen contains all public active  competitions 
-public class JoinCompScreen extends JPanel
+public class JoinCompScreen extends JPanel {
 
-{
+	public JoinCompScreen() {
+		createJoinCompScreen();
+	}
 
-	private String listArray[] =
-	{
+	private String listArray[] = {
 
 	"Active Comp 1 ", "Active Comp 2", "Active Comp 3", "Active Comp 4" };
 	private JScrollPane listScrollPane;
@@ -38,7 +40,7 @@ public class JoinCompScreen extends JPanel
 	private JButton selectComp = new JButton();
 	private DefaultListModel<String> myListModel = new DefaultListModel<String>();
 	private JList<String> activeCompsList = new JList<String>(listArray);
-	private JButton requestInvite = new JButton();
+	private JButton joinButton = new JButton();
 
 	private JLabel compName = new JLabel();
 	private JLabel NrOfparticipants = new JLabel();
@@ -46,11 +48,9 @@ public class JoinCompScreen extends JPanel
 	private JLabel startsIn = new JLabel();
 	private JLabel bordType = new JLabel();
 
-	
-	//run this method before setting the screen as contentpane
-	
-	public void createJoinCompScreen()
-	{
+	// run this method before setting the screen as contentpane
+
+	public void createJoinCompScreen() {
 		this.createjoinCompScreenListPanel();
 		this.createjoinCompScreenButtonPanel();
 		this.createInfoLabelsPanel();
@@ -64,8 +64,7 @@ public class JoinCompScreen extends JPanel
 
 	// /the following 3 methods are used to create 2 separate panels which are
 	// both added to our main screen in the method above
-	public void createjoinCompScreenListPanel()
-	{
+	public void createjoinCompScreenListPanel() {
 
 		// ///this panel contains our JList, where all the active games are
 		// listed
@@ -101,52 +100,43 @@ public class JoinCompScreen extends JPanel
 
 		selectComp.setText("Select an active competition to view it");
 		joinCompScreenButtonPanel.add(selectComp);
-		selectComp.addActionListener(new ActionListener()
-		{
+		selectComp.addActionListener(new ActionListener() {
 
 			@Override
-			public void actionPerformed(ActionEvent e)
-			{
+			public void actionPerformed(ActionEvent e) {
 				selectCompClicked();
 
 			}
 		});
-		
-		requestInvite.setText("Request Invite");
-		joinCompScreenButtonPanel.add(requestInvite);
-		requestInvite.addActionListener(new ActionListener(){
+
+		joinButton.setText("Join competition");
+		joinCompScreenButtonPanel.add(joinButton);
+		joinButton.addActionListener(new ActionListener() {
 
 			@Override
-			public void actionPerformed(ActionEvent arg0)
-			{
+			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
 				requestInviteClicked();
 			}
-			
+
 		});
-		
 
 	}
-	
-	
-	public void requestInviteClicked()
-	{
-		////checks if the user actually selected something 
-		if(activeCompsList.getSelectedValue()!= null)
-		{
+
+	public void requestInviteClicked() {
+		// //checks if the user actually selected something
+		if (activeCompsList.getSelectedValue() != null) {
 			String itemSelected = activeCompsList.getSelectedValue().toString();
-			selectedTextArea.setText("You have requested an invite for : " + itemSelected);
-		}
-		else
-		{
+			selectedTextArea.setText("You have joined : "
+					+ itemSelected);
+		} else {
 			selectedTextArea.setText("Nothing was selected !");
-	
+
 		}
 	}
 
-////these labels contain the info on the competition
-	public void createInfoLabelsPanel()
-	{
+	// //these labels contain the info on the competition
+	public void createInfoLabelsPanel() {
 		compName.setText("compName:");
 		compName.setFont(new Font("Serif", Font.BOLD, 17));
 		NrOfparticipants.setText("NrOfparticipants:");
@@ -167,11 +157,9 @@ public class JoinCompScreen extends JPanel
 
 	}
 
-	public void fillList()
-	{
+	public void fillList() {
 		int counter = 0;
-		while (counter < listArray.length)
-		{
+		while (counter < listArray.length) {
 
 			myListModel.add(counter, listArray[counter]);
 			counter++;
@@ -186,17 +174,14 @@ public class JoinCompScreen extends JPanel
 
 		// /this method is called if an item is selected and the button is
 		// clicked
-		if (activeCompsList.getSelectedValue() != null)
-		{
+		if (activeCompsList.getSelectedValue() != null) {
 
 			selectedValue = activeCompsList.getSelectedValue().toString();
-			selectedTextArea.setText("You have selected:  " + selectedValue
-					);
+			selectedTextArea.setText("You have selected:  " + selectedValue);
 
 		}
 
-		else
-		{
+		else {
 			selectedTextArea.setText("Nothing was selected !");
 		}
 	}

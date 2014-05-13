@@ -16,6 +16,9 @@ import javax.swing.JTextArea;
 @SuppressWarnings("serial")
 public class SpecScreen extends JPanel
 {
+	public SpecScreen(){
+		createSpectatorScreen();
+	}
 	private String listArray[] =
 	{
 
