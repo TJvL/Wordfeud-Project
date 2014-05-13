@@ -30,6 +30,7 @@ public class StatWindow extends JFrame {
 		createLabels();
 
 		this.pack();
+		this.setLocationRelativeTo(null);
 		this.setVisible(true);
 
 	}

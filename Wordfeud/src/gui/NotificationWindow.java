@@ -60,8 +60,9 @@ public class NotificationWindow extends JFrame
 		select.setText("Select");
 		this.add(select, BorderLayout.SOUTH);
 
-		this.setVisible(true);
 		this.pack();
+		this.setLocationRelativeTo(null);
+		this.setVisible(true);
 
 	}
 	
