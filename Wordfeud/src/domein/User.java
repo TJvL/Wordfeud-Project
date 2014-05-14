@@ -7,36 +7,67 @@ import datalaag.DatabaseHandler;
 public class User {
 	private Player player;
 	private String userName;
+	private Administrator admin;
+	private Spectator spec;
+	private Moderator mod;
+	private String name;
+	private boolean isBanned;
 	
-	public User(){
-		player = new Player("Klaas");
-	}
-	
-	public Player getPlayer(){
-		return player;
+
+	public User() {
+		player = new Player(true);
+		admin = new Administrator(false);
+		spec = new Spectator(true);
+		mod = new Moderator(false);
 	}
 
+	public Player getPlayer() {
+		return player;
+	}
 	
-	private boolean isBanned;
-	public void login(){
+	public Administrator getAdmin() {
+		return admin;
+	}
+
+	public Spectator getSpec() {
+		return spec;
+	}
+
+	public Moderator getMod() {
+		return mod;
+	}
+
+	public String getName() {
+		return name;
+	}
+/*
+	public void login() {
 		Scanner reader = new Scanner(System.in);
 		System.out.println("Voer gebruikersnaam in:");
 		String userNameInput = reader.next();
-		
+
 		System.out.println("Voer wachtwoord in:");
 		String passwordInput = reader.next();
+
+		datalaag.DatabaseHandler.getInstance().login(userNameInput,
+				passwordInput);
+
+		boolean isLoggedIn = datalaag.DatabaseHandler.getInstance().login(userNameInput, passwordInput);
+
+		if(isLoggedIn == true){
+			// set Username in User Class
+			name = userNameInput;
+			
+			System.out.println("Je bent ingelogd!");
+		}
 		
-		datalaag.DatabaseHandler.getInstance().login(userNameInput, passwordInput);
-		
-		
-		
-		
-		
+		reader.close();
+
 	}
-	
+
 	public void register() {
 		Scanner reader = new Scanner(System.in);
-	
+
 		System.out.println("Voer gebruikersnaam in:");
 		String userNameInput = reader.next();
 		// controleer of de gebruikersnaam tussen de 3 en 15 tekens is
@@ -55,7 +86,7 @@ public class User {
 		}
 		System.out.println("Herhaal uw wachtwoord:");
 		String passwordConfirmation = reader.next();
-		
+
 		// Controleer of de opgegeven wachtwoorden overeen komen
 		while (!passwordInput.equals(passwordConfirmation)) {
 			System.out
@@ -67,17 +98,15 @@ public class User {
 						.println("Het wachtwoord moet minimaal 6 tekens bevatten. Vul het opnieuw in:");
 				passwordInput = reader.next();
 			}
-			
+
 			// Voer opnieuw het confirmatie wachtwoord in
 			System.out.println("Herhaal uw wachtwoord:");
 			passwordConfirmation = reader.next();
 		}
 
 		// Voer de gebruiker in in de database
-		
 
-		
-		datalaag.DatabaseHandler.getInstance().register(userNameInput, passwordInput);
-
-	}
+		DatabaseHandler.getInstance().register(userNameInput, passwordInput);
+		reader.close();
+	}*/
 }

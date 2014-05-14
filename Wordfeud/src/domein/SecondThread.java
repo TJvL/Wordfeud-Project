@@ -38,7 +38,7 @@ public class SecondThread extends Thread {
 
 		// While running it will run
 		while (running) {
-			System.out.println("LOOK AT ME - THREAD");
+			//System.out.println("LOOK AT ME - THREAD");
 			if (match != null) {
 				running = true;
 				// Gets the gameID;

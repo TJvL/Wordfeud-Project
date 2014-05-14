@@ -1,26 +1,23 @@
 package domein;
 
-import gui.TempFramePanel;
+import gui.MainFrame;
+
 
 import java.util.ArrayList;
 import java.util.Observer;
-
-import datalaag.DatabaseHandler;
 
 public class WordFeud {
 	private User user;
 	private Match match;
 	private ArrayList<Match> matches;
 	private SecondThread secondThread;
-
-	// Has to be changed to the correct FramePanel
-	private TempFramePanel framePanel;
+	private MainFrame framePanel;
 
 	public WordFeud() {
 		user = new User();
 		match = new Match(0);
 		matches = new ArrayList<Match>();
-		framePanel = new TempFramePanel();
+		framePanel = new MainFrame(this);
 		secondThread = new SecondThread(framePanel.getGameScreen()
 				.getBoardPanel(), framePanel.getGameScreen().getButtonPanel(),
 				framePanel.getGameScreen().getScorePanel());

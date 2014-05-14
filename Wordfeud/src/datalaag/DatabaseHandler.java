@@ -1300,6 +1300,8 @@ public class DatabaseHandler
 			{
 				compRanking.add(result.getString(1) + "---" + result.getInt(2));
 			}
+			result.close();
+			statement.close();
 		} catch (SQLException e)
 		{
 			e.printStackTrace();
@@ -1307,6 +1309,81 @@ public class DatabaseHandler
 		}
 		finally{ closeConnection();}
 		return compRanking ;
+	}
+	
+	public synchronized ArrayList<String> competitionWinScore(int compID)
+	{
+		connection();
+		ArrayList<String> winnerScore = new ArrayList<String>();
+		
+		try
+		{
+			statement = con.prepareStatement("SELECT spel_id, winnerscore FROM rank_winnerscore WHERE competitie_id = '" + compID + "'");
+			
+			result = statement.executeQuery();
+			
+			while(result.next())
+			{
+				winnerScore.add(result.getString(1) + "---" + result.getInt(2));
+			}
+			result.close();
+			statement.close();
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+			System.out.println("QUERRY ERROR!!!");
+		}finally{ closeConnection();}
+		return winnerScore;
+	}
+	
+	public synchronized ArrayList<String> competitionBayesian(int compID)
+	{
+		connection();
+		ArrayList<String> bayesian = new ArrayList<String>();
+		
+		try
+		{
+			statement = con.prepareStatement("SELECT account_naam, this_wins, this_num_games FROM rank_bayesian WHERE competitie_id = '" + compID + "'");
+		
+			result = statement.executeQuery();
+			
+			while(result.next())
+			{
+				bayesian.add(result.getString(1) + "---" + result.getDouble(2) + "---" + result.getInt(3));
+			}
+			result.close();
+			statement.close();
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+			System.out.println("QUERRY ERROR!!!");
+		}finally{closeConnection();}
+		return bayesian;
+	}
+	
+	public synchronized ArrayList<String> competitionBayesianRating(int compID)
+	{
+		connection();
+		ArrayList<String> bayesianRating = new ArrayList<String>();
+		
+		try
+		{
+			statement = con.prepareStatement("SELECT account_naam, bayesian_rating FROM rating WHERE competitie_id = '" + compID + "'");
+		
+			result = statement.executeQuery();
+			
+			while(result.next())
+			{
+				bayesianRating.add(result.getString(1) + "---" + result.getDouble(2));
+			}
+			result.close();
+			statement.close();
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+			System.out.println("QUERRY ERROR!!!");
+		}finally{closeConnection();}
+		return bayesianRating;
 	}
 	
 	public synchronized boolean triplePass(int gameID, String username)

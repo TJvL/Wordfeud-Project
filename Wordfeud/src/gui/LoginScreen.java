@@ -37,16 +37,34 @@ public class LoginScreen extends JPanel {
 
 		registerButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				mainFrame.setRegistrationOptionsScreen();
+				mainFrame.setRegScreen();
+			}
+		});
+
+		spectateButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				mainFrame.setSpecScreen();
+				mainFrame.setSpecMenuBar();
 			}
 		});
 
 		loginButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+				mainFrame.setModMenuBar();
+				mainFrame.setModScreen();
 			}
-
 		});
+		
+		JButton shortCut;
+		shortCut = new JButton("PRESS ME TO CHEAT");
+		shortCut.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				// These are inputs optionspanes to start the game
+				mainFrame.startGame();
+			}
+		});	
+		buttons.add(shortCut);
 
 		buttons.add(registerButton);
 		buttons.add(spectateButton);
@@ -55,8 +73,8 @@ public class LoginScreen extends JPanel {
 
 	private void createDataField() {
 		dataField = new JPanel();
-		JPanel labels = new JPanel(new GridLayout(2, 1));
-		JPanel fields = new JPanel(new GridLayout(2, 1));
+		JPanel labels = new JPanel(new GridLayout(2, 2, 0, 20));
+		JPanel fields = new JPanel(new GridLayout(2, 1, 0, 20));
 
 		JLabel usernameLabel = new JLabel("Username: ");
 		JLabel passwordLabel = new JLabel("Password: ");
