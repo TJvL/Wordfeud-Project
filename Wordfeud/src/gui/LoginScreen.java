@@ -12,22 +12,16 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-import domein.User;
-
+@SuppressWarnings("serial")
 public class LoginScreen extends JPanel {
-	private User user;
 	private JPanel buttons;
 	private JPanel dataField;
 	private MainFrame mainFrame;
-	private String username;
-	private String password;
 	private JTextField usernameField = new JTextField(20);
 	private JPasswordField passwordField = new JPasswordField(20);
 	private JLabel commentLabel = new JLabel();
 
 	public LoginScreen(MainFrame mainFrame) {
-		user = new User();
-
 		this.mainFrame = mainFrame;
 
 		this.setPreferredSize(getSize());
@@ -76,7 +70,6 @@ public class LoginScreen extends JPanel {
 		shortCut = new JButton("PRESS ME TO CHEAT");
 		shortCut.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
 				// These are inputs optionspanes to start the game
 				mainFrame.startGame();
 			}
@@ -117,10 +110,10 @@ public class LoginScreen extends JPanel {
 
 	private void login(){
 		String ret;
-		this.username = this.usernameField.getText();
-		this.password = this.passwordField.getText();
+		String username = this.usernameField.getText();
+		char[] password = this.passwordField.getPassword();
 
-		ret = user.login(username, password);
+		ret = mainFrame.callLoginAction(username, password);
 
 		commentLabel.setText(ret);
 

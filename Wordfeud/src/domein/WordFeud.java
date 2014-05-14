@@ -3,18 +3,20 @@ package domein;
 import gui.MainFrame;
 
 
+
+
 import java.util.ArrayList;
 import java.util.Observer;
 
 public class WordFeud {
-	private User user;
+	private final User currentUser;
 	private Match match;
 	private ArrayList<Match> matches;
 	private SecondThread secondThread;
 	private MainFrame framePanel;
 
 	public WordFeud() {
-		user = new User();
+		currentUser = new User();
 		match = new Match(0);
 		matches = new ArrayList<Match>();
 		framePanel = new MainFrame(this);
@@ -23,13 +25,38 @@ public class WordFeud {
 				framePanel.getGameScreen().getScorePanel());
 		secondThread.start();
 	}
-
-	// Gets the user from the player
-	// DOESNT WORK GOOD ****************************************
+	/*
+	* Gets the user from the player
+	* DOESNT WORK WELL ****************************************
+	*/
 	public Player getUserPlayer() {
-		return user.getPlayer();
+		return currentUser.getPlayer();
 	}
 
+	public User getCurrentUser(){
+		return currentUser;
+	}
+
+	public String doRegisterAction(String username, char[] passInput, char[] passConfirm){
+		return currentUser.register(username, passInput, passConfirm);
+	}
+	
+	public String doLoginAction(String username, char[] password){
+		return currentUser.login(username, password);
+	}
+	
+	public void doLogoutAction() {
+		currentUser.logout();
+	}
+	
+	public boolean doChangeRoleAction(String result) {
+		return currentUser.changeRole(result);
+	}
+	
+	public String getCurrentUserRole() {
+		return currentUser.getCurrentRole();
+	}
+	
 	// Depends if someone is spectating - starting new game
 	// or want to load a game
 	public void startGame(int gameID, boolean spectate, boolean newGame) {

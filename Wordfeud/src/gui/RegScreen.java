@@ -11,16 +11,12 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-import domein.User;
-
 @SuppressWarnings("serial")
 public class RegScreen extends JPanel {
 	private JPanel buttons;
 	private JPanel dataField;
 	private MainFrame mainFrame;
-	private String username;
-	private String password;
-	private String repPassword;
+
 	private JTextField usernameField = new JTextField(20);
 	private JPasswordField passwordField = new JPasswordField(20);
 	private JPasswordField confirmPasswordField = new JPasswordField(20);
@@ -84,20 +80,18 @@ public class RegScreen extends JPanel {
 	}
 
 	private void register(){
-		User newUser = new User();
 		String ret;
-		this.username = usernameField.getText();
-		this.password = passwordField.getText();
-		this.repPassword = confirmPasswordField.getText();
+		String username = usernameField.getText();
+		char[] password = passwordField.getPassword();
+		char[] repPassword = confirmPasswordField.getPassword();
 
-		ret = newUser.register(username, password, repPassword);
+		ret = mainFrame.callRegisterAction(username, password, repPassword);
 		commentLabel.setText(ret);
 
 		if(ret.equals("username is available, account is registered")){
 			try {
 				Thread.sleep(3000);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			mainFrame.setLoginScreen();
