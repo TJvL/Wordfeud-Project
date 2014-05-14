@@ -21,6 +21,7 @@ public class WordFeud {
 		secondThread = new SecondThread(framePanel.getGameScreen()
 				.getGameFieldPanel(), framePanel.getGameScreen().getButtonPanel(),
 				framePanel.getGameScreen().getScorePanel());
+		secondThread.start();
 	}
 
 	// Gets the user from the player
@@ -90,8 +91,6 @@ public class WordFeud {
 		} catch (NullPointerException e) {
 			System.out.println("nullPointer - WordFeud");
 		}
-
-		secondThread.start();
 		setThreadStatus(true);
 	}
 

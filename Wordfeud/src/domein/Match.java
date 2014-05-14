@@ -60,13 +60,14 @@ public class Match implements Observer {
 	// /////////////////////////////////////////////////////////////////
 	public synchronized String getOwnName() {
 		// jager684 is de uitdager
-		return "jager684";
+		return "Mike";
 
 	}
 
 	// Returns the names of the opponent
 	public synchronized String getEnemyName() {
-		return "marijntje42";
+		//return "marijntje42";
+		return "jager684";
 	}
 
 	// Method to check who's turn it is and what turn it is
@@ -311,6 +312,7 @@ public class Match implements Observer {
 	// Loads a game from the database
 	public void loadGame(GameFieldPanel gameFieldPanel) {
 		this.gameField = gameFieldPanel;
+		gameField.clearField();
 		tilesForJar = dbh.jarContent(gameID);
 		getMaxTurnID();
 
@@ -407,7 +409,7 @@ public class Match implements Observer {
 						Integer.parseInt(yPos[p]) - 1, t.getImage());
 			}
 		}
-
+		
 		// Repainting and reseeting jar
 		gameField.repaintBoard();
 		jar.resetJar();

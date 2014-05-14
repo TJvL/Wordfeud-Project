@@ -43,11 +43,9 @@ public class GameChatPanel extends JPanel implements Runnable,ActionListener {
 
 	private void start() {
 		if (runner == null ) {
-			runner.start();
 			running = true;
 		} else if (!running){
 			running = true;
-			runner.start();
 		}
 	}
 	
@@ -77,7 +75,7 @@ public class GameChatPanel extends JPanel implements Runnable,ActionListener {
 		this.user1 = ownName;
 		this.user2 = oponentName;
 		this.gameID = gameID;
-		start();
+		start();	
 	}
 	
 	public GameChatPanel() {				// I get the player object references and the gameID of this match from the class that invokes this constructor (Wouter, Mike)
@@ -85,6 +83,7 @@ public class GameChatPanel extends JPanel implements Runnable,ActionListener {
 		this.user2 = "Opponent";
 		this.gameID = gameID;
 		runner = new Thread(this);
+		runner.start();
 
 		latestUpdatedMessageTimeDate = "";
 
