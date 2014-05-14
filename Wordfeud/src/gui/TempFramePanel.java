@@ -7,7 +7,7 @@ import javax.swing.JFrame;
 
 // A tempFram for crearting the playGame part
 public class TempFramePanel extends JFrame {
-
+/*
 	// TempFrame moet vervangen worden
 	// Er moet ook nog een panel (gamePanel)
 	// GamePanel moet een Match meegeven aan BoardPanel
@@ -56,5 +56,5 @@ public class TempFramePanel extends JFrame {
 	// Gets the specScreen
 	public GameSpecScreen getSpecScreen(){
 		return specScreen;
-	}
+	}*/
 }

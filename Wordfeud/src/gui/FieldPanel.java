@@ -19,5 +19,9 @@ public class FieldPanel extends JPanel {
 	public void addSquare(SquarePanel s) {
 		this.add(s);
 	}
+	
+	public void clearField(){
+		this.removeAll();
+	}
 
 }

@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,12 +12,22 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+import domein.User;
+
 public class LoginScreen extends JPanel {
+	private User user;
 	private JPanel buttons;
 	private JPanel dataField;
 	private MainFrame mainFrame;
+	private String username;
+	private String password;
+	private JTextField usernameField = new JTextField(20);
+	private JPasswordField passwordField = new JPasswordField(20);
+	private JLabel commentLabel = new JLabel();
 
 	public LoginScreen(MainFrame mainFrame) {
+		user = new User();
+
 		this.mainFrame = mainFrame;
 
 		this.setPreferredSize(getSize());
@@ -50,11 +61,17 @@ public class LoginScreen extends JPanel {
 
 		loginButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				mainFrame.setModMenuBar();
-				mainFrame.setModScreen();
+				login();
 			}
 		});
-		
+
+		loginButton.setBackground(Color.CYAN);
+		registerButton.setBackground(Color.CYAN);
+		spectateButton.setBackground(Color.CYAN);
+		commentLabel.setForeground(Color.WHITE);
+
+		buttons.setBackground(Color.DARK_GRAY);
+
 		JButton shortCut;
 		shortCut = new JButton("PRESS ME TO CHEAT");
 		shortCut.addActionListener(new ActionListener() {
@@ -65,10 +82,12 @@ public class LoginScreen extends JPanel {
 			}
 		});	
 		buttons.add(shortCut);
-
+		
+		
 		buttons.add(registerButton);
 		buttons.add(spectateButton);
 		buttons.add(loginButton);
+		buttons.add(commentLabel);
 	}
 
 	private void createDataField() {
@@ -78,8 +97,6 @@ public class LoginScreen extends JPanel {
 
 		JLabel usernameLabel = new JLabel("Username: ");
 		JLabel passwordLabel = new JLabel("Password: ");
-		JTextField usernameField = new JTextField(20);
-		JPasswordField passwordField = new JPasswordField(20);
 
 		labels.add(usernameLabel);
 		labels.add(passwordLabel);
@@ -87,7 +104,37 @@ public class LoginScreen extends JPanel {
 		fields.add(usernameField);
 		fields.add(passwordField);
 
+		usernameLabel.setForeground(Color.WHITE);
+		passwordLabel.setForeground(Color.WHITE);
+
+		labels.setBackground(Color.DARK_GRAY);
+		fields.setBackground(Color.DARK_GRAY);
+		dataField.setBackground(Color.DARK_GRAY);
+
 		dataField.add(labels);
 		dataField.add(fields);
+	}
+
+	private void login(){
+		String ret;
+		this.username = this.usernameField.getText();
+		this.password = this.passwordField.getText();
+
+		ret = user.login(username, password);
+
+		commentLabel.setText(ret);
+
+		if(ret.equals("Username and Password are correct")){
+			mainFrame.setPlayerScreen();
+			mainFrame.setPlayerMenuBar();
+
+			clearInput();
+		}
+	}
+
+	private void clearInput(){
+		usernameField.setText(null);
+		passwordField.setText(null);
+		commentLabel.setText(null);
 	}
 }

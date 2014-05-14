@@ -163,7 +163,7 @@ public class MainFrame extends JFrame {
 		DatabaseHandler dbh = DatabaseHandler.getInstance();
 		String name = JOptionPane.showInputDialog(null,
 				"Please enter your GameID: ");
-		if (name == null) {
+		if (name == null || name.equals("")) {
 			int gameID = dbh.createGame(1, "jager684", "marijntje42",
 					"openbaar", "EN");
 			wf.startGame(gameID, false, true);
@@ -174,19 +174,20 @@ public class MainFrame extends JFrame {
 
 		} else {
 			int gameID = Integer.parseInt(name);
-			wf.startGame(gameID, false, false);
+			if (!dbh.getGameStatusValue(gameID).equals("Finished")
+					|| !dbh.getGameStatusValue(gameID).equals("Resigend")) {
+				wf.startGame(gameID, false, false);
+			} else {
+				JOptionPane.showMessageDialog(null, "Can't load this game",
+						"Loading error!", JOptionPane.OK_OPTION);
+			}
 		}
 
 	}
 
-	// Gets a GameFieldPanel
-	public GameFieldPanel getGameFieldPanel() {
-		return gameScreen.getBoardPanel();
-	}
-
-	// Gets the gameScreen
+	// Gets a gameScreen
 	public GameScreen getGameScreen() {
-		return gameScreen;
+		return gameScreen.getGameScreen();
 	}
 
 	// Gets the specScreen

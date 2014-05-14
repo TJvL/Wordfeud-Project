@@ -13,7 +13,7 @@ public class GameScreen extends JPanel {
 	private GameFieldPanel boardPanel;
 	private GameButtonPanel buttonPanel;
 	private ScorePanel scorePanel;
-	private SecondThread secondThread;
+	private GameChatPanel chatPanel;
 
 	public GameScreen() {
 		// this.setLayout(new BorderLayout());
@@ -28,6 +28,9 @@ public class GameScreen extends JPanel {
 		scorePanel = new ScorePanel();
 		scorePanel.setBounds(530, 515, 500, 85);
 		this.add(scorePanel);	
+		chatPanel = new GameChatPanel();
+		chatPanel.setBounds(530, 0, 500,500);
+		this.add(chatPanel);
 	}
 	
 	// Adds the observers
@@ -50,8 +53,12 @@ public class GameScreen extends JPanel {
 		return buttonPanel;
 	}
 	
-	// Returns the BoardPanel
-	public GameFieldPanel getBoardPanel(){
-		return boardPanel;
+	// Returns the gameScreen
+	public GameScreen getGameScreen(){
+		return this;
+	}
+	
+	public GameChatPanel getGameChatPanel(){
+		return chatPanel;
 	}
 }

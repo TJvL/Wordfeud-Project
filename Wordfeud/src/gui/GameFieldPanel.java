@@ -257,4 +257,10 @@ public class GameFieldPanel extends JPanel {
 	public SquarePanel getTileFromBoard(int x, int y) {
 		return squaresPanels[x][y];
 	}
+	
+	// Clears the field
+	public void clearField(){
+		fieldPanel.clearField();
+		handPanel.disposeTiles();
+	}
 }

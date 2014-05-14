@@ -6,12 +6,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+import domein.User;
+
+@SuppressWarnings("serial")
 public class RegScreen extends JPanel {
 	private JPanel buttons;
 	private JPanel dataField;
@@ -19,12 +21,11 @@ public class RegScreen extends JPanel {
 	private String username;
 	private String password;
 	private String repPassword;
-	private String email;
 	private JTextField usernameField = new JTextField(20);
 	private JPasswordField passwordField = new JPasswordField(20);
 	private JPasswordField confirmPasswordField = new JPasswordField(20);
-	private JTextField emailField = new JTextField(20);
-	
+	private JLabel commentLabel = new JLabel();
+
 
 	public RegScreen(MainFrame mainFrame) {
 		this.mainFrame = mainFrame;
@@ -45,10 +46,12 @@ public class RegScreen extends JPanel {
 
 		buttons.add(cancelButton);
 		buttons.add(confirmButton);
+		buttons.add(commentLabel);
 
 		cancelButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				mainFrame.setLoginScreen();
+				clearInput();
 			}
 		});
 
@@ -63,30 +66,48 @@ public class RegScreen extends JPanel {
 		dataField = new JPanel();
 		JPanel labels = new JPanel(new GridLayout(4, 1, 0, 20));
 		JPanel fields = new JPanel(new GridLayout(4, 1, 0, 20));
-		
+
 		JLabel usernameLabel = new JLabel("Username:");
 		JLabel passwordLabel = new JLabel("Password:");
 		JLabel confirmPasswordLabel = new JLabel("Confirm Password:");
-		JLabel emailLabel = new JLabel("Email adres:");
-		
+
 		labels.add(usernameLabel);
 		labels.add(passwordLabel);
 		labels.add(confirmPasswordLabel);
-		labels.add(emailLabel);
-		
+
 		fields.add(usernameField);
 		fields.add(passwordField);
 		fields.add(confirmPasswordField);
-		fields.add(emailField);
-		
+
 		dataField.add(labels);
 		dataField.add(fields);
 	}
-	
+
 	private void register(){
+		User newUser = new User();
+		String ret;
 		this.username = usernameField.getText();
-		this.password = passwordField.getPassword().toString();
-		this.repPassword = confirmPasswordField.getPassword().toString();
-		this.email = emailField.getText();
+		this.password = passwordField.getText();
+		this.repPassword = confirmPasswordField.getText();
+
+		ret = newUser.register(username, password, repPassword);
+		commentLabel.setText(ret);
+
+		if(ret.equals("username is available, account is registered")){
+			try {
+				Thread.sleep(3000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			mainFrame.setLoginScreen();
+		}
+	}
+
+	private void clearInput(){
+		usernameField.setText(null);
+		passwordField.setText(null);
+		confirmPasswordField.setText(null);
+		commentLabel.setText(null);
 	}
 }
