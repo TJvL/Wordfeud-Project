@@ -10,12 +10,7 @@ import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import domein.Match;
-
 public class GameButtonPanel extends JPanel {
-
-	private static final long serialVersionUID = -1759296107629262333L;
-
 	private GameFieldPanel boardP;
 	private boolean swapPressed;
 	private JButton swap;
@@ -26,6 +21,7 @@ public class GameButtonPanel extends JPanel {
 	private JButton shuffle;
 	private ObserverButtons observerButtons;
 
+	// This uses a gameFieldPanel
 	public GameButtonPanel(GameFieldPanel boardP) {
 		this.boardP = boardP;
 		this.setBackground(Color.green);
@@ -34,14 +30,17 @@ public class GameButtonPanel extends JPanel {
 		observerButtons = new ObserverButtons();
 	}
 	
+	// Adds the observers
 	public void addObserverToObserverButtons(Observer observer){
 		observerButtons.addObserver(observer);
 	}
 
+	// A method to disable the surrender button
 	public synchronized void disableSurrender() {
 		surr.setEnabled(false);
 	}
 
+	// Enables or disables the buttons
 	public synchronized void setTurn(boolean turn) {
 		if (turn) {
 			swap.setEnabled(true);
@@ -55,6 +54,7 @@ public class GameButtonPanel extends JPanel {
 		}
 	}
 
+	// Adds the buttons to the field
 	public void addButtons() {
 		swap = new JButton("Swap");
 		play = new JButton("Play");
@@ -63,6 +63,7 @@ public class GameButtonPanel extends JPanel {
 		clear = new JButton("Clear");
 		shuffle = new JButton("Shuffle");
 
+		// Adds the listeners
 		play.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -100,6 +101,7 @@ public class GameButtonPanel extends JPanel {
 			}
 		});
 
+		// Adds the buttons
 		this.add(play);
 		this.add(pass);
 		this.add(shuffle);
@@ -108,19 +110,17 @@ public class GameButtonPanel extends JPanel {
 		this.add(surr);
 	}
 
-	// ////////////////////////////////////
+	// Sets the observer
 	private void playTiles() {
-		// if score > 0
-//		match.playWord();
 		observerButtons.changeActionRequest("play");
 	}
 
+	// Sets the observer
 	private void skipTurn() {
-		// DatabaseHandler.getInstance().changeTurn();
-//		match.skipTurn();
 		observerButtons.changeActionRequest("pass");
 	}
 
+	// Sets the observer
 	private void shuffleTiles() {
 		boardP.suffleHand();
 	}
@@ -133,8 +133,7 @@ public class GameButtonPanel extends JPanel {
 		if (swapPressed) {
 			swap.setText("Swap");
 			boardP.setSwapPressed(false);
-			// Method in panel to swapTiles
-//			boardP.swapTiles();
+			// Stets the observer
 			observerButtons.changeActionRequest("swap");
 			swapPressed = false;
 			surr.setEnabled(true);
@@ -142,8 +141,9 @@ public class GameButtonPanel extends JPanel {
 			pass.setEnabled(true);
 			shuffle.setEnabled(true);
 			clear.setEnabled(true);
-			// swapTiles()
-		} else {
+		} 
+		// Warning to show that you are going to swap
+		else {
 			if (JOptionPane.showConfirmDialog(null,
 					"Are you sure you want to start swapping tiles?"
 							+ "\n Select the tiles you want to swap",
@@ -163,17 +163,17 @@ public class GameButtonPanel extends JPanel {
 
 	}
 
+	// Sets the observer
 	private void clearTiles() {
-//		match.clearTilesFromBoard();
 		observerButtons.changeActionRequest("clear");
 	}
 
+	// Sets the observer
 	private void surrenderGame() {
-		// pop-up maken met score e.d.
-//		match.surrenderGame();
 		observerButtons.changeActionRequest("surrender");
 	}
 
+	// A class to be able to extend obserable for the buttons
 	class ObserverButtons extends Observable {
 		public void changeActionRequest(String actionRequest) {
 			System.out.println("action requested: " + actionRequest);

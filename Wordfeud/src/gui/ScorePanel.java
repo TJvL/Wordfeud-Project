@@ -8,43 +8,39 @@ import java.awt.Graphics;
 import javax.swing.JPanel;
 
 import datalaag.DatabaseHandler;
-import domein.Match;
 
+// ScorePanel from a normal game
 public class ScorePanel extends JPanel {
-//	private Match match;
-//	private GameFieldPanel boardPanel;
+
 	private int wordValue;
 	private int enemyScore;
 	private int ownScore;
-	private DatabaseHandler dbh;
+	private String ownName;
+	private String enemyName;
 
-	public ScorePanel(GameFieldPanel boardpanel) {
+	public ScorePanel() {
 		this.setPreferredSize(new Dimension(500, 100));
-		// this.setBackground(Color.yellow);
 		this.setLayout(null);
-//		this.boardPanel = boardPanel;
-		dbh = DatabaseHandler.getInstance();
+		ownName = "You";
+		enemyName = "Opponent";
 	}
 
+	// A paintCompontent to paint everything
 	public void paintComponent(Graphics g) {
 		g.setColor(Color.yellow);
 		g.fillRect(0, 0, 500, 100);
 
+		// Sets the font and colour
 		g.setColor(Color.black);
 		Font font = new Font("Monospaced", Font.BOLD | Font.ITALIC, 20);
 		g.setFont(font);
-		g.drawString("You", 300, 30);
+		
+		// Prints the player part
+		g.drawString(ownName, 300, 30);
 		g.drawString("" + ownScore, 450, 30);
 
-		
-		// --- dit ding zorgt nog voor wat errors --- //	
-		// Here is a try and catch because getEnemyName is often null
-		// This catch stops the nullpointer
-		try {
-			g.drawString(/*dbh.getEnemyName()*/ "ScorePanel - paintComponent", 300, 70);
-		} catch (NullPointerException e) {
-
-		}
+		// Prints the enemy part
+		g.drawString(enemyName, 300, 70);
 		g.drawString("" + enemyScore, 450, 70);
 
 		// Current word value
@@ -53,18 +49,32 @@ public class ScorePanel extends JPanel {
 
 	}
 
+	// Sets the wordValue
 	public synchronized void setWordValue(int value) {
 		this.wordValue = value;
 	}
 
+	// Sets the ownScore
 	public synchronized void setOwnScore(int score) {
 		this.ownScore = score;
 	}
 
+	// Sets the enemyScore
 	public synchronized void setEnemyScore(int score) {
 		this.enemyScore = score;
 	}
-
+	
+	// Sets the ownName
+	public synchronized void setOwnName(String name) {
+		this.ownName = name;
+	}
+	
+	// Sets the enemyName
+	public synchronized void setEnemyName(String name) {
+		this.enemyName = name;
+	}
+	
+	// Updates the panel
 	public synchronized void updatePanel() {
 		this.revalidate();
 		this.repaint();

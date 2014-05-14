@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import javax.swing.JPanel;
 
+// A panel to show the tiles
 public class HandPanel extends JPanel{
 	private ArrayList<TilePanel> tiles = new ArrayList<TilePanel>();
 	
@@ -15,16 +16,13 @@ public class HandPanel extends JPanel{
 		this.setBackground(Color.blue);
 	}
 	
-
+	// Adds the tiles to the hand
 	public void addTile(TilePanel t){
 		this.add(t);
 	}
 	
+	// Removes the tiles from the hand
 	public void disposeTiles(){
 		this.removeAll();
 	}
-	
-	//public void getSquareValue(){
-		
-	//}
 }

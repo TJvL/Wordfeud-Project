@@ -28,7 +28,9 @@ public class GameSpecScreen extends JPanel {
 	private JButton backward;
 	private ObserverButtons observerButtons;
 
+	// The constructor sets all the panels
 	public GameSpecScreen() {
+		observerButtons = new ObserverButtons();
 		squaresPanels = new SquarePanel[15][15];
 		tilesP1 = new ArrayList<TilePanel>();
 		tilesP2 = new ArrayList<TilePanel>();
@@ -52,6 +54,8 @@ public class GameSpecScreen extends JPanel {
 		scorePanelP2.setBounds(785, 455, 260, 150);
 		this.add(scorePanelP2);
 		forward.setBounds(785, 300, 260, 50);
+		
+		// Adds actionsListeners the observers
 		forward.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -125,6 +129,7 @@ public class GameSpecScreen extends JPanel {
 		}
 	}
 
+	// Rest the hands
 	public void resetHands() {
 		tilesP1.clear();
 		tilesP2.clear();
@@ -132,7 +137,6 @@ public class GameSpecScreen extends JPanel {
 		handPanelP2.disposeTiles();
 		repaintBoard();
 	}
-
 	// end of the hand part
 
 	// Setting the score panel
@@ -140,10 +144,12 @@ public class GameSpecScreen extends JPanel {
 		scorePanelP1.setName(name);
 	}
 
+	// Sets the score
 	public void setScoreP1(int score) {
 		scorePanelP1.setScore(score);
 	}
 
+	// Sets the name
 	public void setNameP2(String name) {
 		scorePanelP2.setName(name);
 	}
@@ -160,6 +166,7 @@ public class GameSpecScreen extends JPanel {
 		scorePanelP2.setTurnScore(score);
 	}
 
+	// Setting the turn
 	public void setTurn(boolean P1turn) {
 		if (P1turn) {
 			scorePanelP1.setTurn(true);
@@ -172,17 +179,19 @@ public class GameSpecScreen extends JPanel {
 
 	// End of scorepanel part
 
+	// Repainting the board
 	public void repaintBoard() {
 		this.repaint();
 		this.revalidate();
-		this.repaint();
 	}
 
+	// Adds observers
 	public void addObserverToObserverButtons(Observer observer) {
 		observerButtons.addObserver(observer);
 	}
 }
 
+// A innerclass to be able to extend obserable
 class ObserverButtons extends Observable {
 	public void changeActionRequest(String actionRequest) {
 		System.out.println("action requested: " + actionRequest);

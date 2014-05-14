@@ -18,36 +18,27 @@ public class SquarePanel extends JPanel {
 	private int x;
 	private int y;
 
-	// Er moet een mogelijkheid komen om tiles toe te voegen aan de squarepanel
-	// Er kan dan een check komen of er een tile in de square panel zit of niet
-	// Dus er moet ook een square hier worden toegevoegd zodat als er geen tile
-	// is
-	// je de square value kunt laten zien.
-
-	// public SquarePanel(int x, int y, Color color) {
+	// Contructor from the panel
+	// As parameter is a square to get the img from it
 	public SquarePanel(Square square) {
 		this.squareImage = square.getImage();
 		this.tileImage = null;
 		this.x = square.getXPos();
 		this.y = square.getYPos();
 		this.setPreferredSize(new Dimension(SIZE, SIZE));
-		//this.setBackground(Color.red);
 	}
 
-	// public void setBackgroundColor(Color color){
-	// this.setBackground(color);
-	// }
-
-	// toevoegen en verwijderen van een tile
+	// Adding a image to the square
 	public void addImage(BufferedImage tileImage) {
 		this.tileImage = tileImage;
 	}
 
+	// Removes the tile img
 	public void removeImage() {
 		this.tileImage = null;
 	}
 	
-	// kijken of er een tile opligt of niet
+	// Checks if a square is occupied or not
 	public boolean getOccupied() {
 		if (tileImage != null) {
 			return true;
@@ -56,15 +47,20 @@ public class SquarePanel extends JPanel {
 		}
 	}
 
+	// Gets the y value
 	public int getYValue() {
 		return y;
 	}
 
+	// Gets the X value
 	public int getXValue() {
 		return x;
 	}
 
+	// Paints the TileImg if not empty, else it will paint the square img
 	public void paintComponent(Graphics g) {
+		g.setColor(Color.blue);
+		g.fillRect(0, 0, 50, 50);
 		if (tileImage == null) {
 			g.drawImage(squareImage, 0, 0, 33, 33, null);
 		} else {

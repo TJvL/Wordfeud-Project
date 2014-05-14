@@ -51,8 +51,6 @@ public class ScoreCalculator {
 			if (tiles.getTile().getBlancoLetterValue() != null) {
 				if (tiles.getTile().getBlancoLetterValue().equals("?")) {
 					runScoreCalculator = false;
-					System.err.println("ER LIGT EEN LEGE JOKER OP HET VELD!");
-					System.out.println("ER LIGT EEN LEGE JOKER OP HET VELD!");
 				}
 			}
 		}
@@ -63,7 +61,6 @@ public class ScoreCalculator {
 				runScoreCalculator = true;
 			} else {
 				runScoreCalculator = false;
-				System.err.println("First word is not bin placed on the star");
 			}
 		}
 		// Method to check if the played word is connected to atleast one other
@@ -103,7 +100,6 @@ public class ScoreCalculator {
 			}
 			if (!oneConected) {
 				runScoreCalculator = false;
-				System.err.println("THE WORDS ARE NOT CONNECTED!!!");
 			}
 		}
 
@@ -113,15 +109,11 @@ public class ScoreCalculator {
 			if (justFilledSquares.size() > 1) {
 				// System.out.println(justFilledSquares.size() + " grote van");
 				if (tilesInOneLine()) {
-					// alle gelegde tiles liggen op dezelfde lijn
-
+					// All tiles in one line
 					if (justFilledSquares.size() > 1) {
-
-						// er is meer dan 1 tile gelegd
-
+						// More then 1 tile
 						if (playedTilesConnected()) {
-							// alle gelegde tiles liggen aan elkaar
-							// System.out.println("alle checks zijn geslaagd");
+							// All tiles connected
 							score = calculateScore();
 						}
 					}
@@ -129,13 +121,11 @@ public class ScoreCalculator {
 			}
 			// If the played word is 1 long
 			else if (justFilledSquares.size() == 1) {
-				// System.out.println("TEST");
 				score = calculateScoreOneTile();
 			}
 		}
 
-		// method om te kijken of alle woorden bestaan in de database
-		// worden opgeslagen in playedWords
+		// Adds all the formed words to a list and prints it
 		for (Word word : playedWords) {
 			System.out.println("Gespeeld: " + word.getWord() + ".");
 			wordsToCheck.add(word);
@@ -144,8 +134,6 @@ public class ScoreCalculator {
 		// clear all the list and prints the score
 		justFilledSquares.clear();
 		playedWords.clear();
-		System.err.println("/////////////// De score: " + score
-				+ "\\\\\\\\\\\\\\\\\\");
 		System.out.println("/////////////// De score: " + score
 				+ "\\\\\\\\\\\\\\\\\\");
 		return score;
@@ -181,7 +169,6 @@ public class ScoreCalculator {
 				firstWordOnStar = true;
 			}
 		}
-		System.out.println("DIT IS HET EERSTE WOORD: " + firstWordOnStar);
 		return firstWordOnStar;
 	}
 
@@ -190,10 +177,9 @@ public class ScoreCalculator {
 		boolean result = true;
 		boolean firstY = true;
 		boolean stopLoop = false;
-		// Iets apart maken als er maar een letter is gespeeld
 
-		// Onlt counts if atleast 2 tiles are placed
-		// Woord is horizontaal
+		// Only counts if atleast 2 tiles are placed
+		// Word is horizontal
 		for (int y = 0; y < 15 && !stopLoop; y++) {
 			for (int x = 0; x < 15 && !stopLoop; x++) {
 				if (field[x][y].getTile() != null) {
@@ -205,11 +191,9 @@ public class ScoreCalculator {
 							if (tempY != field[x][y].getYPos()) {
 								stopLoop = true;
 								wordHorizontal = false;
-								// System.out.println("Woord is niet horizontaal");
 								result = false;
 							} else {
 								wordHorizontal = true;
-								// System.out.println("Woord is horizontaal");
 								result = true;
 							}
 						}
@@ -221,7 +205,7 @@ public class ScoreCalculator {
 		stopLoop = false;
 		int tempX = 0;
 		boolean firstX = true;
-		// Woord is verticaal
+		// Word is vertical
 		if (!wordHorizontal) {
 			for (int y = 0; y < 15 && !stopLoop; y++) {
 				for (int x = 0; x < 15 && !stopLoop; x++) {
@@ -233,12 +217,9 @@ public class ScoreCalculator {
 							} else {
 								if (tempX != field[x][y].getXPos()) {
 									stopLoop = true;
-									// System.out
-									// .println("Woord is niet verticaal");
 									result = false;
 								} else {
 									wordHorizontal = false;
-									// System.out.println("Woord is verticaal");
 									result = true;
 								}
 							}
@@ -283,10 +264,6 @@ public class ScoreCalculator {
 
 				if (isConnected(field[square.getXPos()][y],
 						field[square.getXPos()][square.getYPos()], "vertical")) {
-					// System.out.println("Letter: "
-					// + field[square.getXPos()][y].getTile().getLetter()
-					// + " waarde: "
-					// + field[square.getXPos()][y].getTile().getValue());
 					word.addLetter(field[square.getXPos()][y].getTile()
 							.getLetter());
 					word.increaseScore(checkBonusOffSquare(
@@ -323,11 +300,9 @@ public class ScoreCalculator {
 	// Adds the words to a new String
 	public int calculateScore() {
 		if (wordHorizontal) {
-			// woord is horizontaal
-			// System.out.println("---- woord is horizontaal");
+			// wood is horizontal
 			int testingXValue;
 			int testingYValue1 = 0;
-
 			for (Square sq : justFilledSquares) {
 				testingXValue = sq.getXPos();
 				testingYValue1 = sq.getYPos();
@@ -337,20 +312,15 @@ public class ScoreCalculator {
 					for (int y = 0; y < 15; y++) {
 
 						if (field[x][y].getTile() != null) {
-							// er ligt een tile op de square
+							// there is a tile on a square
 							if (field[x][y].getXPos() == testingXValue) {
-								// de tile heeft dezelfde x waarde als de net
-								// geplaatste tile
+								// same X value
 								if (isConnected(field[x][y], sq, "vertical")) {
 									word.increaseScore(checkBonusOffSquare(
 											field[x][y], word, field[x][y]
 													.getTile().getValue()));
 									word.addLetter(field[x][y].getTile()
 											.getLetter());
-									// System.out
-									// .println("Letter: "
-									// + field[x][y].getTile()
-									// .getLetter());
 								}
 							}
 						}
@@ -361,22 +331,15 @@ public class ScoreCalculator {
 					playedWords.add(word);
 				}
 			}
-			// waarde berekende horizontaal
+			// calculate score horizontal
 			word = new Word();
 			for (int x = 0; x < 15; x++) {
 				if (field[x][testingYValue1].getTile() != null) {
-					// er ligt een tile op de square
+					// tiles on a square
 					if (isConnected(
 							field[x][testingYValue1],
 							field[justFilledSquares.get(0).getXPos()][testingYValue1],
 							"horizontal")) {
-						// System.out
-						// .println("Letter: "
-						// + field[x][testingYValue1].getTile()
-						// .getLetter()
-						// + " waarde: "
-						// + field[x][testingYValue1].getTile()
-						// .getValue());
 						word.addLetter(field[x][testingYValue1].getTile()
 								.getLetter());
 						word.increaseScore(checkBonusOffSquare(
@@ -389,7 +352,7 @@ public class ScoreCalculator {
 			word.addWordBonusToScore();
 			playedWords.add(word);
 		} else {
-			// woord is verticaal -------------------------
+			// wood is vertical
 			int testingYValue;
 			int testingXValue1 = 0;
 
@@ -401,24 +364,13 @@ public class ScoreCalculator {
 				for (int x = 0; x < 15; x++) {
 					for (int y = 0; y < 15; y++) {
 						if (field[x][y].getTile() != null) {
-							// er ligt een tile op de square
-
 							if (field[x][y].getYPos() == testingYValue) {
-								// de tile heeft dezelfde y waarde als de net
-								// geplaatste tile
-								// if (!field[x][y].getTile().getJustPlayed()) {
 								if (isConnected(field[x][y], sq, "horizontal")) {
-									// de tile is verbonden met de net
-									// geplaatste tile
 									word.increaseScore(checkBonusOffSquare(
 											field[x][y], word, field[x][y]
 													.getTile().getValue()));
 									word.addLetter(field[x][y].getTile()
 											.getLetter());
-									// System.out
-									// .println("Letter: "
-									// + field[x][y].getTile()
-									// .getLetter());
 								}
 							}
 						}
@@ -429,25 +381,16 @@ public class ScoreCalculator {
 					playedWords.add(word);
 				}
 			}
-			// waarde berekenen verticaal
+			// value vertiaal
 			word = new Word();
 			for (int y = 0; y < 15; y++) {
 				if (field[testingXValue1][y].getTile() != null) {
-					// er ligt een tile op de square
-
 					if (isConnected(field[testingXValue1][y],
 							field[testingXValue1][justFilledSquares.get(0)
 									.getYPos()], "vertical")) {
-						// System.out
-						// .println("Letter: "
-						// + field[testingXValue1][y].getTile()
-						// .getLetter()
-						// + " waarde: "
-						// + field[testingXValue1][y].getTile()
-						// .getValue());
 						word.addLetter(field[testingXValue1][y].getTile()
 								.getLetter());
-						// checking for bonussen
+						// checking for bonusen
 						word.increaseScore(checkBonusOffSquare(
 								field[testingXValue1][y], word,
 								field[testingXValue1][y].getTile().getValue()));
@@ -467,9 +410,9 @@ public class ScoreCalculator {
 		return score;
 	}
 
-	// Checks to bonnus of a square
+	// Checks to bonus of a square
 	// Uses the square, the word object and a score input
-	// returns the bonnus with the new score
+	// returns the bonus with the new score
 	public int checkBonusOffSquare(Square square, Word word, int score1) {
 		int score = score1;
 		int x = square.getXPos();
@@ -503,9 +446,6 @@ public class ScoreCalculator {
 				int i = testSq.getXPos() - playedSq.getXPos();
 				if (i > 0) {
 					// testSq ligt rechts van de playedSq
-					// System.out.println(testSq.getTile().getLetter()
-					// + " ligt rechts van de "
-					// + playedSq.getTile().getLetter());
 					for (i = testSq.getXPos() - 1; i > playedSq.getXPos(); i--) {
 
 						if (field[i][testSq.getYPos()].getTile() == null) {
@@ -516,9 +456,6 @@ public class ScoreCalculator {
 
 				} else if (i < 0) {
 					// testSq ligt links van de playedSq
-					// System.out.println(testSq.getTile().getLetter()
-					// + " ligt links van de "
-					// + playedSq.getTile().getLetter());
 					for (i = testSq.getXPos() + 1; i < playedSq.getXPos(); i++) {
 
 						if (field[i][testSq.getYPos()].getTile() == null) {
@@ -532,9 +469,6 @@ public class ScoreCalculator {
 				int i = testSq.getYPos() - playedSq.getYPos();
 				if (i > 0) {
 					// testSq onder de playedSq
-					// System.out.println(testSq.getTile().getLetter()
-					// + " ligt onder de "
-					// + playedSq.getTile().getLetter());
 					for (i = testSq.getYPos() - 1; i > playedSq.getYPos(); i--) {
 						if (field[testSq.getXPos()][i].getTile() == null) {
 							connected = false;
@@ -543,9 +477,6 @@ public class ScoreCalculator {
 					}
 				} else if (i < 0) {
 					// testSq boven de playedSq
-					// System.out.println(testSq.getTile().getLetter()
-					// + " ligt boven de "
-					// + playedSq.getTile().getLetter());
 					for (i = testSq.getYPos() + 1; i < playedSq.getYPos(); i++) {
 						if (field[testSq.getXPos()][i].getTile() == null) {
 							connected = false;
@@ -555,8 +486,6 @@ public class ScoreCalculator {
 				}
 			}
 		}
-		// System.out.println("De tegels zijn: " + connected + " test " +
-		// testSq.getTile().getLetter() + " " + playedSq.getTile().getLetter());
 		return connected;
 	}
 
@@ -569,9 +498,6 @@ public class ScoreCalculator {
 			int testingYValue = justFilledSquares.get(0).getYPos();
 			// de y variabelen zijn opvolgend
 			for (int i = 1; i < justFilledSquares.size(); i++) {
-				// System.out.println(justFilledSquares.get(i).getXPos() +
-				// " ! = "
-				// + (justFilledSquares.get(i - 1).getXPos() + 1));
 				if (justFilledSquares.get(i).getXPos() != (justFilledSquares
 						.get(i - 1).getXPos() + 1)) {
 					for (int p = 1; p < 15 && running; p++) {
@@ -615,9 +541,3 @@ public class ScoreCalculator {
 		return result;
 	}
 }
-
-/*
- * aanmaken door: DatabaseHandler dbh = DatabaseHandler.getInstance();
- * 
- * en aanroepen door: dbh. --------
- */

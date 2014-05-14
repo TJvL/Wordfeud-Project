@@ -7,6 +7,7 @@ import java.awt.Graphics;
 
 import javax.swing.JPanel;
 
+// A panel so show the score during spectating
 public class SpecScorePanel extends JPanel{
 	private String name;
 	private int maxScore;
@@ -20,24 +21,31 @@ public class SpecScorePanel extends JPanel{
 		this.setPreferredSize(new Dimension(250,150));	
 	}
 	
+	// Sets the name
 	public void setName(String name){
 		this.name = name;
 	}
 	
+	// Sets the score
 	public void setScore(int score){
 		this.maxScore = score;
 		this.turnScore = score;
 	}
 	
+	// Setc the turnscore
 	public void setTurnScore(int turnScore){
 		this.turnScore = turnScore;
 	}
 	
+	// Sets if it's this players turn or not
 	public void setTurn(boolean turn){
 		this.myTurn = turn;
 	}
 	
+	// Paints the text
 	public void paintComponent(Graphics g){
+		// If it is my turn it will paint green
+		// Els if will paint red
 		if (myTurn){
 			g.setColor(Color.green);
 		} else {

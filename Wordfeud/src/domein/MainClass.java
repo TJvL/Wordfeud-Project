@@ -1,6 +1,5 @@
 package domein;
 
-import gui.MainFrame;
 import datalaag.DatabaseHandler;
 
 import javax.swing.JOptionPane;
@@ -11,7 +10,7 @@ public class MainClass {
 		
 		WordFeud wf = new WordFeud();
 		
-		
+		// These are inputs optionspanes to start the game
 		DatabaseHandler dbh = DatabaseHandler.getInstance();	
 		String name = JOptionPane.showInputDialog(
 		null, "Please enter your GameID: ");
@@ -27,14 +26,5 @@ public class MainClass {
 			int gameID = Integer.parseInt(name);
 			wf.startGame(gameID, false, false);
 		}
-		//wf.startGame(511, true, false);
-	
-		// TODO Auto-generated method stub
-		
-		
-		//System.out.println("DE GAMEID IS " + gameID);
-	
-		// new MainFrame();
 	}
-
 }
