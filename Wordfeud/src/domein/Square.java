@@ -16,32 +16,37 @@ public class Square {
 		this.image = image;
 	}
 	
+	// Returns X
 	public int getXPos(){
 		return x;
 	}
 	
+	// Returns Y
 	public int getYPos(){
 		return y;
 	}
 	
+	// Returns the value
 	public String getValue(){
 		return value;
 	}
 	
+	// Returns the image
 	public BufferedImage getImage(){
-	//	FileHandler fh = FileHandler.getInstance();
-	//	BufferedImage image = ;
 		return image;
 	}
 	
+	// Sets the tile
 	public void addTile(Tile t){
 		this.tile = t;
 	}
 	
+	// Returns the Tile
 	public Tile getTile(){
 		return tile;
 	}
 	
+	// Removes the tile
 	public void removeTile(){
 		tile = null;
 	}

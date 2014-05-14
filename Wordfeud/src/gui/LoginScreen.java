@@ -54,6 +54,17 @@ public class LoginScreen extends JPanel {
 				mainFrame.setModScreen();
 			}
 		});
+		
+		JButton shortCut;
+		shortCut = new JButton("PRESS ME TO CHEAT");
+		shortCut.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				// These are inputs optionspanes to start the game
+				mainFrame.startGame();
+			}
+		});	
+		buttons.add(shortCut);
 
 		buttons.add(registerButton);
 		buttons.add(spectateButton);

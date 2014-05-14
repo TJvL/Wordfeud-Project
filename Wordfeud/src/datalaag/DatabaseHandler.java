@@ -14,7 +14,7 @@ public class DatabaseHandler
 {
 	final private static String URL = "jdbc:mysql://databases.aii.avans.nl:3306/manschou_db2"; // location of the database
 	final private static String USER = "manschou"; // is the database user
-	final private static String USERPASS = "Mschouten921"; // the password of the user
+	final private static String USERPASS = "Mschouten92"; // the password of the user
 
 	private PreparedStatement statement = null;
 	private ResultSet result = null;
@@ -47,7 +47,7 @@ public class DatabaseHandler
 		}
 	}
 
-	public void connection()
+	public synchronized void connection()
 	{
 		int retry = 0;
 		boolean connected = false;
@@ -67,7 +67,7 @@ public class DatabaseHandler
 		}
 	}
 
-	public void closeConnection() // closes the connection to the database
+	public synchronized void closeConnection() // closes the connection to the database
 	{
 		try
 		{
@@ -80,10 +80,10 @@ public class DatabaseHandler
 		}
 	}
 
-	public synchronized boolean login(String username, String password) // return statement for login in/correct needs to be applied
+	public synchronized String login(String username, String password) // return statement for login in/correct needs to be applied
 	{
 		connection();
-		boolean login = false;
+		String login = "Username or Password is incorrect";
 		try
 		{
 			statement = con
@@ -95,28 +95,28 @@ public class DatabaseHandler
 
 			if (result.next())
 			{
-				System.out.println("username + password correct");
-				login = true;
+//				System.out.println("username + password correct");
+				login = "Username and Password are correct";
 				result.close();
 			}
-			else
-			{
-				System.out.println("username or password incorrect");
-			}
+//			else
+//			{
+//				System.out.println("username or password incorrect");
+//			}
 			statement.close();
 		} catch (SQLException e)
 		{
 			e.printStackTrace();
 			System.out.println("Query ERROR!!!!");
 		}
-		finally{ closeConnection();}
+		finally{closeConnection();}
 		return login;
 	}
 
-	public synchronized boolean register(String username, String password)// return statement for register in/correct needs to be applied
+	public synchronized String register(String username, String password)// return statement for register in/correct needs to be applied
 	{
 		connection();
-		boolean registered = false;
+		String registered = "Can not register account";
 		try
 		{
 			statement = con
@@ -127,7 +127,7 @@ public class DatabaseHandler
 
 			if (!result.next())
 			{
-				System.out.println("username is available");
+				registered = "username is available, account is registered";
 				result.close();
 				statement.close();
 				
@@ -162,11 +162,10 @@ public class DatabaseHandler
 					e.printStackTrace();
 					System.out.println("account register error");
 				}
-				registered = true;
 			}
 			else
 			{
-				System.out.println("username = not available");
+				registered = "username is not available, cannot register your account";
 				statement.close();
 			}
 
@@ -479,21 +478,21 @@ public class DatabaseHandler
 		finally{ closeConnection();}
 	}
 
-	public synchronized String squareCheck(int cordX, int cordY)// should work
+	public synchronized ArrayList<String> squareCheck()// should work
 	{
-		String squareValue = null;
+		connection();
+		ArrayList<String> squareValue = new ArrayList<String>();
 
 		try
 		{
 			statement = con
-					.prepareStatement("SELECT tegeltype_soort FROM tegel WHERE x = '"
-							+ cordX + "' AND y = '" + cordY + "'");
+					.prepareStatement("SELECT x, y, tegeltype_soort FROM tegel ORDER BY y ASC, x ASC");
 
 			result = statement.executeQuery();
 
-			if (result.next())
+			while (result.next())
 			{
-				squareValue = result.getString(1);
+				squareValue.add(result.getInt(1) + "---" + result.getInt(2) + "---" + result.getString(3));
 			}
 			result.close();
 			statement.close();
@@ -502,7 +501,7 @@ public class DatabaseHandler
 		{
 			e.printStackTrace();
 			System.out.println("Query ERROR!!!!");
-		}
+		}finally{closeConnection();}
 		return squareValue;
 	}
 
@@ -919,7 +918,7 @@ public class DatabaseHandler
 			
 			while(result.next())
 			{
-				playedWord.add(result.getString(3) + "---" + result.getString(4) + "---" + result.getString(5));
+				playedWord.add(result.getString(3) + "---" + result.getString(4) + "---" + result.getString(5) +  "---" + result.getString(2));
 			}
 			result.close();
 			statement.close();
@@ -1258,6 +1257,34 @@ public class DatabaseHandler
 		return allScores;
 	}
 	
+	public synchronized int turnScore(int gameID, int turnID) 
+	 {
+		connection();
+		int score = 0;
+		
+		try {
+			statement = con
+					.prepareStatement("SELECT score FROM beurt WHERE id = '"
+							+ turnID + "' AND spel_id = '" + gameID + "'");
+
+			result = statement.executeQuery();
+
+			if (result.next()) 
+			{
+				score = result.getInt(1);
+			}
+			
+	   result.close();
+	   statement.close();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("Query ERROR!!!");
+		} 
+		finally {closeConnection();}
+		return score;
+	 }
+	
 	public synchronized ArrayList<String> competitionRanking(int compID)
 	{
 		connection();
@@ -1273,6 +1300,8 @@ public class DatabaseHandler
 			{
 				compRanking.add(result.getString(1) + "---" + result.getInt(2));
 			}
+			result.close();
+			statement.close();
 		} catch (SQLException e)
 		{
 			e.printStackTrace();
@@ -1282,6 +1311,115 @@ public class DatabaseHandler
 		return compRanking ;
 	}
 	
+	public synchronized ArrayList<String> competitionWinScore(int compID)
+	{
+		connection();
+		ArrayList<String> winnerScore = new ArrayList<String>();
+		
+		try
+		{
+			statement = con.prepareStatement("SELECT spel_id, winnerscore FROM rank_winnerscore WHERE competitie_id = '" + compID + "'");
+			
+			result = statement.executeQuery();
+			
+			while(result.next())
+			{
+				winnerScore.add(result.getString(1) + "---" + result.getInt(2));
+			}
+			result.close();
+			statement.close();
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+			System.out.println("QUERRY ERROR!!!");
+		}finally{ closeConnection();}
+		return winnerScore;
+	}
+	
+	public synchronized ArrayList<String> competitionBayesian(int compID)
+	{
+		connection();
+		ArrayList<String> bayesian = new ArrayList<String>();
+		
+		try
+		{
+			statement = con.prepareStatement("SELECT account_naam, this_wins, this_num_games FROM rank_bayesian WHERE competitie_id = '" + compID + "'");
+		
+			result = statement.executeQuery();
+			
+			while(result.next())
+			{
+				bayesian.add(result.getString(1) + "---" + result.getDouble(2) + "---" + result.getInt(3));
+			}
+			result.close();
+			statement.close();
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+			System.out.println("QUERRY ERROR!!!");
+		}finally{closeConnection();}
+		return bayesian;
+	}
+	
+	public synchronized ArrayList<String> competitionBayesianRating(int compID)
+	{
+		connection();
+		ArrayList<String> bayesianRating = new ArrayList<String>();
+		
+		try
+		{
+			statement = con.prepareStatement("SELECT account_naam, bayesian_rating FROM rating WHERE competitie_id = '" + compID + "'");
+		
+			result = statement.executeQuery();
+			
+			while(result.next())
+			{
+				bayesianRating.add(result.getString(1) + "---" + result.getDouble(2));
+			}
+			result.close();
+			statement.close();
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+			System.out.println("QUERRY ERROR!!!");
+		}finally{closeConnection();}
+		return bayesianRating;
+	}
+	
+	public synchronized boolean triplePass(int gameID, String username)
+	{
+		connection();
+		int passCounter = 0;
+		boolean tripPass = false;
+		
+		try
+		{
+			statement = con.prepareStatement("SELECT aktie_type FROM beurt WHERE spel_id = '" + gameID + "' AND account_naam = '" + username + "' ORDER BY id DESC LIMIT 3");
+			
+			result = statement.executeQuery();
+			
+			while(result.next())
+			{
+				if(result.getString(1).equals("Pass"))
+				{
+					passCounter++;
+				}
+			}
+			result.close();
+			statement.close();
+			
+			if(passCounter == 3)
+			{
+				tripPass = true;
+			}
+			
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+			System.out.println("QUERRY ERROR!!!");
+		}finally{closeConnection();}
+		return tripPass;
+	}
 	
 }
 

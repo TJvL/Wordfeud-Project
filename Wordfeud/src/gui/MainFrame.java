@@ -1,14 +1,24 @@
 package gui;
 
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Observer;
+
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
+import datalaag.DatabaseHandler;
+import domein.WordFeud;
 
 public class MainFrame extends JFrame {
 	private LoginScreen loginscreen;
 	private SpecScreen specscreen;
 	private RegScreen regscreen;
 	private PlayerScreen playerscreen;
-	private GameScreen gamescreen;
+	private GameScreen gameScreen;
+	private GameSpecScreen specScreen;
 	private AdminAccScreen adminaccscreen;
 	private AdminCompScreen admincompscreen;
 	private JoinCompScreen joincompscreen;
@@ -19,8 +29,9 @@ public class MainFrame extends JFrame {
 	private SpecMenuBar specMenuBar;
 	private AdminMenuBar adminMenuBar;
 	private ModMenuBar modMenuBar;
+	private WordFeud wf;
 
-	public MainFrame() {
+	public MainFrame(final WordFeud wf) {
 		startMenuBar = new StartMenuBar();
 		specMenuBar = new SpecMenuBar(this);
 		playerMenuBar = new PlayerMenuBar(this);
@@ -30,7 +41,8 @@ public class MainFrame extends JFrame {
 		specscreen = new SpecScreen();
 		regscreen = new RegScreen(this);
 		playerscreen = new PlayerScreen(this);
-		gamescreen = new GameScreen();
+		gameScreen = new GameScreen();
+		specScreen = new GameSpecScreen();
 		joincompscreen = new JoinCompScreen();
 		joinedcompscreen = new JoinedCompScreen();
 		adminaccscreen = new AdminAccScreen(this);
@@ -44,6 +56,7 @@ public class MainFrame extends JFrame {
 
 		this.setContentPane(loginscreen);
 		this.setJMenuBar(startMenuBar);
+		this.wf = wf;
 
 		this.pack();
 		this.setLocationRelativeTo(null);
@@ -64,18 +77,18 @@ public class MainFrame extends JFrame {
 		this.setContentPane(playerscreen);
 		revalidate();
 	}
-	
-	public void setGameScreen(){
-		this.setContentPane(gamescreen);
+
+	public void setGameScreen() {
+		this.setContentPane(gameScreen);
 		revalidate();
 	}
-	
-	public void setSpecScreen(){
+
+	public void setSpecScreen() {
 		this.setContentPane(specscreen);
 		revalidate();
 	}
-	
-	public void setJoinCompScreen(){
+
+	public void setJoinCompScreen() {
 		this.setContentPane(joincompscreen);
 		revalidate();
 	}
@@ -89,13 +102,13 @@ public class MainFrame extends JFrame {
 		this.setContentPane(adminaccscreen);
 		revalidate();
 	}
-	
-	public void setAdminCompScreen(){
+
+	public void setAdminCompScreen() {
 		this.setContentPane(admincompscreen);
 		revalidate();
 	}
-	
-	public void setModScreen(){
+
+	public void setModScreen() {
 		this.setContentPane(modscreen);
 		revalidate();
 	}
@@ -123,5 +136,61 @@ public class MainFrame extends JFrame {
 	public void setAdminMenuBar() {
 		this.setJMenuBar(adminMenuBar);
 		revalidate();
+	}
+
+	// PlayGame/Spectator part
+	// Adds the observers to all the panels
+	// Sets the right ContentPane
+	public void addObservers(Observer observer, boolean spectator) {
+		if (spectator) {
+			this.setJMenuBar(playerMenuBar);
+			this.setContentPane(specScreen);
+			this.pack();
+			System.out.println("MainFRAMEPANEL - set content specScreen");
+			specScreen.addObserverToObserverButtons(observer);
+			revalidate();
+		} else {
+			this.setJMenuBar(playerMenuBar);
+			this.setContentPane(gameScreen);
+			this.pack();
+			gameScreen.addObservers(observer);
+			System.out.println("MainFRAMEPANEL - set content gameScreen");
+			revalidate();
+		}
+	}
+
+	public void startGame() {
+		DatabaseHandler dbh = DatabaseHandler.getInstance();
+		String name = JOptionPane.showInputDialog(null,
+				"Please enter your GameID: ");
+		if (name == null) {
+			int gameID = dbh.createGame(1, "jager684", "marijntje42",
+					"openbaar", "EN");
+			wf.startGame(gameID, false, true);
+		} else if (name.equals("spec")) {
+			String name2 = JOptionPane.showInputDialog(null,
+					"Please enter your GameID: ");
+			wf.startGame(Integer.parseInt(name2), true, false);
+
+		} else {
+			int gameID = Integer.parseInt(name);
+			wf.startGame(gameID, false, false);
+		}
+
+	}
+
+	// Gets a GameFieldPanel
+	public GameFieldPanel getGameFieldPanel() {
+		return gameScreen.getBoardPanel();
+	}
+
+	// Gets the gameScreen
+	public GameScreen getGameScreen() {
+		return gameScreen;
+	}
+
+	// Gets the specScreen
+	public GameSpecScreen getSpecScreen() {
+		return specScreen;
 	}
 }

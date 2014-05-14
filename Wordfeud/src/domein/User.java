@@ -6,15 +6,16 @@ import datalaag.DatabaseHandler;
 
 public class User {
 	private Player player;
+	private String userName;
 	private Administrator admin;
 	private Spectator spec;
 	private Moderator mod;
-
 	private String name;
+	private boolean isBanned;
 	
 
 	public User() {
-		player = new Player(false);
+		player = new Player(true);
 		admin = new Administrator(false);
 		spec = new Spectator(true);
 		mod = new Moderator(false);
@@ -23,7 +24,7 @@ public class User {
 	public Player getPlayer() {
 		return player;
 	}
-
+	
 	public Administrator getAdmin() {
 		return admin;
 	}
@@ -39,7 +40,7 @@ public class User {
 	public String getName() {
 		return name;
 	}
-
+/*
 	public void login() {
 		Scanner reader = new Scanner(System.in);
 		System.out.println("Voer gebruikersnaam in:");
@@ -107,5 +108,5 @@ public class User {
 
 		DatabaseHandler.getInstance().register(userNameInput, passwordInput);
 		reader.close();
-	}
+	}*/
 }
