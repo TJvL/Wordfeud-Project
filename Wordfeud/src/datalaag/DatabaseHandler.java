@@ -336,17 +336,17 @@ public class DatabaseHandler
 			// closes the statement
 			statement.close();
 			
-//			statement = con.prepareStatement("INSERT INTO beurt(id, spel_id, account_naam, aktie_type)VALUES(?,?,?,?)");
-//			
-//			statement.setInt(1, 1);
-//			statement.setInt(2, gameID);
-//			statement.setString(3, username);
-//			statement.setString(4, "Begin");
-//			
-//			statement.executeUpdate();
-//			
-//			statement.close();
-//			
+			statement = con.prepareStatement("INSERT INTO beurt(id, spel_id, account_naam, aktie_type)VALUES(?,?,?,?)");
+			
+			statement.setInt(1, 1);
+			statement.setInt(2, gameID);
+			statement.setString(3, username);
+			statement.setString(4, "Begin");
+			
+			statement.executeUpdate();
+			
+			statement.close();
+			
 		} catch (SQLException e)
 		{
 			e.printStackTrace();

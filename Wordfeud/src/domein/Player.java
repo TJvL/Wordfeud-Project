@@ -2,6 +2,8 @@ package domein;
 
 import java.util.ArrayList;
 
+
+// Played deed user extend
 public class Player extends Role
 	{
 		private Hand hand;

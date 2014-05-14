@@ -12,14 +12,14 @@ import javax.swing.JList;
 import javax.swing.JScrollPane;
 
 @SuppressWarnings("serial")
-public class Ranking extends JFrame
+public class RankingWindow extends JFrame
 {
 
 	private DefaultListModel<String> myLM = new DefaultListModel<String>();
 	private JList<String> myList = new JList<String>(myLM);
-	JScrollPane mySP = new JScrollPane(myList);
-	JLabel title = new JLabel();
-;
+	private JScrollPane mySP = new JScrollPane(myList);
+	private JLabel title = new JLabel();
+
 
 	public void showRanking()
 	{

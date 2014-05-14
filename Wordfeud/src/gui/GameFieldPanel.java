@@ -3,20 +3,20 @@ package gui;
 import java.awt.BorderLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+
 import javax.swing.JPanel;
+
 import domein.Match;
 import domein.Tile;
 
 public class GameFieldPanel extends JPanel {
 
-	private static final long serialVersionUID = -5454329691571947261L;
-
 	private SquarePanel[][] squaresPanels;
 	private ArrayList<TilePanel> tiles;
 	private FieldPanel fieldPanel;
 	private HandPanel handPanel;
-	private Match match;
 	private boolean swapPressed;
 	private ArrayList<TilePanel> tilesToSwap;
 
@@ -32,63 +32,43 @@ public class GameFieldPanel extends JPanel {
 		this.add(handPanel, BorderLayout.SOUTH);
 	}
 
-	// Method to set the match loaded now
-	public void setMatch(Match match) {
-		this.match = match;
-	}
-
-	public void startNewGame() {
-		this.addSquares();
-	}
-
-	public void addSquares() {
-		// boolean j = true;
-
+	// Adds all the squares to the field and uses a Match as parameter
+	public void addSquares(Match givenMatch) {
+		final Match match = givenMatch;
+		
+		// Loops trough the entire board
 		for (int y = 0; y < 15; y++) {
 			for (int x = 0; x < 15; x++) {
-
-				// --- dit moet nog een in private method worden gezet
-				// -------//////////
-
 				SquarePanel squarePanel;
-
+				
+				// Creates a SquarePanel
 				squarePanel = new SquarePanel(match.getSquare(x, y));
+				if (match.getSquare(x, y).getTile() != null){
+					squarePanel.addImage(match.getSquare(x, y).getTile() .getImage());
+				}
 				squaresPanels[x][y] = squarePanel;
-				// j = !j;
-				// square.setBackground(Color.red);
+			
+				// Adds a mouseAdparter to the square
 				squarePanel.addMouseListener(new MouseAdapter() {
 
-					public void mouseClicked(MouseEvent e) {
+					@Override
+					public void mousePressed(MouseEvent e) {
 						SquarePanel sq = (SquarePanel) e.getSource();
-						String output = "" + sq.getXValue() + " | "
-								+ sq.getYValue();
-						System.out.println(output);
-
-						if (sq.getOccupied()) {
-							System.out.println(match
-									.getSquare(sq.getXValue(), sq.getYValue())
-									.getTile().getJustPlayed()
-									+ " is net gespeeld");
-						}
-
+						
+						// Checks if the player is swapping tiles
 						if (!swapPressed) {
-							// Deze methode moet eigenlijk naar de match
-							// verplaatst
-							// worden
-							// Dan wordt daar bepaald wat er gebeurd als er op
-							// een
-							// square wordt geklikt
+							// Checks for selected Tiles
 							if (match.getSelectedTile() != null
 									&& !sq.getOccupied()) {
+								// Adds the tiles to the board
 								match.moveTileFromHandToBoard(sq.getXValue(),
 										sq.getYValue());
 								sq.addImage(match.getSelectedTile().getImage());
-								// sq.setBackgroundColor(Color.cyan);
 								removeTileFromHand(match.getSelectedTile());
 								match.selectedTile(null);
 							}
 
-							// test om tegels weer weg te kunnen halen
+							// Removes a tile from the board
 							else if (match.getSelectedTile() == null
 									&& sq.getOccupied()
 									&& match.getSquare(sq.getXValue(),
@@ -100,64 +80,39 @@ public class GameFieldPanel extends JPanel {
 							}
 						}
 					}
-
-					@Override
-					public void mouseEntered(MouseEvent e) {
-					}
-
-					@Override
-					public void mouseExited(MouseEvent e) {
-						// this.setBackground(Color.black);
-					}
-
-					@Override
-					public void mousePressed(MouseEvent e) {
-
-					}
-
-					@Override
-					public void mouseReleased(MouseEvent e) { // TODO
-
-					}
-
 				});
 
+				// Adds the square to the panels
 				fieldPanel.addSquare(squarePanel);
-				// this.add(square);
 			}
 		}
 	}
 
-	private TilePanel makeTilePanel(Tile tile) {
+	// A method to make the tilePanels and uses a Match as parameter
+	// And uses a Tile
+	private TilePanel makeTilePanel(Tile tile, Match givenMatch) {
+		final Match match = givenMatch;
+		// Standerd values
 		tile.setXValue(1111);
 		tile.setYValue(1111);
+		
+		// Makes a tilePanel and adds a listener
 		TilePanel tilePanel = new TilePanel(tile);
-
 		tilePanel.addMouseListener(new MouseAdapter() {
-
-			public void mouseClicked(MouseEvent e) {
-
-				// kijken of je niet aan het swappen bent
+			@Override
+			public void mousePressed(MouseEvent e) {
+				// Checks if you are swapping
 				if (!swapPressed) {
 					TilePanel tilePanel = (TilePanel) e.getSource();
-					// String output = "" + tp.getNumber();
-					// System.out.println(output);
-
-					// if (match.getTile() != null) {
+					// Chechs if a tile is already selected
 					if (match.getSelectedTile() == tilePanel.getTile()) {
 						match.selectedTile(null);
-						System.out.println("Value is "
-								+ match.getSelectedTile());
 						tilePanel.setSelected(false);
 						tilePanel.repaintPanel();
-					} else {
-						// nog maken als je op een andere tile klikt dan
-						// selected dat hij de
-						// waardes reset in match
+					}
+					// Deslectes the tiles
+					else {
 						match.selectedTile(tilePanel.getTile());
-						System.out.println("Value is "
-								+ match.getSelectedTile().getLetter());
-
 						for (TilePanel t : tiles) {
 							t.setSelected(false);
 						}
@@ -166,11 +121,11 @@ public class GameFieldPanel extends JPanel {
 						repaintBoard();
 					}
 				}
-				// Swap gedeelte - selecteren van stenen
-
+				// This part if swapping is enabled
 				else {
 					TilePanel tilePanel = (TilePanel) e.getSource();
 					boolean containsTile = false;
+					// Adds the tiles to be swapped
 					for (TilePanel tts : tilesToSwap) {
 						if (!containsTile) {
 							if (tts == tilePanel) {
@@ -178,37 +133,19 @@ public class GameFieldPanel extends JPanel {
 							}
 						}
 					}
+					// Removes the tile to be swapped
 					if (containsTile) {
 						tilesToSwap.remove(tilePanel);
 						tilePanel.setSelected(false);
 						tilePanel.repaintPanel();
 					} else {
+						// Adds the tile
 						tilesToSwap.add(tilePanel);
 						tilePanel.setSelected(true);
 						tilePanel.repaintPanel();
 					}
 				}
-
 			}
-
-			@Override
-			public void mouseEntered(MouseEvent e) {
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-				// this.setBackground(Color.black);
-			}
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-
-			}
-
-			@Override
-			public void mouseReleased(MouseEvent e) {
-			}
-
 		});
 
 		return tilePanel;
@@ -240,9 +177,9 @@ public class GameFieldPanel extends JPanel {
 
 	// You give it a tile to be add to the hand
 	// The param is the tile to be add
-	public void addTileToHand(Tile t) {
+	public void addTileToHand(Tile t, Match givenMatch) {
 		TilePanel tile;
-		tiles.add(tile = makeTilePanel(t));
+		tiles.add(tile = makeTilePanel(t, givenMatch));
 
 		handPanel.disposeTiles();
 		for (TilePanel tp : tiles) {
@@ -265,7 +202,8 @@ public class GameFieldPanel extends JPanel {
 			tiles.remove(tp);
 			tiles.add(tp);
 		}
-
+		
+		// Cleares the hand
 		handPanel.disposeTiles();
 		for (TilePanel tp : tiles) {
 			handPanel.addTile(tp);
@@ -274,6 +212,11 @@ public class GameFieldPanel extends JPanel {
 		}
 	}
 
+	// Adds a image to a squarePanel
+	public void addSquarePanel(int x, int y, BufferedImage image){
+		squaresPanels[x][y].addImage(image);
+	}
+	
 	// Var to see if swapping is enabled
 	// parm if it's true or false
 	public void setSwapPressed(boolean pressed) {
@@ -285,48 +228,25 @@ public class GameFieldPanel extends JPanel {
 	// it will give a message that allows you to
 	// select some tiles to be swapped
 	public void swapTiles() {
-		match.swapTiles(tilesToSwap);
+		//match.swapTiles(tilesToSwap);
 		tilesToSwap.clear();
 		for (TilePanel t : tiles) {
 			t.setSelected(false);
 		}
 		repaintBoard();
 	}
+	
+	// Gets the tiles that have to be swaped
+	public ArrayList<TilePanel> getTilesToSwap(){
+		return tilesToSwap;
+	}
 
+	// Checks if a squarePanel is occupied or not
 	public boolean getOccupied(int x, int y) {
 		return squaresPanels[x][y].getOccupied();
 	}
 
-	// When played is pressed set the tiles on played
-	// Before this happeds all the checks need to be done
-
-	// ------ check als woordenboek kijken - geldige woord - score berekeken //
-
-	/*
-	 * public void setAllTilesToPlayed() { for (SquarePanel[] s : squares) { for
-	 * (SquarePanel sp : s) { if (sp.getOccupied()) {
-	 * sp.getTile().setPlayed(true); } } } }
-	 */
-
-	/*
-	 * public void fillHand() { while (tiles.size() < 7) { TilePanel tilePanel =
-	 * makeTilePanel(match.getTileFromJar()); handPanel.addTile(tilePanel);
-	 * tiles.add(tilePanel); this.repaint(); this.revalidate(); } }
-	 */
-
-	/*
-	 * public void playTiles() {
-	 * 
-	 * // Test gedeelte ArrayList<Tile> playedTiles = new ArrayList<Tile>(); for
-	 * (SquarePanel[] s : squares) { for (SquarePanel sp : s) { if
-	 * (sp.getOccupied()) { if (sp.getTile().getXValue() == 1111) { // Tijdelijk
-	 * als we op play douwen zijn de gelijk played // voor het testen
-	 * sp.getTile().setXValue(sp.getXValue());
-	 * sp.getTile().setYValue(sp.getYValue()); playedTiles.add(sp.getTile());
-	 * System.out.println("Net neergelegde letter: " +
-	 * sp.getTile().getLetter()); } } } } }
-	 */
-
+	// Updates the board
 	public void repaintBoard() {
 		this.repaint();
 		this.revalidate();
@@ -336,5 +256,11 @@ public class GameFieldPanel extends JPanel {
 	// param the cords of the square / return tile on the square
 	public SquarePanel getTileFromBoard(int x, int y) {
 		return squaresPanels[x][y];
+	}
+	
+	// Clears the field
+	public void clearField(){
+		fieldPanel.clearField();
+		handPanel.disposeTiles();
 	}
 }

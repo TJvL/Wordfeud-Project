@@ -3,17 +3,14 @@ package gui;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Observable;
+import java.util.Observer;
+
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import domein.Match;
-
 public class GameButtonPanel extends JPanel {
-
-	private static final long serialVersionUID = -1759296107629262333L;
-
-	private Match match;
 	private GameFieldPanel boardP;
 	private boolean swapPressed;
 	private JButton swap;
@@ -22,18 +19,42 @@ public class GameButtonPanel extends JPanel {
 	private JButton surr;
 	private JButton clear;
 	private JButton shuffle;
+	private ObserverButtons observerButtons;
 
+	// This uses a gameFieldPanel
 	public GameButtonPanel(GameFieldPanel boardP) {
 		this.boardP = boardP;
 		this.setBackground(Color.green);
 		this.addButtons();
 		this.swapPressed = false;
+		observerButtons = new ObserverButtons();
+	}
+	
+	// Adds the observers
+	public void addObserverToObserverButtons(Observer observer){
+		observerButtons.addObserver(observer);
 	}
 
-	public void setMatch(Match match) {
-		this.match = match;
+	// A method to disable the surrender button
+	public synchronized void disableSurrender() {
+		surr.setEnabled(false);
 	}
 
+	// Enables or disables the buttons
+	public synchronized void setTurn(boolean turn) {
+		if (turn) {
+			swap.setEnabled(true);
+			play.setEnabled(true);
+			pass.setEnabled(true);
+			surr.setEnabled(true);
+		} else {
+			swap.setEnabled(false);
+			play.setEnabled(false);
+			pass.setEnabled(false);
+		}
+	}
+
+	// Adds the buttons to the field
 	public void addButtons() {
 		swap = new JButton("Swap");
 		play = new JButton("Play");
@@ -42,6 +63,7 @@ public class GameButtonPanel extends JPanel {
 		clear = new JButton("Clear");
 		shuffle = new JButton("Shuffle");
 
+		// Adds the listeners
 		play.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -79,6 +101,7 @@ public class GameButtonPanel extends JPanel {
 			}
 		});
 
+		// Adds the buttons
 		this.add(play);
 		this.add(pass);
 		this.add(shuffle);
@@ -87,50 +110,17 @@ public class GameButtonPanel extends JPanel {
 		this.add(surr);
 	}
 
-	// ////////////////////////////////////
+	// Sets the observer
 	private void playTiles() {
-		// if score > 0
-
-		// Moet worden bijgewerkt
-		// moet verwijzen naar match.playTiles
-		// Daar moet alles worden geregeld
-		/*
-		 * 
-		 * boardP.playTiles();
-		 * 
-		 * for (int y = 0; y < 15; y++) { for (int x = 0; x < 15; x++) { if
-		 * (boardP.getTileFromBoard(x, y).getOccupied()) { //
-		 * System.out.println(boardP.getTileFromBoard(x, // y).getLetter());
-		 * match.addPlayedTilesToBoard(boardP.getTileFromBoard(x, y)
-		 * .getTile()); } } }
-		 */
-
-		if (match.startCalculating()) {
-			// if this is true, a score will be calculated
-			if (match.checkWords()){
-				match.setTilesPlayed();
-				match.fillHand();
-			} else {
-				System.err.println("WOORDEN ZIJN FOUT");
-				// hier moet de optie komen om ze te laten keuren
-			}
-			
-		}
-		/*
-		 * boardP.playTiles(); if (ScoreCalculator.getInstance().getScore() > 0)
-		 * { // woord komt voor in database?
-		 * 
-		 * // if true // tel score van player op met de score // 4. zet alle
-		 * tiles op played = true // vul hand aan tot 7 (of meest haalbare) //
-		 * verander van beurt } else { JOptionPane .showMessageDialog(null,
-		 * "The tiles you have placed don't seem to be giving you a score."); }
-		 */
+		observerButtons.changeActionRequest("play");
 	}
 
+	// Sets the observer
 	private void skipTurn() {
-		// DatabaseHandler.getInstance().changeTurn();
+		observerButtons.changeActionRequest("pass");
 	}
 
+	// Sets the observer
 	private void shuffleTiles() {
 		boardP.suffleHand();
 	}
@@ -143,15 +133,17 @@ public class GameButtonPanel extends JPanel {
 		if (swapPressed) {
 			swap.setText("Swap");
 			boardP.setSwapPressed(false);
-			boardP.swapTiles();
+			// Stets the observer
+			observerButtons.changeActionRequest("swap");
 			swapPressed = false;
 			surr.setEnabled(true);
 			play.setEnabled(true);
 			pass.setEnabled(true);
 			shuffle.setEnabled(true);
 			clear.setEnabled(true);
-			// swapTiles()
-		} else {
+		} 
+		// Warning to show that you are going to swap
+		else {
 			if (JOptionPane.showConfirmDialog(null,
 					"Are you sure you want to start swapping tiles?"
 							+ "\n Select the tiles you want to swap",
@@ -171,12 +163,22 @@ public class GameButtonPanel extends JPanel {
 
 	}
 
+	// Sets the observer
 	private void clearTiles() {
-		match.clearTilesFromBoard();
+		observerButtons.changeActionRequest("clear");
 	}
 
+	// Sets the observer
 	private void surrenderGame() {
-		// pop-up maken met score e.d.
-		System.exit(0);
+		observerButtons.changeActionRequest("surrender");
+	}
+
+	// A class to be able to extend obserable for the buttons
+	class ObserverButtons extends Observable {
+		public void changeActionRequest(String actionRequest) {
+			System.out.println("action requested: " + actionRequest);
+			this.setChanged();
+			this.notifyObservers(actionRequest);
+		}
 	}
 }

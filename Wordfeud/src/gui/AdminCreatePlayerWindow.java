@@ -16,7 +16,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 	
 @SuppressWarnings("serial")
-public class AdminCreatePlayer extends JFrame
+public class AdminCreatePlayerWindow extends JFrame
 {
 	private JPanel buttons;
 	private JPanel dataField;

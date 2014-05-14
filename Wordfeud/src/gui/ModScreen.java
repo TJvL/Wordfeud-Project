@@ -1,4 +1,5 @@
 package gui;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -15,11 +16,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 @SuppressWarnings("serial")
-public class ModScreen extends JPanel
-{
-
-	private String listArray[] =
-	{
+public class ModScreen extends JPanel {
+	private String listArray[] = {
 
 	"Word Request 1 ", "Word Request 2", "Word Request 3", "Word Request 4" };
 
@@ -35,7 +33,7 @@ public class ModScreen extends JPanel
 	private JButton declineWord = new JButton();
 	private JButton addWord = new JButton();
 	private JButton removeWord = new JButton();
-	private JTextField insertWord = new JTextField();
+	private JTextField insertWord = new JTextField(20);
 
 	private DefaultListModel<String> myListModel = new DefaultListModel<String>();
 	private JList<String> wordReqList = new JList<String>(listArray);
@@ -49,8 +47,11 @@ public class ModScreen extends JPanel
 	// run this method before setting the screen as contentpane
 
 	// //left side of the screen
-	public void createmodScreen()
-	{
+	public ModScreen(){
+		createmodScreen();
+	}
+	
+	public void createmodScreen() {
 		this.createRequestListPanel();
 		this.createRequestsButtonPanel();
 		this.rightPanel();
@@ -68,8 +69,7 @@ public class ModScreen extends JPanel
 
 	}
 
-	public void createRequestListPanel()
-	{
+	public void createRequestListPanel() {
 
 		// ///this panel contains our JList, where all the active games are
 		// listed
@@ -102,14 +102,11 @@ public class ModScreen extends JPanel
 		modScreenButtonPanel.add(selectedWord);
 		modScreenButtonPanel.add(selectedWordValue);
 
-		approveWord.addActionListener(new ActionListener()
-		{
+		approveWord.addActionListener(new ActionListener() {
 
 			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				if (wordReqList.getSelectedValue() != null)
-				{
+			public void actionPerformed(ActionEvent e) {
+				if (wordReqList.getSelectedValue() != null) {
 					selectedWordValue.setText(wordReqList.getSelectedValue()
 							+ "(Approved).");
 
@@ -122,35 +119,29 @@ public class ModScreen extends JPanel
 			}
 		});
 
-		declineWord.addActionListener(new ActionListener()
-		{
+		declineWord.addActionListener(new ActionListener() {
 
-			
-				@Override
-				public void actionPerformed(ActionEvent e)
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (wordReqList.getSelectedValue() != null) {
+					selectedWordValue.setText(wordReqList.getSelectedValue()
+							+ "(Declined).");
+
+				} else
+
 				{
-					if (wordReqList.getSelectedValue() != null)
-					{
-						selectedWordValue.setText(wordReqList.getSelectedValue()
-								+ "(Declined).");
-
-					} else
-
-					{
-						selectedWordValue.setText("Nothing selected.");
-					}
-					modScreenButtonPanel.revalidate();
+					selectedWordValue.setText("Nothing selected.");
 				}
-			
+				modScreenButtonPanel.revalidate();
+			}
+
 		});
 
 	}
 
-	public void fillList()
-	{
+	public void fillList() {
 		int counter = 0;
-		while (counter < listArray.length)
-		{
+		while (counter < listArray.length) {
 
 			myListModel.add(counter, listArray[counter]);
 			counter++;
@@ -162,8 +153,7 @@ public class ModScreen extends JPanel
 	// ////left side end
 
 	// right side of the screen
-	public void createDictionaryOptions()
-	{
+	public void createDictionaryOptions() {
 		addWord.setText("Add Word");
 		removeWord.setText("Remove Word");
 		insertWord.setText("Insert a Word");
@@ -190,8 +180,7 @@ public class ModScreen extends JPanel
 
 	}
 
-	public void rightPanel()
-	{
+	public void rightPanel() {
 
 		createDictionaryOptions();
 		rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.PAGE_AXIS));

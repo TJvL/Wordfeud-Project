@@ -11,7 +11,6 @@ public class User {
 	private Moderator mod;
 
 	private String name;
-	
 
 	public User() {
 		player = new Player(false);
@@ -40,72 +39,62 @@ public class User {
 		return name;
 	}
 
-	public void login() {
-		Scanner reader = new Scanner(System.in);
-		System.out.println("Voer gebruikersnaam in:");
-		String userNameInput = reader.next();
+	public String login(String usernameInput, String passwordInput) {
 
-		System.out.println("Voer wachtwoord in:");
-		String passwordInput = reader.next();
 
-		datalaag.DatabaseHandler.getInstance().login(userNameInput,
+		String retValue = datalaag.DatabaseHandler.getInstance().login(usernameInput,
 				passwordInput);
 
-		boolean isLoggedIn = datalaag.DatabaseHandler.getInstance().login(userNameInput, passwordInput);
+		datalaag.DatabaseHandler.getInstance().login(usernameInput,
+				passwordInput);
 
-		if(isLoggedIn == true){
+
+
+		if (retValue.equalsIgnoreCase("Username and Password are correct")) {
 			// set Username in User Class
-			name = userNameInput;
-			
-			System.out.println("Je bent ingelogd!");
+			name = usernameInput;
 		}
-		
-		reader.close();
+
+		System.out.println(retValue);
+		return retValue;
 
 	}
 
-	public void register() {
-		Scanner reader = new Scanner(System.in);
+	public String register(String usernameInput, String passwordInput,
+			String passConfirmInput) {
 
-		System.out.println("Voer gebruikersnaam in:");
-		String userNameInput = reader.next();
+		String retValue = "Idle";
+
 		// controleer of de gebruikersnaam tussen de 3 en 15 tekens is
-		while (userNameInput.length() < 3 || userNameInput.length() > 15) {
-			System.out
-					.println("De gebruikersnaam moet tussen de 3 en de 15 tekens bevatten. Vul het opnieuw in:");
-			userNameInput = reader.next();
+		if (usernameInput.length() < 3 || usernameInput.length() > 15) {
+			retValue = "Gebruikersnaam moet tussen de 3 en 15 tekens bevatten.";
 		}
-		System.out.println("Voer wachtwoord in:");
-		String passwordInput = reader.next();
-		// Controleer of wachtwoord tussen de 6 en 15 tekens is
-		while (passwordInput.length() < 6) {
-			System.out
-					.println("Het wachtwoord moet minimaal 6 tekens bevatten. Vul het opnieuw in:");
-			passwordInput = reader.next();
+
+		// Controleer of wachtwoord minimaal 6 tekens bevat
+		else if (passwordInput.length() < 6) {
+			retValue = "Het wachtwoord moet minimaal 6 tekens bevatten.";
+
 		}
-		System.out.println("Herhaal uw wachtwoord:");
-		String passwordConfirmation = reader.next();
 
 		// Controleer of de opgegeven wachtwoorden overeen komen
-		while (!passwordInput.equals(passwordConfirmation)) {
-			System.out
-					.println("De opgegeven wachtwoorden komen niet overeen. Vul het wachtwoord opnieuw in:");
-			passwordInput = reader.next();
-			// Controleer of wachtwoord tussen de 6 en 20 tekens is
-			while (passwordInput.length() < 6 || passwordInput.length() > 20) {
-				System.out
-						.println("Het wachtwoord moet minimaal 6 tekens bevatten. Vul het opnieuw in:");
-				passwordInput = reader.next();
-			}
+		else if (!passwordInput.equals(passConfirmInput)) {
+			retValue = "De opgegeven wachtwoorden komen niet overeen.";
 
-			// Voer opnieuw het confirmatie wachtwoord in
-			System.out.println("Herhaal uw wachtwoord:");
-			passwordConfirmation = reader.next();
 		}
 
 		// Voer de gebruiker in in de database
 
-		DatabaseHandler.getInstance().register(userNameInput, passwordInput);
-		reader.close();
+		else{
+		retValue = DatabaseHandler.getInstance().register(usernameInput, passwordInput);
+		DatabaseHandler.getInstance().register(usernameInput, passwordInput);
+
+
+
+		}
+
+
+		System.out.println(retValue);
+		return retValue;
+
 	}
 }
