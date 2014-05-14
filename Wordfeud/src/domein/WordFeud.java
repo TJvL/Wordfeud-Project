@@ -19,7 +19,7 @@ public class WordFeud {
 		matches = new ArrayList<Match>();
 		framePanel = new MainFrame(this);
 		secondThread = new SecondThread(framePanel.getGameScreen()
-				.getBoardPanel(), framePanel.getGameScreen().getButtonPanel(),
+				.getGameFieldPanel(), framePanel.getGameScreen().getButtonPanel(),
 				framePanel.getGameScreen().getScorePanel());
 	}
 
@@ -50,7 +50,8 @@ public class WordFeud {
 		this.addObservers(match, false);
 		// Sets the thread
 		createSecondThread(match);
-		match.startNewGame(framePanel.getGameFieldPanel());
+		match.startNewGame(framePanel.getGameScreen().getGameFieldPanel());
+		framePanel.getGameScreen().getGameChatPanel().setChatVariables(match.getOwnName(), match.getEnemyName(), match.getGameID());
 		matches.add(match);
 	}
 
@@ -62,15 +63,20 @@ public class WordFeud {
 			if (match.getGameID() == gameID) {
 				exists = true;
 				match = new Match(gameID, getUserPlayer());
+				// Adds the observers
+				this.addObservers(match, false);
 				createSecondThread(match);
-				match.loadGame(framePanel.getGameFieldPanel());
-
+				match.loadGame(framePanel.getGameScreen().getGameFieldPanel());
+				framePanel.getGameScreen().getGameChatPanel().setChatVariables(match.getOwnName(), match.getEnemyName(), match.getGameID());
 			}
 		}
 		if (!exists) {
 			match = new Match(gameID, getUserPlayer());
+			// Adds the observers
+			this.addObservers(match, false);
 			createSecondThread(match);
-			match.loadGame(framePanel.getGameFieldPanel());
+			match.loadGame(framePanel.getGameScreen().getGameFieldPanel());
+			framePanel.getGameScreen().getGameChatPanel().setChatVariables(match.getOwnName(), match.getEnemyName(), match.getGameID());
 		}
 
 	}
