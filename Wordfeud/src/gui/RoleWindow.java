@@ -8,7 +8,7 @@ import javax.swing.JTextField;
 public class RoleWindow extends JFrame
 {
 	/////this method returns a string with the chosen value, if th eplayer chooses cancel, nothing is returned
-	public String ShowchangeRole()
+	public String showChangeRole()
 	{
 
 		Object[] possibilities = {"Administrator", "Moderator", "Spectator", "Player"};
@@ -22,7 +22,7 @@ public class RoleWindow extends JFrame
 		
 		
 		if ((s != null) && (s.length() > 0)) {
-		    System.out.println(s);
+		    System.out.println("Attempting to change role to: " + s);
 		    return s;
 		}
 		else

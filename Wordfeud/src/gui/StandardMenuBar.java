@@ -44,6 +44,7 @@ public class StandardMenuBar extends JMenuBar {
 			public void actionPerformed(ActionEvent e) {
 				mainFrame.setLoginScreen();
 				mainFrame.setStartMenuBar();
+				mainFrame.callLogoutAction();
 			}
 		});
 		exitMenuItem.addActionListener(new ActionListener() {
@@ -53,7 +54,15 @@ public class StandardMenuBar extends JMenuBar {
 		});
 		changeroleMenuItem.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
-				rolewindow.ShowchangeRole();
+				String result = rolewindow.showChangeRole();
+				boolean isSuccesful = mainFrame.callChangeRoleAction(result);
+				if (isSuccesful){
+					System.out.println("Role changed succesfully.");
+					mainFrame.setCorrectRoleMainMenu();
+				}
+				else{
+					System.err.println("ERROR: Role not changed!");
+				}
 			}
 		});
 		

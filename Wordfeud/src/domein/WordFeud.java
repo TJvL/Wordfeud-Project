@@ -3,18 +3,23 @@ package domein;
 import gui.MainFrame;
 
 
+
+
+
 import java.util.ArrayList;
 import java.util.Observer;
 
 public class WordFeud {
-	private User user;
+	private final User currentUser;
+	private final CompetitionManager compMan;
 	private Match match;
 	private ArrayList<Match> matches;
 	private SecondThread secondThread;
 	private MainFrame framePanel;
 
 	public WordFeud() {
-		user = new User();
+		currentUser = new User();
+		compMan = new CompetitionManager(this);
 		match = new Match(0);
 		matches = new ArrayList<Match>();
 		framePanel = new MainFrame(this);
@@ -23,13 +28,47 @@ public class WordFeud {
 				framePanel.getGameScreen().getScorePanel());
 		secondThread.start();
 	}
-
-	// Gets the user from the player
-	// DOESNT WORK GOOD ****************************************
+	/*
+	* Gets the user from the player
+	* DOESNT WORK WELL ****************************************
+	*/
 	public Player getUserPlayer() {
-		return user.getPlayer();
+		return currentUser.getPlayer();
 	}
 
+	public User getCurrentUser(){
+		return currentUser;
+	}
+
+	public String doRegisterAction(String username, char[] passInput, char[] passConfirm){
+		return currentUser.register(username, passInput, passConfirm);
+	}
+	
+	public String doLoginAction(String username, char[] password){
+		
+		String result = currentUser.login(username, password);
+		if(result.equals("Username and Password are correct")){
+			compMan.loadCompetitions(currentUser.getUsername());
+		}
+		return result;
+	}
+	
+	public void doLogoutAction() {
+		currentUser.logout();
+	}
+	
+	public boolean doChangeRoleAction(String result) {
+		return currentUser.changeRole(result);
+	}
+	
+	public String getCurrentUserRole() {
+		return currentUser.getCurrentRole();
+	}
+	
+	public String getCurrentUsername() {
+		return currentUser.getUsername();
+	}
+	
 	// Depends if someone is spectating - starting new game
 	// or want to load a game
 	public void startGame(int gameID, boolean spectate, boolean newGame) {
