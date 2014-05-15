@@ -1091,12 +1091,12 @@ public class DatabaseHandler
 		return userRoles;
 	}
 
-	public synchronized void banPlayer(String username)
+	public synchronized void revokeRole(String username, String role)
 	{
 		connection();
 		try
 		{
-			statement = con.prepareStatement("DELETE FROM accountrol WHERE account_naam = '" + username + "' AND rol_type = 'Player'");
+			statement = con.prepareStatement("DELETE FROM accountrol WHERE account_naam = '" + username + "' AND rol_type = '" + role + "'");
 		
 			statement.executeQuery();
 			statement.close();
@@ -1419,6 +1419,31 @@ public class DatabaseHandler
 			System.out.println("QUERRY ERROR!!!");
 		}finally{closeConnection();}
 		return tripPass;
+	}
+	
+	public synchronized ArrayList<String> AdminSelectPlayer(String username)
+	{
+		connection();
+		ArrayList<String> players = new ArrayList<String>();
+		
+		try
+		{
+			statement = con.prepareStatement("SELECT naam FROM account WHERE naam LIKE '" + username + "%'");
+			
+			result = statement.executeQuery();
+			
+			while(result.next())
+			{
+				players.add(result.getString(1));
+			}
+			result.close();
+			statement.close();
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+			System.out.println("QUERRY ERROR");
+		}finally{closeConnection();}
+		return players;
 	}
 	
 }
