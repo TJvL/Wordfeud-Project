@@ -43,7 +43,7 @@ public class User {
 		return mod;
 	}
 
-	public String getName() {
+	public String getUsername() {
 		return username;
 	}
 

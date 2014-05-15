@@ -5,11 +5,13 @@ import gui.MainFrame;
 
 
 
+
 import java.util.ArrayList;
 import java.util.Observer;
 
 public class WordFeud {
 	private final User currentUser;
+	private final CompetitionManager compMan;
 	private Match match;
 	private ArrayList<Match> matches;
 	private SecondThread secondThread;
@@ -17,6 +19,7 @@ public class WordFeud {
 
 	public WordFeud() {
 		currentUser = new User();
+		compMan = new CompetitionManager(this);
 		match = new Match(0);
 		matches = new ArrayList<Match>();
 		framePanel = new MainFrame(this);
@@ -42,7 +45,12 @@ public class WordFeud {
 	}
 	
 	public String doLoginAction(String username, char[] password){
-		return currentUser.login(username, password);
+		
+		String result = currentUser.login(username, password);
+		if(result.equals("Username and Password are correct")){
+			compMan.loadCompetitions(currentUser.getUsername());
+		}
+		return result;
 	}
 	
 	public void doLogoutAction() {
@@ -55,6 +63,10 @@ public class WordFeud {
 	
 	public String getCurrentUserRole() {
 		return currentUser.getCurrentRole();
+	}
+	
+	public String getCurrentUsername() {
+		return currentUser.getUsername();
 	}
 	
 	// Depends if someone is spectating - starting new game
