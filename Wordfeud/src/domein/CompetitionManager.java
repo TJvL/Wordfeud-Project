@@ -20,7 +20,7 @@ public class CompetitionManager {
 
 		System.out.println("Loading competitions...");
 
-		ArrayList<String> ownedComps = dbh.competitionOwner(username);
+		ArrayList<String> ownedComps = dbh.fetchCompetition(username);
 		if (!ownedComps.isEmpty()) {
 			for (String comp : ownedComps) {
 				String[] compData = comp.split("---");
@@ -41,7 +41,7 @@ public class CompetitionManager {
 			System.out.println("No owned competitions to load.");
 		}
 
-		ArrayList<String> joinedComps = dbh.competitionParticipant(username);
+		ArrayList<String> joinedComps = dbh.fetchCompetition(username);
 		if (!ownedComps.isEmpty()) {
 			for (String comp : joinedComps) {
 				String[] compData = comp.split("---");
