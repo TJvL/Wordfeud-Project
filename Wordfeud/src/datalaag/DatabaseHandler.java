@@ -797,7 +797,7 @@ public class DatabaseHandler
 		finally{ closeConnection();}
 	}
 		
-	public synchronized ArrayList<String> competitionOwner(String username)// seems to work
+	public synchronized ArrayList<String> fetchCompetition(String username)// seems to work
 	{
 		connection();
 		ArrayList<String> myCompetitions = new ArrayList<String>();
@@ -805,15 +805,14 @@ public class DatabaseHandler
 		try
 		{
 			statement = con
-					.prepareStatement("SELECT id, start, einde, omschrijving, minimum_aantal_deelnemers, maximum_aantal_deelnemers FROM competitie");
+					.prepareStatement("SELECT * FROM competitie LEFT JOIN deelnemer ON competitie.id = deelnemer.competitie_id WHERE deelnemer.account_naam LIKE '" + username + "'");
 
 			result = statement.executeQuery();
 
 			while (result.next())
 			{
-				myCompetitions.add(result.getInt(1) + "---" + result.getTimestamp(2).toString() + "---" + result.getTimestamp(3).toString()
-						+ "---" + result.getString(4) + "---" + result.getInt(5) + "---" + result.getInt(6));
-
+				myCompetitions.add(result.getInt(1) + "---" + result.getString(2) + "---" + result.getTimestamp(3).toString() + "---" + result.getTimestamp(4).toString()
+						+ "---" + result.getString(5) + "---" + result.getInt(6) + "---" + result.getInt(7));
 			}
 			result.close();
 			statement.close();
@@ -823,34 +822,6 @@ public class DatabaseHandler
 		}
 		finally{ closeConnection();}
 		return myCompetitions;
-	}
-
-	public synchronized ArrayList<String> competitionParticipant(String username)//seems to work
-	{
-		connection();
-		ArrayList<String> myParticipations = new ArrayList<String>();
-
-		try
-		{
-			statement = con
-					.prepareStatement("SELECT d.account_naam AS me, c.id AS compID, c.account_naam_eigenaar AS competition_Owner, c.start, c.einde, c.omschrijving FROM deelnemer AS d RIGHT JOIN competitie AS c ON d.competitie_id = c.id WHERE d.account_naam = '"
-							+ username + "' AND c.account_naam_eigenaar NOT Like '" + username + "'");
-			
-			result = statement.executeQuery();
-			
-			while(result.next())
-			{
-				myParticipations.add(result.getString(1) + "---" + result.getInt(2) + "---" + result.getString(3) + "---" + result.getTimestamp(4).toString() + "---" + result.getTimestamp(5).toString() + "---" + result.getString(6));
-			}
-			result.close();
-			statement.close();
-		} catch (SQLException e)
-		{
-			e.printStackTrace();
-			System.out.println("Query ERROR!!!!");
-		}
-		finally{ closeConnection();}
-		return myParticipations;
 	}
 
 	public synchronized void createJar(int gameID, String language)
@@ -951,32 +922,6 @@ public class DatabaseHandler
 			System.out.println("Query ERROR!!!!");
 		}
 		finally{ closeConnection();}
-	}
-
-	public synchronized ArrayList<String> peopleInCompetition()
-	{
-		connection();
-		ArrayList<String> numOfPeopleInCompetition = new ArrayList<String>();
-
-		try
-		{
-			statement = con.prepareStatement("SELECT distinct(competitie_id), count(account_naam) FROM deelnemer");
-			
-			result = statement.executeQuery();
-			
-			while(result.next())
-			{
-				numOfPeopleInCompetition.add(result.getInt(1) + "---" + result.getInt(2));
-			}
-			result.close();
-			statement.close();
-		} catch (SQLException e)
-		{
-			e.printStackTrace();
-			System.out.println("QUERRY ERROR!!!!");
-		}
-		finally{ closeConnection();}
-		return numOfPeopleInCompetition;
 	}
 
 	public synchronized void requestWord(String word, String language)
@@ -1444,6 +1389,32 @@ public class DatabaseHandler
 			System.out.println("QUERRY ERROR");
 		}finally{closeConnection();}
 		return players;
+	}
+
+	public synchronized ArrayList<String> peopleInCompetition(int compID)
+	{
+		connection();
+		ArrayList<String> compJoiners = new ArrayList<String>();
+		
+		try
+		{
+			statement = con.prepareStatement("SELECT account_naam FROM deelnemer WHERE competitie_id = '" + compID + "'");
+			
+			result = statement.executeQuery();
+			
+			while(result.next())
+			{
+				compJoiners.add(result.getString(1));
+			}
+			result.close();
+			statement.close();
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+			System.out.println("QUERRY ERROR!!");
+		}finally{closeConnection();}
+		return compJoiners;
+		
 	}
 	
 }
