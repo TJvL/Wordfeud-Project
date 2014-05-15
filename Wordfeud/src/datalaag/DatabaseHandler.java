@@ -924,32 +924,6 @@ public class DatabaseHandler
 		finally{ closeConnection();}
 	}
 
-	public synchronized ArrayList<String> peopleInCompetition()
-	{
-		connection();
-		ArrayList<String> numOfPeopleInCompetition = new ArrayList<String>();
-
-		try
-		{
-			statement = con.prepareStatement("SELECT distinct(competitie_id), count(account_naam) FROM deelnemer");
-			
-			result = statement.executeQuery();
-			
-			while(result.next())
-			{
-				numOfPeopleInCompetition.add(result.getInt(1) + "---" + result.getInt(2));
-			}
-			result.close();
-			statement.close();
-		} catch (SQLException e)
-		{
-			e.printStackTrace();
-			System.out.println("QUERRY ERROR!!!!");
-		}
-		finally{ closeConnection();}
-		return numOfPeopleInCompetition;
-	}
-
 	public synchronized void requestWord(String word, String language)
 	{
 		connection();
