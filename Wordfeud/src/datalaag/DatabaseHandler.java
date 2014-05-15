@@ -1416,6 +1416,32 @@ public class DatabaseHandler
 		}finally{closeConnection();}
 		return players;
 	}
+
+	public synchronized ArrayList<String> peopleInCompetition(int compID)
+	{
+		connection();
+		ArrayList<String> compJoiners = new ArrayList<String>();
+		
+		try
+		{
+			statement = con.prepareStatement("SELECT account_naam FROM deelnemer WHERE competitie_id = '" + compID + "'");
+			
+			result = statement.executeQuery();
+			
+			while(result.next())
+			{
+				compJoiners.add(result.getString(1));
+			}
+			result.close();
+			statement.close();
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+			System.out.println("QUERRY ERROR!!");
+		}finally{closeConnection();}
+		return compJoiners;
+		
+	}
 	
 }
 
