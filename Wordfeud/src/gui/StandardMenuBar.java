@@ -86,4 +86,8 @@ public class StandardMenuBar extends JMenuBar {
 		this.add(playerdataMenu);
 		this.add(notificationsMenu);
 	}
+	
+	public RoleWindow getRoleWindow(){
+		return rolewindow;
+	}
 }

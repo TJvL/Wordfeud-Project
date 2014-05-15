@@ -123,6 +123,8 @@ public class LoginScreen extends JPanel {
 
 			clearInput();
 		}
+		
+		mainFrame.getPlayerMenuBar().getRoleWindow().fillRoles(mainFrame.callGetRoles());
 	}
 
 	private void clearInput(){

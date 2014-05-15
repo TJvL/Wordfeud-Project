@@ -205,4 +205,27 @@ public class User {
 		}
 		return actionSuccesful;
 	}
+	
+	public ArrayList<String> getRoles(){
+		ArrayList<String> roles = new ArrayList<String>();
+		
+		if(admin.HasPermissions()){
+			roles.add("Administrator");
+		}
+		if(mod.HasPermissions()){
+			roles.add("Moderator");
+		}
+		if(player.HasPermissions()){
+			roles.add("Player");
+		}
+		if(spec.HasPermissions()){
+			roles.add("Spectator");
+		}
+		
+		for(int i = 0; i < roles.size(); i++){
+			System.out.println(roles.get(i));
+		}
+		
+		return roles;
+	}
 }

@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.Dimension;
+import java.util.ArrayList;
 import java.util.Observer;
 
 import javax.swing.JFrame;
@@ -150,6 +151,14 @@ public class MainFrame extends JFrame {
 	
 	public void callLogoutAction() {
 		wf.doLogoutAction();
+	}
+	
+	public ArrayList<String> callGetRoles(){
+		return wf.getCurrentUser().getRoles();
+	}
+	
+	public PlayerMenuBar getPlayerMenuBar(){
+		return playerMenuBar;
 	}
 	// PlayGame/Spectator part
 	// Adds the observers to all the panels
