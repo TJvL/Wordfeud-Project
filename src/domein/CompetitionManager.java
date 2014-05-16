@@ -41,9 +41,9 @@ public class CompetitionManager {
 		}
 	}
 	
-	public void createCompetition(String currentUsername, String summary, String endDate, int maxParticipants) {
-		
-		DatabaseHandler dbh = DatabaseHandler.getInstance();
-		dbh.createCompetition(currentUsername, summary, endDate, maxParticipants);
-	}
+//	public void createCompetition(String currentUsername, String summary, String endDate, int maxParticipants) {
+//		
+//		DatabaseHandler dbh = DatabaseHandler.getInstance();
+//		dbh.createCompetition(currentUsername, summary, endDate, maxParticipants);
+//	}
 }
