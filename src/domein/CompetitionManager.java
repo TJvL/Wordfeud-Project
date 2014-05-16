@@ -30,10 +30,10 @@ public class CompetitionManager {
 						+ " " + compData[4] + " " + compData[5] + " " + compData[6]);
 				// --------TEST CODE---------
 
-				joinedCompetitions.add(new Competition(Integer
-						.parseInt(compData[0]), compData[1], compData[2], compData[3],
-						compData[4], Integer.parseInt(compData[5]), Integer
-								.parseInt(compData[6])));
+//				joinedCompetitions.add(new Competition(Integer
+//						.parseInt(compData[0]), compData[1], compData[2], compData[3],
+//						compData[4], Integer.parseInt(compData[5]), Integer
+//								.parseInt(compData[6])));
 			}
 			System.out.println("Succesfully loaded competitions.");
 		} else {
@@ -44,6 +44,8 @@ public class CompetitionManager {
 	public void createCompetition(String currentUsername, String summary, String endDate, int maxParticipants) {
 		
 		DatabaseHandler dbh = DatabaseHandler.getInstance();
-		dbh.createCompetition(currentUsername, summary, endDate, maxParticipants);
+
+//		dbh.createCompetition(currentUsername, summary, endDate, 2, maxParticipants);
+
 	}
 }
