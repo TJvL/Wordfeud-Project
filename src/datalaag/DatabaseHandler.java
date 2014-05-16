@@ -1786,6 +1786,88 @@ public class DatabaseHandler
 		return changeResult;
 	}
 	
+	public synchronized String playerStatistics(String username)
+	{
+		connection();
+		
+		int competitionsWon = 0;
+		int gamesWon = 0;
+		String mostValuableWord = null;
+		int numberOfGamesPlayed = 0;
+		int highestGameScore = 0;
+		
+		String statistics = null;
+		
+		try
+		{
+			statement = con.prepareStatement("SELECT count(wins) FROM competitie AS c LEFT JOIN rank_winner AS rw ON c.id = rw.competitie_id WHERE rw.account_naam = '" + username + "' AND c.start < '" + getCurrentTimeStamp() + "' AND rw.wins = (SELECT max(wins) FROM rank_winner)");
+			
+			result = statement.executeQuery();
+			if(result.next())
+			{
+				competitionsWon = result.getInt(1);
+			}
+			result.close();
+			statement.close();
+			
+			statement = con.prepareStatement("SELECT count(rw.wins) FROM competitie AS c LEFT JOIN rank_winner AS rw ON c.id = rw.competitie_id WHERE rw.account_naam = '" + username + "'");
+
+			result = statement.executeQuery();
+			
+			if(result.next())
+			{
+				gamesWon = result.getInt(1);
+			}
+			result.close();
+			statement.close();
+			
+			statement = con.prepareStatement("SELECT g.woorddeel, b.score FROM spel AS s LEFT JOIN beurt AS b ON s.id = b.spel_id LEFT JOIN gelegd AS g ON s.id = g.spel_id AND b.spel_id = g.spel_id AND b.id = g.beurt_id WHERE b.account_naam = '" + username + "' ORDER BY score DESC LIMIT 1");
+			
+			result = statement.executeQuery();
+			
+			if(result.next())
+			{
+				mostValuableWord = result.getString(1) + "---" + result.getInt(2);
+			}
+			result.close();
+			statement.close();
+			
+			statement = con.prepareStatement("SELECT count(id) FROM spel WHERE (toestand_type = 'Finished' OR toestand_type = 'Resigned') AND (account_naam_uitdager = '" + username + "' OR account_naam_tegenstander = '" + username + "')");
+			
+			result = statement.executeQuery();
+			
+			if(result.next())
+			{
+				numberOfGamesPlayed = result.getInt(1);
+			}
+			result.close();
+			statement.close();
+			
+			statement = con.prepareStatement("SELECT max(totaalscore) FROM score WHERE account_naam = 'jager684'");
+			
+			result = statement.executeQuery();
+			
+			if(result.next())
+			{
+				highestGameScore = result.getInt(1);
+			}
+			result.close();
+			statement.close();
+			
+			statistics = competitionsWon + "---" + gamesWon + "---" + mostValuableWord + "---" + numberOfGamesPlayed + "---" + highestGameScore;
+			
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+			System.out.println("");
+		}finally{closeConnection();}
+		return statistics;
+	}
+	
+	
+	
+	
+	
 }
 
 /*
