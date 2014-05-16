@@ -18,6 +18,7 @@ public class Board {
 	private int score;
 	private String submittedWord;
 	private ArrayList<String> checkedWords;
+
 	// Hier moet gekeken of er een nieuwe bord wordt aangemaakt
 	// Of het spel al bezig is het bord laden
 	// Standaard bord laden of random bord laden
@@ -45,24 +46,28 @@ public class Board {
 	}
 
 	// A method to remove all the tiles from the field
-	public void clearField(){
+	public void clearField() {
 		for (int y = 0; y < 15; y++) {
 			for (int x = 0; x < 15; x++) {
-				field[x][y].removeTile();		
+				if (field[x][y] != null) {
+					if (field[x][y].getTile() != null) {
+						field[x][y].removeTile();
+					}
+				}
 			}
 		}
 	}
-	
+
 	// A method to reset the ckeckedWords
-	public void resetPlayedWords(){
+	public void resetPlayedWords() {
 		checkedWords.clear();
 	}
-	
+
 	// A method to get the image from a square
-	public BufferedImage getImage(int x, int y){
+	public BufferedImage getImage(int x, int y) {
 		return field[x][y].getImage();
 	}
-	
+
 	// A method to add tiles to the board
 	public void addTileToSquare(Tile t, int x, int y) {
 		field[x][y].addTile(t);
@@ -80,7 +85,7 @@ public class Board {
 		// Gives the justPlayedTiles to the calculator
 		calculator.addSquaresToBoard(field);
 		boolean possible = false;
-		
+
 		// Starts the calculator and returns the score
 		score = calculator.startCalculating();
 		if (score > 0) {
@@ -110,12 +115,12 @@ public class Board {
 				System.out.println("WOORD BESTAAT IN WOORDENBOEK");
 				checkedWords.add(word.getWord() + " exixts");
 				submittedWord = "*";
-			} 
+			}
 			// Else it does not exist
 			else {
 				System.out.println("WOORD BESTAAT NIET IN HET WOORDENBOEK");
 				allWordsExist = false;
-				//submittedWord = "*";
+				// submittedWord = "*";
 				checkedWords.add(word.getWord() + " does NOT exixt");
 				/*
 				 * submittedWord = word.getWord(); while (!checkingWord){
@@ -137,10 +142,10 @@ public class Board {
 	}
 
 	// A method that returns the words that were just made
-	public ArrayList<String> getPlayedWords(){
+	public ArrayList<String> getPlayedWords() {
 		return checkedWords;
 	}
-	
+
 	// Set all the tiles on the board to played
 	public void setTilesPlayed() {
 		for (int y = 0; y < 15; y++) {

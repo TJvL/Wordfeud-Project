@@ -17,7 +17,7 @@ import javax.swing.JTextArea;
 
 import datalaag.DatabaseHandler;
  
-public class GameChatPanel extends JPanel implements Runnable,ActionListener {
+public class GameChatPanel extends JPanel implements ActionListener {
 	private JScrollPane inputScrollPane;
 	private JScrollPane chatScrollPane;
 	private JTextArea chatArea;
@@ -41,31 +41,6 @@ public class GameChatPanel extends JPanel implements Runnable,ActionListener {
 
 	/**		eventually unnecessary	*/		//private TestUserClass testUser1 = new TestUserClass();
 
-	private void start() {
-		if (runner == null ) {
-			running = true;
-		} else if (!running){
-			running = true;
-		}
-	}
-	
-	private void stop(){
-		if (runner != null){
-			running = false;
-		}
-	}
-
-	@Override
-	public void run() {
-					//	chatArea.append("test 1!\n");										//TEST CODE
-					//	chatArea.append("hopelijk staaT dit op de volgende regel!\n");		//TEST CODE
-						/** 	 */		// REAL CODE // it recieves every message from this match that have ever been sent (all messages)
-
-		while (running) {
-			this.checkForMessages();
-			try { Thread.sleep(3000); } catch (Exception e) {}
-		}
-	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	///////////////////////////////VRAAG VRAAG OVER BERICHTEN IN DATABASE- waarschijnlijk opgelost////////////////
@@ -75,16 +50,13 @@ public class GameChatPanel extends JPanel implements Runnable,ActionListener {
 		this.user1 = ownName;
 		this.user2 = oponentName;
 		this.gameID = gameID;
-		start();	
+		//start();	
 	}
 	
 	public GameChatPanel() {				// I get the player object references and the gameID of this match from the class that invokes this constructor (Wouter, Mike)
 		this.user1 = "You";
 		this.user2 = "Opponent";
-		this.gameID = gameID;
-		runner = new Thread(this);
-		runner.start();
-
+		
 		latestUpdatedMessageTimeDate = "";
 
 		this.setPreferredSize(new Dimension(500,500));
@@ -153,7 +125,8 @@ public class GameChatPanel extends JPanel implements Runnable,ActionListener {
 
 	}
 
-	public void checkForMessages() {
+	public synchronized void checkForMessages() {
+
 		chatMessages = dbh.chatReceive(this.gameID , latestUpdatedMessageTimeDate); 			// REAL CODE
 
 		for (String a : chatMessages) {

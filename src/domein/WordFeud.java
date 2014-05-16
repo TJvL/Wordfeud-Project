@@ -2,10 +2,6 @@ package domein;
 
 import gui.MainFrame;
 
-
-
-
-
 import java.util.ArrayList;
 import java.util.Observer;
 
@@ -20,58 +16,76 @@ public class WordFeud {
 	public WordFeud() {
 		currentUser = new User();
 		compMan = new CompetitionManager(this);
-		match = new Match(0);
 		matches = new ArrayList<Match>();
 		framePanel = new MainFrame(this);
+	}
+
+	// A method to initialize the Thread
+	public void initializeThread() {
 		secondThread = new SecondThread(framePanel.getGameScreen()
-				.getGameFieldPanel(), framePanel.getGameScreen().getButtonPanel(),
-				framePanel.getGameScreen().getScorePanel());
+				.getGameChatPanel(), framePanel.getGameScreen()
+				.getButtonPanel(), framePanel.getGameScreen().getScorePanel());
 		secondThread.start();
 	}
+
+	// A method to start the Thread
+	public void startThread() {
+		initializeThread();
+		secondThread.setRunning(true);
+	}
+
+	public void stopThread() {
+		if (secondThread != null) {
+			secondThread.setRunning(false);
+		}
+	}
+
 	/*
-	* Gets the user from the player
-	* DOESNT WORK WELL ****************************************
-	*/
+	 * Returns the user from the player DOESNT WORK WELL
+	 * ****************************************
+	 */
 	public Player getUserPlayer() {
 		return currentUser.getPlayer();
 	}
 
-	public User getCurrentUser(){
+	public User getCurrentUser() {
 		return currentUser;
 	}
 
-	public String doRegisterAction(String username, char[] passInput, char[] passConfirm){
+	public String doRegisterAction(String username, char[] passInput,
+			char[] passConfirm) {
 		return currentUser.register(username, passInput, passConfirm);
 	}
-	
-	public String doLoginAction(String username, char[] password){
-		
+
+	public String doLoginAction(String username, char[] password) {
+
 		String result = currentUser.login(username, password);
-		if(result.equals("Username and Password are correct")){
+		if (result.equals("Username and Password are correct")) {
 			compMan.loadCompetitions(currentUser.getUsername());
 		}
 		return result;
 	}
-	
+
 	public void doLogoutAction() {
 		currentUser.logout();
 	}
-	
+
 	public boolean doChangeRoleAction(String result) {
 		return currentUser.changeRole(result);
 	}
-	
+
 	public String getCurrentUserRole() {
 		return currentUser.getCurrentRole();
 	}
-	
+
 	public String getCurrentUsername() {
 		return currentUser.getUsername();
 	}
-	
+
 	// Depends if someone is spectating - starting new game
 	// or want to load a game
 	public void startGame(int gameID, boolean spectate, boolean newGame) {
+		startThread();
 		if (spectate) {
 			spectateMatch(gameID);
 		} else {
@@ -85,14 +99,20 @@ public class WordFeud {
 
 	// This starts a Match that is made by me
 	public void newMatchStartedByMe(int gameID) {
-		match = new Match(gameID, getUserPlayer());
+		match = new Match(gameID, getUserPlayer(), framePanel.getGameScreen()
+				.getGameFieldPanel(), getCurrentUsername());
 		// Adds the observers
 		this.addObservers(match, false);
 		// Sets the thread
-		createSecondThread(match);
-		match.startNewGame(framePanel.getGameScreen().getGameFieldPanel());
-		framePanel.getGameScreen().getGameChatPanel().setChatVariables(match.getOwnName(), match.getEnemyName(), match.getGameID());
+		secondThread.setMatch(match);
+		match.startNewGame();
+		framePanel
+				.getGameScreen()
+				.getGameChatPanel()
+				.setChatVariables(match.getOwnName(), match.getEnemyName(),
+						match.getGameID());
 		matches.add(match);
+		secondThread.setRunning(true);
 	}
 
 	// Loads a match
@@ -102,40 +122,34 @@ public class WordFeud {
 		for (Match match : matches) {
 			if (match.getGameID() == gameID) {
 				exists = true;
-				match = new Match(gameID, getUserPlayer());
 				// Adds the observers
 				this.addObservers(match, false);
-				createSecondThread(match);
-				match.loadGame(framePanel.getGameScreen().getGameFieldPanel());
-				framePanel.getGameScreen().getGameChatPanel().setChatVariables(match.getOwnName(), match.getEnemyName(), match.getGameID());
+				secondThread.setMatch(match);
+				framePanel
+						.getGameScreen()
+						.getGameChatPanel()
+						.setChatVariables(match.getOwnName(),
+								match.getEnemyName(), match.getGameID());
+				match.loadGame();
+				secondThread.setRunning(true);
 			}
 		}
 		if (!exists) {
-			match = new Match(gameID, getUserPlayer());
+			match = new Match(gameID, getUserPlayer(), framePanel
+					.getGameScreen().getGameFieldPanel(), getCurrentUsername());
 			// Adds the observers
 			this.addObservers(match, false);
-			createSecondThread(match);
-			match.loadGame(framePanel.getGameScreen().getGameFieldPanel());
-			framePanel.getGameScreen().getGameChatPanel().setChatVariables(match.getOwnName(), match.getEnemyName(), match.getGameID());
-		}
-
-	}
-
-	// Starting the thread
-	public void createSecondThread(Match match) {
-		// Second thread for running the chat funcion and who's turn it is
-		try {
-			setThreadStatus(false);
 			secondThread.setMatch(match);
-		} catch (NullPointerException e) {
-			System.out.println("nullPointer - WordFeud");
+			match.loadGame();
+			framePanel
+					.getGameScreen()
+					.getGameChatPanel()
+					.setChatVariables(match.getOwnName(), match.getEnemyName(),
+							match.getGameID());
+			matches.add(match);
+			secondThread.setRunning(true);
 		}
-		setThreadStatus(true);
-	}
 
-	// Sets the status, way to stop the thread
-	public void setThreadStatus(boolean running) {
-		secondThread.setRunning(running);
 	}
 
 	// A method start spectating

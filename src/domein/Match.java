@@ -24,6 +24,7 @@ public class Match implements Observer {
 	private GameSpecScreen gameSpec;
 	private DatabaseHandler dbh;
 	private Player player;
+	private String myName;
 	@SuppressWarnings("unused")
 	private Player enemy;
 	private int gameID;
@@ -32,17 +33,21 @@ public class Match implements Observer {
 	private int maxTurn;
 
 	// Constructor for starting a game where you are playing in
-	public Match(int gameID, Player player) {
+	public Match(int gameID, Player player, GameFieldPanel gameField,
+			String myName) {
+		this.gameField = gameField;
 		this.gameID = gameID;
 		board = new Board();
 		jar = new Jar();
 		this.player = player;
 		dbh = DatabaseHandler.getInstance();
 		myTurn = true;
+		this.myName = myName;
 	}
 
-	// Constructor for a spectator game - doest not need a played
+	// Constructor for a spectator game - does not need a player
 	public Match(int gameID) {
+		this.gameField = gameField;
 		this.gameID = gameID;
 		board = new Board();
 		jar = new Jar();
@@ -60,14 +65,19 @@ public class Match implements Observer {
 	// /////////////////////////////////////////////////////////////////
 	public synchronized String getOwnName() {
 		// jager684 is de uitdager
-		return "Mike";
+		if (myName.equals("Spectator")) {
+			myName = "Mike";
+		}
+		// System.out.println("MIJN NAAM IS: " + myName +
+		// " match getOwnName()");
+		return myName;
 
 	}
 
 	// Returns the names of the opponent
 	public synchronized String getEnemyName() {
-		//return "marijntje42";
-		return "jager684";
+		// return "marijntje42";
+		return "marijntje42";
 	}
 
 	// Method to check who's turn it is and what turn it is
@@ -108,7 +118,7 @@ public class Match implements Observer {
 			this.swapTiles(gameField.getTilesToSwap());
 		} else if (requestedAction.equals("forward")) {
 			updateSpecTurn(true);
-		} else if (requestedAction.equals("backward")){
+		} else if (requestedAction.equals("backward")) {
 			updateSpecTurn(false);
 		}
 	}
@@ -272,8 +282,10 @@ public class Match implements Observer {
 
 	// A method to start a new game by me
 	// Sets the gamefieldpanel
-	public void startNewGame(GameFieldPanel gameFieldPanel) {
-		this.gameField = gameFieldPanel;
+	public void startNewGame() {
+		gameField.clearField();
+		board.clearField();
+		player.clearHand();
 		// Updates the turn
 		getMaxTurnID();
 
@@ -284,6 +296,10 @@ public class Match implements Observer {
 			board.addSquaresNewBoard(Integer.parseInt(splits[0]) - 1,
 					Integer.parseInt(splits[1]) - 1, splits[2]);
 		}
+
+		// Repainting and reseting jar
+		gameField.repaintBoard();
+		jar.resetJar();
 
 		// Method to add the tiles to the jar
 		System.out.println(gameID + " DE GAME ID");
@@ -310,9 +326,11 @@ public class Match implements Observer {
 	}
 
 	// Loads a game from the database
-	public void loadGame(GameFieldPanel gameFieldPanel) {
-		this.gameField = gameFieldPanel;
+	public void loadGame() {
 		gameField.clearField();
+		if (board != null) {
+			board.clearField();
+		}
 		tilesForJar = dbh.jarContent(gameID);
 		getMaxTurnID();
 
@@ -380,7 +398,6 @@ public class Match implements Observer {
 
 		// Method of fill the hand at the beginning of a game
 		else {
-
 			fillHand();
 		}
 		gameField.repaintBoard();
@@ -388,6 +405,8 @@ public class Match implements Observer {
 
 	// A method to update the playfield
 	public synchronized void updateField() {
+		// clears the board when turn is swapped
+		clearTilesFromBoard();
 
 		// Updating the field
 		ArrayList<String> playedWords = dbh.playedWords(gameID);
@@ -409,8 +428,8 @@ public class Match implements Observer {
 						Integer.parseInt(yPos[p]) - 1, t.getImage());
 			}
 		}
-		
-		// Repainting and reseeting jar
+
+		// Repainting and reseting jar
 		gameField.repaintBoard();
 		jar.resetJar();
 
@@ -458,6 +477,7 @@ public class Match implements Observer {
 		selectedTile.setJustPlayed(true);
 		if (selectedTile.getValue() == 0) {
 
+			// This allows you to pick your Joker value
 			String[] choices = { "A", "B", "C", "D", "E", "F", "G", "H", "I",
 					"J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U",
 					"V", "W", "X", "Y", "Z" };
@@ -467,14 +487,6 @@ public class Match implements Observer {
 			System.out.println(input);
 			selectedTile.setBlancoLetterValue(input);
 			selectedTile.setLetter(input);
-
-			/*
-			 * String input = JOptionPane.showInputDialog(
-			 * "Enter the letter you want the Joker to be:"); if (input !=
-			 * null){ System.out.println(input);
-			 * tile.setBlancoLetterValue(input); }
-			 */
-			// Hier moet de methode komen voor input vanuit de joker
 		}
 		player.removeTileFromHand(selectedTile);
 		board.addTileToSquare(selectedTile, x, y);
@@ -518,7 +530,7 @@ public class Match implements Observer {
 
 	// Fills the hand back to 7
 	public void fillHand() {
-
+		getMaxTurnID();
 		if (maxTurn == 1 && myTurn) {
 			dbh.updateTurn(maxTurn, gameID, getOwnName(), 0, "Begin");
 		} else if (maxTurn == 2 && myTurn) {
@@ -543,8 +555,9 @@ public class Match implements Observer {
 		for (Tile tile : tilesInHand) {
 			tilesNumber.add(tile.getTileID());
 		}
-		getMaxTurnID();
-		System.out.println(gameID + " " + tilesNumber.size() + " " + maxTurn);
+
+		// System.out.println(gameID + " " + tilesNumber.size() + " " +
+		// maxTurn);
 		dbh.addTileToHand(gameID, tilesNumber, maxTurn);
 		// Dit kan dus nog niet - we hebben de tile id nog niet opgeslagen in
 		// tiles
@@ -559,16 +572,15 @@ public class Match implements Observer {
 		for (TilePanel tile : tilesToSwap) {
 			addTileToJar(tile.getTile());
 		}
-		dbh.updateTurn(maxTurn, gameID, getOwnName(), 0, "Swap");
-		tilesToSwap.clear();
-		gameField.swapTiles();
-		fillHand();
+		if (tilesToSwap.size() == 0) {
+			JOptionPane.showMessageDialog(null, "No tiles selected to swap",
+					"Notice", JOptionPane.OK_OPTION);
+		} else {
+			dbh.updateTurn(maxTurn, gameID, getOwnName(), 0, "Swap");
+			tilesToSwap.clear();
+			gameField.swapTiles();
+			fillHand();
 
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		// ***** dbh.updateTurn(maxTurn + 1, gameID, getEnemyName(), 25,
 		// "Pass");

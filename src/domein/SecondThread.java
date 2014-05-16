@@ -2,7 +2,7 @@ package domein;
 
 import datalaag.DatabaseHandler;
 import gui.GameButtonPanel;
-import gui.GameFieldPanel;
+import gui.GameChatPanel;
 import gui.ScorePanel;
 
 // Thread for updating ScorePanel
@@ -11,25 +11,25 @@ import gui.ScorePanel;
 // Checks who's turn it is for the GameFieldPanel
 public class SecondThread extends Thread {
 	private Match match;
-	private GameFieldPanel fieldPanel;
 	private GameButtonPanel buttonPanel;
 	private DatabaseHandler dbh;
 	private ScorePanel scorePanel;
+	private GameChatPanel chatPanel;
 	private int storeScore;
 	private boolean running = true;
 	private boolean turnSwap = true;
 
-	public SecondThread(GameFieldPanel fieldPanel, GameButtonPanel buttonPanel,
+	public SecondThread(GameChatPanel chatPanel, GameButtonPanel buttonPanel,
 			ScorePanel scorePanel) {
 		super("thread");
-		this.fieldPanel = fieldPanel;
+		this.chatPanel = chatPanel;
 		this.buttonPanel = buttonPanel;
 		this.scorePanel = scorePanel;
 		this.dbh = DatabaseHandler.getInstance();
 	}
 
 	// Sets the current Match
-	public synchronized void setMatch(Match match) {
+	public void setMatch(Match match) {
 		this.match = match;
 	}
 
@@ -37,13 +37,12 @@ public class SecondThread extends Thread {
 	public void run() {
 
 		// While running it will run
-		while (running) {
-			//System.out.println("LOOK AT ME - THREAD");
-			if (match != null) {
+		while (running) {		
+			if (match != null) {			
 				running = true;
 				// Gets the gameID;
 				int gameID = match.getGameID();
-
+			//	System.out.println("LOOK AT ME - THREAD " + gameID);
 				// Setting the scores
 				scorePanel
 						.setEnemyScore(dbh.score(gameID, match.getEnemyName()));
@@ -60,6 +59,9 @@ public class SecondThread extends Thread {
 					storeScore = currentScore;
 				}
 
+				// Update chat
+				chatPanel.checkForMessages();
+				
 				// a loop to see if the turn is swapped 
 				try {
 					if (!dbh.getGameStatusValue(gameID).equals("Finished")
@@ -70,7 +72,6 @@ public class SecondThread extends Thread {
 							buttonPanel.setTurn(true);
 							if (turnSwap) {
 								match.updateField();
-								System.out.println("WORDT DIT AANGEROEPEN?");
 							}
 							turnSwap = false;
 						} else {
@@ -87,13 +88,13 @@ public class SecondThread extends Thread {
 					scorePanel.updatePanel();
 				} catch (NullPointerException e) {
 
-				}
-				try {
-					Thread.sleep(2000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				}		
+			}
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 	}

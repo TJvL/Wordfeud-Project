@@ -1630,9 +1630,9 @@ public class DatabaseHandler
 		try
 		{
 			statement = con
-					.prepareStatement("SELECT id, account_naam_uitdager, account_naam_tegenstander, competitie_id FROM spel WHERE account_naam_uitdager = '"
+					.prepareStatement("SELECT id, account_naam_uitdager, account_naam_tegenstander, competitie_id FROM spel WHERE (account_naam_uitdager = '"
 							+ username + "' OR account_naam_tegenstander = '"
-							+ username + "' AND toestand_type = 'Playing'");
+							+ username + "') AND toestand_type = 'Playing'");
 
 			result = statement.executeQuery();
 
@@ -1670,9 +1670,8 @@ public class DatabaseHandler
 		try
 		{
 			statement = con
-					.prepareStatement("SELECT id, account_naam_uitdager, account_naam_tegenstander, competitie_id FROM spel WHERE account_naam_uitdager = '"
-							+ username + "' OR account_naam_tegenstander = '"
-							+ username + "' AND toestand_type = 'Request'");
+					.prepareStatement("SELECT id, account_naam_uitdager, account_naam_tegenstander, competitie_id FROM spel WHERE account_naam_tegenstander = '"
+							+ username + "' AND reaktie_type = 'Unknown'");
 
 			result = statement.executeQuery();
 
