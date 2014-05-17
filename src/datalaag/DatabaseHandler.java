@@ -864,9 +864,7 @@ public class DatabaseHandler
 		finally{ closeConnection();}
 	}
 
-	public synchronized ArrayList<String> fetchCompetition(String username)// seems
-																			// to
-																			// work
+	public synchronized ArrayList<String> fetchJoinedCompetitions(String username)
 	{
 		connection();
 		ArrayList<String> myCompetitions = new ArrayList<String>();
@@ -874,7 +872,7 @@ public class DatabaseHandler
 		try
 		{
 			statement = con
-					.prepareStatement("SELECT * FROM competitie LEFT JOIN deelnemer ON competitie.id = deelnemer.competitie_id WHERE deelnemer.account_naam LIKE '"
+					.prepareStatement("SELECT id, account_naam_eigenaar, `start`, einde, omschrijving, minimum_aantal_deelnemers, maximum_aantal_deelnemers FROM competitie LEFT JOIN deelnemer ON competitie.id = deelnemer.competitie_id WHERE deelnemer.account_naam LIKE '"
 							+ username + "'");
 
 			result = statement.executeQuery();
@@ -897,7 +895,35 @@ public class DatabaseHandler
 		return myCompetitions;
 	}
 	
+	public synchronized ArrayList<String> fetchAllCompetitions(String username){
+		connection();
+		ArrayList<String> competitions = new ArrayList<String>();
 
+		try
+		{
+			statement = con
+					.prepareStatement("SELECT id, account_naam_eigenaar, `start`, einde, omschrijving, minimum_aantal_deelnemers, maximum_aantal_deelnemers FROM competitie LEFT JOIN deelnemer ON competitie.id = deelnemer.competitie_id WHERE NOT EXISTS ( SELECT * FROM competitie LEFT JOIN deelnemer ON competitie.id = deelnemer.competitie_id WHERE deelnemer.account_naam LIKE '" + username + "') GROUP BY id");
+
+			result = statement.executeQuery();
+
+			while (result.next())
+			{
+				competitions.add(result.getInt(1) + "---" + result.getString(2) + "---"
+						+ result.getTimestamp(3).toString() + "---" + result.getTimestamp(4).toString() + "---"
+						+ result.getString(5) + "---" + result.getInt(6) + "---" + result.getInt(7));
+			}
+			result.close();
+			statement.close();
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+		} finally
+		{
+			closeConnection();
+		}
+		return competitions;
+	}
+	
 	public synchronized void createJar(int gameID, String language)
 	{
 		connection();

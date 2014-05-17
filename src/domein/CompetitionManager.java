@@ -1,25 +1,30 @@
 package domein;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import datalaag.DatabaseHandler;
 
 public class CompetitionManager {
-	private WordFeud wf;
-	private ArrayList<Competition> joinedCompetitions;
+	
+	private HashMap<String, Competition> joinedCompetitions;
+	private HashMap<String, Competition> competitions;
 
 	public CompetitionManager(WordFeud wf) {
-		this.wf = wf;
-		joinedCompetitions = new ArrayList<Competition>();
+		
+		competitions = new HashMap<String, Competition>();
+		joinedCompetitions = new HashMap<String, Competition>();
 	}
 
-	public void loadCompetitions(String username) {
+	public void loadJoinedCompetitions(String username) {
 		
-		DatabaseHandler dbh = DatabaseHandler.getInstance();
 		joinedCompetitions.clear();
-		System.out.println("Loading competitions...");
+		System.out.println("Loading joined competitions...");
 
-		ArrayList<String> comps = dbh.fetchCompetition(username);
+		ArrayList<String> comps = DatabaseHandler.getInstance().fetchJoinedCompetitions(username);
 		if (!comps.isEmpty()) {
 			for (String comp : comps) {
 				String[] compData = comp.split("---");
@@ -30,22 +35,80 @@ public class CompetitionManager {
 						+ " " + compData[4] + " " + compData[5] + " " + compData[6]);
 				// --------TEST CODE---------
 
-//				joinedCompetitions.add(new Competition(Integer
-//						.parseInt(compData[0]), compData[1], compData[2], compData[3],
-//						compData[4], Integer.parseInt(compData[5]), Integer
-//								.parseInt(compData[6])));
+				joinedCompetitions.put(compData[0], new Competition(Integer
+						.parseInt(compData[0]), compData[1], compData[2], compData[3],
+						compData[4], Integer.parseInt(compData[5]), Integer
+								.parseInt(compData[6])));
 			}
-			System.out.println("Succesfully loaded competitions.");
+			
+			System.out.println("Succesfully loaded all joined competitions.");
 		} else {
-			System.out.println("No competitions to load.");
+			System.out.println("No joined competitions to load.");
 		}
 	}
 	
-	public void createCompetition(String currentUsername, String summary, String endDate, int maxParticipants) {
+	public void loadAllCompetitions(String username){
+		competitions.clear();
+		System.out.println("Loading all other competitions...");
+
+		ArrayList<String> comps = DatabaseHandler.getInstance().fetchAllCompetitions(username);
+		if (!comps.isEmpty()) {
+			for (String comp : comps) {
+				String[] compData = comp.split("---");
+
+				// --------TEST CODE---------
+				System.out.println("RAW DATA PRINT COMP: " + compData[0] + " "
+						+ compData[1] + " " + compData[2] + " " + compData[3]
+						+ " " + compData[4] + " " + compData[5] + " " + compData[6]);
+				// --------TEST CODE---------
+
+				competitions.put(compData[0], new Competition(Integer
+						.parseInt(compData[0]), compData[1], compData[2], compData[3],
+						compData[4], Integer.parseInt(compData[5]), Integer
+								.parseInt(compData[6])));
+			}
+			
+			System.out.println("Succesfully loaded all other competitions.");
+		} else {
+			System.out.println("No other competitions to load.");
+		}
+	}
+	
+	public void joinCompetition(int compID, String username){
 		
-		DatabaseHandler dbh = DatabaseHandler.getInstance();
+		if (competitions.get(compID).isRoomForMore()){
+			DatabaseHandler.getInstance().joinCompetition(compID, username);
+			Competition comp = competitions.get(compID);
+			joinedCompetitions.put(Integer.toString(compID), comp);
+			competitions.remove(compID);
+		}
+		else{
+			System.err.println("ERROR: Could not join selected competition");
+		}
+	}
 
-//		dbh.createCompetition(currentUsername, summary, endDate, 2, maxParticipants);
-
+	public void createCompetition(String currentUsername, String summary, String endDate, int minParticipants, int maxParticipants) {
+		
+		DatabaseHandler.getInstance().createCompetition(currentUsername, summary, endDate, minParticipants, maxParticipants);
+		this.loadJoinedCompetitions(currentUsername);
+		this.loadAllCompetitions(currentUsername);
+	}
+	
+	public void updateEachAmountParticipants(){
+		Iterator<Entry<String, Competition>> it = joinedCompetitions.entrySet().iterator();
+		while (it.hasNext()){
+			Map.Entry<String, Competition>  pair = (Map.Entry<String, Competition>)it.next();
+			pair.getValue().updateAmountParticipants();
+		}
+		
+		it = competitions.entrySet().iterator();
+		while (it.hasNext()){
+			Map.Entry<String, Competition>  pair = (Map.Entry<String, Competition>)it.next();
+			pair.getValue().updateAmountParticipants();
+		}
+	}
+	
+	public HashMap<String, Competition>  getCompetitionsMap(){
+		return competitions;
 	}
 }
