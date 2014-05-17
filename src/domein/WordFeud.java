@@ -50,7 +50,7 @@ public class WordFeud {
 		String result = currentUser.login(username, password);
 		if(result.equals("Username and Password are correct")){
 			compMan.loadJoinedCompetitions(currentUser.getUsername());
-			compMan.updateEachAmountParticipants();
+			compMan.updateEachParticipants();
 		}
 		return result;
 	}
@@ -73,7 +73,6 @@ public class WordFeud {
 	 */
 	public void doCreateCompAction(String summary, String endDate, int minParticipants, int maxParticipants){
 		compMan.createCompetition(currentUser.getUsername(), summary, endDate, minParticipants, maxParticipants);
-		compMan.updateEachAmountParticipants();
 	}
 	
 	public boolean doJoinCompAction(int compID){
@@ -82,7 +81,10 @@ public class WordFeud {
 	
 	public void doLoadAllCompetitionsAction(){
 		compMan.loadAllCompetitions(currentUser.getUsername());
-		compMan.updateEachAmountParticipants();
+	}
+	
+	public ArrayList<String> getParticipantListAction(int compID){
+		return compMan.getParticipantList(compID);
 	}
 	
 	public String getCurrentUserRole() {

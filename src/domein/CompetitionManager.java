@@ -96,21 +96,37 @@ public class CompetitionManager {
 		this.loadAllCompetitions(currentUsername);
 	}
 	
-	public void updateEachAmountParticipants(){
+	public void updateEachParticipants(){
 		Iterator<Entry<String, Competition>> it = joinedCompetitions.entrySet().iterator();
 		while (it.hasNext()){
 			Map.Entry<String, Competition>  pair = (Map.Entry<String, Competition>)it.next();
-			pair.getValue().updateAmountParticipants();
+			pair.getValue().updateParticipants();
 		}
 		
 		it = competitions.entrySet().iterator();
 		while (it.hasNext()){
 			Map.Entry<String, Competition>  pair = (Map.Entry<String, Competition>)it.next();
-			pair.getValue().updateAmountParticipants();
+			pair.getValue().updateParticipants();
 		}
 	}
 	
 	public HashMap<String, Competition>  getCompetitionsMap(){
 		return competitions;
+	}
+
+	public ArrayList<String> getParticipantList(int compID) {
+		ArrayList<String> participantList;
+		
+		if (joinedCompetitions.containsKey(compID)){
+			participantList = joinedCompetitions.get(compID).getParticipants();
+			return participantList;
+		}
+		else if (competitions.containsKey(compID)){
+			participantList = competitions.get(compID).getParticipants();
+			return participantList;
+		}
+		else{
+		return null;
+		}
 	}
 }

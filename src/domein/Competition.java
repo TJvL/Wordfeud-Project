@@ -1,5 +1,7 @@
 package domein;
 
+import java.util.ArrayList;
+
 import datalaag.DatabaseHandler;
 
 public class Competition {
@@ -12,6 +14,8 @@ public class Competition {
 	private int minParticipants;
 	private int maxParticipants;
 	private int amountParticipants;
+	
+	private ArrayList<String> participants;
 
 	public Competition(int databaseID, String compOwner, String startDate,
 			String endDate, String summary, int minParticipants,
@@ -23,7 +27,7 @@ public class Competition {
 		this.summary = summary;
 		this.minParticipants = minParticipants;
 		this.maxParticipants = maxParticipants;
-
+		this.updateParticipants();
 	}
 
 	public int getCompID() {
@@ -57,15 +61,20 @@ public class Competition {
 	public int getAmountParticipants() {
 		return amountParticipants;
 	}
+	
+	public ArrayList<String> getParticipants(){
+		return participants;
+	}
 
-	public void updateAmountParticipants() {
-		this.amountParticipants = DatabaseHandler.getInstance().numberOfPeopleInCompetition(compID);
+	public void updateParticipants() {
+		this.participants = DatabaseHandler.getInstance().peopleInCompetition(compID);
+		amountParticipants = participants.size();
 	}
 	
 	public boolean isRoomForMore(){
 		boolean roomForMore = false;
 		
-		this.updateAmountParticipants();
+		this.updateParticipants();
 		
 		if (amountParticipants < maxParticipants){
 			roomForMore = true;
