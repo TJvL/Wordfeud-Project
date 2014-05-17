@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.Dimension;
+import java.util.ArrayList;
 import java.util.Observer;
 
 import javax.swing.JFrame;
@@ -135,22 +136,28 @@ public class MainFrame extends JFrame {
 		this.setJMenuBar(adminMenuBar);
 		revalidate();
 	}
-	
-	public String callRegisterAction(String username, char[] passInput, char[] passConfirm){
+
+	public String callRegisterAction(String username, char[] passInput,
+			char[] passConfirm) {
 		return wf.doRegisterAction(username, passInput, passConfirm);
 	}
-	
-	public String callLoginAction(String username, char[] password){
+
+	public String callLoginAction(String username, char[] password) {
 		return wf.doLoginAction(username, password);
 	}
-	
+
 	public boolean callChangeRoleAction(String result) {
 		return wf.doChangeRoleAction(result);
 	}
-	
+
 	public void callLogoutAction() {
 		wf.doLogoutAction();
 	}
+
+	public void fillRoleWindow(){
+		playerMenuBar.fillRoleWindow(wf.getCurrentUserPossibleRoles());
+	}
+
 	// PlayGame/Spectator part
 	// Adds the observers to all the panels
 	// Sets the right ContentPane
@@ -210,18 +217,15 @@ public class MainFrame extends JFrame {
 
 	public void setCorrectRoleMainMenu() {
 		String currentRole = wf.getCurrentUserRole();
-		
-			if (currentRole.equals("Administrator")){
-				this.setAdminCompScreen();
-			}
-			else if (currentRole.equals("Moderator")){
-				this.setModScreen();
-			}
-			else if (currentRole.equals("Player")){
-				this.setPlayerScreen();
-			}
-			else if (currentRole.equals("Spectator")){
-				this.setSpecScreen();
-			}
+
+		if (currentRole.equals("Administrator")) {
+			this.setAdminCompScreen();
+		} else if (currentRole.equals("Moderator")) {
+			this.setModScreen();
+		} else if (currentRole.equals("Player")) {
+			this.setPlayerScreen();
+		} else if (currentRole.equals("Spectator")) {
+			this.setSpecScreen();
+		}
 	}
 }

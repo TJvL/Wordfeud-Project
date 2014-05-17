@@ -5,21 +5,26 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
+import datalaag.DatabaseHandler;
+
 @SuppressWarnings("serial")
 public class ModScreen extends JPanel {
-	private String listArray[] = {
-
-	"Word Request 1 ", "Word Request 2", "Word Request 3", "Word Request 4" };
+	private ArrayList<String> requests = DatabaseHandler.getInstance()
+			.pendingWords();
+	private String listArray[] = new String[requests.size()];
 
 	private JScrollPane listScrollPane;
 
@@ -47,10 +52,10 @@ public class ModScreen extends JPanel {
 	// run this method before setting the screen as contentpane
 
 	// //left side of the screen
-	public ModScreen(){
+	public ModScreen() {
 		createmodScreen();
 	}
-	
+
 	public void createmodScreen() {
 		this.createRequestListPanel();
 		this.createRequestsButtonPanel();
@@ -109,7 +114,15 @@ public class ModScreen extends JPanel {
 				if (wordReqList.getSelectedValue() != null) {
 					selectedWordValue.setText(wordReqList.getSelectedValue()
 							+ "(Approved).");
+					String selected = wordReqList.getSelectedValue();
+					String parts[] = selected.split("---");
+					String word = parts[0];
+					String language = parts[1];
 
+					DatabaseHandler.getInstance().acceptDeniedWord(word,
+							language, "Accepted");
+
+					fillList();
 				} else
 
 				{
@@ -127,6 +140,15 @@ public class ModScreen extends JPanel {
 					selectedWordValue.setText(wordReqList.getSelectedValue()
 							+ "(Declined).");
 
+					String selected = wordReqList.getSelectedValue();
+					String parts[] = selected.split("---");
+					String word = parts[0];
+					String language = parts[1];
+
+					DatabaseHandler.getInstance().acceptDeniedWord(word,
+							language, "Denied");
+
+					fillList();
 				} else
 
 				{
@@ -140,6 +162,9 @@ public class ModScreen extends JPanel {
 	}
 
 	public void fillList() {
+		myListModel.clear();
+		requests = DatabaseHandler.getInstance().pendingWords();
+		listArray = requests.toArray(listArray);
 		int counter = 0;
 		while (counter < listArray.length) {
 
@@ -154,13 +179,42 @@ public class ModScreen extends JPanel {
 
 	// right side of the screen
 	public void createDictionaryOptions() {
+		String[] availableLanguages = { "EN", "NL" };
+		final JComboBox languageSelect = new JComboBox(availableLanguages);
+		languageSelect.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				dictionaryTitle.setText("Dictionary: "
+						+ languageSelect.getSelectedItem().toString());
+			}
+		});
+
 		addWord.setText("Add Word");
+		addWord.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				DatabaseHandler.getInstance().requestWord(insertWord.getText(),
+						languageSelect.getSelectedItem().toString());
+				DatabaseHandler.getInstance()
+						.acceptDeniedWord(insertWord.getText(),
+								languageSelect.getSelectedItem().toString(),
+								"Accepted");
+			}
+		});
+
 		removeWord.setText("Remove Word");
+		removeWord.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				DatabaseHandler.getInstance().acceptDeniedWord(
+						insertWord.getText(),
+						languageSelect.getSelectedItem().toString(), "Denied");
+			}
+		});
+
 		insertWord.setText("Insert a Word");
 		dictionaryOptions.setLayout(new BoxLayout(dictionaryOptions,
 				BoxLayout.PAGE_AXIS));
 
-		dictionaryTitle.setText("Dictionary: ");
+		dictionaryTitle.setText("Dictionary: "
+				+ languageSelect.getSelectedItem().toString());
 		dictionaryOptions.add(dictionaryTitle);
 		dictionaryTitle.setFont(new Font("Serif", 20, 20));
 		dictionaryTitle.setPreferredSize(new Dimension(300, 50));
@@ -168,7 +222,10 @@ public class ModScreen extends JPanel {
 		test.setPreferredSize(new Dimension(0, 100));
 		JLabel test1 = new JLabel();
 		test1.setPreferredSize(new Dimension(0, 100));
+		JLabel selectLanguageLabel = new JLabel("Select dictionary language:");
 		dictionaryOptions.add(test1);
+		dictionaryOptions.add(selectLanguageLabel);
+		dictionaryOptions.add(languageSelect);
 		dictionaryOptions.add(addWord);
 		dictionaryOptions.add(removeWord);
 		dictionaryOptions.add(test);
@@ -177,7 +234,6 @@ public class ModScreen extends JPanel {
 		wordInput
 				.setText("Insert a word in the box above to add it to , or remove it from the dictionary.");
 		dictionaryOptions.add(wordInput);
-
 	}
 
 	public void rightPanel() {

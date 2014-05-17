@@ -2,10 +2,6 @@ package domein;
 
 import gui.MainFrame;
 
-
-
-
-
 import java.util.ArrayList;
 import java.util.Observer;
 
@@ -24,51 +20,57 @@ public class WordFeud {
 		matches = new ArrayList<Match>();
 		framePanel = new MainFrame(this);
 		secondThread = new SecondThread(framePanel.getGameScreen()
-				.getGameFieldPanel(), framePanel.getGameScreen().getButtonPanel(),
-				framePanel.getGameScreen().getScorePanel());
+				.getGameFieldPanel(), framePanel.getGameScreen()
+				.getButtonPanel(), framePanel.getGameScreen().getScorePanel());
 		secondThread.start();
 	}
+
 	/*
-	* Gets the user from the player
-	* DOESNT WORK WELL ****************************************
-	*/
+	 * Gets the user from the player DOESNT WORK WELL
+	 * ****************************************
+	 */
 	public Player getUserPlayer() {
 		return currentUser.getPlayer();
 	}
 
-	public User getCurrentUser(){
+	public User getCurrentUser() {
 		return currentUser;
 	}
 
-	public String doRegisterAction(String username, char[] passInput, char[] passConfirm){
+	public String doRegisterAction(String username, char[] passInput,
+			char[] passConfirm) {
 		return currentUser.register(username, passInput, passConfirm);
 	}
-	
-	public String doLoginAction(String username, char[] password){
-		
+
+	public String doLoginAction(String username, char[] password) {
+
 		String result = currentUser.login(username, password);
-		if(result.equals("Username and Password are correct")){
+		if (result.equals("Username and Password are correct")) {
 			compMan.loadCompetitions(currentUser.getUsername());
 		}
 		return result;
 	}
-	
+
 	public void doLogoutAction() {
 		currentUser.logout();
 	}
-	
+
 	public boolean doChangeRoleAction(String result) {
 		return currentUser.changeRole(result);
 	}
-	
+
 	public String getCurrentUserRole() {
 		return currentUser.getCurrentRole();
 	}
-	
+
+	public ArrayList<String> getCurrentUserPossibleRoles() {
+		return currentUser.getRoles();
+	}
+
 	public String getCurrentUsername() {
 		return currentUser.getUsername();
 	}
-	
+
 	// Depends if someone is spectating - starting new game
 	// or want to load a game
 	public void startGame(int gameID, boolean spectate, boolean newGame) {
@@ -91,7 +93,11 @@ public class WordFeud {
 		// Sets the thread
 		createSecondThread(match);
 		match.startNewGame(framePanel.getGameScreen().getGameFieldPanel());
-		framePanel.getGameScreen().getGameChatPanel().setChatVariables(match.getOwnName(), match.getEnemyName(), match.getGameID());
+		framePanel
+				.getGameScreen()
+				.getGameChatPanel()
+				.setChatVariables(match.getOwnName(), match.getEnemyName(),
+						match.getGameID());
 		matches.add(match);
 	}
 
@@ -107,7 +113,11 @@ public class WordFeud {
 				this.addObservers(match, false);
 				createSecondThread(match);
 				match.loadGame(framePanel.getGameScreen().getGameFieldPanel());
-				framePanel.getGameScreen().getGameChatPanel().setChatVariables(match.getOwnName(), match.getEnemyName(), match.getGameID());
+				framePanel
+						.getGameScreen()
+						.getGameChatPanel()
+						.setChatVariables(match.getOwnName(),
+								match.getEnemyName(), match.getGameID());
 			}
 		}
 		if (!exists) {
@@ -116,7 +126,11 @@ public class WordFeud {
 			this.addObservers(match, false);
 			createSecondThread(match);
 			match.loadGame(framePanel.getGameScreen().getGameFieldPanel());
-			framePanel.getGameScreen().getGameChatPanel().setChatVariables(match.getOwnName(), match.getEnemyName(), match.getGameID());
+			framePanel
+					.getGameScreen()
+					.getGameChatPanel()
+					.setChatVariables(match.getOwnName(), match.getEnemyName(),
+							match.getGameID());
 		}
 
 	}
