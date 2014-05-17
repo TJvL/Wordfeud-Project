@@ -74,17 +74,19 @@ public class CompetitionManager {
 		}
 	}
 	
-	public void joinCompetition(int compID, String username){
-		
+	public boolean joinCompetition(int compID, String username){
+		boolean actionSuccesfull = false;
 		if (competitions.get(compID).isRoomForMore()){
 			DatabaseHandler.getInstance().joinCompetition(compID, username);
 			Competition comp = competitions.get(compID);
 			joinedCompetitions.put(Integer.toString(compID), comp);
 			competitions.remove(compID);
+			actionSuccesfull = true;
 		}
 		else{
 			System.err.println("ERROR: Could not join selected competition");
 		}
+		return actionSuccesfull;
 	}
 
 	public void createCompetition(String currentUsername, String summary, String endDate, int minParticipants, int maxParticipants) {

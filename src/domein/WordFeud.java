@@ -77,9 +77,7 @@ public class WordFeud {
 	}
 	
 	public boolean doJoinCompAction(int compID){
-		
-		compMan.joinCompetition(compID, currentUser.getUsername());
-		return true;
+		return compMan.joinCompetition(compID, currentUser.getUsername());
 	}
 	
 	public void doLoadAllCompetitionsAction(){
