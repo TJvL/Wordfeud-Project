@@ -1621,32 +1621,6 @@ public class DatabaseHandler
 		}
 		return compJoiners;
 	}
-	
-	public synchronized int numberOfPeopleInCompetition(int compID)
-	{
-		connection();
-		int numOfPeopleInCompetition= 0;
-
-		try
-		{
-			statement = con.prepareStatement("SELECT count(account_naam) FROM deelnemer WHERE competitie_id = '" + compID + "'");
-			
-			result = statement.executeQuery();
-			
-			if(result.next())
-			{
-				numOfPeopleInCompetition = result.getInt(2);
-			}
-			result.close();
-			statement.close();
-		} catch (SQLException e)
-		{
-			e.printStackTrace();
-			System.out.println("QUERRY ERROR!!!!");
-		}
-		finally{closeConnection();}
-		return numOfPeopleInCompetition;
-	}
 
 	public synchronized ArrayList<String> activeGames(String username)
 	{

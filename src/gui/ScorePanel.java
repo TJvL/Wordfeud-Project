@@ -7,9 +7,8 @@ import java.awt.Graphics;
 
 import javax.swing.JPanel;
 
-import datalaag.DatabaseHandler;
-
 // ScorePanel from a normal game
+@SuppressWarnings("serial")
 public class ScorePanel extends JPanel {
 
 	private int wordValue;

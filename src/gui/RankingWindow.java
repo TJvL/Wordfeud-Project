@@ -1,13 +1,9 @@
 package gui;
 
 import java.awt.Dimension;
-import java.net.URL;
-
 import javax.swing.DefaultListModel;
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JLayeredPane;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 

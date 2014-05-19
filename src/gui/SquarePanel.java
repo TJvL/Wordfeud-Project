@@ -8,8 +8,8 @@ import java.awt.image.BufferedImage;
 import javax.swing.JPanel;
 
 import domein.Square;
-import domein.Tile;
 
+@SuppressWarnings("serial")
 public class SquarePanel extends JPanel {
 
 	private static final int SIZE = 33;

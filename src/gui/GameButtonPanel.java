@@ -10,6 +10,7 @@ import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+@SuppressWarnings("serial")
 public class GameButtonPanel extends JPanel {
 	private GameFieldPanel boardP;
 	private boolean swapPressed;

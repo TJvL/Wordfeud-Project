@@ -13,6 +13,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+@SuppressWarnings("serial")
 public class PlayerScreen extends JPanel {
 	private MainFrame mainFrame;
 	private String games[] = { "hoi", "hoii" };

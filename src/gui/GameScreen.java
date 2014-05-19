@@ -1,14 +1,11 @@
 package gui;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.util.Observer;
 
 import javax.swing.JPanel;
 
-import domein.Match;
-import domein.SecondThread;
-
+@SuppressWarnings("serial")
 public class GameScreen extends JPanel {
 	private GameFieldPanel boardPanel;
 	private GameButtonPanel buttonPanel;
