@@ -5,8 +5,6 @@ import domein.Word;
 
 import java.util.ArrayList;
 
-import domein.Square;
-
 public class ScoreCalculator {
 
 	private static ScoreCalculator scoreCalculator = new ScoreCalculator();

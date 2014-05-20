@@ -1,8 +1,8 @@
 package gui;
 
 import javax.swing.JPanel;
+
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -14,13 +14,12 @@ import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.SwingConstants;
+import javax.swing.ScrollPaneConstants;
 
 /////this screen contains all public active  competitions 
+@SuppressWarnings("serial")
 public class JoinCompScreen extends JPanel {
 
 	public JoinCompScreen() {
@@ -85,7 +84,7 @@ public class JoinCompScreen extends JPanel {
 		selectedTextArea.setLineWrap(true);
 
 		textAreaScrollPane
-				.setVerticalScrollBarPolicy(textAreaScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+				.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		textAreaScrollPane.setPreferredSize(new Dimension(500, 1200));
 		// joinCompTextareaPanel.add(textAreaScrollPane, BorderLayout.CENTER);
 		joinCompScreenListPanel.add(selectedTextArea, BorderLayout.SOUTH);
@@ -115,7 +114,6 @@ public class JoinCompScreen extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				// TODO Auto-generated method stub
 				requestInviteClicked();
 			}
 

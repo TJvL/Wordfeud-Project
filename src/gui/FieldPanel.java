@@ -7,6 +7,7 @@ import java.awt.GridLayout;
 import javax.swing.JPanel;
 
 // The panel that contains all the squares
+@SuppressWarnings("serial")
 public class FieldPanel extends JPanel {
 
 	public FieldPanel() {

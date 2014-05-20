@@ -8,6 +8,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
+@SuppressWarnings("serial")
 public class StandardMenuBar extends JMenuBar {
 	protected JMenu optionsMenu;
 	protected JMenu playerdataMenu;

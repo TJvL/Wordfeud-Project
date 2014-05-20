@@ -7,6 +7,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
+@SuppressWarnings("serial")
 public class SpecMenuBar extends JMenuBar{
 	public SpecMenuBar(final MainFrame mainFrame){
 		JMenu optionsMenu = new JMenu("Options");

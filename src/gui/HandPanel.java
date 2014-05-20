@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import javax.swing.JPanel;
 
 // A panel to show the tiles
+@SuppressWarnings("serial")
 public class HandPanel extends JPanel{
 	private ArrayList<TilePanel> tiles = new ArrayList<TilePanel>();
 	

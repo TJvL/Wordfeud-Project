@@ -11,6 +11,7 @@ import javax.swing.JPanel;
 import domein.Match;
 import domein.Tile;
 
+@SuppressWarnings("serial")
 public class GameFieldPanel extends JPanel {
 
 	private SquarePanel[][] squaresPanels;
