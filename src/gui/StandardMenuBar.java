@@ -7,6 +7,10 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
+import domein.Statistics;
+import domein.WordFeud;
+
+@SuppressWarnings("serial")
 public class StandardMenuBar extends JMenuBar {
 	protected JMenu optionsMenu;
 	protected JMenu playerdataMenu;
@@ -15,8 +19,12 @@ public class StandardMenuBar extends JMenuBar {
 	private StatWindow statwindow;
 	private NotificationWindow notificationwindow;
 	private AccDataWindow accdatawindow;
+	private WordFeud wordFeud;
+	private Statistics statistics;
 
-	public StandardMenuBar(final MainFrame mainFrame) {
+	public StandardMenuBar(final MainFrame mainFrame, WordFeud wordfeud) {
+		
+		this.wordFeud = wordfeud;
 		rolewindow = new RoleWindow();	
 		statwindow = new StatWindow();
 		notificationwindow = new NotificationWindow();
@@ -68,7 +76,9 @@ public class StandardMenuBar extends JMenuBar {
 		
 		statisticsMenuItem.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
-				statwindow.showStats();
+				statistics = new Statistics();
+				statistics.getUserName(mainFrame.getUsernameForStats());
+				statwindow.showStats(statistics.getHighestGameScore(), statistics.getNumGamesPlayed(), statistics.mostValuableWord(), statistics.getGamesWon(), statistics.getCompetitionsWon());
 			}
 		});
 		accountdataMenuItem.addActionListener(new ActionListener(){
@@ -86,4 +96,5 @@ public class StandardMenuBar extends JMenuBar {
 		this.add(playerdataMenu);
 		this.add(notificationsMenu);
 	}
+	
 }

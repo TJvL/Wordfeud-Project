@@ -207,6 +207,12 @@ public class MainFrame extends JFrame {
 	public GameSpecScreen getSpecScreen() {
 		return specScreen;
 	}
+	
+	public String getUsernameForStats()
+	{
+		
+		return wf.getCurrentUsername();
+	}
 
 	public void setCorrectRoleMainMenu() {
 		String currentRole = wf.getCurrentUserRole();
