@@ -48,7 +48,7 @@ public class DatabaseHandler
 		}
 	}
 
-	public synchronized void connection()
+	private synchronized void connection()
 	{
 		int retry = 0;
 		boolean connected = false;
@@ -69,7 +69,7 @@ public class DatabaseHandler
 		}
 	}
 
-	public synchronized void closeConnection() // closes the connection to the
+	private synchronized void closeConnection() // closes the connection to the
 												// database
 	{
 		try
@@ -1565,7 +1565,7 @@ public class DatabaseHandler
 		return tripPass;
 	}
 
-	public synchronized ArrayList<String> AdminSelectPlayer(String username)
+	public synchronized ArrayList<String> adminSelectPlayer(String username)
 	{
 		connection();
 		ArrayList<String> players = new ArrayList<String>();
@@ -1630,9 +1630,9 @@ public class DatabaseHandler
 		try
 		{
 			statement = con
-					.prepareStatement("SELECT id, account_naam_uitdager, account_naam_tegenstander, competitie_id FROM spel WHERE account_naam_uitdager = '"
+					.prepareStatement("SELECT id, account_naam_uitdager, account_naam_tegenstander, competitie_id FROM spel WHERE (account_naam_uitdager = '"
 							+ username + "' OR account_naam_tegenstander = '"
-							+ username + "' AND toestand_type = 'Playing'");
+							+ username + "') AND toestand_type = 'Playing'");
 
 			result = statement.executeQuery();
 
@@ -1670,8 +1670,7 @@ public class DatabaseHandler
 		try
 		{
 			statement = con
-					.prepareStatement("SELECT id, account_naam_uitdager, account_naam_tegenstander, competitie_id FROM spel WHERE account_naam_uitdager = '"
-							+ username + "' OR account_naam_tegenstander = '"
+					.prepareStatement("SELECT id, account_naam_uitdager, account_naam_tegenstander, competitie_id FROM spel WHERE account_naam_tegenstander = '"
 							+ username + "' AND toestand_type = 'Request'");
 
 			result = statement.executeQuery();
@@ -1864,8 +1863,165 @@ public class DatabaseHandler
 		return statistics;
 	}
 	
+	public synchronized String getPassword(String username)
+	{
+		connection();
+		String password = null;
+		
+		try
+		{
+			statement = con.prepareStatement("SELECT wachtwoord FROM account WHERE naam = '" + username + "'");
+			
+			result = statement.executeQuery();
+			
+			if(result.next())
+			{
+				password = result.getString(1);
+			}
+			result.close();
+			statement.close();
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+			System.out.println("QUERRY ERROR");
+		}finally{closeConnection();}
+		return password;
+	}
 	
+	public ArrayList<String> activeCompetitions()
+	{
+		connection();
+		ArrayList<String> activeComps = new ArrayList<String>();
+		
+		try
+		{
+			statement = con.prepareStatement("SELECT * FROM competitie WHERE einde > '" + getCurrentTimeStamp() + "'");
+			
+			result = statement.executeQuery();
+			
+			while(result.next())
+			{
+				activeComps.add(result.getInt(1) + "---" + result.getString(2) + "---" + result.getTimestamp(3) + "---" + result.getTimestamp(4) + "---" + result.getString(5) + "---" + result.getInt(6) + "---" + result.getString(7));
+			}
+			result.close();
+			statement.close();
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+			System.out.println("QUERRY ERROR");
+		}
+		return activeComps;
+	}
 	
+	public synchronized String adminRegister(String username, String password, boolean admin, boolean moderator, boolean player)
+	{
+		connection();
+		String registered = "Can not register account";
+		try
+		{
+			statement = con.prepareStatement("SELECT * FROM account WHERE naam = '" + username + "'");
+			
+			result = statement.executeQuery();
+			
+			if (!result.next())
+			{
+				registered = "username is available, account is registered";
+				result.close();
+				statement.close();
+
+				try
+				{
+					statement = con.prepareStatement("INSERT INTO account(naam, wachtwoord)VALUES(?,?)");
+
+					statement.setString(1, username);
+					statement.setString(2, password);
+
+					statement.executeUpdate(); 
+					statement.close();
+
+				} catch (SQLException e)
+				{
+					e.printStackTrace();
+					System.out.println("account register error");
+				}
+				try
+				{
+					if(admin)
+					{
+					statement = con.prepareStatement("INSERT INTO accountrol(account_naam, rol_type)VALUES(?,?)");
+
+					statement.setString(1, username);
+					statement.setString(2, "Administrator");
+
+					statement.executeUpdate(); 
+					statement.close();
+					}
+					
+					if(moderator)
+					{
+					statement = con.prepareStatement("INSERT INTO accountrol(account_naam, rol_type)VALUES(?,?)");
+
+					statement.setString(1, username);
+					statement.setString(2, "Moderator");
+
+					statement.executeUpdate(); 
+					statement.close();
+					}
+					
+					if(player)
+					{
+					statement = con.prepareStatement("INSERT INTO accountrol(account_naam, rol_type)VALUES(?,?)");
+
+					statement.setString(1, username);
+					statement.setString(2, "Player");
+
+					statement.executeUpdate(); 
+					statement.close();
+					}
+
+				} catch (SQLException e)
+				{
+					e.printStackTrace();
+					System.out.println("role register error");
+				}
+			}
+			else
+			{
+				registered = "username is not available, cannot register your account";
+				statement.close();
+			}
+
+		} catch (SQLException e){
+			e.printStackTrace();
+			System.out.println("query error!!!");
+		} finally{closeConnection();}
+		return registered;
+	}
+	
+	public ArrayList<String> getAllPlayers()
+	{
+		connection();
+		ArrayList<String> allPlayers = new ArrayList<String>();
+		
+		try
+		{
+			statement = con.prepareStatement("SELECT naam FROM account");
+			
+			result = statement.executeQuery();
+			
+			while(result.next())
+			{
+				allPlayers.add(result.getString(1));
+			}
+			result.close();
+			statement.close();
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+			System.out.println("Players retrieval error");
+		}finally{closeConnection();}
+		return allPlayers;
+	}
 	
 	
 }

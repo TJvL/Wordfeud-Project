@@ -24,7 +24,6 @@ public class AdminAccScreen extends JPanel {
 
 	public AdminAccScreen(MainFrame mainFrame) {
 		accdatawindow = new AccDataWindow();
-		admincreateplayerwindow = new AdminCreatePlayerWindow();
 		this.mainFrame = mainFrame;
 		
 		this.setLayout(new BorderLayout());
@@ -71,6 +70,7 @@ public class AdminAccScreen extends JPanel {
 			}});
 		addAccButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent arg0) {
+				admincreateplayerwindow = new AdminCreatePlayerWindow();
 				admincreateplayerwindow.ShowAdminCreatePlayer();
 			}});
 		compScreenButton.addActionListener(new ActionListener(){
