@@ -20,25 +20,19 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-public class AccDataWindow extends JFrame
-{
+public class AccDataWindow extends JFrame {
 	private JPanel buttonPanel = new JPanel();
 	private JPanel labelPanel = new JPanel();
 	private JButton changeName = new JButton();
-	private JButton changeEmail = new JButton();
+	private JButton changePassword = new JButton();
 
 	private JLabel userName = new JLabel();
 	private JLabel userNameValue = new JLabel();
-
-	private JLabel emailAdress = new JLabel();
-	private JLabel emailAdressValue = new JLabel();
 	private JLabel password = new JLabel();
 	private JLabel passwordValue = new JLabel();
+	private String response;
 
-
-
-	public void showAccData()
-	{
+	public void showAccData() {
 		createButtonPanel();
 		createLabelPanel();
 
@@ -46,9 +40,6 @@ public class AccDataWindow extends JFrame
 
 		this.setResizable(false);
 		this.setTitle(" PlayerName's Statistics");
-
-
-		
 
 		this.add(buttonPanel, BorderLayout.SOUTH);
 		this.add(labelPanel, BorderLayout.CENTER);
@@ -58,80 +49,66 @@ public class AccDataWindow extends JFrame
 		this.setVisible(true);
 	}
 
-	public void createButtonPanel()
-	{
+	public void createButtonPanel() {
 		changeName.setText("Change name");
-		changeEmail.setText("Change Email");
+		changePassword.setText("Change password");
 
 		buttonPanel.add(changeName);
-		buttonPanel.add(changeEmail);
+		buttonPanel.add(changePassword);
 
-		changeName.addActionListener(new ActionListener()
-		{
+		changeName.addActionListener(new ActionListener() {
 
 			@Override
-			public void actionPerformed(ActionEvent arg0)
-			{
+			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
 
-				String response = JOptionPane
+				response = JOptionPane
 						.showInputDialog(null, "What is your desired name?",
 								"Enter your desired name",
 								JOptionPane.QUESTION_MESSAGE);
-				System.out.println(response);
-
+				if (!response.equals("")) {
+					System.out.println(response);
+					userNameValue.setText(response);
+				}
 			}
 		});
 
-		changeEmail.addActionListener(new ActionListener()
-		{
+		changePassword.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent arg0)
-			{
+			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
-				String response = JOptionPane.showInputDialog(null,
+				response = JOptionPane.showInputDialog(null,
 						"What is your desired Email-adress?",
 						"Enter your desired Email-adress",
 						JOptionPane.QUESTION_MESSAGE);
-				if (response != null)
-				{
+				if (!response.equals("")) {
 					System.out.println(response);
+					passwordValue.setText(response);
 				}
-				{
-					System.out.println("No value was entered !");
-				}
-
 			}
 
 		});
 	}
 
-	public void createLabelPanel()
-	{
-		labelPanel.setLayout(new GridLayout(4, 2, 20, 20));
+	public void createLabelPanel() {
+		labelPanel.setLayout(new GridLayout(4, 2));
+
 		userName.setText("User Name:");
-		userName.setFont(new Font("Serif", Font.BOLD, 17));
-
-		emailAdress.setText("Email Adress:");
-		emailAdress.setFont(new Font("Serif", Font.BOLD, 17));
-
-		userNameValue.setText("value");
-		userNameValue.setFont(new Font("Serif", Font.PLAIN, 17));
-
-		emailAdressValue.setText("value");
-		emailAdressValue.setFont(new Font("Serif", Font.PLAIN, 17));
-
 		password.setText("Password:");
-		password.setFont(new Font("Serif", Font.BOLD, 17));
-		passwordValue.setText("value");
-		passwordValue.setFont(new Font("Serif", Font.PLAIN, 17));
 
 		labelPanel.add(userName);
 		labelPanel.add(userNameValue);
-		labelPanel.add(emailAdress);
-		labelPanel.add(emailAdressValue);
 		labelPanel.add(password);
 		labelPanel.add(passwordValue);
+	}
+
+	public void setValues(String username, String password) {
+		userNameValue.setText(username);
+		passwordValue.setText(password);
+	}
+
+	public String getInput() {
+		return response;
 	}
 
 }

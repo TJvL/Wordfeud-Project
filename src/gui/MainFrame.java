@@ -154,8 +154,13 @@ public class MainFrame extends JFrame {
 		wf.doLogoutAction();
 	}
 
-	public void fillRoleWindow(){
+	public void fillRoleWindow() {
 		playerMenuBar.fillRoleWindow(wf.getCurrentUserPossibleRoles());
+	}
+
+	public void setAccDataValues() {
+		playerMenuBar.fillAccDataValues(wf.getCurrentUsername(),
+				wf.getCurrentPassword());
 	}
 
 	// PlayGame/Spectator part

@@ -70,6 +70,10 @@ public class WordFeud {
 	public String getCurrentUsername() {
 		return currentUser.getUsername();
 	}
+	
+	public String getCurrentPassword(){
+		return currentUser.getPassword();
+	}
 
 	// Depends if someone is spectating - starting new game
 	// or want to load a game

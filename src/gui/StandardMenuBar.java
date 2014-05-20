@@ -92,4 +92,8 @@ public class StandardMenuBar extends JMenuBar {
 	public void fillRoleWindow(ArrayList<String> roles) {
 		rolewindow.fillRoleList(roles);
 	}
+	
+	public void fillAccDataValues(String username, String password){
+		accdatawindow.setValues(username, password);
+	}
 }

@@ -124,6 +124,7 @@ public class LoginScreen extends JPanel {
 		}
 
 		mainFrame.fillRoleWindow();
+		mainFrame.setAccDataValues();
 	}
 
 	private void clearInput() {
