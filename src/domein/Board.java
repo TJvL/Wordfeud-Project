@@ -16,8 +16,8 @@ public class Board {
 	private DatabaseHandler dbh;
 	private HashMap<String, BufferedImage> images;
 	private int score;
-	private String submittedWord;
 	private ArrayList<String> checkedWords;
+	private ArrayList<String> requestableWords;
 
 	// Hier moet gekeken of er een nieuwe bord wordt aangemaakt
 	// Of het spel al bezig is het bord laden
@@ -29,7 +29,7 @@ public class Board {
 		fh = FileHandler.getInstance();
 		dbh = DatabaseHandler.getInstance();
 		checkedWords = new ArrayList<String>();
-		submittedWord = "*";
+		requestableWords = new ArrayList<String>();
 		images = new HashMap<String, BufferedImage>();
 		images.put("DL", fh.readImage("Plaatjes/DL.png"));
 		images.put("TL", fh.readImage("Plaatjes/TL.png"));
@@ -109,12 +109,14 @@ public class Board {
 	public boolean checkWords() {
 		boolean allWordsExist = true;
 		ArrayList<Word> words = calculator.getjustPlayedWords();
+
+		requestableWords.clear();
+
 		for (Word word : words) {
 			// If the words exist it will say it does
 			if (dbh.checkWord(word.getWord(), "EN")) {
 				System.out.println("WOORD BESTAAT IN WOORDENBOEK");
 				checkedWords.add(word.getWord() + " exixts");
-				submittedWord = "*";
 			}
 			// Else it does not exist
 			else {
@@ -122,19 +124,7 @@ public class Board {
 				allWordsExist = false;
 				// submittedWord = "*";
 				checkedWords.add(word.getWord() + " does NOT exixt");
-				/*
-				 * submittedWord = word.getWord(); while (!checkingWord){
-				 * submittedWord = "*"; checkingWord = false;
-				 * 
-				 * if (dbh.checkWord(word.getWord())){
-				 * System.out.println("WOORD BESTAAT IN WOORDENBOEK"); } else {
-				 * System
-				 * .out.println("HET WOORD IS AFGEKEURD OF TERUGGETROKKEN"); }
-				 * 
-				 * }
-				 */
-
-				// return false;
+				requestableWords.add(word.getWord());
 			}
 
 		}
@@ -144,6 +134,11 @@ public class Board {
 	// A method that returns the words that were just made
 	public ArrayList<String> getPlayedWords() {
 		return checkedWords;
+	}
+
+	// Return the requstable words
+	public ArrayList<String> getRequestableWords() {
+		return requestableWords;
 	}
 
 	// Set all the tiles on the board to played

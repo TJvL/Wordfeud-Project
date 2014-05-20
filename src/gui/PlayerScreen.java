@@ -93,6 +93,8 @@ public class PlayerScreen extends JPanel {
 
 		listPanel.add(label);
 		listPanel.add(scrollPane);
+		this.repaint();
+		this.revalidate();
 	}
 
 	private void createButtons() {

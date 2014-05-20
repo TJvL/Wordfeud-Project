@@ -77,7 +77,7 @@ public class Match implements Observer {
 	// Returns the names of the opponent
 	public synchronized String getEnemyName() {
 		// return "marijntje42";
-		return "marijntje42";
+		return "Wouter";
 	}
 
 	// Method to check who's turn it is and what turn it is
@@ -614,6 +614,7 @@ public class Match implements Observer {
 	// When the play button is pressed
 	// This method does the word
 	public void playWord() {
+		int answer;
 
 		if (board.startCalculating()) {
 			// if this is true, a score will be calculated
@@ -624,7 +625,7 @@ public class Match implements Observer {
 						null,
 						"Your word(s) are correct \n WordValue: "
 								+ board.getScore(), " Words checked ",
-						JOptionPane.OK_OPTION);
+						JOptionPane.YES_NO_CANCEL_OPTION);
 
 				dbh.updateTurn(maxTurn, gameID, getOwnName(), getScore(),
 						"Word");
@@ -660,13 +661,43 @@ public class Match implements Observer {
 					printString += playedWord + "\n";
 				}
 
-				JOptionPane.showMessageDialog(null,
-						" Your word(s) are incorrect \n" + printString,
-						" Words checked", JOptionPane.OK_OPTION);
+				answer = JOptionPane.showConfirmDialog(null,
+						"Your word(s) are incorrect \n" + printString
+								+ "Would you like to request a word?",
+						"Words checked", JOptionPane.YES_NO_OPTION);
+
+				if (answer == 0) {
+					System.out.println("answer given is Yes");
+					requestWord();
+				}
+				// JOptionPane.showMessageDialog(null,
+				// " Your word(s) are incorrect \n" + printString,
+				// " Words checked", JOptionPane.OK_OPTION);
 
 			}
 		}
 		board.resetPlayedWords();
+	}
+
+	public void requestWord() {
+		ArrayList<String> playedWords = board.getRequestableWords();
+		String[] choices = new String[playedWords.size()];
+		int i = 0;
+		for (String playedWord : playedWords) {
+			choices[i] = playedWord;
+			i++;
+		}
+		System.out.println("joptionpane");
+		String input = (String) JOptionPane.showInputDialog(null,
+				"Select your letter below...", "Choose you word",
+				JOptionPane.QUESTION_MESSAGE, null, choices, choices[0]);
+		System.out.println("given word request: " + input);
+
+		if (input != null) {
+			dbh.requestWord(input, "EN");
+			JOptionPane.showMessageDialog(null, input + " has been requested.",
+					"Request confirmation", JOptionPane.INFORMATION_MESSAGE);
+		}
 	}
 
 	// Method to surrender the game

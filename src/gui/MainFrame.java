@@ -148,26 +148,28 @@ public class MainFrame extends JFrame {
 		this.setJMenuBar(adminMenuBar);
 		revalidate();
 	}
-	public String callRegisterAction(String username, char[] passInput, char[] passConfirm){
+
+	public String callRegisterAction(String username, char[] passInput,
+			char[] passConfirm) {
 		return wf.doRegisterAction(username, passInput, passConfirm);
 	}
-	
-	public String callLoginAction(String username, char[] password){
+
+	public String callLoginAction(String username, char[] password) {
 		return wf.doLoginAction(username, password);
 	}
-	
+
 	public boolean callChangeRoleAction(String result) {
 		return wf.doChangeRoleAction(result);
 	}
-	
+
 	public void callLogoutAction() {
 		wf.doLogoutAction();
 	}
-	
-	public String getName(){
+
+	public String getName() {
 		return wf.getCurrentUsername();
 	}
-	
+
 	// PlayGame/Spectator part
 	// Adds the observers to all the panels
 	// Sets the right ContentPane
@@ -194,14 +196,14 @@ public class MainFrame extends JFrame {
 		if (gameToLoad != 0 && !spectating) {
 			wf.startGame(gameToLoad, false, false);
 			System.out.println("GAMEID IS " + gameToLoad);
-		} else if (spectating){
+		} else if (spectating) {
 			wf.startGame(gameToLoad, true, false);
 			System.out.println("GAMEID IS " + gameToLoad);
 		} else {
 			String name = JOptionPane.showInputDialog(null,
 					"Please enter your GameID: ");
 			if (name == null || name.equals("")) {
-				int gameID = dbh.createGame(1, "Mike", "marijntje42",
+				int gameID = dbh.createGame(1, "Mike", "Wouter",
 						"openbaar", "EN");
 				wf.startGame(gameID, false, true);
 				System.out.println("GAMEID IS " + gameID);
@@ -236,44 +238,41 @@ public class MainFrame extends JFrame {
 
 	public void setCorrectRoleMainMenu() {
 		String currentRole = wf.getCurrentUserRole();
-		
-			if (currentRole.equals("Administrator")){
-				this.setAdminCompScreen();
-			}
-			else if (currentRole.equals("Moderator")){
-				this.setModScreen();
-			}
-			else if (currentRole.equals("Player")){
-				this.setPlayerScreen();
-			}
-			else if (currentRole.equals("Spectator")){
-				this.setSpecScreen();
-			}
+
+		if (currentRole.equals("Administrator")) {
+			this.setAdminCompScreen();
+		} else if (currentRole.equals("Moderator")) {
+			this.setModScreen();
+		} else if (currentRole.equals("Player")) {
+			this.setPlayerScreen();
+		} else if (currentRole.equals("Spectator")) {
+			this.setSpecScreen();
+		}
 	}
-	
 
 	// Everything in this method will be updated every 7,5 second
 	// Use synchronized for the methods
 	// That allows a method to be uses by multiple threads
 	// Only the current contentPane will auto update
-	public synchronized void updateGUI(){		
+	public synchronized void updateGUI() {
 		playerMenuBar.updateNotificationList();
-		 if (this.getContentPane() instanceof PlayerScreen) {
-			 playerscreen.setGameList(this.getName());	
-		} else if (this.getContentPane() instanceof SpecScreen){
+		if (this.getContentPane() instanceof PlayerScreen) {
+			playerscreen.setGameList(this.getName());
+		} else if (this.getContentPane() instanceof SpecScreen) {
 			specscreen.setGameList();
 		}
 	}
-	
+
 	// A method to start the Thread
 	public void startThread() {
 		guiThread = new UpdateGUIThread(this);
 		guiThread.setRunning(true);
-		guiThread.start();	
+		guiThread.start();
 	}
 
-	
 	public void stopThread() {
-		guiThread.setRunning(false);
+		if (guiThread != null) {
+			guiThread.setRunning(false);
+		}
 	}
 }
