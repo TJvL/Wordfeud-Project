@@ -6,6 +6,7 @@ import gui.MainFrame;
 
 
 
+
 import java.util.ArrayList;
 import java.util.Observer;
 
@@ -48,7 +49,8 @@ public class WordFeud {
 		
 		String result = currentUser.login(username, password);
 		if(result.equals("Username and Password are correct")){
-			compMan.loadCompetitions(currentUser.getUsername());
+			compMan.loadJoinedCompetitions(currentUser.getUsername());
+			compMan.updateEachParticipants();
 		}
 		return result;
 	}
@@ -59,6 +61,30 @@ public class WordFeud {
 	
 	public boolean doChangeRoleAction(String result) {
 		return currentUser.changeRole(result);
+	}
+	
+	/*
+	 * param uitleg:
+	 * summary = de naam of omschrijving die in alle lijsten terug komt als "naam".
+	 * endDate = de eind datum van de competitie.
+	 * minParticipants = minimaal aantal deelnemers die nodig zijn om de compo te starten !!MOET >2 zijn!!
+	 * maxParticipants = maximaal aantal deelnemers dat in de compo mag zitten.
+	 * - Thomas
+	 */
+	public void doCreateCompAction(String summary, String endDate, int minParticipants, int maxParticipants){
+		compMan.createCompetition(currentUser.getUsername(), summary, endDate, minParticipants, maxParticipants);
+	}
+	
+	public boolean doJoinCompAction(int compID){
+		return compMan.joinCompetition(compID, currentUser.getUsername());
+	}
+	
+	public void doLoadAllCompetitionsAction(){
+		compMan.loadAllCompetitions(currentUser.getUsername());
+	}
+	
+	public ArrayList<String> getParticipantListAction(int compID){
+		return compMan.getParticipantList(compID);
 	}
 	
 	public String getCurrentUserRole() {

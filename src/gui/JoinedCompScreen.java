@@ -13,6 +13,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+@SuppressWarnings("serial")
 public class JoinedCompScreen extends JPanel {
 	private RankingWindow rankingwindow;
 	private JPanel listPanel;

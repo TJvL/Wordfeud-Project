@@ -13,6 +13,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+@SuppressWarnings("serial")
 public class AdminCompScreen extends JPanel {
 	private JPanel listPanel;
 	private JPanel buttonsPanel;

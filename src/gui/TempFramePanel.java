@@ -1,11 +1,9 @@
 package gui;
 
-import java.awt.Dimension;
-import java.util.Observer;
-
 import javax.swing.JFrame;
 
 // A tempFram for crearting the playGame part
+@SuppressWarnings("serial")
 public class TempFramePanel extends JFrame {
 /*
 	// TempFrame moet vervangen worden
