@@ -7,6 +7,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
+
 @SuppressWarnings("serial")
 public class StandardMenuBar extends JMenuBar {
 	protected JMenu optionsMenu;
@@ -69,7 +70,10 @@ public class StandardMenuBar extends JMenuBar {
 		
 		statisticsMenuItem.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
-				statwindow.showStats();
+
+				
+			statwindow.showStats(mainFrame.getUsernameForStats());
+			
 			}
 		});
 		accountdataMenuItem.addActionListener(new ActionListener(){

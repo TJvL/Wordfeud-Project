@@ -1,5 +1,6 @@
 package gui;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -7,13 +8,18 @@ import java.awt.GridLayout;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
-@SuppressWarnings("serial")
-public class StatWindow extends JFrame {
+import datalaag.DatabaseHandler;
+import domein.WordFeud;
 
+@SuppressWarnings("serial")
+public class StatWindow extends JFrame
+{
+
+	private DatabaseHandler dbh = DatabaseHandler.getInstance();
 	private JLabel playedGames = new JLabel();
-	private JLabel gamesWon = new JLabel();
+	private JLabel gamesWonLabel = new JLabel();
 	private JLabel highScore = new JLabel();
-	private JLabel mostValuableWord = new JLabel();
+	private JLabel mostValuableWordLabel = new JLabel();
 	private JLabel compsWon = new JLabel();
 
 	private JLabel playedGamesValue = new JLabel();
@@ -22,7 +28,28 @@ public class StatWindow extends JFrame {
 	private JLabel mostValuableWordValue = new JLabel();
 	private JLabel compsWonValue = new JLabel();
 
-	public void showStats() {
+	private String highestGameScore;
+	private String numGamesPlayed;
+	private String mostValuableWord;
+	private String gamesWon;
+	private String competitionsWon;
+	private String userName;
+	private String statistics;
+
+	WordFeud myLocalWordFeud;
+
+	public void showStats(String username)
+	{
+		
+		this.userName = username;
+		
+		
+
+		this.highestGameScore = this.getHighestGameScore();
+		this.numGamesPlayed = this.getNumGamesPlayed();
+		this.mostValuableWord = this.mostValuableWord();
+		this.gamesWon = this.getGamesWon();
+		this.competitionsWon = this.getCompetitionsWon();
 
 		this.setLayout(new GridLayout(6, 2, 10, 10));
 		this.setPreferredSize(new Dimension(500, 500));
@@ -30,19 +57,80 @@ public class StatWindow extends JFrame {
 		this.setTitle(" PlayerName's Statistics");
 		createLabels();
 
+		this.getContentPane().setBackground(Color.DARK_GRAY);
+		playedGames.setForeground(Color.WHITE);
+		gamesWonLabel.setForeground(Color.WHITE);
+		highScore.setForeground(Color.WHITE);
+		mostValuableWordLabel.setForeground(Color.WHITE);
+		compsWon.setForeground(Color.WHITE);
+		playedGamesValue.setForeground(Color.WHITE);
+		gamesWonValue.setForeground(Color.WHITE);
+		highScoreValue.setForeground(Color.WHITE);
+		mostValuableWordValue.setForeground(Color.WHITE);
+		compsWonValue.setForeground(Color.WHITE);
+
 		this.pack();
 		this.setLocationRelativeTo(null);
 		this.setVisible(true);
 
 	}
 
-	public void createLabels() {
+	
+
+	public String getHighestGameScore()
+	{
+		statistics = dbh.playerStatistics(userName);
+
+		highestGameScore = statistics
+				.substring(statistics.lastIndexOf('h') + 1);
+		System.out.println(highestGameScore);
+		return highestGameScore;
+
+	}
+
+	public String getNumGamesPlayed()
+	{
+		statistics = dbh.playerStatistics(userName);
+		numGamesPlayed = statistics.substring(statistics.lastIndexOf('f') + 1,
+				statistics.lastIndexOf('g'));
+		System.out.println(numGamesPlayed);
+		return numGamesPlayed;
+	}
+
+	public String mostValuableWord()
+	{
+		statistics = dbh.playerStatistics(userName);
+		mostValuableWord = statistics.substring(
+				statistics.lastIndexOf('d') + 1, statistics.lastIndexOf('e'));
+		System.out.println(mostValuableWord);
+		return mostValuableWord;
+	}
+
+	public String getGamesWon()
+	{
+		statistics = dbh.playerStatistics(userName);
+		gamesWon = statistics.substring(statistics.lastIndexOf('b') + 1,
+				statistics.lastIndexOf('c'));
+		System.out.println(gamesWon);
+		return gamesWon;
+	}
+
+	public String getCompetitionsWon()
+	{
+		statistics = dbh.playerStatistics(userName);
+		competitionsWon = statistics.substring(0, statistics.lastIndexOf('a'));
+		System.out.println(competitionsWon);
+		return competitionsWon;
+	}
+
+	public void createLabels()
+	{
 
 		playedGames.setText("Played games:");
 		playedGames.setFont(new Font("Serif", Font.BOLD, 17));
 
-		gamesWon.setText("Games won:");
-		gamesWon.setFont(new Font("Serif", Font.BOLD, 17));
+		gamesWonLabel.setText("Games won:");
+		gamesWonLabel.setFont(new Font("Serif", Font.BOLD, 17));
 
 		compsWon.setText("Competitions won:");
 		compsWon.setFont(new Font("Serif", Font.BOLD, 17));
@@ -50,47 +138,39 @@ public class StatWindow extends JFrame {
 		highScore.setText("Highest gameScore:");
 		highScore.setFont(new Font("Serif", Font.BOLD, 17));
 
-		mostValuableWord.setText("Most valuable word played:");
-		mostValuableWord.setFont(new Font("Serif", Font.BOLD, 17));
+		mostValuableWordLabel.setText("Most valuable word played:");
+		mostValuableWordLabel.setFont(new Font("Serif", Font.BOLD, 17));
 
 		// these are the actual values that will have to be retrieved from the
 		// database somehow
-		playedGamesValue.setText("value");
 		playedGamesValue.setFont(new Font("Serif", Font.PLAIN, 17));
 
-		gamesWonValue.setText("value");
-
 		gamesWonValue.setFont(new Font("Serif", Font.PLAIN, 17));
-		compsWonValue.setText("value");
 		compsWonValue.setFont(new Font("Serif", Font.PLAIN, 17));
-		highScoreValue.setText("value");
-		highScoreValue.setFont(new Font("Serif", Font.PLAIN, 17));
-		mostValuableWordValue.setText("value");
-		mostValuableWordValue.setFont(new Font("Serif", Font.PLAIN, 17));
 
-		// playedGames.setForeground(Color.GRAY);
-		// playedGamesValue.setForeground(Color.GRAY);
-		// gamesWon.setForeground(Color.GRAY);
-		// gamesWonValue.setForeground(Color.GRAY);
-		// compsWon.setForeground(Color.GRAY);
-		// compsWonValue.setForeground(Color.GRAY);
-		// highScore.setForeground(Color.GRAY);
-		// highScoreValue.setForeground(Color.GRAY);
-		// mostValuableWord.setForeground(Color.GRAY);
-		// mostValuableWordValue.setForeground(Color.GRAY);
+		highScoreValue.setFont(new Font("Serif", Font.PLAIN, 17));
+
+		mostValuableWordValue.setFont(new Font("Serif", Font.PLAIN, 17));
 
 		this.add(playedGames);
 
 		this.add(playedGamesValue);
 
-		this.add(gamesWon);
+		this.add(gamesWonLabel);
 		this.add(gamesWonValue);
 		this.add(compsWon);
 		this.add(compsWonValue);
 		this.add(highScore);
 		this.add(highScoreValue);
-		this.add(mostValuableWord);
+		this.add(mostValuableWordLabel);
 		this.add(mostValuableWordValue);
 
+		playedGamesValue.setText(numGamesPlayed);
+		gamesWonValue.setText(gamesWon);
+		compsWonValue.setText(competitionsWon);
+		highScoreValue.setText(highestGameScore);
+		mostValuableWordValue.setText(mostValuableWord);
+
 	}
+
 }
