@@ -7,65 +7,61 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import javax.swing.DefaultListModel;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
+
 import domein.PendingMatch;
 
 @SuppressWarnings("serial")
 public class NotificationWindow extends JFrame {
-	// private String[] listItems;
-
-	// private JScrollPane infoPane = new JScrollPane(infoTextArea);
 	private JLabel title = new JLabel();
 	private JList<PendingMatch> notificationList;
-	private JButton select = new JButton();
-	private DefaultListModel<String> listModel = new DefaultListModel<String>();
-	// private String itemSelected = "";
+	private JButton refresh = new JButton();;
 	private ArrayList<PendingMatch> pendingGames;
 	private MainFrame mainFrame;
+	private int numberOfNotes;
 
 	public NotificationWindow(MainFrame mainFrame) {
 		this.mainFrame = mainFrame;
+		this.numberOfNotes = 0;
 	}
 
 	public void openNotificationWindow() {
 
 		// notificationList.setModel(listModel);
+		this.setPreferredSize(new Dimension(500,500));
 		fillNotificationList();
 		this.setLayout(new BorderLayout());
 
-		notificationList.setPreferredSize(new Dimension(400, 400));
+		notificationList.setPreferredSize(new Dimension(300, 400));
 		this.add(notificationList, BorderLayout.CENTER);
 
-		title.setPreferredSize(new Dimension(50, 100));
-		title.setText("You have : " + listModel.getSize() + " notifications.");
+		title.setPreferredSize(new Dimension(300, 100));
+		title.setText("You have : " + numberOfNotes + " notifications.");
 		this.add(title, BorderLayout.NORTH);
 
 		// this.infoPane.setPreferredSize(new Dimension(100, 200));
 		// this.add(infoPane, BorderLayout.EAST);
 
-		select.addActionListener(new ActionListener() {
+		refresh.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
-				selectClicked();
+				numberOfNotes = fillNotificationList();
+				title.setText("You have : " + numberOfNotes + " notifications.");
 			}
 		});
 
-		select.setText("Select");
-		this.add(select, BorderLayout.SOUTH);
+		refresh.setText("Refresh list");
+		this.add(refresh, BorderLayout.SOUTH);
 
 		this.pack();
 		this.setLocationRelativeTo(null);
 		this.setVisible(true);
-
-	}
-
-	public void selectClicked() {
 
 	}
 
@@ -85,17 +81,19 @@ public class NotificationWindow extends JFrame {
 			public void mousePressed(MouseEvent e) {
 				// TODO Auto-generated method stub
 				PendingMatch input = notificationList.getSelectedValue();
-
-				int reply = JOptionPane.showConfirmDialog(null,
-						"Want to accept this game?", "Game accept",
-						JOptionPane.YES_NO_OPTION);
-				if (reply == JOptionPane.YES_OPTION) {
-					mainFrame.acceptRejectGame("Accepted", 2, input.getGameID());
-				} else {
-					mainFrame.acceptRejectGame("Rejected", 2, input.getGameID());
+				if (input != null) {
+					int reply = JOptionPane.showConfirmDialog(null,
+							"Want to accept this game?", "Game accept",
+							JOptionPane.YES_NO_OPTION);
+					if (reply == JOptionPane.YES_OPTION) {
+						mainFrame.acceptRejectGame("Accepted", 2,
+								input.getGameID());
+					} else {
+						mainFrame.acceptRejectGame("Rejected", 2,
+								input.getGameID());
+					}
 				}
 			}
-
 		});
 		this.repaint();
 		this.revalidate();

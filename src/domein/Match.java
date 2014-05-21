@@ -34,14 +34,15 @@ public class Match implements Observer {
 		this.gameID = gameID;
 		board = new Board();
 		jar = new Jar();
-		this.player = player;		
-		this.myName = myName;
+		this.player = player;
+
 		// Dit is tijdelijk todat je mensen kunt uitdagen
 		if (myName.equals("Spectator")) {
-			myName = "Mike";
+			myName = "mike";
 		}
+
+		this.myName = myName;
 		dbh = DatabaseHandler.getInstance();
-		System.out.println("MIJN NAAMIS: " + myName);
 		String inputName = dbh.opponentName(gameID);
 		String[] splitName = inputName.split("---");
 		if (splitName[0].equals(myName)) {
@@ -67,6 +68,11 @@ public class Match implements Observer {
 
 	// Return the player names
 	public synchronized String getOwnName() {
+		// Dit is tijdelijk todat je mensen kunt uitdagen
+		if (myName.equals("Spectator")) {
+			myName = "mike";
+		}
+		//System.out.println("MIJN NAAM IS: " + myName);
 		return myName;
 	}
 
@@ -132,6 +138,10 @@ public class Match implements Observer {
 	// Uses a separate panel
 	public void loadSpecateGame(GameSpecScreen gameSpecScreen) {
 		this.gameSpec = gameSpecScreen;
+
+		gameField.clearField();
+		board.clearField();
+		player.clearHand();
 
 		// Filling the field
 		ArrayList<String> squares = dbh.squareCheck();
@@ -643,7 +653,7 @@ public class Match implements Observer {
 
 				// Tijdelijke reactie van de tegenstander
 				// *****
-				//\ dbh.updateTurn(maxTurn + 1, gameID, getEnemyName(), 25,
+				// \ dbh.updateTurn(maxTurn + 1, gameID, getEnemyName(), 25,
 				// "Pass");
 
 			} else {
@@ -711,16 +721,17 @@ public class Match implements Observer {
 
 	public void winGame() {
 		int handTileFromTurn = 0;
-		if (dbh.score(gameID, getOwnName()) > dbh.score(gameID, getEnemyName())){
+		if (dbh.score(gameID, getOwnName()) > dbh.score(gameID, getEnemyName())) {
 			handTileFromTurn = maxTurn - 1;
 		} else {
 			handTileFromTurn = maxTurn;
 		}
-		
+
 		int handScore = 0;
 		System.out.println("POT IS LEEG, GEEN NIEUWE LETTERS MEER!");
-		ArrayList<String> handContent = dbh.handContent(gameID, handTileFromTurn);
-		for (String content: handContent){
+		ArrayList<String> handContent = dbh.handContent(gameID,
+				handTileFromTurn);
+		for (String content : handContent) {
 			String[] split = content.split("---");
 			handScore += Integer.parseInt(split[2]);
 		}

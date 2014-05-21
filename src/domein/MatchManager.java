@@ -34,8 +34,7 @@ public class MatchManager {
 		ArrayList<String> games = dbh.pendingGames(wf.getCurrentUsername());
 		for (String game : games) {
 			String[] split = game.split(",");
-			pendingMatchs.add(new PendingMatch(Integer.parseInt(split[0]),
-					Integer.parseInt(split[1]), split[2]));
+			pendingMatchs.add(new PendingMatch(Integer.parseInt(split[0]), split[1]));
 		}
 		return pendingMatchs;
 	}

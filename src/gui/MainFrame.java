@@ -205,7 +205,7 @@ public class MainFrame extends JFrame {
 			String name = JOptionPane.showInputDialog(null,
 					"Please enter your GameID: ");
 			if (name == null || name.equals("")) {
-				int gameID = dbh.createGame(1, "Mike", "Wouter",
+				int gameID = dbh.createGame(1, "mike", "wouter",
 						"openbaar", "EN");
 				wf.startGame(gameID, false, true);
 				System.out.println("GAMEID IS " + gameID);

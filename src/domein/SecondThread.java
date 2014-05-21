@@ -73,7 +73,7 @@ public class SecondThread extends Thread {
 							match.getOwnName());
 				}
 
-				if (gameBegin.equals("Begin")) {
+		//		if (gameBegin.equals("Begin")) {
 					// a loop to see if the turn is swapped
 					try {
 						if (!dbh.getGameStatusValue(gameID).equals("Finished")
@@ -107,11 +107,12 @@ public class SecondThread extends Thread {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-			} else {
-				buttonPanel.setTurn(false);
-				buttonPanel.disableSurrender();
-				running = false;
-			}
+		
+//			} else {
+//				buttonPanel.setTurn(false);
+//				buttonPanel.disableSurrender();
+//				running = false;
+//			}
 		}
 	}
 
