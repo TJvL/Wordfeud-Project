@@ -1,16 +1,13 @@
 package gui;
 
-import javax.swing.JFrame;
-
 import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -18,7 +15,7 @@ import javax.swing.JPanel;
 import datalaag.DatabaseHandler;
 
 @SuppressWarnings("serial")
-public class AccDataWindow extends JFrame {
+public class AccDataWindow extends JDialog{
 	private JPanel buttonPanel = new JPanel();
 	private JPanel labelPanel = new JPanel();
 	private JButton changeName = new JButton();
@@ -32,11 +29,12 @@ public class AccDataWindow extends JFrame {
 	private String dbResponse;
 
 	public void showAccData() {
+		this.setModal(true);
 		createButtonPanel();
 		createLabelPanel();
 
 		this.setResizable(false);
-		this.setTitle(" PlayerName's Statistics");
+		this.setTitle(userNameValue.getText() + " statistics");
 
 		this.add(buttonPanel, BorderLayout.SOUTH);
 		this.add(labelPanel, BorderLayout.CENTER);
@@ -63,10 +61,11 @@ public class AccDataWindow extends JFrame {
 								JOptionPane.QUESTION_MESSAGE);
 				if (!response.equals("")) {
 					System.out.println(response);
-					dbResponse = DatabaseHandler.getInstance().changeUsername(
-							userNameValue.getText(), response);
 					if (response.length() > 2 && response.length() < 16) {
-						if (dbResponse
+						if (DatabaseHandler
+								.getInstance()
+								.changeUsername(userNameValue.getText(),
+										response)
 								.equals("Your username has been succesfully changed")) {
 							DatabaseHandler.getInstance().changeUsername(
 									userNameValue.getText(), response);
@@ -76,7 +75,8 @@ public class AccDataWindow extends JFrame {
 									"ERROR", JOptionPane.WARNING_MESSAGE);
 						}
 					} else {
-						JOptionPane.showMessageDialog(null, "Username must contain 3-15 characters.",
+						JOptionPane.showMessageDialog(null,
+								"Username must contain 3-15 characters.",
 								"ERROR", JOptionPane.WARNING_MESSAGE);
 					}
 				}
