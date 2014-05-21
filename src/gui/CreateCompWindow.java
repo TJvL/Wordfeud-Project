@@ -27,8 +27,6 @@ public class CreateCompWindow extends JFrame {
 	private JLabel maxPlayersLabel = new JLabel();
 	private JLabel gameCreatedLabel = new JLabel();
 
-	private String maxPlayersChosen = new String();
-
 	public void createCompFrame() {
 		this.setTitle("Create Competition");
 		this.setLayout(new BorderLayout());

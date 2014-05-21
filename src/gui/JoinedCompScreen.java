@@ -12,6 +12,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
 
 @SuppressWarnings("serial")
 public class JoinedCompScreen extends JPanel {
@@ -41,7 +42,7 @@ public class JoinedCompScreen extends JPanel {
 
 		scrollPane.setPreferredSize(new Dimension(800, 300));
 		scrollPane
-				.setVerticalScrollBarPolicy(scrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+				.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 
 		listPanel.add(label);
 		listPanel.add(scrollPane);
