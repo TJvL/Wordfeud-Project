@@ -16,9 +16,9 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import datalaag.DatabaseHandler;
 import domein.ActiveMatch;
 
+@SuppressWarnings("serial")
 public class PlayerScreen extends JPanel {
 	private MainFrame mainFrame;
 	private ArrayList<ActiveMatch> activeGames;

@@ -13,6 +13,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+@SuppressWarnings("serial")
 public class AdminAccScreen extends JPanel {
 	private AccDataWindow accdatawindow;
 	private AdminCreatePlayerWindow admincreateplayerwindow;
@@ -23,7 +24,6 @@ public class AdminAccScreen extends JPanel {
 
 	public AdminAccScreen(MainFrame mainFrame) {
 		accdatawindow = new AccDataWindow();
-		admincreateplayerwindow = new AdminCreatePlayerWindow();
 		this.mainFrame = mainFrame;
 		
 		this.setLayout(new BorderLayout());
@@ -70,6 +70,7 @@ public class AdminAccScreen extends JPanel {
 			}});
 		addAccButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent arg0) {
+				admincreateplayerwindow = new AdminCreatePlayerWindow();
 				admincreateplayerwindow.ShowAdminCreatePlayer();
 			}});
 		compScreenButton.addActionListener(new ActionListener(){

@@ -1,8 +1,6 @@
 package gui;
 
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-
+@SuppressWarnings("serial")
 public class AdminMenuBar extends StandardMenuBar{
 
 	public AdminMenuBar(MainFrame mainFrame) {

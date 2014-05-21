@@ -7,6 +7,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
+@SuppressWarnings("serial")
 public class StartMenuBar extends JMenuBar{
 	public StartMenuBar(){
 		JMenu optionsMenu = new JMenu("Options");

@@ -10,14 +10,15 @@ import java.util.ArrayList;
 
 import javax.swing.Box;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import datalaag.DatabaseHandler;
  
+
 public class GameChatPanel extends JPanel implements ActionListener {
+
 	private JScrollPane inputScrollPane;
 	private JScrollPane chatScrollPane;
 	private JTextArea chatArea;
@@ -29,9 +30,6 @@ public class GameChatPanel extends JPanel implements ActionListener {
 	private int gameID;
 	private String latestUpdatedMessageTimeDate;
 	private String latestUpdatedMessage;
-	private boolean running;
-
-	private Thread runner;
 
 	private DatabaseHandler dbh = DatabaseHandler.getInstance();
 
