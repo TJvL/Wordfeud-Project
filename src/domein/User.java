@@ -206,6 +206,8 @@ public class User {
 	public ArrayList<String> getRoles() {
 		ArrayList<String> roles = DatabaseHandler.getInstance().getRole(
 				username);
+		roles.add("Spectator");
+		
 		return roles;
 	}
 }

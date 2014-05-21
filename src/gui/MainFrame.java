@@ -122,6 +122,7 @@ public class MainFrame extends JFrame {
 
 	public void setModScreen() {
 		this.setContentPane(modscreen);
+		modscreen.fillList();
 		wf.stopThread();
 		revalidate();
 	}
