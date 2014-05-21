@@ -45,7 +45,7 @@ public class MainFrame extends JFrame {
 		gameScreen = new GameScreen();
 		specScreen = new GameSpecScreen();
 		joincompscreen = new JoinCompScreen();
-		joinedcompscreen = new JoinedCompScreen();
+		joinedcompscreen = new JoinedCompScreen(this);
 		adminaccscreen = new AdminAccScreen(this);
 		admincompscreen = new AdminCompScreen(this);
 		modscreen = new ModScreen();
@@ -104,6 +104,12 @@ public class MainFrame extends JFrame {
 
 	public void setJoinedCompScreen() {
 		this.setContentPane(joinedcompscreen);
+		/**
+		 * TIJDELIJK LAAD HET ALLEEN COMPETITIE 1 - DIT MOET ERGENS VANDAAN
+		 * WORDEN OPGEVRAAGD
+		 **/
+		wf.getParticipantListAction(1);
+		joinedcompscreen.fillCompList(wf.getParticipantListAction(1));
 		wf.stopThread();
 		revalidate();
 	}
@@ -214,8 +220,8 @@ public class MainFrame extends JFrame {
 			String name = JOptionPane.showInputDialog(null,
 					"Please enter your GameID: ");
 			if (name == null || name.equals("")) {
-				int gameID = dbh.createGame(1, "mike", "wouter",
-						"openbaar", "EN");
+				int gameID = dbh.createGame(1, "mike", "wouter", "openbaar",
+						"EN");
 				wf.startGame(gameID, false, true);
 				System.out.println("GAMEID IS " + gameID);
 			} else if (name.equals("spec")) {
@@ -235,6 +241,11 @@ public class MainFrame extends JFrame {
 				}
 			}
 		}
+	}
+
+	public void challengePlayer(int competitionID, String username,
+			String opponent, String language) {
+		wf.challengePlayer(competitionID, username, opponent, language);
 	}
 
 	// Returns the gameScreen

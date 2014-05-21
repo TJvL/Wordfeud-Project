@@ -19,10 +19,8 @@ public class WordFeud {
 	}
 
 	/*
-<<<<<<< HEAD
-	 * Gets the user from the player DOESNT WORK WELL
-=======
-	 * // A method to initialize the Thread public void initializeThread() {
+	 * <<<<<<< HEAD Gets the user from the player DOESNT WORK WELL ======= // A
+	 * method to initialize the Thread public void initializeThread() {
 	 * secondThread = new SecondThread(framePanel.getGameScreen()
 	 * .getGameChatPanel(), framePanel.getGameScreen() .getButtonPanel(),
 	 * framePanel.getGameScreen().getScorePanel()); secondThread.start(); }
@@ -34,15 +32,14 @@ public class WordFeud {
 	}
 
 	/*
-	 * Returns the user from the player DOESNT WORK WELL
->>>>>>> refs/remotes/origin/master-development
+	 * Returns the user from the player DOESNT WORK WELL >>>>>>>
+	 * refs/remotes/origin/master-development
 	 * ****************************************
 	 */
 	public Player getUserPlayer() {
 		return currentUser.getPlayer();
 	}
-	
-	
+
 	public User getCurrentUser() {
 		return currentUser;
 	}
@@ -67,7 +64,9 @@ public class WordFeud {
 	}
 
 	public boolean doChangeRoleAction(String result) {
-		return currentUser.changeRole(result);}
+		return currentUser.changeRole(result);
+	}
+
 	/*
 	 * param uitleg: summary = de naam of omschrijving die in alle lijsten terug
 	 * komt als "naam". endDate = de eind datum van de competitie.
@@ -81,7 +80,6 @@ public class WordFeud {
 				minParticipants, maxParticipants);
 	}
 
-
 	public boolean doJoinCompAction(int compID) {
 		return compMan.joinCompetition(compID, currentUser.getUsername());
 	}
@@ -90,7 +88,7 @@ public class WordFeud {
 		compMan.loadAllCompetitions(currentUser.getUsername());
 	}
 
-	public ArrayList<String> getParticipantListAction(int compID) {
+	public ArrayList<CompPlayer> getParticipantListAction(int compID) {
 		return compMan.getParticipantList(compID);
 	}
 
@@ -106,10 +104,10 @@ public class WordFeud {
 		return currentUser.getUsername();
 	}
 
-
 	public String getCurrentPassword() {
 		return currentUser.getPassword();
 	}
+
 	// Returns active games
 	public ArrayList<ActiveMatch> getActiveGames() {
 		return matchManager.getActiveMatches();
@@ -140,5 +138,12 @@ public class WordFeud {
 	public void acceptRejectGame(String string, int competionID, int gameID) {
 		matchManager.acceptRejectGame(competionID, gameID,
 				getCurrentUsername(), string);
+	}
+
+	// Method to start a game
+	public void challengePlayer(int competitionID, String username,
+			String opponent, String language) {
+		matchManager.challengePlayer(competitionID, username, opponent,
+				language);
 	}
 }
