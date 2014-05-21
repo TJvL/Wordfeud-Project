@@ -7,6 +7,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -18,25 +20,23 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import datalaag.DatabaseHandler;
+import domein.PendingMatch;
 
 @SuppressWarnings("serial")
 public class NotificationWindow extends JFrame {
-	//private String[] listItems;
+	// private String[] listItems;
 
-	private JTextArea infoTextArea = new JTextArea();
-	//private JScrollPane infoPane = new JScrollPane(infoTextArea);
+	// private JScrollPane infoPane = new JScrollPane(infoTextArea);
 	private JLabel title = new JLabel();
-	private JList<String> notificationList;
+	private JList<PendingMatch> notificationList;
 	private JButton select = new JButton();
 	private DefaultListModel<String> listModel = new DefaultListModel<String>();
-	//private String itemSelected = "";
-	private ArrayList<String> pendingGames;
-	private DatabaseHandler dbh;
+	// private String itemSelected = "";
+	private ArrayList<PendingMatch> pendingGames;
 	private MainFrame mainFrame;
 
 	public NotificationWindow(MainFrame mainFrame) {
 		this.mainFrame = mainFrame;
-		dbh = DatabaseHandler.getInstance();
 	}
 
 	public void openNotificationWindow() {
@@ -52,8 +52,8 @@ public class NotificationWindow extends JFrame {
 		title.setText("You have : " + listModel.getSize() + " notifications.");
 		this.add(title, BorderLayout.NORTH);
 
-		//this.infoPane.setPreferredSize(new Dimension(100, 200));
-		//this.add(infoPane, BorderLayout.EAST);
+		// this.infoPane.setPreferredSize(new Dimension(100, 200));
+		// this.add(infoPane, BorderLayout.EAST);
 
 		select.addActionListener(new ActionListener() {
 			@Override
@@ -77,32 +77,32 @@ public class NotificationWindow extends JFrame {
 	}
 
 	public synchronized int fillNotificationList() {
-		pendingGames = dbh.pendingGames(mainFrame.getName());
-		String[] games = new String[pendingGames.size()];
+		pendingGames = mainFrame.getPendingGames();
+		PendingMatch[] games = new PendingMatch[pendingGames.size()];
 		for (int i = 0; i < pendingGames.size(); i++) {
 			games[i] = pendingGames.get(i);
 		}
 		if (notificationList != null) {
 			this.remove(notificationList);
 		}
-		notificationList = new JList<String>(games);
+		notificationList = new JList<PendingMatch>(games);
 		this.add(notificationList, BorderLayout.CENTER);
 		notificationList.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
 				// TODO Auto-generated method stub
-				String input = notificationList.getSelectedValue();
-				String[] splits = input.split(",");
-				int gameID = Integer.parseInt(splits[0]);
+				PendingMatch input = notificationList.getSelectedValue();
+
 				int reply = JOptionPane.showConfirmDialog(null,
 						"Want to accept this game?", "Game accept",
 						JOptionPane.YES_NO_OPTION);
 				if (reply == JOptionPane.YES_OPTION) {
-					dbh.acceptRejectGame(1, gameID, mainFrame.getName(), "Accepted");
+					mainFrame.acceptRejectGame("Accepted", 2, input.getGameID());
 				} else {
-					dbh.acceptRejectGame(1, gameID, mainFrame.getName(), "Rejected");
+					mainFrame.acceptRejectGame("Rejected", 2, input.getGameID());
 				}
 			}
+
 		});
 		this.repaint();
 		this.revalidate();

@@ -95,8 +95,13 @@ public class Match implements Observer {
 			System.out.println("NULLPOINTER");
 		}
 	}
-
-	// Mythod for the thread to see if it is my turn
+	
+	// Method to get maxTurn
+	public synchronized int getMaxTurn(){
+		return maxTurn;
+	}
+	
+	// Method for the thread to see if it is my turn
 	public synchronized boolean getMyTurn() {
 		return myTurn;
 	}

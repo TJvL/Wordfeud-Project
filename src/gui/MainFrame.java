@@ -1,12 +1,14 @@
 package gui;
 
 import java.awt.Dimension;
+import java.util.ArrayList;
 import java.util.Observer;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import datalaag.DatabaseHandler;
+import domein.PendingMatch;
 import domein.WordFeud;
 
 @SuppressWarnings("serial")
@@ -76,7 +78,7 @@ public class MainFrame extends JFrame {
 
 	public void setPlayerScreen() {
 		this.setContentPane(playerscreen);
-		playerscreen.setGameList(this.getName());
+		playerscreen.setGameList(wf.myActiveGames(), this.getName());
 		wf.stopThread();
 		revalidate();
 	}
@@ -88,7 +90,7 @@ public class MainFrame extends JFrame {
 	}
 
 	public void setSpecScreen() {
-		specscreen.setGameList();
+		specscreen.setGameList(wf.getActiveGames());
 		this.setContentPane(specscreen);
 		wf.stopThread();
 		revalidate();
@@ -257,9 +259,9 @@ public class MainFrame extends JFrame {
 	public synchronized void updateGUI() {
 		playerMenuBar.updateNotificationList();
 		if (this.getContentPane() instanceof PlayerScreen) {
-			playerscreen.setGameList(this.getName());
+			playerscreen.setGameList(wf.myActiveGames(), this.getName());
 		} else if (this.getContentPane() instanceof SpecScreen) {
-			specscreen.setGameList();
+			specscreen.setGameList(wf.getActiveGames());
 		}
 	}
 
@@ -270,9 +272,20 @@ public class MainFrame extends JFrame {
 		guiThread.start();
 	}
 
+	// Stops the Thread
 	public void stopThread() {
 		if (guiThread != null) {
 			guiThread.setRunning(false);
 		}
+	}
+	
+	// Returns a list of pending Games
+	public ArrayList<PendingMatch> getPendingGames(){
+		return wf.getPendingGames();
+	}
+
+	// Method to accept/reject games
+	public void acceptRejectGame(String string, int competionID, int gameID) {
+		wf.acceptRejectGame(string, competionID, gameID);
 	}
 }

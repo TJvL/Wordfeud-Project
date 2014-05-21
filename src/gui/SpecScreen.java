@@ -19,6 +19,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import datalaag.DatabaseHandler;
+import domein.ActiveMatch;
 
 @SuppressWarnings("serial")
 public class SpecScreen extends JPanel {
@@ -30,10 +31,8 @@ public class SpecScreen extends JPanel {
 	private JPanel spectatorScreenTextareaPanel;
 
 	private JButton selectGame;
-	private DefaultListModel<String> myListModel;
-	private JList<String> activeGamesList;
-	private ArrayList<String> activeGames;
-	private DatabaseHandler dbh;
+	private JList<ActiveMatch> activeGamesList;
+	private ArrayList<ActiveMatch> activeGames;
 	private MainFrame mainFrame;
 	private int storeLastClickGameID;
 	private int clickCount = 0;
@@ -45,14 +44,12 @@ public class SpecScreen extends JPanel {
 		myTextArea = new JTextArea();
 		spectatorScreenButtonPanel = new JPanel();
 		spectatorScreenTextareaPanel = new JPanel();
-		myListModel = new DefaultListModel<String>();
-		dbh = DatabaseHandler.getInstance();
 	}
 
 	// Filling the list with games from then Database
-	public synchronized void setGameList() {
-		activeGames = dbh.spectateList();
-		String[] games = new String[activeGames.size()];
+	public synchronized void setGameList(ArrayList<ActiveMatch> arrayList) {
+		this.activeGames = arrayList;
+		ActiveMatch[] games = new ActiveMatch[activeGames.size()];
 		for (int i = 0; i < activeGames.size(); i++) {
 			games[i] = activeGames.get(i);
 		}
@@ -68,19 +65,18 @@ public class SpecScreen extends JPanel {
 	// Creating the gui to show the list
 	// Adding a actionlistener
 	// When a game is pressed it will trigger the mainFram
-	public synchronized void createGamesList(String games[]) {
+	public synchronized void createGamesList(ActiveMatch[] games) {
 		spectatorScreenListPanel = new JPanel();
-		activeGamesList = new JList<String>(games);
+		activeGamesList = new JList<ActiveMatch>(games);
 		spectatorScreenListPanel.setLayout(new BoxLayout(
 				spectatorScreenListPanel, BoxLayout.Y_AXIS));
 		activeGamesList.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
 				// TODO Auto-generated method stub
-				String input = activeGamesList.getSelectedValue();
+				ActiveMatch input = activeGamesList.getSelectedValue();
 				if (input != null) {
-					String[] splits = input.split("---");
-					int gameID = Integer.parseInt(splits[0]);
+					int gameID = input.getGameID();
 					if (gameID != storeLastClickGameID) {
 						clickCount = 0;
 						storeLastClickGameID = gameID;

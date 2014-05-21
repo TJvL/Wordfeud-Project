@@ -37,12 +37,13 @@ public class SecondThread extends Thread {
 	public void run() {
 
 		// While running it will run
-		while (running) {		
-			if (match != null) {			
+		while (running) {
+			if (match != null) {
 				running = true;
 				// Gets the gameID;
+				match.getMaxTurnID();
 				int gameID = match.getGameID();
-			//	System.out.println("LOOK AT ME - THREAD " + gameID);
+				// System.out.println("LOOK AT ME - THREAD " + gameID);
 				// Setting the scores
 				scorePanel
 						.setEnemyScore(dbh.score(gameID, match.getEnemyName()));
@@ -61,40 +62,54 @@ public class SecondThread extends Thread {
 
 				// Update chat
 				chatPanel.checkForMessages();
-				
-				// a loop to see if the turn is swapped 
-				try {
-					if (!dbh.getGameStatusValue(gameID).equals("Finished")
-							&& !dbh.getGameStatusValue(gameID).equals(
-									"Resigned")) {
-						match.getMaxTurnID();
-						if (match.getMyTurn()) {
-							buttonPanel.setTurn(true);
-							if (turnSwap) {
-								match.updateField();
+
+				String gameBegin;
+				if (match.getMyTurn()) {
+					gameBegin = dbh.turnValue(gameID, match.getMaxTurn(),
+							match.getOwnName());
+				} else {
+					gameBegin = dbh.turnValue(gameID, match.getMaxTurn(),
+							match.getOwnName());
+				}
+
+				if (gameBegin.equals("Begin")) {
+					// a loop to see if the turn is swapped
+					try {
+						if (!dbh.getGameStatusValue(gameID).equals("Finished")
+								&& !dbh.getGameStatusValue(gameID).equals(
+										"Resigned")) {
+							if (match.getMyTurn()) {
+								buttonPanel.setTurn(true);
+								if (turnSwap) {
+									match.updateField();
+								}
+								turnSwap = false;
+							} else {
+								// System.out.println("NIET MIJN BEURT");
+								buttonPanel.setTurn(false);
+								turnSwap = true;
 							}
-							turnSwap = false;
 						} else {
-							// System.out.println("NIET MIJN BEURT");
 							buttonPanel.setTurn(false);
-							turnSwap = true;
+							buttonPanel.disableSurrender();
+							running = false;
 						}
-					} else {
-						buttonPanel.setTurn(false);
-						buttonPanel.disableSurrender();
-						running = false;
+
+						scorePanel.updatePanel();
+					} catch (NullPointerException e) {
+
 					}
-
-					scorePanel.updatePanel();
-				} catch (NullPointerException e) {
-
-				}		
-			}
-			try {
-				Thread.sleep(2000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				}
+				try {
+					Thread.sleep(2000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} else {
+				buttonPanel.setTurn(false);
+				buttonPanel.disableSurrender();
+				running = false;
 			}
 		}
 	}

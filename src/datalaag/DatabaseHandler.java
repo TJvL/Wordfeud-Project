@@ -48,7 +48,7 @@ public class DatabaseHandler
 		}
 	}
 
-	public synchronized void connection()
+	private synchronized void connection()
 	{
 		int retry = 0;
 		boolean connected = false;
@@ -69,7 +69,7 @@ public class DatabaseHandler
 		}
 	}
 
-	public synchronized void closeConnection() // closes the connection to the
+	private synchronized void closeConnection() // closes the connection to the
 												// database
 	{
 		try
@@ -1630,23 +1630,23 @@ public class DatabaseHandler
 		try
 		{
 			statement = con
-					.prepareStatement("SELECT id, account_naam_uitdager, account_naam_tegenstander, competitie_id FROM spel WHERE (account_naam_uitdager = '"
-							+ username + "' OR account_naam_tegenstander = '"
-							+ username + "') AND toestand_type = 'Playing'");
+					.prepareStatement("SELECT spel.id, spel.account_naam_uitdager, spel.account_naam_tegenstander, competitie.omschrijving FROM spel LEFT JOIN competitie ON spel.competitie_id = competitie.id WHERE (account_naam_uitdager = '" + username + "' OR account_naam_tegenstander = '" + username + "') AND toestand_type = 'Playing'");
 
 			result = statement.executeQuery();
-
+	
 			while (result.next())
 			{
+				//System.out.println(result.getInt(1) + "," + result.getString(2) + " VS " + result.getString(3) + " From competition: "
+				//		+ competitionName(result.getInt(4)) + " TOESTAND TIJDELIJK OP REQUEST - DBH");
 				if (result.getString(2).equals(username))
 				{
-					activeGames.add(result.getInt(1) + ", " + result.getString(2) + " VS " + result.getString(3) + " From competition: "
-							+ result.getInt(4));
+					activeGames.add(result.getInt(1) + "," + result.getString(2) + " VS " + result.getString(3) + " From competition: "
+							+ result.getString(4));
 				}
 				else
 				{
-					activeGames.add(result.getInt(1) + ", " + result.getString(3) + " VS " + result.getString(2) + " From competition: "
-							+ result.getInt(4));
+					activeGames.add(result.getInt(1) + "," + result.getString(3) + " VS " + result.getString(2) + " From competition: "
+							+ result.getString(4));
 				}
 			}
 			result.close();
@@ -1661,7 +1661,7 @@ public class DatabaseHandler
 		}
 		return activeGames;
 	}
-
+	
 	public synchronized ArrayList<String> pendingGames(String username)
 	{
 		connection();
@@ -1670,8 +1670,7 @@ public class DatabaseHandler
 		try
 		{
 			statement = con
-					.prepareStatement("SELECT id, account_naam_uitdager, account_naam_tegenstander, competitie_id FROM spel WHERE account_naam_tegenstander = '"
-							+ username + "' AND reaktie_type = 'Unknown'");
+					.prepareStatement("SELECT spel.id, spel.account_naam_uitdager, spel.account_naam_tegenstander, competitie.omschrijving FROM spel LEFT JOIN competitie ON spel.competitie_id = competitie.id WHERE account_naam_tegenstander = '" + username + "' AND reaktie_type = 'Unknown'");
 
 			result = statement.executeQuery();
 
@@ -1679,13 +1678,13 @@ public class DatabaseHandler
 			{
 				if (result.getString(2).equals(username))
 				{
-					pendingGames.add(result.getInt(1) + ", " + result.getString(2) + " VS " + result.getString(3) + " From competition: "
-							+ result.getInt(4));
+					pendingGames.add(result.getInt(1) + "," + result.getString(2) + " VS " + result.getString(3) + " from competition: "
+							+  result.getString(4));
 				}
 				else
 				{
-					pendingGames.add(result.getInt(1) + ", " + result.getString(3) + " VS " + result.getString(2) + " From competition: "
-							+ result.getInt(4));
+					pendingGames.add(result.getInt(1) + "," + result.getString(3) + " VS " + result.getString(2) + " from competition: "
+							+  result.getString(4));
 				}
 			}
 			result.close();
@@ -1708,13 +1707,13 @@ public class DatabaseHandler
 		
 		try
 		{
-			statement = con.prepareStatement("SELECT id, account_naam_uitdager, account_naam_tegenstander FROM spel WHERE toestand_type = 'Playing' AND zichtbaarheid_type = 'openbaar' ORDER BY id ASC");
+			statement = con.prepareStatement("SELECT spel.id, spel.account_naam_uitdager, spel.account_naam_tegenstander, competitie.omschrijving FROM spel LEFT JOIN competitie ON spel.competitie_id = competitie.id WHERE toestand_type = 'Playing' AND zichtbaarheid_type = 'openbaar' ORDER BY id ASC");
 			
 			result = statement.executeQuery();
 			
 			while(result.next())
 			{
-				spectateGames.add(result.getInt(1) + "---" + result.getString(2) + " VS " + result.getString(3));
+				spectateGames.add(result.getInt(1) + "," + result.getString(2) + " VS " + result.getString(3) + " in competition " + result.getString(4));
 			}
 			result.close();
 			statement.close();
