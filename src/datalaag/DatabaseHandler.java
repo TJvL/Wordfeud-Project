@@ -1749,7 +1749,7 @@ public class DatabaseHandler
 		return userInfo;
 	}
 	
-	public synchronized String changeUserInfo(String oldUsername, String newUsername, String password)
+	public synchronized String changeUsername(String oldUsername, String newUsername)
 	{
 		connection();
 		String changeResult = "The username: " + newUsername + " is already taken";
@@ -1764,18 +1764,40 @@ public class DatabaseHandler
 			{
 				try
 				{
-				statement = con.prepareStatement("UPDATE account SET naam = '" + newUsername + "', wachtwoord = '" + password + "' WHERE naam = '" + oldUsername + "'");
+				statement = con.prepareStatement("UPDATE account SET naam = '" + newUsername + "' WHERE naam = '" + oldUsername + "'");
 
 				statement.executeUpdate();
 				
 				statement.close();
-				changeResult = "Your username and/or password has been succesfully been changed";
+				changeResult = "Your username has been succesfully changed";
 				} catch (SQLException e)
 				{
 					e.printStackTrace();			
 					System.out.println("QUERRY ERROR");
 				}
 			}
+
+		} catch (SQLException e)
+		{
+			e.printStackTrace();			
+			System.out.println("QUERRY ERROR");
+		}finally{closeConnection();}
+		return changeResult;
+	}
+	
+	public synchronized String changePassword(String username, String password)
+	{
+		connection();
+		String changeResult = null;
+
+		try
+		{
+			statement = con.prepareStatement("UPDATE account SET wachtwoord = '" + password + "' WHERE naam = '" + username + "'");
+		
+			statement.executeUpdate();
+				
+			statement.close();
+			changeResult = "Your password has been succesfully changed";
 
 		} catch (SQLException e)
 		{

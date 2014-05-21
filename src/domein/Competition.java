@@ -65,7 +65,7 @@ public class Competition {
 	public ArrayList<String> getParticipants(){
 		return participants;
 	}
-
+	
 	public void updateParticipants() {
 		this.participants = DatabaseHandler.getInstance().peopleInCompetition(compID);
 		amountParticipants = participants.size();

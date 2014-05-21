@@ -63,16 +63,6 @@ public class User {
 		return DatabaseHandler.getInstance().getPassword(username);
 	}
 
-	public void changeUsername(String username) {
-		DatabaseHandler.getInstance().changeUserInfo(getUsername(), username,
-				getPassword());
-	}
-
-	public void changePassword(String password) {
-		DatabaseHandler.getInstance().changeUserInfo(getUsername(),
-				getUsername(), password);
-	}
-
 	/*
 	 * use the changeRole() method for changing the role of the user.
 	 */
