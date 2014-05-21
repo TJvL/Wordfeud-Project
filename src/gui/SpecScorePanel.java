@@ -8,6 +8,7 @@ import java.awt.Graphics;
 import javax.swing.JPanel;
 
 // A panel so show the score during spectating
+@SuppressWarnings("serial")
 public class SpecScorePanel extends JPanel{
 	private String name;
 	private int maxScore;

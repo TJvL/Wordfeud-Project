@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JMenuItem;
 
+@SuppressWarnings("serial")
 public class PlayerMenuBar extends StandardMenuBar {
 
 	public PlayerMenuBar(final MainFrame mainFrame) {

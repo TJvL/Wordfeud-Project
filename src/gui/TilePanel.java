@@ -9,6 +9,7 @@ import javax.swing.JPanel;
 
 import domein.Tile;
 
+@SuppressWarnings("serial")
 public class TilePanel extends JPanel {
 	private int size = 33;
 	private static final int PANEL_SIZE = 45;

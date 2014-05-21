@@ -13,6 +13,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+@SuppressWarnings("serial")
 public class AdminAccScreen extends JPanel {
 	private AccDataWindow accdatawindow;
 	private AdminCreatePlayerWindow admincreateplayerwindow;

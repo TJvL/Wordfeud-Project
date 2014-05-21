@@ -7,6 +7,7 @@ import java.awt.GridLayout;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
+@SuppressWarnings("serial")
 public class StatWindow extends JFrame {
 
 	private JLabel playedGames = new JLabel();

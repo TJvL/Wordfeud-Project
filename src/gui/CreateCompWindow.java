@@ -6,12 +6,10 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
 @SuppressWarnings("serial")
@@ -28,8 +26,6 @@ public class CreateCompWindow extends JFrame {
 	private JLabel endDateLabel = new JLabel();
 	private JLabel maxPlayersLabel = new JLabel();
 	private JLabel gameCreatedLabel = new JLabel();
-
-	private String maxPlayersChosen = new String();
 
 	public void createCompFrame() {
 		this.setTitle("Create Competition");

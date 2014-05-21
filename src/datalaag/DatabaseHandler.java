@@ -881,9 +881,7 @@ public class DatabaseHandler
 		finally{ closeConnection();}
 	}
 
-	public synchronized ArrayList<String> fetchCompetition(String username)// seems
-																			// to
-																			// work
+	public synchronized ArrayList<String> fetchJoinedCompetitions(String username)
 	{
 		connection();
 		ArrayList<String> myCompetitions = new ArrayList<String>();
@@ -891,7 +889,7 @@ public class DatabaseHandler
 		try
 		{
 			statement = con
-					.prepareStatement("SELECT * FROM competitie LEFT JOIN deelnemer ON competitie.id = deelnemer.competitie_id WHERE deelnemer.account_naam LIKE '"
+					.prepareStatement("SELECT id, account_naam_eigenaar, `start`, einde, omschrijving, minimum_aantal_deelnemers, maximum_aantal_deelnemers FROM competitie LEFT JOIN deelnemer ON competitie.id = deelnemer.competitie_id WHERE deelnemer.account_naam LIKE '"
 							+ username + "'");
 
 			result = statement.executeQuery();
@@ -907,13 +905,39 @@ public class DatabaseHandler
 		} catch (SQLException e)
 		{
 			e.printStackTrace();
+		} finally{closeConnection();}
+		return myCompetitions;
+	}
+	
+	public synchronized ArrayList<String> fetchAllCompetitions(String username){
+		connection();
+		ArrayList<String> competitions = new ArrayList<String>();
+
+		try
+		{
+			statement = con
+					.prepareStatement("SELECT id, account_naam_eigenaar, `start`, einde, omschrijving, minimum_aantal_deelnemers, maximum_aantal_deelnemers FROM competitie LEFT JOIN deelnemer ON competitie.id = deelnemer.competitie_id WHERE NOT EXISTS ( SELECT * FROM competitie LEFT JOIN deelnemer ON competitie.id = deelnemer.competitie_id WHERE deelnemer.account_naam LIKE '" + username + "') GROUP BY id");
+
+			result = statement.executeQuery();
+
+			while (result.next())
+			{
+				competitions.add(result.getInt(1) + "---" + result.getString(2) + "---"
+						+ result.getTimestamp(3).toString() + "---" + result.getTimestamp(4).toString() + "---"
+						+ result.getString(5) + "---" + result.getInt(6) + "---" + result.getInt(7));
+			}
+			result.close();
+			statement.close();
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
 		} finally
 		{
 			closeConnection();
 		}
-		return myCompetitions;
+		return competitions;
 	}
-
+	
 	public synchronized void createJar(int gameID, String language)
 	{
 		connection();
@@ -1600,32 +1624,7 @@ public class DatabaseHandler
 		}
 		return compJoiners;
 	}
-	
-	public synchronized int numberOfPeopleInCompetition(int compID)
-	{
-		connection();
-		int numOfPeopleInCompetition= 0;
 
-		try
-		{
-			statement = con.prepareStatement("SELECT count(account_naam) FROM deelnemer WHERE competitie_id = '" + compID + "'");
-			
-			result = statement.executeQuery();
-			
-			if(result.next())
-			{
-				numOfPeopleInCompetition = result.getInt(2);
-			}
-			result.close();
-			statement.close();
-		} catch (SQLException e)
-		{
-			e.printStackTrace();
-			System.out.println("QUERRY ERROR!!!!");
-		}
-		finally{closeConnection();}
-		return numOfPeopleInCompetition;
-	}
 
 	public synchronized ArrayList<String> activeGames(String username)
 	{
@@ -1635,23 +1634,23 @@ public class DatabaseHandler
 		try
 		{
 			statement = con
-					.prepareStatement("SELECT id, account_naam_uitdager, account_naam_tegenstander, competitie_id FROM spel WHERE (account_naam_uitdager = '"
-							+ username + "' OR account_naam_tegenstander = '"
-							+ username + "') AND toestand_type = 'Playing'");
+					.prepareStatement("SELECT spel.id, spel.account_naam_uitdager, spel.account_naam_tegenstander, competitie.omschrijving FROM spel LEFT JOIN competitie ON spel.competitie_id = competitie.id WHERE (account_naam_uitdager = '" + username + "' OR account_naam_tegenstander = '" + username + "') AND toestand_type = 'Playing'");
 
 			result = statement.executeQuery();
-
+	
 			while (result.next())
 			{
+				//System.out.println(result.getInt(1) + "," + result.getString(2) + " VS " + result.getString(3) + " From competition: "
+				//		+ competitionName(result.getInt(4)) + " TOESTAND TIJDELIJK OP REQUEST - DBH");
 				if (result.getString(2).equals(username))
 				{
-					activeGames.add(result.getInt(1) + ", " + result.getString(2) + " VS " + result.getString(3) + " From competition: "
-							+ result.getInt(4));
+					activeGames.add(result.getInt(1) + "," + result.getString(2) + " VS " + result.getString(3) + " From competition: "
+							+ result.getString(4));
 				}
 				else
 				{
-					activeGames.add(result.getInt(1) + ", " + result.getString(3) + " VS " + result.getString(2) + " From competition: "
-							+ result.getInt(4));
+					activeGames.add(result.getInt(1) + "," + result.getString(3) + " VS " + result.getString(2) + " From competition: "
+							+ result.getString(4));
 				}
 			}
 			result.close();
@@ -1666,7 +1665,7 @@ public class DatabaseHandler
 		}
 		return activeGames;
 	}
-
+	
 	public synchronized ArrayList<String> pendingGames(String username)
 	{
 		connection();
@@ -1675,8 +1674,7 @@ public class DatabaseHandler
 		try
 		{
 			statement = con
-					.prepareStatement("SELECT id, account_naam_uitdager, account_naam_tegenstander, competitie_id FROM spel WHERE account_naam_tegenstander = '"
-							+ username + "' AND toestand_type = 'Request'");
+					.prepareStatement("SELECT spel.id, spel.account_naam_uitdager, spel.account_naam_tegenstander, competitie.omschrijving FROM spel LEFT JOIN competitie ON spel.competitie_id = competitie.id WHERE account_naam_tegenstander = '" + username + "' AND reaktie_type = 'Unknown'");
 
 			result = statement.executeQuery();
 
@@ -1684,13 +1682,13 @@ public class DatabaseHandler
 			{
 				if (result.getString(2).equals(username))
 				{
-					pendingGames.add(result.getInt(1) + ", " + result.getString(2) + " VS " + result.getString(3) + " From competition: "
-							+ result.getInt(4));
+					pendingGames.add(result.getInt(1) + "," + result.getString(2) + " VS " + result.getString(3) + " from competition: "
+							+  result.getString(4));
 				}
 				else
 				{
-					pendingGames.add(result.getInt(1) + ", " + result.getString(3) + " VS " + result.getString(2) + " From competition: "
-							+ result.getInt(4));
+					pendingGames.add(result.getInt(1) + "," + result.getString(3) + " VS " + result.getString(2) + " from competition: "
+							+  result.getString(4));
 				}
 			}
 			result.close();
@@ -1713,13 +1711,13 @@ public class DatabaseHandler
 		
 		try
 		{
-			statement = con.prepareStatement("SELECT id, account_naam_uitdager, account_naam_tegenstander FROM spel WHERE toestand_type = 'Playing' AND zichtbaarheid_type = 'openbaar' ORDER BY id ASC");
+			statement = con.prepareStatement("SELECT spel.id, spel.account_naam_uitdager, spel.account_naam_tegenstander, competitie.omschrijving FROM spel LEFT JOIN competitie ON spel.competitie_id = competitie.id WHERE toestand_type = 'Playing' AND zichtbaarheid_type = 'openbaar' ORDER BY id ASC");
 			
 			result = statement.executeQuery();
 			
 			while(result.next())
 			{
-				spectateGames.add(result.getInt(1) + "---" + result.getString(2) + " VS " + result.getString(3));
+				spectateGames.add(result.getInt(1) + "," + result.getString(2) + " VS " + result.getString(3) + " in competition " + result.getString(4));
 			}
 			result.close();
 			statement.close();
@@ -1730,6 +1728,7 @@ public class DatabaseHandler
 		}finally{closeConnection();}
 		return spectateGames;
 	}
+	
 	
 	public synchronized ArrayList<String> userInfo(String username)
 	{
