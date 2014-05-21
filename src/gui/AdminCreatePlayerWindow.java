@@ -8,7 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
-import javax.swing.JFrame;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -19,7 +19,7 @@ import javax.swing.JTextField;
 import datalaag.DatabaseHandler;
 	
 @SuppressWarnings("serial")
-public class AdminCreatePlayerWindow extends JFrame
+public class AdminCreatePlayerWindow extends JDialog
 {
 	private DatabaseHandler dbh = DatabaseHandler.getInstance();
 	
@@ -45,6 +45,7 @@ public class AdminCreatePlayerWindow extends JFrame
 	private boolean adminSelected = false;
 	private boolean modSelected = false;
 	private boolean playerSelected = false;
+	private boolean allFieldFilled = false;
 	
 	public void ShowAdminCreatePlayer()
 	{	
@@ -56,13 +57,14 @@ public class AdminCreatePlayerWindow extends JFrame
 		createJRadioButtonPanel();
 		createButtons();
 		
+		this.setModal(true);
+					
 		this.add(dataField, BorderLayout.NORTH);
 		this.add(radioButtonPanel, BorderLayout.CENTER);
 		this.add(buttons, BorderLayout.SOUTH);
 		this.pack();
 		this.setLocationRelativeTo(null);
 		this.setVisible(true);
-		
 	}
 	
 	private void createDataField() {
@@ -104,15 +106,17 @@ public class AdminCreatePlayerWindow extends JFrame
 		cancelButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				dispose(); // removes the screen
-//				setVisible(false);
-				clearInput();
+				clearInput();	
 			}
 		});
 
 		confirmButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				adminRegister();
+				if(allFieldFilled)
+				{
 				dispose();
+				}
 			}
 		});
 	}
@@ -147,6 +151,7 @@ public class AdminCreatePlayerWindow extends JFrame
 		}
 		if((!username.isEmpty() && !password.isEmpty() && !passConfirm.isEmpty()))
 		{
+			
 			if((adminSelected || modSelected || playerSelected))
 			{
 				if (username.length() < 3 || username.length() > 15) 
@@ -162,7 +167,7 @@ public class AdminCreatePlayerWindow extends JFrame
 					retValue = "The given passwords do not match.";
 				}
 				else
-				{
+				{	allFieldFilled = true;
 					dbh.adminRegister(username, password, adminSelected, modSelected, playerSelected);
 					retValue = "Register confirmed";
 				}
@@ -172,7 +177,7 @@ public class AdminCreatePlayerWindow extends JFrame
 				retValue = "U need to select at least 1 role";
 			}
 		}
-		JOptionPane.showMessageDialog(null, retValue);	
+		JOptionPane.showMessageDialog(null, retValue, "ERROR", JOptionPane.WARNING_MESSAGE);	
 	}
 	
 	private void clearInput()
@@ -181,5 +186,5 @@ public class AdminCreatePlayerWindow extends JFrame
 		passwordField.setText(null);
 		confirmPasswordField.setText(null);
 	}
-	
+
 }
