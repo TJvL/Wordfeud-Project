@@ -168,6 +168,15 @@ public class MainFrame extends JFrame {
 		wf.doLogoutAction();
 	}
 
+	public void fillRoleWindow() {
+		playerMenuBar.fillRoleWindow(wf.getCurrentUserPossibleRoles());
+	}
+
+	public void setAccDataValues() {
+		playerMenuBar.fillAccDataValues(wf.getCurrentUsername(),
+				wf.getCurrentPassword());
+	}
+
 	public String getName() {
 		return wf.getCurrentUsername();
 	}
@@ -205,8 +214,8 @@ public class MainFrame extends JFrame {
 			String name = JOptionPane.showInputDialog(null,
 					"Please enter your GameID: ");
 			if (name == null || name.equals("")) {
-				int gameID = dbh.createGame(1, "Mike", "Wouter",
-						"openbaar", "EN");
+				int gameID = dbh.createGame(1, "Mike", "Wouter", "openbaar",
+						"EN");
 				wf.startGame(gameID, false, true);
 				System.out.println("GAMEID IS " + gameID);
 			} else if (name.equals("spec")) {
@@ -278,9 +287,9 @@ public class MainFrame extends JFrame {
 			guiThread.setRunning(false);
 		}
 	}
-	
+
 	// Returns a list of pending Games
-	public ArrayList<PendingMatch> getPendingGames(){
+	public ArrayList<PendingMatch> getPendingGames() {
 		return wf.getPendingGames();
 	}
 
