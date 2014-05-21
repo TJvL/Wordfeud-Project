@@ -8,7 +8,6 @@ import java.util.Observer;
 public class WordFeud {
 	private final User currentUser;
 	private final CompetitionManager compMan;
-	private SecondThread secondThread;
 	private MainFrame framePanel;
 	private MatchManager matchManager;
 
@@ -16,7 +15,7 @@ public class WordFeud {
 		currentUser = new User();
 		compMan = new CompetitionManager(this);
 		framePanel = new MainFrame(this);
-		matchManager = new MatchManager(this, framePanel, secondThread);
+		matchManager = new MatchManager(this, framePanel);
 	}
 
 	/*
@@ -25,11 +24,6 @@ public class WordFeud {
 	 * .getGameChatPanel(), framePanel.getGameScreen() .getButtonPanel(),
 	 * framePanel.getGameScreen().getScorePanel()); secondThread.start(); }
 	 */
-
-	// A method to start the Thread
-	public void startThread() {
-		matchManager.startThread();
-	}
 
 	// Stops the Thread
 	public void stopThread() {
@@ -57,7 +51,7 @@ public class WordFeud {
 	public String doLoginAction(String username, char[] password) {
 
 		String result = currentUser.login(username, password);
-		if(result.equals("Username and Password are correct")){
+		if (result.equals("Username and Password are correct")) {
 			compMan.loadJoinedCompetitions(currentUser.getUsername());
 			compMan.updateEachParticipants();
 		}
@@ -70,31 +64,33 @@ public class WordFeud {
 
 	public boolean doChangeRoleAction(String result) {
 		return currentUser.changeRole(result);
-	}	
-	/*
-	 * param uitleg:
-	 * summary = de naam of omschrijving die in alle lijsten terug komt als "naam".
-	 * endDate = de eind datum van de competitie.
-	 * minParticipants = minimaal aantal deelnemers die nodig zijn om de compo te starten !!MOET >2 zijn!!
-	 * maxParticipants = maximaal aantal deelnemers dat in de compo mag zitten.
-	 * - Thomas
-	 */
-	public void doCreateCompAction(String summary, String endDate, int minParticipants, int maxParticipants){
-		compMan.createCompetition(currentUser.getUsername(), summary, endDate, minParticipants, maxParticipants);
 	}
-	
-	public boolean doJoinCompAction(int compID){
+
+	/*
+	 * param uitleg: summary = de naam of omschrijving die in alle lijsten terug
+	 * komt als "naam". endDate = de eind datum van de competitie.
+	 * minParticipants = minimaal aantal deelnemers die nodig zijn om de compo
+	 * te starten !!MOET >2 zijn!! maxParticipants = maximaal aantal deelnemers
+	 * dat in de compo mag zitten. - Thomas
+	 */
+	public void doCreateCompAction(String summary, String endDate,
+			int minParticipants, int maxParticipants) {
+		compMan.createCompetition(currentUser.getUsername(), summary, endDate,
+				minParticipants, maxParticipants);
+	}
+
+	public boolean doJoinCompAction(int compID) {
 		return compMan.joinCompetition(compID, currentUser.getUsername());
 	}
-	
-	public void doLoadAllCompetitionsAction(){
+
+	public void doLoadAllCompetitionsAction() {
 		compMan.loadAllCompetitions(currentUser.getUsername());
 	}
-	
-	public ArrayList<String> getParticipantListAction(int compID){
+
+	public ArrayList<String> getParticipantListAction(int compID) {
 		return compMan.getParticipantList(compID);
 	}
-	
+
 	public String getCurrentUserRole() {
 		return currentUser.getCurrentRole();
 	}

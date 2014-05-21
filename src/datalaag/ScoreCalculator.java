@@ -121,6 +121,10 @@ public class ScoreCalculator {
 			else if (justFilledSquares.size() == 1) {
 				score = calculateScoreOneTile();
 			}
+			
+			if (justFilledSquares.size() == 7){
+				score += 40;
+			}
 		}
 
 		// Adds all the formed words to a list and prints it

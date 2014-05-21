@@ -20,22 +20,23 @@ public class SecondThread extends Thread {
 	private boolean turnSwap = true;
 
 	public SecondThread(GameChatPanel chatPanel, GameButtonPanel buttonPanel,
-			ScorePanel scorePanel) {
+			ScorePanel scorePanel, Match match) {
 		super("thread");
 		this.chatPanel = chatPanel;
 		this.buttonPanel = buttonPanel;
 		this.scorePanel = scorePanel;
 		this.dbh = DatabaseHandler.getInstance();
-	}
-
-	// Sets the current Match
-	public void setMatch(Match match) {
 		this.match = match;
 	}
 
 	// The method that will be running
 	public void run() {
-
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		// While running it will run
 		while (running) {
 			if (match != null) {
@@ -43,7 +44,7 @@ public class SecondThread extends Thread {
 				// Gets the gameID;
 				match.getMaxTurnID();
 				int gameID = match.getGameID();
-				// System.out.println("LOOK AT ME - THREAD " + gameID);
+				//System.out.println("LOOK AT ME - THREAD " + gameID);
 				// Setting the scores
 				scorePanel
 						.setEnemyScore(dbh.score(gameID, match.getEnemyName()));

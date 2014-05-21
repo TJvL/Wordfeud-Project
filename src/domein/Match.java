@@ -21,8 +21,7 @@ public class Match implements Observer {
 	private DatabaseHandler dbh;
 	private Player player;
 	private String myName;
-	@SuppressWarnings("unused")
-	private Player enemy;
+	private String opponentName;
 	private int gameID;
 	private ArrayList<String> tilesForJar;
 	private boolean myTurn;
@@ -35,10 +34,22 @@ public class Match implements Observer {
 		this.gameID = gameID;
 		board = new Board();
 		jar = new Jar();
-		this.player = player;
-		dbh = DatabaseHandler.getInstance();
-		myTurn = true;
+		this.player = player;		
 		this.myName = myName;
+		// Dit is tijdelijk todat je mensen kunt uitdagen
+		if (myName.equals("Spectator")) {
+			myName = "Mike";
+		}
+		dbh = DatabaseHandler.getInstance();
+		System.out.println("MIJN NAAMIS: " + myName);
+		String inputName = dbh.opponentName(gameID);
+		String[] splitName = inputName.split("---");
+		if (splitName[0].equals(myName)) {
+			this.opponentName = splitName[1];
+		} else {
+			this.opponentName = splitName[0];
+		}
+		myTurn = true;
 	}
 
 	// Constructor for a spectator game - does not need a player
@@ -55,24 +66,17 @@ public class Match implements Observer {
 	}
 
 	// Return the player names
-	// /////////////////////////////////////////////////////////////////
-	// Spelers nog toevoegen aan een spel ////////////////////////////
-	// /////////////////////////////////////////////////////////////////
 	public synchronized String getOwnName() {
-		// jager684 is de uitdager
-		if (myName.equals("Spectator")) {
-			myName = "Mike";
-		}
-		// System.out.println("MIJN NAAM IS: " + myName +
-		// " match getOwnName()");
 		return myName;
-
 	}
 
 	// Returns the names of the opponent
 	public synchronized String getEnemyName() {
-		// return "marijntje42";
-		return "Wouter";
+		if (opponentName != null) {
+			return opponentName;
+		} else {
+			return "Opponent";
+		}
 	}
 
 	// Method to check who's turn it is and what turn it is
@@ -90,12 +94,12 @@ public class Match implements Observer {
 			System.out.println("NULLPOINTER");
 		}
 	}
-	
+
 	// Method to get maxTurn
-	public synchronized int getMaxTurn(){
+	public synchronized int getMaxTurn() {
 		return maxTurn;
 	}
-	
+
 	// Method for the thread to see if it is my turn
 	public synchronized boolean getMyTurn() {
 		return myTurn;
@@ -537,34 +541,30 @@ public class Match implements Observer {
 			dbh.updateTurn(maxTurn, gameID, getOwnName(), 0, "Begin");
 		}
 
-		// ArrayList<Integer> tileID = new ArrayList<Integer>();
-		while (player.getHandSize() < 7 && jar.getJarSize() > 0) {
-			int id = getTileFromJar();
-			if (id != -1) {
-				// tileID.add(id);
-			} else {
-				System.out.println("ER IS IETS FOUT GEGAAN BY FILLHAND");
+		if (player.getHandSize() == 0 && jar.getJarSize() == 0) {
+			this.winGame();
+		} else {
+			// ArrayList<Integer> tileID = new ArrayList<Integer>();
+			while (player.getHandSize() < 7 && jar.getJarSize() > 0) {
+				int id = getTileFromJar();
+				if (id != -1) {
+					// tileID.add(id);
+				} else {
+					System.out.println("ER IS IETS FOUT GEGAAN BY FILLHAND");
+				}
+				gameField.repaintBoard();
 			}
-			gameField.repaintBoard();
-		}
-		if (player.getHandSize() < 7 && jar.getJarSize() == 0) {
-			System.out.println("POT IS LEEG, GEEN NIEUWE LETTERS MEER!");
-		}
-		ArrayList<Tile> tilesInHand = player.getHand();
-		ArrayList<Integer> tilesNumber = new ArrayList<Integer>();
-		for (Tile tile : tilesInHand) {
-			tilesNumber.add(tile.getTileID());
-		}
 
-		// System.out.println(gameID + " " + tilesNumber.size() + " " +
-		// maxTurn);
-		dbh.addTileToHand(gameID, tilesNumber, maxTurn);
-		// Dit kan dus nog niet - we hebben de tile id nog niet opgeslagen in
-		// tiles
+			ArrayList<Tile> tilesInHand = player.getHand();
+			ArrayList<Integer> tilesNumber = new ArrayList<Integer>();
+			for (Tile tile : tilesInHand) {
+				tilesNumber.add(tile.getTileID());
+			}
 
-		// dbh.addTileToHand(gameID, tileID, maxTurn);
-
-		board.setScore();
+			dbh.addTileToHand(gameID, tilesNumber, maxTurn);
+			// dbh.addTileToHand(gameID, tileID, maxTurn);
+			board.setScore();
+		}
 	}
 
 	// Swapping tiles from the hand back to the jar
@@ -632,12 +632,6 @@ public class Match implements Observer {
 				board.setScore();
 				ArrayList<Tile> justPlayedTiles = board.addtilesToDatabase();
 				for (Tile tiles : justPlayedTiles) {
-					try {
-						Thread.sleep(10);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
 					dbh.tileToBoard(gameID, maxTurn, tiles.getTileID(),
 							tiles.getBlancoLetterValue(),
 							tiles.getXValue() + 1, tiles.getYValue() + 1);
@@ -649,7 +643,7 @@ public class Match implements Observer {
 
 				// Tijdelijke reactie van de tegenstander
 				// *****
-				// dbh.updateTurn(maxTurn + 1, gameID, getEnemyName(), 25,
+				//\ dbh.updateTurn(maxTurn + 1, gameID, getEnemyName(), 25,
 				// "Pass");
 
 			} else {
@@ -670,10 +664,6 @@ public class Match implements Observer {
 					System.out.println("answer given is Yes");
 					requestWord();
 				}
-				// JOptionPane.showMessageDialog(null,
-				// " Your word(s) are incorrect \n" + printString,
-				// " Words checked", JOptionPane.OK_OPTION);
-
 			}
 		}
 		board.resetPlayedWords();
@@ -715,7 +705,27 @@ public class Match implements Observer {
 	public void skipTurn() {
 		dbh.updateTurn(maxTurn, gameID, getOwnName(), 0, "Pass");
 		if (dbh.triplePass(gameID, getOwnName())) {
-			dbh.gameStatusUpdate(gameID, "Finished");
+			winGame();
 		}
+	}
+
+	public void winGame() {
+		int handTileFromTurn = 0;
+		if (dbh.score(gameID, getOwnName()) > dbh.score(gameID, getEnemyName())){
+			handTileFromTurn = maxTurn - 1;
+		} else {
+			handTileFromTurn = maxTurn;
+		}
+		
+		int handScore = 0;
+		System.out.println("POT IS LEEG, GEEN NIEUWE LETTERS MEER!");
+		ArrayList<String> handContent = dbh.handContent(gameID, handTileFromTurn);
+		for (String content: handContent){
+			String[] split = content.split("---");
+			handScore += Integer.parseInt(split[2]);
+		}
+		dbh.updateTurn(maxTurn + 1, gameID, getOwnName(), handScore, "End");
+		dbh.updateTurn(maxTurn + 2, gameID, getEnemyName(), -handScore, "End");
+		dbh.gameStatusUpdate(gameID, "Finished");
 	}
 }
