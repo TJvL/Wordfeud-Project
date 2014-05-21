@@ -200,25 +200,42 @@ public class DatabaseHandler
 																					// works
 	{
 		connection();
+		boolean canSend = false;
 		try
 		{
-			// Here we create our query where u state which fields u want to
-			// insert data
-			statement = con
-					.prepareStatement("INSERT INTO chatregel(account_naam, spel_id, tijdstip, bericht)VALUES(?,?,?,?)");
-			// the ? represents anonymous values
-
-			statement.setString(1, username);
-			statement.setInt(2, gameID);
-			statement.setTimestamp(3, getCurrentTimeStamp());
-			statement.setString(4, message);
-
-			// execute your query
-			statement.executeUpdate();
-
-			// closes the statement
+			statement = con.prepareStatement("SELECT account_naam_uitdager, account_naam_tegenstander FROM spel");
+			
+			result = statement.executeQuery();
+			
+			if(result.next())
+			{
+				if(result.getString(1).equals(username) || result.getString(2).equals(username))
+				{
+					canSend = true;
+				}
+			}
+			result.close();
 			statement.close();
+			
+			if(canSend)
+			{
+				// Here we create our query where u state which fields u want to
+				// insert data
+				statement = con
+						.prepareStatement("INSERT INTO chatregel(account_naam, spel_id, tijdstip, bericht)VALUES(?,?,?,?)");
+				// the ? represents anonymous values
 
+				statement.setString(1, username);
+				statement.setInt(2, gameID);
+				statement.setTimestamp(3, getCurrentTimeStamp());
+				statement.setString(4, message);
+
+				// execute your query
+				statement.executeUpdate();
+
+				// closes the statement
+				statement.close();
+			}
 		} catch (SQLException e)
 		{
 			e.printStackTrace();
@@ -888,10 +905,7 @@ public class DatabaseHandler
 		} catch (SQLException e)
 		{
 			e.printStackTrace();
-		} finally
-		{
-			closeConnection();
-		}
+		} finally{closeConnection();}
 		return myCompetitions;
 	}
 	
@@ -980,7 +994,6 @@ public class DatabaseHandler
 		}
 	}
 	
-
 	public synchronized ArrayList<String> playedWords(int gameID)// works
 	{
 		connection();
@@ -1010,7 +1023,6 @@ public class DatabaseHandler
 		return playedWord;
 	}
 	
-
 	public synchronized void joinCompetition(int compID, String username)
 	{
 		connection();
@@ -1035,7 +1047,6 @@ public class DatabaseHandler
 		}
 	}
 	
-
 	public synchronized String requestWord(String word, String language)
 	{
 		connection();
@@ -1081,7 +1092,6 @@ public class DatabaseHandler
 		return request;
 	}
 	
-
 	public synchronized void acceptDeniedWord(String word, String language, String status)
 	{
 		connection();
@@ -1102,7 +1112,6 @@ public class DatabaseHandler
 		}
 	}
 	
-
 	public synchronized ArrayList<String> pendingWords()
 	{
 		connection();
@@ -1132,7 +1141,6 @@ public class DatabaseHandler
 		return pendingWord;
 	}
 	
-
 	public synchronized void setRole(String username, String role)
 	{
 		connection();
@@ -1155,7 +1163,6 @@ public class DatabaseHandler
 		}
 	}
 	
-
 	public synchronized ArrayList<String> getRole(String username)
 	{
 		connection();
@@ -1185,7 +1192,6 @@ public class DatabaseHandler
 		return userRoles;
 	}
 	
-
 	public synchronized void revokeRole(String username, String role)
 	{
 		connection();
@@ -1206,7 +1212,6 @@ public class DatabaseHandler
 		}
 	}
 	
-
 	public synchronized void acceptRejectGame(int turnID, int gameID, String username, String reaction)
 	{
 		connection();
@@ -1262,7 +1267,6 @@ public class DatabaseHandler
 		}
 	}
 	
-
 	public synchronized int letterValue(String language, String letter)
 	{
 		connection();
@@ -1291,7 +1295,6 @@ public class DatabaseHandler
 		return value;
 	}
 	
-
 	public synchronized HashMap<Integer, String> gameTiles(int gameID)
 	{
 		connection();
@@ -1808,6 +1811,28 @@ public class DatabaseHandler
 		return changeResult;
 	}
 	
+	public synchronized String changePassword(String username, String password)
+	{
+		connection();
+		String changeResult = null;
+
+		try
+		{
+			statement = con.prepareStatement("UPDATE account SET wachtwoord = '" + password + "' WHERE naam = '" + username + "'");
+		
+			statement.executeUpdate();
+				
+			statement.close();
+			changeResult = "Your password has been succesfully changed";
+
+		} catch (SQLException e)
+		{
+			e.printStackTrace();			
+			System.out.println("QUERRY ERROR");
+		}finally{closeConnection();}
+		return changeResult;
+	}
+	
 	public synchronized String playerStatistics(String username)
 	{
 		connection();
@@ -1911,7 +1936,7 @@ public class DatabaseHandler
 		return password;
 	}
 	
-	public ArrayList<String> activeCompetitions()
+	public synchronized ArrayList<String> activeCompetitions()
 	{
 		connection();
 		ArrayList<String> activeComps = new ArrayList<String>();
@@ -2021,7 +2046,7 @@ public class DatabaseHandler
 		return registered;
 	}
 	
-	public ArrayList<String> getAllPlayers()
+	public synchronized ArrayList<String> getAllPlayers()
 	{
 		connection();
 		ArrayList<String> allPlayers = new ArrayList<String>();
