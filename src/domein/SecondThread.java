@@ -2,7 +2,7 @@ package domein;
 
 import datalaag.DatabaseHandler;
 import gui.GameButtonPanel;
-import gui.GameFieldPanel;
+import gui.GameChatPanel;
 import gui.ScorePanel;
 
 // Thread for updating ScorePanel
@@ -11,25 +11,25 @@ import gui.ScorePanel;
 // Checks who's turn it is for the GameFieldPanel
 public class SecondThread extends Thread {
 	private Match match;
-	private GameFieldPanel fieldPanel;
 	private GameButtonPanel buttonPanel;
 	private DatabaseHandler dbh;
 	private ScorePanel scorePanel;
+	private GameChatPanel chatPanel;
 	private int storeScore;
 	private boolean running = true;
 	private boolean turnSwap = true;
 
-	public SecondThread(GameFieldPanel fieldPanel, GameButtonPanel buttonPanel,
+	public SecondThread(GameChatPanel chatPanel, GameButtonPanel buttonPanel,
 			ScorePanel scorePanel) {
 		super("thread");
-		this.fieldPanel = fieldPanel;
+		this.chatPanel = chatPanel;
 		this.buttonPanel = buttonPanel;
 		this.scorePanel = scorePanel;
 		this.dbh = DatabaseHandler.getInstance();
 	}
 
 	// Sets the current Match
-	public synchronized void setMatch(Match match) {
+	public void setMatch(Match match) {
 		this.match = match;
 	}
 
@@ -38,12 +38,12 @@ public class SecondThread extends Thread {
 
 		// While running it will run
 		while (running) {
-			//System.out.println("LOOK AT ME - THREAD");
 			if (match != null) {
 				running = true;
 				// Gets the gameID;
+				match.getMaxTurnID();
 				int gameID = match.getGameID();
-
+				// System.out.println("LOOK AT ME - THREAD " + gameID);
 				// Setting the scores
 				scorePanel
 						.setEnemyScore(dbh.score(gameID, match.getEnemyName()));
@@ -60,33 +60,45 @@ public class SecondThread extends Thread {
 					storeScore = currentScore;
 				}
 
-				// a loop to see if the turn is swapped 
-				try {
-					if (!dbh.getGameStatusValue(gameID).equals("Finished")
-							&& !dbh.getGameStatusValue(gameID).equals(
-									"Resigned")) {
-						match.getMaxTurnID();
-						if (match.getMyTurn()) {
-							buttonPanel.setTurn(true);
-							if (turnSwap) {
-								match.updateField();
-								System.out.println("WORDT DIT AANGEROEPEN?");
+				// Update chat
+				chatPanel.checkForMessages();
+
+				String gameBegin;
+				if (match.getMyTurn()) {
+					gameBegin = dbh.turnValue(gameID, match.getMaxTurn(),
+							match.getOwnName());
+				} else {
+					gameBegin = dbh.turnValue(gameID, match.getMaxTurn(),
+							match.getOwnName());
+				}
+
+				if (gameBegin.equals("Begin")) {
+					// a loop to see if the turn is swapped
+					try {
+						if (!dbh.getGameStatusValue(gameID).equals("Finished")
+								&& !dbh.getGameStatusValue(gameID).equals(
+										"Resigned")) {
+							if (match.getMyTurn()) {
+								buttonPanel.setTurn(true);
+								if (turnSwap) {
+									match.updateField();
+								}
+								turnSwap = false;
+							} else {
+								// System.out.println("NIET MIJN BEURT");
+								buttonPanel.setTurn(false);
+								turnSwap = true;
 							}
-							turnSwap = false;
 						} else {
-							// System.out.println("NIET MIJN BEURT");
 							buttonPanel.setTurn(false);
-							turnSwap = true;
+							buttonPanel.disableSurrender();
+							running = false;
 						}
-					} else {
-						buttonPanel.setTurn(false);
-						buttonPanel.disableSurrender();
-						running = false;
+
+						scorePanel.updatePanel();
+					} catch (NullPointerException e) {
+
 					}
-
-					scorePanel.updatePanel();
-				} catch (NullPointerException e) {
-
 				}
 				try {
 					Thread.sleep(2000);
@@ -94,6 +106,10 @@ public class SecondThread extends Thread {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+			} else {
+				buttonPanel.setTurn(false);
+				buttonPanel.disableSurrender();
+				running = false;
 			}
 		}
 	}
