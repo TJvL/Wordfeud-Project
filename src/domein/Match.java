@@ -2,9 +2,6 @@ package domein;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -13,7 +10,6 @@ import javax.swing.JOptionPane;
 import datalaag.DatabaseHandler;
 import gui.GameFieldPanel;
 import gui.GameSpecScreen;
-import gui.SpecScreen;
 import gui.TilePanel;
 
 public class Match implements Observer {
@@ -47,7 +43,6 @@ public class Match implements Observer {
 
 	// Constructor for a spectator game - does not need a player
 	public Match(int gameID) {
-		this.gameField = gameField;
 		this.gameID = gameID;
 		board = new Board();
 		jar = new Jar();

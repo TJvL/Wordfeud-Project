@@ -10,7 +10,6 @@ import java.util.ArrayList;
 
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListCellRenderer;
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -19,7 +18,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 
-import datalaag.DatabaseHandler;
 import domein.ActiveMatch;
 
 @SuppressWarnings("serial")

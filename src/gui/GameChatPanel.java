@@ -17,6 +17,7 @@ import javax.swing.JTextArea;
 import datalaag.DatabaseHandler;
  
 
+@SuppressWarnings("serial")
 public class GameChatPanel extends JPanel implements ActionListener {
 
 	private JScrollPane inputScrollPane;
@@ -26,7 +27,6 @@ public class GameChatPanel extends JPanel implements ActionListener {
 	private JButton sendButton;
 	private ArrayList<String> chatMessages = new ArrayList<String>();
 	private String user1;
-	private String user2;
 	private int gameID;
 	private String latestUpdatedMessageTimeDate;
 	private String latestUpdatedMessage;
@@ -44,16 +44,14 @@ public class GameChatPanel extends JPanel implements ActionListener {
 	///////////////////////////////VRAAG VRAAG OVER BERICHTEN IN DATABASE- waarschijnlijk opgelost////////////////
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	public void setChatVariables(String ownName, String oponentName, int gameID){
+	public void setChatVariables(String ownName, int gameID){
 		this.user1 = ownName;
-		this.user2 = oponentName;
 		this.gameID = gameID;
 		//start();	
 	}
 	
 	public GameChatPanel() {				// I get the player object references and the gameID of this match from the class that invokes this constructor (Wouter, Mike)
 		this.user1 = "You";
-		this.user2 = "Opponent";
 		
 		latestUpdatedMessageTimeDate = "";
 

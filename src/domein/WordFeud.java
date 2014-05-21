@@ -5,23 +5,16 @@ import gui.MainFrame;
 import java.util.ArrayList;
 import java.util.Observer;
 
-import datalaag.DatabaseHandler;
-
 public class WordFeud {
 	private final User currentUser;
 	private final CompetitionManager compMan;
-	private Match match;
-	private ArrayList<Match> matches;
 	private SecondThread secondThread;
 	private MainFrame framePanel;
-	private DatabaseHandler dbh;
 	private MatchManager matchManager;
 
 	public WordFeud() {
-		dbh = DatabaseHandler.getInstance();
 		currentUser = new User();
 		compMan = new CompetitionManager(this);
-		matches = new ArrayList<Match>();
 		framePanel = new MainFrame(this);
 		matchManager = new MatchManager(this, framePanel, secondThread);
 	}

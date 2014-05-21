@@ -180,6 +180,7 @@ public class GameFieldPanel extends JPanel {
 	// You give it a tile to be add to the hand
 	// The param is the tile to be add
 	public void addTileToHand(Tile t, Match givenMatch) {
+		@SuppressWarnings("unused")
 		TilePanel tile;
 		tiles.add(tile = makeTilePanel(t, givenMatch));
 

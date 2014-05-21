@@ -8,8 +8,6 @@ import datalaag.DatabaseHandler;
 
 public class MatchManager {
 	private Match match;
-	private PendingMatch pendingMatch;
-	private ActiveMatch activeMatch;
 	private DatabaseHandler dbh;
 	private ArrayList<Match> matches;
 	private ArrayList<PendingMatch> pendingMatchs;
@@ -117,7 +115,7 @@ public class MatchManager {
 		framePanel
 				.getGameScreen()
 				.getGameChatPanel()
-				.setChatVariables(match.getOwnName(), match.getEnemyName(),
+				.setChatVariables(match.getOwnName(),
 						match.getGameID());
 		matches.add(match);
 		secondThread.setRunning(true);
@@ -136,8 +134,7 @@ public class MatchManager {
 				framePanel
 						.getGameScreen()
 						.getGameChatPanel()
-						.setChatVariables(match.getOwnName(),
-								match.getEnemyName(), match.getGameID());
+						.setChatVariables(match.getOwnName(), match.getGameID());
 				match.loadGame();
 				secondThread.setRunning(true);
 			}
@@ -153,7 +150,7 @@ public class MatchManager {
 			framePanel
 					.getGameScreen()
 					.getGameChatPanel()
-					.setChatVariables(match.getOwnName(), match.getEnemyName(),
+					.setChatVariables(match.getOwnName(),
 							match.getGameID());
 			matches.add(match);
 			secondThread.setRunning(true);
