@@ -1811,28 +1811,6 @@ public class DatabaseHandler
 		return changeResult;
 	}
 	
-	public synchronized String changePassword(String username, String password)
-	{
-		connection();
-		String changeResult = null;
-
-		try
-		{
-			statement = con.prepareStatement("UPDATE account SET wachtwoord = '" + password + "' WHERE naam = '" + username + "'");
-		
-			statement.executeUpdate();
-				
-			statement.close();
-			changeResult = "Your password has been succesfully changed";
-
-		} catch (SQLException e)
-		{
-			e.printStackTrace();			
-			System.out.println("QUERRY ERROR");
-		}finally{closeConnection();}
-		return changeResult;
-	}
-	
 	public synchronized String playerStatistics(String username)
 	{
 		connection();
