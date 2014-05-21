@@ -168,6 +168,15 @@ public class MainFrame extends JFrame {
 		wf.doLogoutAction();
 	}
 
+	public void fillRoleWindow() {
+		playerMenuBar.fillRoleWindow(wf.getCurrentUserPossibleRoles());
+	}
+
+	public void setAccDataValues() {
+		playerMenuBar.fillAccDataValues(wf.getCurrentUsername(),
+				wf.getCurrentPassword());
+	}
+
 	public String getName() {
 		return wf.getCurrentUsername();
 	}
@@ -278,9 +287,9 @@ public class MainFrame extends JFrame {
 			guiThread.setRunning(false);
 		}
 	}
-	
+
 	// Returns a list of pending Games
-	public ArrayList<PendingMatch> getPendingGames(){
+	public ArrayList<PendingMatch> getPendingGames() {
 		return wf.getPendingGames();
 	}
 

@@ -19,6 +19,9 @@ public class WordFeud {
 	}
 
 	/*
+<<<<<<< HEAD
+	 * Gets the user from the player DOESNT WORK WELL
+=======
 	 * // A method to initialize the Thread public void initializeThread() {
 	 * secondThread = new SecondThread(framePanel.getGameScreen()
 	 * .getGameChatPanel(), framePanel.getGameScreen() .getButtonPanel(),
@@ -32,13 +35,14 @@ public class WordFeud {
 
 	/*
 	 * Returns the user from the player DOESNT WORK WELL
+>>>>>>> refs/remotes/origin/master-development
 	 * ****************************************
 	 */
 	public Player getUserPlayer() {
 		return currentUser.getPlayer();
 	}
-
-	// Returns the User
+	
+	
 	public User getCurrentUser() {
 		return currentUser;
 	}
@@ -63,9 +67,7 @@ public class WordFeud {
 	}
 
 	public boolean doChangeRoleAction(String result) {
-		return currentUser.changeRole(result);
-	}
-
+		return currentUser.changeRole(result);}
 	/*
 	 * param uitleg: summary = de naam of omschrijving die in alle lijsten terug
 	 * komt als "naam". endDate = de eind datum van de competitie.
@@ -78,6 +80,7 @@ public class WordFeud {
 		compMan.createCompetition(currentUser.getUsername(), summary, endDate,
 				minParticipants, maxParticipants);
 	}
+
 
 	public boolean doJoinCompAction(int compID) {
 		return compMan.joinCompetition(compID, currentUser.getUsername());
@@ -95,10 +98,18 @@ public class WordFeud {
 		return currentUser.getCurrentRole();
 	}
 
+	public ArrayList<String> getCurrentUserPossibleRoles() {
+		return currentUser.getRoles();
+	}
+
 	public String getCurrentUsername() {
 		return currentUser.getUsername();
 	}
 
+
+	public String getCurrentPassword() {
+		return currentUser.getPassword();
+	}
 	// Returns active games
 	public ArrayList<ActiveMatch> getActiveGames() {
 		return matchManager.getActiveMatches();

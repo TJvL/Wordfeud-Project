@@ -127,6 +127,10 @@ public class LoginScreen extends JPanel {
 		} else {
 			loginSucces = false;
 		}
+		
+		mainFrame.fillRoleWindow();
+		mainFrame.setAccDataValues();
+		
 		return loginSucces;
 	}
 
