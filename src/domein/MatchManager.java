@@ -17,8 +17,7 @@ public class MatchManager {
 	private MainFrame framePanel;
 	private SecondThread secondThread;
 
-	public MatchManager(WordFeud wf, MainFrame framePanel,
-			SecondThread secondThread) {
+	public MatchManager(WordFeud wf, MainFrame framePanel) {
 		this.dbh = DatabaseHandler.getInstance();
 		this.matches = new ArrayList<Match>();
 		this.pendingMatchs = new ArrayList<PendingMatch>();
@@ -26,7 +25,6 @@ public class MatchManager {
 		this.myActiveMatches = new ArrayList<ActiveMatch>();
 		this.wf = wf;
 		this.framePanel = framePanel;
-		this.secondThread = secondThread;
 	}
 
 	public ArrayList<PendingMatch> getPendingMatchs() {
@@ -36,8 +34,7 @@ public class MatchManager {
 		ArrayList<String> games = dbh.pendingGames(wf.getCurrentUsername());
 		for (String game : games) {
 			String[] split = game.split(",");
-			pendingMatchs.add(new PendingMatch(Integer.parseInt(split[0]),
-					Integer.parseInt(split[1]), split[2]));
+			pendingMatchs.add(new PendingMatch(Integer.parseInt(split[0]), split[1]));
 		}
 		return pendingMatchs;
 	}
@@ -68,16 +65,16 @@ public class MatchManager {
 	}
 	
 	// A method to initialize the Thread
-	public void initializeThread() {
-		secondThread = new SecondThread(framePanel.getGameScreen()
+	public void initializeThread(Match match) {
+		this.secondThread = new SecondThread(framePanel.getGameScreen()
 				.getGameChatPanel(), framePanel.getGameScreen()
-				.getButtonPanel(), framePanel.getGameScreen().getScorePanel());
+				.getButtonPanel(), framePanel.getGameScreen().getScorePanel(), match);
 		secondThread.start();
 	}
 
 	// A method to start the Thread
-	public void startThread() {
-		this.initializeThread();
+	public void startThread(Match match) {
+		initializeThread(match);
 		secondThread.setRunning(true);
 	}
 
@@ -91,7 +88,6 @@ public class MatchManager {
 	// Depends if someone is spectating - starting new game
 	// or want to load a game
 	public void startGame(int gameID, boolean spectate, boolean newGame) {
-		wf.startThread();
 		if (spectate) {
 			spectateMatch(gameID);
 		} else {
@@ -110,7 +106,7 @@ public class MatchManager {
 		// Adds the observers
 		wf.addObservers(match, false);
 		// Sets the thread
-		secondThread.setMatch(match);
+		startThread(match);
 		match.startNewGame();
 		framePanel
 				.getGameScreen()
@@ -130,7 +126,7 @@ public class MatchManager {
 				exists = true;
 				// Adds the observers
 				wf.addObservers(match, false);
-				secondThread.setMatch(match);
+				startThread(match);
 				framePanel
 						.getGameScreen()
 						.getGameChatPanel()
@@ -145,7 +141,7 @@ public class MatchManager {
 					wf.getCurrentUsername());
 			// Adds the observers
 			wf.addObservers(match, false);
-			secondThread.setMatch(match);
+			startThread(match);
 			match.loadGame();
 			framePanel
 					.getGameScreen()
