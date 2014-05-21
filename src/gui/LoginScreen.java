@@ -55,7 +55,9 @@ public class LoginScreen extends JPanel {
 
 		loginButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				login();
+				if (login()) {
+					mainFrame.startThread();
+				}
 			}
 		});
 
@@ -71,7 +73,7 @@ public class LoginScreen extends JPanel {
 		shortCut.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// These are inputs optionspanes to start the game
-				mainFrame.startGame();
+				mainFrame.startGame(0, false);
 			}
 		});
 		buttons.add(shortCut);
@@ -107,8 +109,9 @@ public class LoginScreen extends JPanel {
 		dataField.add(fields);
 	}
 
-	private void login() {
+	private boolean login() {
 		String ret;
+		boolean loginSucces = true;
 		String username = this.usernameField.getText();
 		char[] password = this.passwordField.getPassword();
 
@@ -121,10 +124,14 @@ public class LoginScreen extends JPanel {
 			mainFrame.setPlayerMenuBar();
 
 			clearInput();
+		} else {
+			loginSucces = false;
 		}
-
+		
 		mainFrame.fillRoleWindow();
 		mainFrame.setAccDataValues();
+		
+		return loginSucces;
 	}
 
 	private void clearInput() {

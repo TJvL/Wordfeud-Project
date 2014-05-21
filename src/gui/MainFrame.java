@@ -8,6 +8,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import datalaag.DatabaseHandler;
+import domein.PendingMatch;
 import domein.WordFeud;
 
 @SuppressWarnings("serial")
@@ -28,6 +29,7 @@ public class MainFrame extends JFrame {
 	private SpecMenuBar specMenuBar;
 	private AdminMenuBar adminMenuBar;
 	private ModMenuBar modMenuBar;
+	private UpdateGUIThread guiThread;
 	private WordFeud wf;
 
 	public MainFrame(final WordFeud wf) {
@@ -37,7 +39,7 @@ public class MainFrame extends JFrame {
 		modMenuBar = new ModMenuBar(this);
 		adminMenuBar = new AdminMenuBar(this);
 		loginscreen = new LoginScreen(this);
-		specscreen = new SpecScreen();
+		specscreen = new SpecScreen(this);
 		regscreen = new RegScreen(this);
 		playerscreen = new PlayerScreen(this);
 		gameScreen = new GameScreen();
@@ -64,51 +66,63 @@ public class MainFrame extends JFrame {
 
 	public void setRegScreen() {
 		this.setContentPane(regscreen);
+		wf.stopThread();
 		revalidate();
 	}
 
 	public void setLoginScreen() {
 		this.setContentPane(loginscreen);
+		wf.stopThread();
 		revalidate();
 	}
 
 	public void setPlayerScreen() {
 		this.setContentPane(playerscreen);
+		playerscreen.setGameList(wf.myActiveGames(), this.getName());
+		wf.stopThread();
 		revalidate();
 	}
 
 	public void setGameScreen() {
 		this.setContentPane(gameScreen);
+		wf.stopThread();
 		revalidate();
 	}
 
 	public void setSpecScreen() {
+		specscreen.setGameList(wf.getActiveGames());
 		this.setContentPane(specscreen);
+		wf.stopThread();
 		revalidate();
 	}
 
 	public void setJoinCompScreen() {
 		this.setContentPane(joincompscreen);
+		wf.stopThread();
 		revalidate();
 	}
 
 	public void setJoinedCompScreen() {
 		this.setContentPane(joinedcompscreen);
+		wf.stopThread();
 		revalidate();
 	}
 
 	public void setAdminAccScreen() {
 		this.setContentPane(adminaccscreen);
+		wf.stopThread();
 		revalidate();
 	}
 
 	public void setAdminCompScreen() {
 		this.setContentPane(admincompscreen);
+		wf.stopThread();
 		revalidate();
 	}
 
 	public void setModScreen() {
 		this.setContentPane(modscreen);
+		wf.stopThread();
 		revalidate();
 	}
 
@@ -163,6 +177,10 @@ public class MainFrame extends JFrame {
 				wf.getCurrentPassword());
 	}
 
+	public String getName() {
+		return wf.getCurrentUsername();
+	}
+
 	// PlayGame/Spectator part
 	// Adds the observers to all the panels
 	// Sets the right ContentPane
@@ -184,38 +202,47 @@ public class MainFrame extends JFrame {
 		}
 	}
 
-	public void startGame() {
+	public void startGame(int gameToLoad, boolean spectating) {
 		DatabaseHandler dbh = DatabaseHandler.getInstance();
-		String name = JOptionPane.showInputDialog(null,
-				"Please enter your GameID: ");
-		if (name == null || name.equals("")) {
-			int gameID = dbh.createGame(1, "jager684", "marijntje42",
-					"openbaar", "EN");
-			wf.startGame(gameID, false, true);
-		} else if (name.equals("spec")) {
-			String name2 = JOptionPane.showInputDialog(null,
-					"Please enter your GameID: ");
-			wf.startGame(Integer.parseInt(name2), true, false);
-
+		if (gameToLoad != 0 && !spectating) {
+			wf.startGame(gameToLoad, false, false);
+			System.out.println("GAMEID IS " + gameToLoad);
+		} else if (spectating) {
+			wf.startGame(gameToLoad, true, false);
+			System.out.println("GAMEID IS " + gameToLoad);
 		} else {
-			int gameID = Integer.parseInt(name);
-			if (!dbh.getGameStatusValue(gameID).equals("Finished")
-					|| !dbh.getGameStatusValue(gameID).equals("Resigend")) {
-				wf.startGame(gameID, false, false);
+			String name = JOptionPane.showInputDialog(null,
+					"Please enter your GameID: ");
+			if (name == null || name.equals("")) {
+				int gameID = dbh.createGame(1, "Mike", "Wouter", "openbaar",
+						"EN");
+				wf.startGame(gameID, false, true);
+				System.out.println("GAMEID IS " + gameID);
+			} else if (name.equals("spec")) {
+				String name2 = JOptionPane.showInputDialog(null,
+						"Please enter your GameID: ");
+				wf.startGame(Integer.parseInt(name2), true, false);
+				System.out.println("GAMEID IS " + Integer.parseInt(name2));
 			} else {
-				JOptionPane.showMessageDialog(null, "Can't load this game",
-						"Loading error!", JOptionPane.OK_OPTION);
+				int gameID = Integer.parseInt(name);
+				if (!dbh.getGameStatusValue(gameID).equals("Finished")
+						|| !dbh.getGameStatusValue(gameID).equals("Resigend")) {
+					wf.startGame(gameID, false, false);
+					System.out.println("GAMEID IS " + gameID);
+				} else {
+					JOptionPane.showMessageDialog(null, "Can't load this game",
+							"Loading error!", JOptionPane.OK_OPTION);
+				}
 			}
 		}
-
 	}
 
-	// Gets a gameScreen
+	// Returns the gameScreen
 	public GameScreen getGameScreen() {
 		return gameScreen.getGameScreen();
 	}
 
-	// Gets the specScreen
+	// Returns the specScreen
 	public GameSpecScreen getSpecScreen() {
 		return specScreen;
 	}
@@ -232,5 +259,42 @@ public class MainFrame extends JFrame {
 		} else if (currentRole.equals("Spectator")) {
 			this.setSpecScreen();
 		}
+	}
+
+	// Everything in this method will be updated every 7,5 second
+	// Use synchronized for the methods
+	// That allows a method to be uses by multiple threads
+	// Only the current contentPane will auto update
+	public synchronized void updateGUI() {
+		playerMenuBar.updateNotificationList();
+		if (this.getContentPane() instanceof PlayerScreen) {
+			playerscreen.setGameList(wf.myActiveGames(), this.getName());
+		} else if (this.getContentPane() instanceof SpecScreen) {
+			specscreen.setGameList(wf.getActiveGames());
+		}
+	}
+
+	// A method to start the Thread
+	public void startThread() {
+		guiThread = new UpdateGUIThread(this);
+		guiThread.setRunning(true);
+		guiThread.start();
+	}
+
+	// Stops the Thread
+	public void stopThread() {
+		if (guiThread != null) {
+			guiThread.setRunning(false);
+		}
+	}
+
+	// Returns a list of pending Games
+	public ArrayList<PendingMatch> getPendingGames() {
+		return wf.getPendingGames();
+	}
+
+	// Method to accept/reject games
+	public void acceptRejectGame(String string, int competionID, int gameID) {
+		wf.acceptRejectGame(string, competionID, gameID);
 	}
 }

@@ -17,15 +17,18 @@ public class StandardMenuBar extends JMenuBar {
 	private StatWindow statwindow;
 	private NotificationWindow notificationwindow;
 	private AccDataWindow accdatawindow;
+	private String notificationWindowName;
 
 	public StandardMenuBar(final MainFrame mainFrame) {
 		rolewindow = new RoleWindow();
+		notificationWindowName = "Notifications (0)";
+		rolewindow = new RoleWindow();
 		statwindow = new StatWindow();
-		notificationwindow = new NotificationWindow();
+		notificationwindow = new NotificationWindow(mainFrame);
 		accdatawindow = new AccDataWindow();
 		optionsMenu = new JMenu("Options");
 		playerdataMenu = new JMenu("Playerdata");
-		notificationsMenu = new JMenu("Notifications");
+		notificationsMenu = new JMenu(notificationWindowName);
 		JMenuItem exitMenuItem = new JMenuItem("Exit");
 		JMenuItem logoffMenuItem = new JMenuItem("Log off");
 		JMenuItem changeroleMenuItem = new JMenuItem("Change role");
@@ -48,6 +51,7 @@ public class StandardMenuBar extends JMenuBar {
 				mainFrame.setLoginScreen();
 				mainFrame.setStartMenuBar();
 				mainFrame.callLogoutAction();
+				mainFrame.stopThread();
 			}
 		});
 		exitMenuItem.addActionListener(new ActionListener() {
@@ -93,8 +97,18 @@ public class StandardMenuBar extends JMenuBar {
 	public void fillRoleWindow(ArrayList<String> roles) {
 		rolewindow.fillRoleList(roles);
 	}
-	
-	public void fillAccDataValues(String username, String password){
+
+	public void fillAccDataValues(String username, String password) {
 		accdatawindow.setValues(username, password);
+	}
+
+	public synchronized void updateNotificationList() {
+		// notificationwindow.set
+		notificationWindowName = "Notifications ("
+				+ notificationwindow.fillNotificationList() + ")";
+		notificationwindow.setTitle(notificationWindowName);
+		notificationsMenu.setText(notificationWindowName);
+		this.repaint();
+		this.revalidate();
 	}
 }
