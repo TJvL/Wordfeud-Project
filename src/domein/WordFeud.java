@@ -78,7 +78,7 @@ public class WordFeud {
 	 */
 	public void doCreateCompAction(String summary, Timestamp endDate,
 			int minParticipants, int maxParticipants) {
-		compMan.createCompetition(framePanel.getWf().getCurrentUsername(), summary, endDate, minParticipants, maxParticipants);
+		compMan.createCompetition(getCurrentUsername(), summary, endDate, minParticipants, maxParticipants);
 	}
 
 

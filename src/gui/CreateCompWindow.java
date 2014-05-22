@@ -25,34 +25,24 @@ import com.toedter.calendar.JDateChooser;
 @SuppressWarnings("serial")
 public class CreateCompWindow extends JFrame
 {
-
 	@SuppressWarnings("unused")
 	private static final DateFormat df = new SimpleDateFormat(
 			"yyyy-dd-mm HH:MM:SS");
-
 	private JDateChooser cal1 = new JDateChooser();
 	private DateTimePicker dtp = new DateTimePicker();
 	private JButton confirm = new JButton();
-
 	private JPanel buttonPanel = new JPanel();
 	private JPanel inputPanel = new JPanel();
-
+	private JTextField minPlayers = new JTextField();
 	private JTextField maxPlayers = new JTextField();
 	private JTextField summary = new JTextField();
-
-	public String getSummaryString()
-	{
-		return summaryString;
-	}
-
 	private JPanel mainPanel = new JPanel();
 	private JLabel maxPlayersLabel = new JLabel();
+	private JLabel minPlayersLabel = new JLabel();
 	private JLabel gameCreatedLabel = new JLabel();
 	private JLabel summaryLabel = new JLabel();
+	private PlayerScreen playerScreen;
 	private String endDate;
-	private String summaryString;
-	private int maxPlayersInt;
-	private MainFrame mainFrame;
 	private String hours;
 	private String minutes;
 	private String seconds;
@@ -62,16 +52,16 @@ public class CreateCompWindow extends JFrame
 	private String finalReturnString;
 	Calendar cal = Calendar.getInstance();
 
-	public CreateCompWindow(MainFrame mainFrame)
+	public CreateCompWindow(PlayerScreen playerScreen)
 	{
-		this.mainFrame = mainFrame;
+		this.playerScreen = playerScreen;
 		this.setTitle("Create Competition");
 		this.setLayout(new BorderLayout());
 		this.add(buttonPanel, BorderLayout.SOUTH);
 		this.add(mainPanel, BorderLayout.CENTER);
-		createCompButtonpanel();
-		createInputPanel();
-		createMainPanel();
+		this.createCompButtonpanel();
+		this.createInputPanel();
+		this.createMainPanel();
 		this.add(dtp, BorderLayout.NORTH);
 		
 		this.setBackground(Color.DARK_GRAY);
@@ -81,15 +71,12 @@ public class CreateCompWindow extends JFrame
 		confirm.setBackground(Color.CYAN);
 		summaryLabel.setForeground(Color.WHITE);
 		maxPlayersLabel.setForeground(Color.WHITE);
-		
-		
+		minPlayersLabel.setForeground(Color.WHITE);
 		
 		this.pack();
 		this.setLocationRelativeTo(null);
 		this.setVisible(true);
 		this.setResizable(false);
-		
-		
 	}
 
 	public void createCompButtonpanel()
@@ -104,7 +91,6 @@ public class CreateCompWindow extends JFrame
 			@Override
 			public void actionPerformed(ActionEvent arg0)
 			{
-				// TODO Auto-generated method stub
 				confirmClicked();
 			}
 
@@ -114,16 +100,16 @@ public class CreateCompWindow extends JFrame
 
 	public void createInputPanel()
 	{
-		inputPanel.setLayout(new GridLayout(2, 2, 50, 25));
+		inputPanel.setLayout(new GridLayout(3, 2, 50, 25));
 		maxPlayersLabel.setText("Max Players(2-24)");
+		minPlayersLabel.setText("Min Players(2-22)");
 		summaryLabel.setText("Competition name");
 		inputPanel.add(summaryLabel);
 		inputPanel.add(summary);
+		inputPanel.add(minPlayersLabel);
+		inputPanel.add(minPlayers);
 		inputPanel.add(maxPlayersLabel);
 		inputPanel.add(maxPlayers);
-		
-		
-
 	}
 
 	public void createMainPanel()
@@ -135,18 +121,19 @@ public class CreateCompWindow extends JFrame
 	{
 
 		if (!maxPlayers.getText().equals("") && !summary.getText().equals("")
+				&& !minPlayers.getText().equals("")
 				&& summary.getText().length() < 255)
 		{
 			try
 			{
 				if (Integer.parseInt(maxPlayers.getText()) >= 2
-						&& Integer.parseInt(maxPlayers.getText()) <= 24)
+						&& Integer.parseInt(maxPlayers.getText()) <= 24
+							&& Integer.parseInt(minPlayers.getText()) >= 2
+								&& Integer.parseInt(minPlayers.getText()) <= 22)
 				{
 
 					// get the values we have to send to our database
 					endDate = dtp.getDate().toString();
-					summaryString = summary.getText();
-					maxPlayersInt = Integer.parseInt(maxPlayers.getText());
 
 					// for enddate, we have to split up our string, edit the
 					// month part to an int, and put it back together
@@ -174,7 +161,7 @@ public class CreateCompWindow extends JFrame
 					// //
 					// // FORMATTED
 //mainframe wordt hier aangeroepen omdat, als ik het in playerscreen doe je niet kan checken of confirmclicked al gedaan is 
-					mainFrame.getWf().getCompMan().createCompetition(mainFrame.getWf().getCurrentUsername(), summaryString, compEnd, 2, maxPlayersInt);
+					playerScreen.callCreateComp(summary.getText(), compEnd, Integer.parseInt(minPlayers.getText()), Integer.parseInt(maxPlayers.getText()));
 					gameCreatedLabel.setText("Competition has been created.");
 					buttonPanel.add(gameCreatedLabel);
 					this.revalidate();
@@ -182,7 +169,7 @@ public class CreateCompWindow extends JFrame
 				} else
 				{
 					gameCreatedLabel
-							.setText("Invalid Values, max Player nr. was exceeded");
+							.setText("Invalid Values, max or min Player nr. was exceeded");
 					buttonPanel.add(gameCreatedLabel);
 					this.revalidate();
 				}
@@ -190,7 +177,6 @@ public class CreateCompWindow extends JFrame
 			{
 				gameCreatedLabel.setText("Invalid Values");
 				buttonPanel.add(gameCreatedLabel);
-
 				this.revalidate();
 			}
 		} else
@@ -212,54 +198,52 @@ public class CreateCompWindow extends JFrame
 		{
 			monthInt = "01";
 		}
-		if (month.equals("Feb"))
+		else if (month.equals("Feb"))
 		{
 			monthInt = "02";
 		}
-		if (month.equals("Mar"))
+		else if (month.equals("Mar"))
 		{
 			monthInt = "03";
 		}
-		if (month.equals("Apr"))
+		else if (month.equals("Apr"))
 		{
 			monthInt = "04";
 		}
-		if (month.equals("May"))
+		else if (month.equals("May"))
 		{
 			monthInt = "05";
 		}
-		if (month.equals("Jun"))
+		else if (month.equals("Jun"))
 		{
 			monthInt = "06";
 		}
-		if (month.equals("Jul"))
+		else if (month.equals("Jul"))
 		{
 			monthInt = "07";
 		}
-		if (month.equals("Aug"))
+		else if (month.equals("Aug"))
 		{
 			monthInt = "08";
 		}
-		if (month.equals("Sep"))
+		else if (month.equals("Sep"))
 		{
 			monthInt = "09";
 		}
-		if (month.equals("Oct"))
+		else if (month.equals("Oct"))
 		{
 			monthInt = "10";
 		}
-		if (month.equals("Nov"))
+		else if (month.equals("Nov"))
 		{
 			monthInt = "11";
 		}
-		if (month.equals("Dec"))
+		else if (month.equals("Dec"))
 		{
 			monthInt = "12";
 
 		}
-
 		return monthInt;
-
 	}
 
 }

@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 
 import javax.swing.BoxLayout;
@@ -28,7 +29,6 @@ public class PlayerScreen extends JPanel {
 
 	private int storeLastClickGameID;
 	private int clickCount = 0;
-	private CreateCompWindow ccw;
 	public PlayerScreen(MainFrame mainFrame) {
 		
 		this.mainFrame = mainFrame;
@@ -128,13 +128,7 @@ public class PlayerScreen extends JPanel {
 		});
 		createCompButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
-				ccw = new CreateCompWindow(mainFrame);
-				
-		
-				
-				
-	
+				showCreateCompWindow();
 			}
 		});
 
@@ -144,5 +138,13 @@ public class PlayerScreen extends JPanel {
 		composedButtons.add(joinCompButton);
 
 		buttonsPanel.add(composedButtons, BorderLayout.WEST);
+	}
+	
+	public void showCreateCompWindow(){
+		new CreateCompWindow(this);
+	}
+	
+	public void callCreateComp(String summary, Timestamp compEnd, int i, int maxPlayersInt){
+		mainFrame.callCreateCompAction(summary, compEnd, i, maxPlayersInt);
 	}
 }

@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.Dimension;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Observer;
 
@@ -297,10 +298,8 @@ public class MainFrame extends JFrame {
 	public void acceptRejectGame(String string, int competionID, int gameID) {
 		wf.acceptRejectGame(string, competionID, gameID);
 	}
-
-	public WordFeud getWf()
-	{
-		return wf;
-	}
 	
+	public void callCreateCompAction(String summaryString, Timestamp compEnd, int i, int maxPlayersInt){
+		wf.doCreateCompAction(summaryString, compEnd, i, maxPlayersInt);
+	}
 }
