@@ -12,7 +12,7 @@ public class User {
 
 	private String username;
 	private boolean isLoggedIn;
-	
+
 	private String currentRole;
 	private final String defaultUsername = "Spectator";
 	private final String defaultRole = "Spectator";
@@ -54,9 +54,13 @@ public class User {
 	public void setLoggedIn(boolean isLoggedIn) {
 		this.isLoggedIn = isLoggedIn;
 	}
-	
+
 	public String getCurrentRole() {
 		return currentRole;
+	}
+
+	public String getPassword() {
+		return DatabaseHandler.getInstance().getPassword(username);
 	}
 
 	/*
@@ -77,14 +81,14 @@ public class User {
 	}
 
 	public String login(String username, char[] passInputArray) {
-		
+
 		String passInput = "";
-		for (char c : passInputArray){
+		for (char c : passInputArray) {
 			passInput = passInput + c;
 		}
-		
-		String retValue = datalaag.DatabaseHandler.getInstance().login(username,
-				passInput);
+
+		String retValue = datalaag.DatabaseHandler.getInstance().login(
+				username, passInput);
 
 		if (retValue.equalsIgnoreCase("Username and Password are correct")) {
 			// set Username in User Class
@@ -102,14 +106,14 @@ public class User {
 			char[] passConfirmArray) {
 
 		String passInput = "";
-		for (char c : passInputArray){
+		for (char c : passInputArray) {
 			passInput = passInput + c;
 		}
 		String passConfirm = "";
-		for (char c : passConfirmArray){
+		for (char c : passConfirmArray) {
 			passConfirm = passConfirm + c;
 		}
-		
+
 		String retValue = "Idle";
 
 		// controleer of de gebruikersnaam tussen de 3 en 15 tekens is
@@ -131,37 +135,33 @@ public class User {
 
 		// Voer de gebruiker in in de database
 
-		else{
-		retValue = DatabaseHandler.getInstance().register(username, passInput);
-		DatabaseHandler.getInstance().register(username, passInput);
-
-
+		else {
+			retValue = DatabaseHandler.getInstance().register(username,
+					passInput);
+			DatabaseHandler.getInstance().register(username, passInput);
 
 		}
-
 
 		System.out.println(retValue);
 		return retValue;
 
 	}
-	
-	public boolean checkRoles()
-	{
+
+	public boolean checkRoles() {
 		boolean actionSuccesful = false;
-		if (isLoggedIn){
-			ArrayList<String> roles = DatabaseHandler.getInstance().getRole(username);
-		
-			if (!roles.isEmpty()){
-				for (String role : roles){
-					if (role.equals("Administrator")){
+		if (isLoggedIn) {
+			ArrayList<String> roles = DatabaseHandler.getInstance().getRole(
+					username);
+
+			if (!roles.isEmpty()) {
+				for (String role : roles) {
+					if (role.equals("Administrator")) {
 						admin.setHasPermissions(true);
 						actionSuccesful = true;
-					}
-					else if (role.equals("Moderator")){
+					} else if (role.equals("Moderator")) {
 						mod.setHasPermissions(true);
 						actionSuccesful = true;
-					}
-					else if (role.equals("Player")){
+					} else if (role.equals("Player")) {
 						player.setHasPermissions(true);
 						actionSuccesful = true;
 					}
@@ -173,36 +173,39 @@ public class User {
 
 	public boolean changeRole(String role) {
 		boolean actionSuccesful = false;
-		if (role != null){
-			if (role.equals("Administrator")){
-				if (admin.HasPermissions()){
+		if (role != null) {
+			if (role.equals("Administrator")) {
+				if (admin.HasPermissions()) {
+					this.setCurrentRole(role);
+					actionSuccesful = true;
+				}
+			} else if (role.equals("Moderator")) {
+				if (mod.HasPermissions()) {
+					this.setCurrentRole(role);
+					actionSuccesful = true;
+				}
+			} else if (role.equals("Player")) {
+				if (player.HasPermissions()) {
+					this.setCurrentRole(role);
+					actionSuccesful = true;
+				}
+			} else if (role.equals("Spectator")) {
+				if (spec.HasPermissions()) {
 					this.setCurrentRole(role);
 					actionSuccesful = true;
 				}
 			}
-			else if (role.equals("Moderator")){
-				if (mod.HasPermissions()){
-					this.setCurrentRole(role);
-					actionSuccesful = true;
-				}
-			}
-			else if (role.equals("Player")){
-				if (player.HasPermissions()){
-					this.setCurrentRole(role);
-					actionSuccesful = true;
-				}
-			}
-			else if (role.equals("Spectator")){
-				if (spec.HasPermissions()){
-					this.setCurrentRole(role);
-					actionSuccesful = true;
-				}
-			}
-		}
-		else{
-			System.err.println("ERROR: invalid value received or value was null");
+		} else {
+			System.err
+					.println("ERROR: invalid value received or value was null");
 			System.out.println("No role change has occured.");
 		}
 		return actionSuccesful;
+	}
+
+	public ArrayList<String> getRoles() {
+		ArrayList<String> roles = DatabaseHandler.getInstance().getRole(
+				username);
+		return roles;
 	}
 }

@@ -2,12 +2,10 @@ package domein;
 
 public class PendingMatch {
 	private int gameID;
-	private int competionID;
 	private String discription;
 	
-	public PendingMatch(int gameID, int competionID, String discription) {
+	public PendingMatch(int gameID, String discription) {
 		this.gameID = gameID;
-		this.competionID = competionID;
 		this.discription = discription;
 	}
 
@@ -19,10 +17,6 @@ public class PendingMatch {
 	
 	public int getGameID() {
 		return gameID;
-	}
-
-	public int getCompetionID() {
-		return competionID;
 	}
 
 	public String getDiscription() {
