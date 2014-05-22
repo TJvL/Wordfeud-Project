@@ -297,4 +297,10 @@ public class MainFrame extends JFrame {
 	public void acceptRejectGame(String string, int competionID, int gameID) {
 		wf.acceptRejectGame(string, competionID, gameID);
 	}
+
+	public WordFeud getWf()
+	{
+		return wf;
+	}
+	
 }

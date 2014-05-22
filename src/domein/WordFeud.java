@@ -141,4 +141,11 @@ public class WordFeud {
 		matchManager.acceptRejectGame(competionID, gameID,
 				getCurrentUsername(), string);
 	}
+
+	public CompetitionManager getCompMan()
+	{
+		return compMan;
+	}
+	
+	
 }

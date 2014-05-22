@@ -25,12 +25,12 @@ public class PlayerScreen extends JPanel {
 	private JList<ActiveMatch> gameList;
 	private JPanel listPanel;
 	private JPanel buttonsPanel;
-	private CreateCompWindow createcompwindow;
+
 	private int storeLastClickGameID;
 	private int clickCount = 0;
-
+	private CreateCompWindow ccw;
 	public PlayerScreen(MainFrame mainFrame) {
-		createcompwindow = new CreateCompWindow();
+		
 		this.mainFrame = mainFrame;
 		this.setLayout(new BorderLayout());
 		createButtons();
@@ -128,7 +128,13 @@ public class PlayerScreen extends JPanel {
 		});
 		createCompButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				createcompwindow.createCompFrame();
+				
+				ccw = new CreateCompWindow(mainFrame);
+				
+		
+				
+				
+	
 			}
 		});
 
