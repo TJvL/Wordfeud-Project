@@ -90,7 +90,7 @@ public class CompetitionManager {
 		return actionSuccesfull;
 	}
 
-	public void createCompetition(String currentUsername, String summary, Timestamp endDate, int minParticipants, int maxParticipants) {
+	public void createCompetition(String currentUsername, String summary, String endDate, int minParticipants, int maxParticipants) {
 		
 		DatabaseHandler.getInstance().createCompetition(currentUsername, endDate, summary, minParticipants, maxParticipants);
 		this.loadJoinedCompetitions(currentUsername);
