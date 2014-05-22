@@ -1220,7 +1220,7 @@ public class DatabaseHandler
 			if (reaction.equalsIgnoreCase("Accepted"))
 			{
 				statement = con
-						.prepareStatement("UPDATE spel SET toestand_type = 'Playing', reactie = 'Accepted', moment_reaktie = '"
+						.prepareStatement("UPDATE spel SET toestand_type = 'Playing', reaktie_type = 'Accepted', moment_reaktie = '"
 								+ getCurrentTimeStamp() + "' WHERE id = '" + gameID + "'");
 
 				statement.executeUpdate();
@@ -1240,7 +1240,7 @@ public class DatabaseHandler
 			else if (reaction.equalsIgnoreCase("Rejected"))
 			{
 				statement = con
-						.prepareStatement("UPDATE spel SET toestand_type = 'Resigned', reactie = 'Rejected', moment_reaktie = '"
+						.prepareStatement("UPDATE spel SET toestand_type = 'Resigned', reaktie_type = 'Rejected', moment_reaktie = '"
 								+ getCurrentTimeStamp() + "' WHERE id = '" + gameID + "'");
 
 				statement.executeUpdate();
