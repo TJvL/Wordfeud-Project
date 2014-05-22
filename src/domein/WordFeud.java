@@ -76,7 +76,7 @@ public class WordFeud {
 	 * te starten !!MOET >2 zijn!! maxParticipants = maximaal aantal deelnemers
 	 * dat in de compo mag zitten. - Thomas
 	 */
-	public void doCreateCompAction(String summary, Timestamp endDate,
+	public void doCreateCompAction(String summary, String endDate,
 			int minParticipants, int maxParticipants) {
 		compMan.createCompetition(getCurrentUsername(), summary, endDate, minParticipants, maxParticipants);
 	}

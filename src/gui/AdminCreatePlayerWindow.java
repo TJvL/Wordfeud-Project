@@ -16,13 +16,12 @@ import javax.swing.JPasswordField;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
-import datalaag.DatabaseHandler;
+import domein.Administrator;
 	
 @SuppressWarnings("serial")
 public class AdminCreatePlayerWindow extends JDialog
 {
-	private DatabaseHandler dbh = DatabaseHandler.getInstance();
-	
+	private Administrator administrator = new Administrator(true);
 	private JPanel buttons;
 	private JPanel dataField;
 	private JPanel radioButtonPanel = new JPanel();
@@ -41,11 +40,6 @@ public class AdminCreatePlayerWindow extends JDialog
 	private JRadioButton admin = new JRadioButton();
 	private JRadioButton mod = new JRadioButton();
 	private JRadioButton player = new JRadioButton();
-
-	private boolean adminSelected = false;
-	private boolean modSelected = false;
-	private boolean playerSelected = false;
-	private boolean allFieldFilled = false;
 	
 	public void ShowAdminCreatePlayer()
 	{	
@@ -58,7 +52,7 @@ public class AdminCreatePlayerWindow extends JDialog
 		createButtons();
 		
 		this.setModal(true);
-					
+							
 		this.add(dataField, BorderLayout.NORTH);
 		this.add(radioButtonPanel, BorderLayout.CENTER);
 		this.add(buttons, BorderLayout.SOUTH);
@@ -112,72 +106,27 @@ public class AdminCreatePlayerWindow extends JDialog
 
 		confirmButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				adminRegister();
-				if(allFieldFilled)
+				String ret[];
+				System.out.println(usernameField.getText());
+				System.out.println(passwordField.getPassword());
+				System.out.println(confirmPasswordField.getPassword());
+				System.out.println(admin.isSelected());
+				System.out.println(mod.isSelected());
+				System.out.println(player.isSelected());
+				
+
+				ret = administrator.adminRegister(usernameField.getText(), passwordField.getPassword(), confirmPasswordField.getPassword(), admin.isSelected(), mod.isSelected(), player.isSelected()).split("---");
+			System.out.println(ret);
+
+				JOptionPane.showMessageDialog(null, ret[0], "ERROR", JOptionPane.WARNING_MESSAGE);
+			System.out.println(ret);
+
+				if(ret[1].equals("true"))
 				{
 				dispose();
-				}
+				}System.out.println(ret);
 			}
 		});
-	}
-
-	public void adminRegister()
-	{
-		String retValue = "U need to fill in all the fields";
-		String username = usernameField.getText();
-		char[] passInput = passwordField.getPassword();
-		char[] confirmPassInput = confirmPasswordField.getPassword();
-		
-		String password = "";
-		for (char c : passInput){
-			password = password + c;
-		}
-		String passConfirm = "";
-		for (char c : confirmPassInput){
-			passConfirm = passConfirm + c;
-		}
-		
-		if(admin.isSelected())
-		{
-			adminSelected = true;
-		}
-		if(mod.isSelected())
-		{
-			modSelected = true;
-		}
-		if(player.isSelected())
-		{
-			playerSelected = true;
-		}
-		if((!username.isEmpty() && !password.isEmpty() && !passConfirm.isEmpty()))
-		{
-			
-			if((adminSelected || modSelected || playerSelected))
-			{
-				if (username.length() < 3 || username.length() > 15) 
-				{
-					retValue = "Username must be between 3 and 15 characters.";
-				}
-				else if (password.length() < 6) 
-				{
-					retValue = "The password must contain at least 6 characters.";
-				}
-				else if (!password.equals(passConfirm)) 
-				{
-					retValue = "The given passwords do not match.";
-				}
-				else
-				{	allFieldFilled = true;
-					dbh.adminRegister(username, password, adminSelected, modSelected, playerSelected);
-					retValue = "Register confirmed";
-				}
-			}
-			else
-			{
-				retValue = "U need to select at least 1 role";
-			}
-		}
-		JOptionPane.showMessageDialog(null, retValue, "ERROR", JOptionPane.WARNING_MESSAGE);	
 	}
 	
 	private void clearInput()

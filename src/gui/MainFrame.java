@@ -299,7 +299,7 @@ public class MainFrame extends JFrame {
 		wf.acceptRejectGame(string, competionID, gameID);
 	}
 	
-	public void callCreateCompAction(String summaryString, Timestamp compEnd, int i, int maxPlayersInt){
+	public void callCreateCompAction(String summaryString, String compEnd, int i, int maxPlayersInt){
 		wf.doCreateCompAction(summaryString, compEnd, i, maxPlayersInt);
 	}
 }
