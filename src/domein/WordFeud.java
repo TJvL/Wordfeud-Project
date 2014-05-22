@@ -2,6 +2,7 @@ package domein;
 
 import gui.MainFrame;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Observer;
 
@@ -75,10 +76,9 @@ public class WordFeud {
 	 * te starten !!MOET >2 zijn!! maxParticipants = maximaal aantal deelnemers
 	 * dat in de compo mag zitten. - Thomas
 	 */
-	public void doCreateCompAction(String summary, String endDate,
+	public void doCreateCompAction(String summary, Timestamp endDate,
 			int minParticipants, int maxParticipants) {
-		compMan.createCompetition(currentUser.getUsername(), summary, endDate,
-				minParticipants, maxParticipants);
+		compMan.createCompetition(framePanel.getWf().getCurrentUsername(), summary, endDate, minParticipants, maxParticipants);
 	}
 
 

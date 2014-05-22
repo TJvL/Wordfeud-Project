@@ -292,11 +292,11 @@ public class DatabaseHandler
 		return chat;
 	}
 
-	public synchronized int createCompetition(String username, String end, String summary, int minParticipants, int maxParticipants) // works
+	public synchronized int createCompetition(String username, Timestamp targetCompEnd, String summary, int minParticipants, int maxParticipants) // works
 	{
 		connection();
 		// convert string to timestamp
-		java.sql.Timestamp compEnd = java.sql.Timestamp.valueOf(end);
+		java.sql.Timestamp compEnd = targetCompEnd;
 
 		int compID = 0;
 
@@ -309,6 +309,7 @@ public class DatabaseHandler
 							"INSERT INTO competitie(account_naam_eigenaar, start, einde, omschrijving, minimum_aantal_deelnemers, maximum_aantal_deelnemers)VALUES(?,?,?,?,?,?)",
 							PreparedStatement.RETURN_GENERATED_KEYS);
 			// the ? represents anonymous values
+			
 
 			statement.setString(1, username);
 			statement.setTimestamp(2, getCurrentTimeStamp());

@@ -4,6 +4,7 @@ package gui;
 import gui.CreateCompWindow;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -45,7 +46,6 @@ public class CreateCompWindow extends JFrame
 	}
 
 	private JPanel mainPanel = new JPanel();
-
 	private JLabel maxPlayersLabel = new JLabel();
 	private JLabel gameCreatedLabel = new JLabel();
 	private JLabel summaryLabel = new JLabel();
@@ -53,7 +53,6 @@ public class CreateCompWindow extends JFrame
 	private String summaryString;
 	private int maxPlayersInt;
 	private MainFrame mainFrame;
-
 	private String hours;
 	private String minutes;
 	private String seconds;
@@ -61,12 +60,10 @@ public class CreateCompWindow extends JFrame
 	private String day;
 	private String month;
 	private String finalReturnString;
-
 	Calendar cal = Calendar.getInstance();
 
 	public CreateCompWindow(MainFrame mainFrame)
 	{
-
 		this.mainFrame = mainFrame;
 		this.setTitle("Create Competition");
 		this.setLayout(new BorderLayout());
@@ -76,12 +73,23 @@ public class CreateCompWindow extends JFrame
 		createInputPanel();
 		createMainPanel();
 		this.add(dtp, BorderLayout.NORTH);
-
+		
+		this.setBackground(Color.DARK_GRAY);
+		mainPanel.setBackground(Color.DARK_GRAY);
+		inputPanel.setBackground(Color.DARK_GRAY);
+		buttonPanel.setBackground(Color.DARK_GRAY);
+		confirm.setBackground(Color.CYAN);
+		summaryLabel.setForeground(Color.WHITE);
+		maxPlayersLabel.setForeground(Color.WHITE);
+		
+		
+		
 		this.pack();
 		this.setLocationRelativeTo(null);
 		this.setVisible(true);
 		this.setResizable(false);
-
+		
+		
 	}
 
 	public void createCompButtonpanel()
@@ -90,7 +98,6 @@ public class CreateCompWindow extends JFrame
 		cal1.setDateFormatString("yyyy-MM-dd HH:mm:SS");
 		buttonPanel.add(confirm);
 		confirm.setText("Confirm ");
-
 		confirm.addActionListener(new ActionListener()
 		{
 
@@ -107,24 +114,21 @@ public class CreateCompWindow extends JFrame
 
 	public void createInputPanel()
 	{
-
 		inputPanel.setLayout(new GridLayout(2, 2, 50, 25));
-
 		maxPlayersLabel.setText("Max Players(2-24)");
 		summaryLabel.setText("Competition name");
-
 		inputPanel.add(summaryLabel);
 		inputPanel.add(summary);
-
 		inputPanel.add(maxPlayersLabel);
 		inputPanel.add(maxPlayers);
+		
+		
 
 	}
 
 	public void createMainPanel()
 	{
 		mainPanel.add(inputPanel);
-
 	}
 
 	public void confirmClicked()
@@ -159,17 +163,18 @@ public class CreateCompWindow extends JFrame
 					hours = timeSplit[0];
 					minutes = timeSplit[1];
 					seconds = timeSplit[2];
-					// this is the format that needs to be sent to the dbh
-					// method but for some reason it does not get accepted
+					
 					finalReturnString = (year + "-" + month + "-" + day + " "
 							+ hours + ":" + minutes + ":" + seconds);
-					System.out.println(finalReturnString);
+					//convert de enddate naar een timestamp
+					java.sql.Timestamp compEnd = java.sql.Timestamp.valueOf(finalReturnString);
+			
 
 					// //
 					// //
 					// // FORMATTED
-
-					mainFrame.getWf().getCompMan().createCompetition(mainFrame.getWf().getCurrentUsername(),summaryString, finalReturnString, 2,maxPlayersInt);
+//mainframe wordt hier aangeroepen omdat, als ik het in playerscreen doe je niet kan checken of confirmclicked al gedaan is 
+					mainFrame.getWf().getCompMan().createCompetition(mainFrame.getWf().getCurrentUsername(), summaryString, compEnd, 2, maxPlayersInt);
 					gameCreatedLabel.setText("Competition has been created.");
 					buttonPanel.add(gameCreatedLabel);
 					this.revalidate();

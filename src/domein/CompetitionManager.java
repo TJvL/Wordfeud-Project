@@ -1,5 +1,6 @@
 package domein;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -89,9 +90,9 @@ public class CompetitionManager {
 		return actionSuccesfull;
 	}
 
-	public void createCompetition(String currentUsername, String summary, String endDate, int minParticipants, int maxParticipants) {
+	public void createCompetition(String currentUsername, String summary, Timestamp endDate, int minParticipants, int maxParticipants) {
 		
-		DatabaseHandler.getInstance().createCompetition(currentUsername, summary, endDate, minParticipants, maxParticipants);
+		DatabaseHandler.getInstance().createCompetition(currentUsername, endDate, summary, minParticipants, maxParticipants);
 		this.loadJoinedCompetitions(currentUsername);
 		this.loadAllCompetitions(currentUsername);
 	}
