@@ -157,5 +157,4 @@ public class WordFeud {
 	{
 		return compMan;
 	}
-	
 }

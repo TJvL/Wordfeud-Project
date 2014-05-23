@@ -68,6 +68,7 @@ public class LoginScreen extends JPanel {
 
 		buttons.setBackground(Color.DARK_GRAY);
 
+		/**
 		JButton shortCut;
 		shortCut = new JButton("PRESS ME TO CHEAT");
 		shortCut.addActionListener(new ActionListener() {
@@ -77,7 +78,8 @@ public class LoginScreen extends JPanel {
 			}
 		});
 		buttons.add(shortCut);
-
+		**/
+		
 		buttons.add(registerButton);
 		buttons.add(spectateButton);
 		buttons.add(loginButton);

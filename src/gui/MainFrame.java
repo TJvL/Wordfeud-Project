@@ -107,25 +107,20 @@ public class MainFrame extends JFrame {
 
 	public void setJoinedCompScreen() {
 		this.setContentPane(joinedcompscreen);
-		/**
-		 * TIJDELIJK LAAD HET ALLEEN COMPETITIE 1 - DIT MOET ERGENS VANDAAN
-		 * WORDEN OPGEVRAAGD
-		 **/
 		joinedcompscreen.fillCompList(wf.getJoinedCompetitions());
 		wf.stopThread();
 		revalidate();
 	}
 
-	
 	public void setJoinCompPlayerScreen(int compID) {
 		this.setContentPane(joinedcompplayerscreen);
-		//getJoinedCompetitions
-		joinedcompplayerscreen.fillCompList(wf.getParticipantListAction(compID));
+		// getJoinedCompetitions
+		joinedcompplayerscreen
+				.fillCompList(wf.getParticipantListAction(compID));
 		wf.stopThread();
 		revalidate();
 	}
 
-	
 	public void setAdminAccScreen() {
 		this.setContentPane(adminaccscreen);
 		wf.stopThread();
@@ -221,40 +216,34 @@ public class MainFrame extends JFrame {
 	}
 
 	public void startGame(int gameToLoad, boolean spectating) {
-		DatabaseHandler dbh = DatabaseHandler.getInstance();
+		//DatabaseHandler dbh = DatabaseHandler.getInstance();
 		if (gameToLoad != 0 && !spectating) {
 			wf.startGame(gameToLoad, false, false);
 			System.out.println("GAMEID IS " + gameToLoad);
 		} else if (spectating) {
 			wf.startGame(gameToLoad, true, false);
 			System.out.println("GAMEID IS " + gameToLoad);
-		} else {
-			String name = JOptionPane.showInputDialog(null,
-					"Please enter your GameID: ");
-			if (name == null || name.equals("")) {
-				int gameID = dbh.createGame(1, "mike", "wouter", "openbaar",
-						"EN");
-				wf.startGame(gameID, false, true);
-				System.out.println("GAMEID IS " + gameID);
-			} else if (name.equals("spec")) {
-				String name2 = JOptionPane.showInputDialog(null,
-						"Please enter your GameID: ");
-				wf.startGame(Integer.parseInt(name2), true, false);
-				System.out.println("GAMEID IS " + Integer.parseInt(name2));
-			} else {
-				int gameID = Integer.parseInt(name);
-				if (!dbh.getGameStatusValue(gameID).equals("Finished")
-						|| !dbh.getGameStatusValue(gameID).equals("Resigend")) {
-					wf.startGame(gameID, false, false);
-					System.out.println("GAMEID IS " + gameID);
-				} else {
-					JOptionPane.showMessageDialog(null, "Can't load this game",
-							"Loading error!", JOptionPane.OK_OPTION);
-				}
-			}
 		}
+		/*
+		 * else { String name = JOptionPane.showInputDialog(null,
+		 * "Please enter your GameID: "); if (name == null || name.equals("")) {
+		 * int gameID = dbh.createGame(1, "mike", "wouter", "openbaar", "EN");
+		 * wf.startGame(gameID, false, true); System.out.println("GAMEID IS " +
+		 * gameID); } else if (name.equals("spec")) { String name2 =
+		 * JOptionPane.showInputDialog(null, "Please enter your GameID: ");
+		 * wf.startGame(Integer.parseInt(name2), true, false);
+		 * System.out.println("GAMEID IS " + Integer.parseInt(name2)); } else {
+		 * int gameID = Integer.parseInt(name); if
+		 * (!dbh.getGameStatusValue(gameID).equals("Finished") ||
+		 * !dbh.getGameStatusValue(gameID).equals("Resigend")) {
+		 * wf.startGame(gameID, false, false); System.out.println("GAMEID IS " +
+		 * gameID); } else { JOptionPane.showMessageDialog(null,
+		 * "Can't load this game", "Loading error!", JOptionPane.OK_OPTION); } }
+		 * }
+		 */
 	}
 
+	// Method to challenge a player in a competition
 	public void challengePlayer(int competitionID, String username,
 			String opponent, String language) {
 		wf.challengePlayer(competitionID, username, opponent, language);
@@ -291,10 +280,15 @@ public class MainFrame extends JFrame {
 	public synchronized void updateGUI() {
 		playerMenuBar.updateNotificationList();
 		if (this.getContentPane() instanceof PlayerScreen) {
-			playerscreen.setGameList(wf.myActiveGames(), this.getName());
+			updatePlayerGameList();
 		} else if (this.getContentPane() instanceof SpecScreen) {
 			specscreen.setGameList(wf.getActiveGames());
 		}
+	}
+
+	// Update the mainscreen games from the player
+	public void updatePlayerGameList() {
+		playerscreen.setGameList(wf.myActiveGames(), this.getName());
 	}
 
 	// A method to start the Thread
@@ -320,8 +314,9 @@ public class MainFrame extends JFrame {
 	public void acceptRejectGame(String string, int competionID, int gameID) {
 		wf.acceptRejectGame(string, competionID, gameID);
 	}
-	
-	public void callCreateCompAction(String summaryString, String compEnd, int i, int maxPlayersInt){
+
+	public void callCreateCompAction(String summaryString, String compEnd,
+			int i, int maxPlayersInt) {
 		wf.doCreateCompAction(summaryString, compEnd, i, maxPlayersInt);
 	}
 }
