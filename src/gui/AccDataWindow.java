@@ -15,7 +15,9 @@ import javax.swing.JPanel;
 import datalaag.DatabaseHandler;
 
 @SuppressWarnings("serial")
-public class AccDataWindow extends JDialog{
+public class AccDataWindow extends JDialog {
+	private MainFrame mainFrame;
+
 	private JPanel buttonPanel = new JPanel();
 	private JPanel labelPanel = new JPanel();
 	private JButton changeName = new JButton();
@@ -26,16 +28,58 @@ public class AccDataWindow extends JDialog{
 	private JLabel password = new JLabel();
 	private JLabel passwordValue = new JLabel();
 	private String response;
-	private String dbResponse;
+
+	public AccDataWindow(MainFrame mainFrame) {
+		this.mainFrame = mainFrame;
+		this.setModal(true);
+		this.setResizable(false);
+	}
 
 	public void showAccData() {
-		this.setModal(true);
+		this.setTitle(userNameValue.getText() + " data");
+
 		createButtonPanel();
 		createLabelPanel();
 
-		this.setResizable(false);
-		this.setTitle(userNameValue.getText() + " statistics");
+		changeName.addActionListener(new ActionListener() {
 
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				userNameValue.setText(mainFrame.getuser().changeUsername());
+			}
+		});
+		changePassword.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				passwordValue.setText(mainFrame.getuser().changePassword());
+			}
+		});
+
+		this.add(buttonPanel, BorderLayout.SOUTH);
+		this.add(labelPanel, BorderLayout.CENTER);
+
+		this.pack();
+		this.setLocationRelativeTo(null);
+		this.setVisible(true);
+	}
+
+	public void showAdminAccData() {
+		this.setTitle(userNameValue.getText() + " data");
+
+		createButtonPanel();
+		createLabelPanel();
+
+		changeName.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				userNameValue.setText(mainFrame.getAdmin().changeUsername(userNameValue.getText()));
+			}
+		});
+		changePassword.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				passwordValue.setText(mainFrame.getAdmin().changePassword(userNameValue.getText()));
+			}
+		});
+		
 		this.add(buttonPanel, BorderLayout.SOUTH);
 		this.add(labelPanel, BorderLayout.CENTER);
 
@@ -50,62 +94,6 @@ public class AccDataWindow extends JDialog{
 
 		buttonPanel.add(changeName);
 		buttonPanel.add(changePassword);
-
-		changeName.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				response = JOptionPane
-						.showInputDialog(null, "What is your desired name?",
-								"Enter your desired name",
-								JOptionPane.QUESTION_MESSAGE);
-				if (!response.equals("")) {
-					System.out.println(response);
-					if (response.length() > 2 && response.length() < 16) {
-						if (DatabaseHandler
-								.getInstance()
-								.changeUsername(userNameValue.getText(),
-										response)
-								.equals("Your username has been succesfully changed")) {
-							DatabaseHandler.getInstance().changeUsername(
-									userNameValue.getText(), response);
-							userNameValue.setText(response);
-						} else {
-							JOptionPane.showMessageDialog(null, dbResponse,
-									"ERROR", JOptionPane.WARNING_MESSAGE);
-						}
-					} else {
-						JOptionPane.showMessageDialog(null,
-								"Username must contain 3-15 characters.",
-								"ERROR", JOptionPane.WARNING_MESSAGE);
-					}
-				}
-			}
-		});
-
-		changePassword.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				// TODO Auto-generated method stub
-				response = JOptionPane.showInputDialog(null,
-						"What is your desired password?",
-						"Enter your desired password",
-						JOptionPane.QUESTION_MESSAGE);
-				if (!response.equals("")) {
-					System.out.println(response);
-					if (response.length() > 5) {
-						DatabaseHandler.getInstance().changePassword(
-								userNameValue.getText(), response);
-						passwordValue.setText(response);
-					} else {
-						JOptionPane.showMessageDialog(null,
-								"Password must contain at least 6 characters.",
-								"ERROR", JOptionPane.WARNING_MESSAGE);
-					}
-				}
-			}
-
-		});
 	}
 
 	public void createLabelPanel() {

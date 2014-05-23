@@ -5,6 +5,8 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -13,24 +15,28 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import datalaag.DatabaseHandler;
+import domein.User;
+
 @SuppressWarnings("serial")
 public class AdminAccScreen extends JPanel {
+	private ArrayList<String> activePlayers;
+	private JList playersList;
 	private AccDataWindow accdatawindow;
 	private AdminCreatePlayerWindow admincreateplayerwindow;
 	private MainFrame mainFrame;
 	private JPanel listPanel;
 	private JPanel buttonsPanel;
-	private String players[] = { "palyer" };
 
 	public AdminAccScreen(MainFrame mainFrame) {
-		accdatawindow = new AccDataWindow();
+		accdatawindow = new AccDataWindow(mainFrame);
 		this.mainFrame = mainFrame;
-		
+
 		this.setLayout(new BorderLayout());
-		
+
 		createPlayerList();
 		createButtons();
-		
+
 		this.add(listPanel, BorderLayout.WEST);
 		this.add(buttonsPanel, BorderLayout.EAST);
 	}
@@ -38,7 +44,7 @@ public class AdminAccScreen extends JPanel {
 	private void createPlayerList() {
 		listPanel = new JPanel();
 		JLabel label = new JLabel("Players:");
-		JList<String> playersList = new JList<String>(players);
+		playersList = new JList();
 		JScrollPane scrollPane = new JScrollPane(playersList);
 
 		scrollPane.setPreferredSize(new Dimension(800, 300));
@@ -63,25 +69,38 @@ public class AdminAccScreen extends JPanel {
 		JButton getDataButton = new JButton("Player data");
 		JButton compScreenButton = new JButton("Competitions screen");
 		JButton addAccButton = new JButton("Create account");
-		
-		getDataButton.addActionListener(new ActionListener(){
+
+		getDataButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				accdatawindow.showAccData();
-			}});
-		addAccButton.addActionListener(new ActionListener(){
+				accdatawindow.setValues(
+						playersList.getSelectedValue().toString(),
+						DatabaseHandler.getInstance().getPassword(
+								playersList.getSelectedValue().toString()));
+				accdatawindow.showAdminAccData();
+			}
+		});
+		addAccButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				admincreateplayerwindow = new AdminCreatePlayerWindow();
 				admincreateplayerwindow.ShowAdminCreatePlayer();
-			}});
-		compScreenButton.addActionListener(new ActionListener(){
+			}
+		});
+		compScreenButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				mainFrame.setAdminCompScreen();
-			}});
-		
+			}
+		});
+
 		composedButtons.add(getDataButton);
 		composedButtons.add(addAccButton);
 		composedButtons.add(compScreenButton);
 
 		buttonsPanel.add(composedButtons, BorderLayout.WEST);
+	}
+
+	public void fillPlayerList() {
+		System.out.println("Loading player list...");
+		activePlayers = DatabaseHandler.getInstance().getAllPlayers();
+		playersList.setListData(activePlayers.toArray());
 	}
 }
