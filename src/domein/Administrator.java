@@ -16,6 +16,7 @@ public class Administrator extends Role {
 		if ((!response.equals("")) && (response != null)) {
 			System.out.println(response);
 			if (response.length() > 2 && response.length() < 16) {
+				System.out.println("good size");
 				if (DatabaseHandler.getInstance()
 						.changeUsername(username, response)
 						.equals("Your username has been succesfully changed")) {
@@ -28,6 +29,7 @@ public class Administrator extends Role {
 					response = username;
 				}
 			} else {
+				System.out.println("wrong size");
 				JOptionPane.showMessageDialog(null,
 						"Username must contain 3-15 characters.", "ERROR",
 						JOptionPane.WARNING_MESSAGE);
@@ -36,6 +38,7 @@ public class Administrator extends Role {
 		} else {
 			response = username;
 		}
+		System.out.println("done");
 		return response;
 	}
 
