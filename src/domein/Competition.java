@@ -32,6 +32,12 @@ public class Competition {
 		this.updateParticipantsAmmount();
 	}
 
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return summary;
+	}
+	
 	public int getCompID() {
 		return compID;
 	}

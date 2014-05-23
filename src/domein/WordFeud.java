@@ -91,6 +91,10 @@ public class WordFeud {
 	public ArrayList<CompPlayer> getParticipantListAction(int compID) {
 		return compMan.getParticipantList(compID);
 	}
+	
+	public ArrayList<Competition> getJoinedCompetitions(){
+		return compMan.getJoinedCompetitions();
+	}
 
 	public String getCurrentUserRole() {
 		return currentUser.getCurrentRole();

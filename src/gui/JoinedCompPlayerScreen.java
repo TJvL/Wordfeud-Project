@@ -13,24 +13,20 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.ListModel;
 import javax.swing.ScrollPaneConstants;
 
 import domein.CompPlayer;
-import domein.Competition;
 
-@SuppressWarnings("serial")
-public class JoinedCompScreen extends JPanel {
+public class JoinedCompPlayerScreen extends JPanel {
 	private RankingWindow rankingwindow;
 	private JPanel listPanel;
 	private JPanel buttonsPanel;
-	private JList<Competition> compsList;
+	private JList<CompPlayer> compsList;
 	private MainFrame framePanel;
 
-	public JoinedCompScreen(MainFrame framePanel) {
+	public JoinedCompPlayerScreen(MainFrame framePanel) {
 		rankingwindow = new RankingWindow();
 		listPanel = new JPanel();
 		this.setLayout(new BorderLayout());
@@ -41,17 +37,17 @@ public class JoinedCompScreen extends JPanel {
 		this.framePanel = framePanel;
 	}
 
-	public void fillCompList(ArrayList<Competition> arrayList) {
-		if (arrayList != null) {
-			Competition[] comps = new Competition[arrayList.size()];
-			for (int i = 0; i < arrayList.size(); i++) {
-				comps[i] = arrayList.get(i);
+	public void fillCompList(ArrayList<CompPlayer> players) {
+		if (players != null) {
+			CompPlayer[] compPlayers = new CompPlayer[players.size()];
+			for (int i = 0; i < players.size(); i++) {
+				compPlayers[i] = players.get(i);
 			}
 			if (compsList != null) {
 				this.remove(compsList);
 				this.remove(listPanel);
 			}
-			createCompList(comps);
+			createCompList(compPlayers);
 			this.repaint();
 			this.revalidate();
 		} else {
@@ -60,19 +56,15 @@ public class JoinedCompScreen extends JPanel {
 		}
 	}
 
-	private void createCompList(Competition[] comps) {
-		compsList = new JList<Competition>(comps);
+	private void createCompList(CompPlayer[] players) {
+		compsList = new JList<CompPlayer>(players);
 		compsList.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				Competition comp = compsList.getSelectedValue();
-				if (comp != null) {
-					int reply3 = JOptionPane.showConfirmDialog(null,
-							"Want to load the competion?", "Load competion",
-							JOptionPane.YES_NO_OPTION);
-					if (reply3 == JOptionPane.YES_OPTION) {
-						framePanel.setJoinCompPlayerScreen(comp.getCompID());
-					}
+				CompPlayer player = compsList.getSelectedValue();
+				if (player != null) {
+					framePanel.challengePlayer(player.getCompetitionID(),
+							framePanel.getName(), player.getName(), "EN");
 				}
 			}
 		});

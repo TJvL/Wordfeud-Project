@@ -132,4 +132,13 @@ public class CompetitionManager {
 		return null;
 		}
 	}
+	
+	public ArrayList<Competition> getJoinedCompetitions(){
+		ArrayList<Competition> arrayCompetitions = new ArrayList<Competition>();
+		for (Competition value : joinedCompetitions.values()) {
+			arrayCompetitions.add(value);
+		}
+		return arrayCompetitions;
+		
+	}
 }

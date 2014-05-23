@@ -23,6 +23,7 @@ public class MainFrame extends JFrame {
 	private AdminCompScreen admincompscreen;
 	private JoinCompScreen joincompscreen;
 	private JoinedCompScreen joinedcompscreen;
+	private JoinedCompPlayerScreen joinedcompplayerscreen;
 	private ModScreen modscreen;
 	private StartMenuBar startMenuBar;
 	private PlayerMenuBar playerMenuBar;
@@ -46,6 +47,7 @@ public class MainFrame extends JFrame {
 		specScreen = new GameSpecScreen();
 		joincompscreen = new JoinCompScreen();
 		joinedcompscreen = new JoinedCompScreen(this);
+		joinedcompplayerscreen = new JoinedCompPlayerScreen(this);
 		adminaccscreen = new AdminAccScreen(this);
 		admincompscreen = new AdminCompScreen(this);
 		modscreen = new ModScreen();
@@ -108,12 +110,21 @@ public class MainFrame extends JFrame {
 		 * TIJDELIJK LAAD HET ALLEEN COMPETITIE 1 - DIT MOET ERGENS VANDAAN
 		 * WORDEN OPGEVRAAGD
 		 **/
-		wf.getParticipantListAction(1);
-		joinedcompscreen.fillCompList(wf.getParticipantListAction(1));
+		joinedcompscreen.fillCompList(wf.getJoinedCompetitions());
 		wf.stopThread();
 		revalidate();
 	}
 
+	
+	public void setJoinCompPlayerScreen(int compID) {
+		this.setContentPane(joinedcompplayerscreen);
+		//getJoinedCompetitions
+		joinedcompplayerscreen.fillCompList(wf.getParticipantListAction(compID));
+		wf.stopThread();
+		revalidate();
+	}
+
+	
 	public void setAdminAccScreen() {
 		this.setContentPane(adminaccscreen);
 		wf.stopThread();
