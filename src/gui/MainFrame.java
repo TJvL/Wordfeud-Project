@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.Dimension;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Observer;
 
@@ -318,5 +319,9 @@ public class MainFrame extends JFrame {
 	// Method to accept/reject games
 	public void acceptRejectGame(String string, int competionID, int gameID) {
 		wf.acceptRejectGame(string, competionID, gameID);
+	}
+	
+	public void callCreateCompAction(String summaryString, String compEnd, int i, int maxPlayersInt){
+		wf.doCreateCompAction(summaryString, compEnd, i, maxPlayersInt);
 	}
 }

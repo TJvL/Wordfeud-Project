@@ -2,6 +2,7 @@ package domein;
 
 import gui.MainFrame;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Observer;
 
@@ -78,6 +79,7 @@ public class WordFeud {
 			int minParticipants, int maxParticipants) {
 		compMan.createCompetition(currentUser.getUsername(), summary, endDate,
 				minParticipants, maxParticipants);
+
 	}
 
 	public boolean doJoinCompAction(int compID) {
@@ -150,4 +152,10 @@ public class WordFeud {
 		matchManager.challengePlayer(competitionID, username, opponent,
 				language);
 	}
+	
+	public CompetitionManager getCompMan()
+	{
+		return compMan;
+	}
+	
 }
