@@ -412,7 +412,7 @@ public class Match implements Observer {
 
 		// Method of fill the hand at the beginning of a game
 		else {
-			fillHand();
+			fillHand(false);
 		}
 		gameField.repaintBoard();
 	}
@@ -603,7 +603,7 @@ public class Match implements Observer {
 			dbh.updateTurn(maxTurn, gameID, getOwnName(), 0, "Swap");
 			tilesToSwap.clear();
 			gameField.swapTiles();
-			fillHand();
+			fillHand(false);
 
 		}
 		// ***** dbh.updateTurn(maxTurn + 1, gameID, getEnemyName(), 25,
@@ -663,7 +663,7 @@ public class Match implements Observer {
 
 				board.setTilesPlayed();
 
-				fillHand();
+				fillHand(false);
 
 				// Tijdelijke reactie van de tegenstander
 				// *****
