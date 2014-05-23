@@ -2,186 +2,163 @@ package gui;
 
 import javax.swing.JPanel;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridLayout;
+import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
 
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.ScrollPaneConstants;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import domein.Competition;
 
 /////this screen contains all public active  competitions 
 @SuppressWarnings("serial")
 public class JoinCompScreen extends JPanel {
 
-	public JoinCompScreen() {
-		createJoinCompScreen();
+	private MainFrame mainFrame;
+	private JPanel infoPanel;
+	private JPanel buttonPanel;
+	private JTable table;
+	private JScrollPane scrollTable;
+	private ListSelectionModel selectModel;
+	private String currentSelection;
+	private boolean neverViewed;
+
+	public JoinCompScreen(MainFrame mainFrame) {
+		this.mainFrame = mainFrame;
+		infoPanel = new JPanel();
+		buttonPanel = new JPanel();
+		infoPanel.setLayout(null);
+		buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 50, 20));
+		this.setLayout(null);
+		this.createButtons();
+		neverViewed =  true;
+		buttonPanel.setBackground(Color.BLACK);		
+	}
+	
+	public void populateScreen(){
+		currentSelection = "";
+		if(neverViewed){
+			mainFrame.callLoadAllCompetitionsAction();
+			this.initTable();
+		}
+		
+		scrollTable.setBounds(0, 0, 650, 700);
+		infoPanel.setBounds(650, 0, 550, 550);
+		buttonPanel.setBounds(650, 550, 550, 150);
+		
+		this.add(scrollTable);
+		this.add(infoPanel);
+		this.add(buttonPanel);
+		neverViewed = false;
 	}
 
-	private String listArray[] = {
-
-	"Active Comp 1 ", "Active Comp 2", "Active Comp 3", "Active Comp 4" };
-	private JScrollPane listScrollPane;
-	private JScrollPane textAreaScrollPane;
-	private JTextArea selectedTextArea = new JTextArea();
-	private JPanel joinCompScreenButtonPanel = new JPanel();
-	private JPanel joinCompScreenListPanel = new JPanel();
-	private JPanel infoLabelsPanel = new JPanel();
-	private String selectedValue = new String();
-	private JButton selectComp = new JButton();
-	private DefaultListModel<String> myListModel = new DefaultListModel<String>();
-	private JList<String> activeCompsList = new JList<String>(listArray);
-	private JButton joinButton = new JButton();
-
-	private JLabel compName = new JLabel();
-	private JLabel NrOfparticipants = new JLabel();
-	private JLabel compPrivate = new JLabel();
-	private JLabel startsIn = new JLabel();
-	private JLabel bordType = new JLabel();
-
-	// run this method before setting the screen as contentpane
-
-	public void createJoinCompScreen() {
-		this.createjoinCompScreenListPanel();
-		this.createjoinCompScreenButtonPanel();
-		this.createInfoLabelsPanel();
-		this.setLayout(new BorderLayout());
-		this.setPreferredSize(this.getSize());
-		this.add(joinCompScreenListPanel, BorderLayout.CENTER);
-		this.add(joinCompScreenButtonPanel, BorderLayout.SOUTH);
-		this.add(infoLabelsPanel, BorderLayout.EAST);
-		// this.add(joinCompTextareaPanel, BorderLayout.EAST);
-	}
-
-	// /the following 3 methods are used to create 2 separate panels which are
-	// both added to our main screen in the method above
-	public void createjoinCompScreenListPanel() {
-
-		// ///this panel contains our JList, where all the active games are
-		// listed
-		joinCompScreenListPanel.setLayout(new BorderLayout());
-		joinCompScreenListPanel.setPreferredSize(this.getSize());
-		DefaultListCellRenderer renderer = (DefaultListCellRenderer) activeCompsList
-				.getCellRenderer();
-		renderer.setHorizontalAlignment(JLabel.CENTER);
-		activeCompsList.setModel(myListModel);
-		listScrollPane = new JScrollPane(activeCompsList);
-		listScrollPane
-				.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-		joinCompScreenListPanel.add(listScrollPane, BorderLayout.CENTER);
-		// //////
-
-		textAreaScrollPane = new JScrollPane(selectedTextArea);
-		selectedTextArea.setWrapStyleWord(true);
-		selectedTextArea.setLineWrap(true);
-
-		textAreaScrollPane
-				.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		textAreaScrollPane.setPreferredSize(new Dimension(500, 1200));
-		// joinCompTextareaPanel.add(textAreaScrollPane, BorderLayout.CENTER);
-		joinCompScreenListPanel.add(selectedTextArea, BorderLayout.SOUTH);
-
-		fillList();
-
-	}
-
-	public void createjoinCompScreenButtonPanel()
-
-	{
-
-		selectComp.setText("Select an active competition to view it");
-		joinCompScreenButtonPanel.add(selectComp);
-		selectComp.addActionListener(new ActionListener() {
-
+	private void createButtons() {
+		JButton refresh = new JButton("Refresh");
+		JButton join = new JButton("Join");
+		JButton back = new JButton("Back");
+		
+		refresh.addActionListener(new ActionListener() {			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				selectCompClicked();
-
+				mainFrame.callLoadAllCompetitionsAction();
+				refreshTable();
 			}
 		});
-
-		joinButton.setText("Join competition");
-		joinCompScreenButtonPanel.add(joinButton);
-		joinButton.addActionListener(new ActionListener() {
-
+		join.addActionListener(new ActionListener() {			
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				requestInviteClicked();
+			public void actionPerformed(ActionEvent e) {
+				if (!currentSelection.equals("")){
+					joinSelectedCompetition();
+					refreshTable();
+				}
 			}
-
 		});
-
+		back.addActionListener(new ActionListener() {			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				mainFrame.setPlayerScreen();
+			}
+		});
+		
+		buttonPanel.add(join);
+		buttonPanel.add(refresh);
+		buttonPanel.add(back);
 	}
 
-	public void requestInviteClicked() {
-		// //checks if the user actually selected something
-		if (activeCompsList.getSelectedValue() != null) {
-			String itemSelected = activeCompsList.getSelectedValue().toString();
-			selectedTextArea.setText("You have joined : "
-					+ itemSelected);
-		} else {
-			selectedTextArea.setText("Nothing was selected !");
+	private void initTable() {
+		String[] columnNames = { "ID", "Summary", "Max Parts", "Current Parts", "Owner", "End Date/Time" };
+		Set<Entry<String, Competition>> competitions = mainFrame.callGetAllCompetitionsAction();
+		String[][] tableData = new String[competitions.size()][6];
 
-		}
-	}
-
-	// //these labels contain the info on the competition
-	public void createInfoLabelsPanel() {
-		compName.setText("compName:");
-		compName.setFont(new Font("Serif", Font.BOLD, 17));
-		NrOfparticipants.setText("NrOfparticipants:");
-		NrOfparticipants.setFont(new Font("Serif", Font.BOLD, 17));
-		compPrivate.setText("compPrivate:");
-		compPrivate.setFont(new Font("Serif", Font.BOLD, 17));
-		startsIn.setText("startsIn:");
-		startsIn.setFont(new Font("Serif", Font.BOLD, 17));
-		bordType.setText("bordType:");
-		bordType.setFont(new Font("Serif", Font.BOLD, 17));
-
-		infoLabelsPanel.setLayout(new GridLayout(4, 2, 50, 50));
-		infoLabelsPanel.add(compName);
-		infoLabelsPanel.add(NrOfparticipants);
-		infoLabelsPanel.add(compPrivate);
-		infoLabelsPanel.add(startsIn);
-		infoLabelsPanel.add(bordType);
-
-	}
-
-	public void fillList() {
-		int counter = 0;
-		while (counter < listArray.length) {
-
-			myListModel.add(counter, listArray[counter]);
-			counter++;
-
+		Iterator<Entry<String, Competition>> it = competitions
+				.iterator();
+		int i = 0;
+		while (it.hasNext()) {
+			Map.Entry<String, Competition> pair = (Map.Entry<String, Competition>) it
+					.next();
+			tableData[i][0] = Integer.toString(pair.getValue().getCompID());
+			tableData[i][1] = pair.getValue().getSummary();
+			tableData[i][2] = Integer.toString(pair.getValue()
+					.getMaxParticipants());
+			tableData[i][3] = Integer.toString(pair.getValue()
+					.getMinParticipants());
+			tableData[i][4] = pair.getValue()
+					.getCompOwner();
+			tableData[i][5] = pair.getValue().getEndDate();
+			i++;
 		}
 
+		table = new JTable(tableData, columnNames) {
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
+		table.getTableHeader().setResizingAllowed(false);
+		table.getTableHeader().setReorderingAllowed(false);
+		table.setColumnSelectionAllowed(false);
+		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		table.getColumnModel().getColumn(0).setPreferredWidth(30);
+		table.getColumnModel().getColumn(1).setPreferredWidth(230);
+		table.getColumnModel().getColumn(2).setPreferredWidth(80);
+		table.getColumnModel().getColumn(3).setPreferredWidth(80);
+		table.getColumnModel().getColumn(4).setPreferredWidth(80);
+		table.getColumnModel().getColumn(5).setPreferredWidth(150);
+
+		selectModel = new ForcedListSelectionModel();
+		selectModel.addListSelectionListener(new ListSelectionListener() {
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				if (e.getValueIsAdjusting()) {
+					setCompInfo();
+				}
+			}
+		});
+		table.setSelectionModel(selectModel);
+		scrollTable = new JScrollPane(table);
 	}
-
-	public void selectCompClicked()
-
-	{
-
-		// /this method is called if an item is selected and the button is
-		// clicked
-		if (activeCompsList.getSelectedValue() != null) {
-
-			selectedValue = activeCompsList.getSelectedValue().toString();
-			selectedTextArea.setText("You have selected:  " + selectedValue);
-
-		}
-
-		else {
-			selectedTextArea.setText("Nothing was selected !");
-		}
+	
+	private void refreshTable(){
+		this.initTable();
+		scrollTable.setBounds(0, 0, 650, 700);
+		this.add(scrollTable);
+		this.revalidate();
 	}
-
+	
+	private void setCompInfo(){
+		currentSelection = table.getValueAt(table.getSelectedRow(), 0).toString();
+	}
+	
+	private void joinSelectedCompetition(){
+		mainFrame.callJoinCompetitionAction(currentSelection);
+	}
 }

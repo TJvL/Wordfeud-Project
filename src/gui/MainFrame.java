@@ -3,12 +3,15 @@ package gui;
 import java.awt.Dimension;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Map.Entry;
 import java.util.Observer;
+import java.util.Set;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import datalaag.DatabaseHandler;
+import domein.Competition;
 import domein.PendingMatch;
 import domein.WordFeud;
 
@@ -33,24 +36,10 @@ public class MainFrame extends JFrame {
 	private UpdateGUIThread guiThread;
 	private WordFeud wf;
 
-	public MainFrame(final WordFeud wf) {
+	public MainFrame(WordFeud wf) {
+		this.wf = wf;
 		startMenuBar = new StartMenuBar();
-		specMenuBar = new SpecMenuBar(this);
-		playerMenuBar = new PlayerMenuBar(this);
-		modMenuBar = new ModMenuBar(this);
-		adminMenuBar = new AdminMenuBar(this);
 		loginscreen = new LoginScreen(this);
-		specscreen = new SpecScreen(this);
-		regscreen = new RegScreen(this);
-		playerscreen = new PlayerScreen(this);
-		gameScreen = new GameScreen();
-		specScreen = new GameSpecScreen();
-		joincompscreen = new JoinCompScreen();
-		joinedcompscreen = new JoinedCompScreen();
-		adminaccscreen = new AdminAccScreen(this);
-		admincompscreen = new AdminCompScreen(this);
-		modscreen = new ModScreen();
-
 		this.setPreferredSize(new Dimension(1200, 700));
 		this.setResizable(false);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -58,10 +47,26 @@ public class MainFrame extends JFrame {
 
 		this.setContentPane(loginscreen);
 		this.setJMenuBar(startMenuBar);
-		this.wf = wf;
 
 		this.pack();
 		this.setLocationRelativeTo(null);
+	}
+	
+	public void init(){
+		specMenuBar = new SpecMenuBar(this);
+		playerMenuBar = new PlayerMenuBar(this);
+		modMenuBar = new ModMenuBar(this);
+		adminMenuBar = new AdminMenuBar(this);
+		specscreen = new SpecScreen(this);
+		regscreen = new RegScreen(this);
+		playerscreen = new PlayerScreen(this);
+		gameScreen = new GameScreen();
+		specScreen = new GameSpecScreen();
+		joincompscreen = new JoinCompScreen(this);
+		joinedcompscreen = new JoinedCompScreen();
+		adminaccscreen = new AdminAccScreen(this);
+		admincompscreen = new AdminCompScreen(this);
+		modscreen = new ModScreen();
 		this.setVisible(true);
 	}
 
@@ -98,6 +103,7 @@ public class MainFrame extends JFrame {
 	}
 
 	public void setJoinCompScreen() {
+		joincompscreen.populateScreen();
 		this.setContentPane(joincompscreen);
 		wf.stopThread();
 		revalidate();
@@ -301,5 +307,21 @@ public class MainFrame extends JFrame {
 	
 	public void callCreateCompAction(String summaryString, Timestamp compEnd, int i, int maxPlayersInt){
 		wf.doCreateCompAction(summaryString, compEnd, i, maxPlayersInt);
+	}
+
+	public  Set<Entry<String, Competition>> callGetAllCompetitionsAction() {
+		return wf.doGetAllCompetitionsAction();
+	}
+
+	public Competition callGetOneCompetitionAction(String key) {
+		return wf.doGetOneCompetitionAction(key);
+	}
+	
+	public void callLoadAllCompetitionsAction(){
+		wf.doLoadAllCompetitionsAction();
+	}
+	
+	public void callJoinCompetitionAction(String compID){
+		wf.doJoinCompAction(compID);
 	}
 }

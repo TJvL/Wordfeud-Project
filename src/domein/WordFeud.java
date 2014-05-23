@@ -4,25 +4,29 @@ import gui.MainFrame;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Map.Entry;
 import java.util.Observer;
+import java.util.Set;
 
 public class WordFeud {
-	private final User currentUser;
-	private final CompetitionManager compMan;
+	private User currentUser;
+	private CompetitionManager compMan;
 	private MainFrame framePanel;
 	private MatchManager matchManager;
 
 	public WordFeud() {
 		currentUser = new User();
-		compMan = new CompetitionManager(this);
+		compMan = new CompetitionManager();
+	}
+	
+	public void init() {
 		framePanel = new MainFrame(this);
+		framePanel.init();
 		matchManager = new MatchManager(this, framePanel);
 	}
 
 	/*
-<<<<<<< HEAD
 	 * Gets the user from the player DOESNT WORK WELL
-=======
 	 * // A method to initialize the Thread public void initializeThread() {
 	 * secondThread = new SecondThread(framePanel.getGameScreen()
 	 * .getGameChatPanel(), framePanel.getGameScreen() .getButtonPanel(),
@@ -36,7 +40,6 @@ public class WordFeud {
 
 	/*
 	 * Returns the user from the player DOESNT WORK WELL
->>>>>>> refs/remotes/origin/master-development
 	 * ****************************************
 	 */
 	public Player getUserPlayer() {
@@ -82,7 +85,7 @@ public class WordFeud {
 	}
 
 
-	public boolean doJoinCompAction(int compID) {
+	public boolean doJoinCompAction(String compID) {
 		return compMan.joinCompetition(compID, currentUser.getUsername());
 	}
 
@@ -146,6 +149,12 @@ public class WordFeud {
 	{
 		return compMan;
 	}
-	
-	
+
+	public  Set<Entry<String, Competition>> doGetAllCompetitionsAction() {
+		return compMan.getAllCompEntries();
+	}
+
+	public Competition doGetOneCompetitionAction(String key) {
+		return compMan.getOneCompetition(key);
+	}
 }

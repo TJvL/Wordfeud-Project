@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import datalaag.DatabaseHandler;
 
@@ -14,8 +15,7 @@ public class CompetitionManager {
 	private HashMap<String, Competition> joinedCompetitions;
 	private HashMap<String, Competition> competitions;
 
-	public CompetitionManager(WordFeud wf) {
-		
+	public CompetitionManager() {	
 		competitions = new HashMap<String, Competition>();
 		joinedCompetitions = new HashMap<String, Competition>();
 	}
@@ -75,14 +75,15 @@ public class CompetitionManager {
 		}
 	}
 	
-	public boolean joinCompetition(int compID, String username){
+	public boolean joinCompetition(String compID, String username){
 		boolean actionSuccesfull = false;
 		if (competitions.get(compID).isRoomForMore()){
-			DatabaseHandler.getInstance().joinCompetition(compID, username);
+			DatabaseHandler.getInstance().joinCompetition(Integer.parseInt(compID), username);
 			Competition comp = competitions.get(compID);
-			joinedCompetitions.put(Integer.toString(compID), comp);
+			joinedCompetitions.put(compID, comp);
 			competitions.remove(compID);
 			actionSuccesfull = true;
+			System.out.println("Joined competition succesfully! CompObject ID: " + comp.getCompID());
 		}
 		else{
 			System.err.println("ERROR: Could not join selected competition");
@@ -111,10 +112,6 @@ public class CompetitionManager {
 		}
 	}
 	
-	public HashMap<String, Competition>  getCompetitionsMap(){
-		return competitions;
-	}
-
 	public ArrayList<String> getParticipantList(int compID) {
 		ArrayList<String> participantList;
 		
@@ -129,5 +126,21 @@ public class CompetitionManager {
 		else{
 		return null;
 		}
+	}
+	
+	public Set<Entry<String, Competition>> getAllCompEntries(){
+		return competitions.entrySet();
+	}
+	
+	public Set<Entry<String, Competition>> getJoinedCompEntries(){
+		return joinedCompetitions.entrySet();
+	} 
+
+	public Competition getOneCompetition(String key){
+		return competitions.get(key);
+	}
+	
+	public Competition getOneJoinedCompetition(String key){
+		return joinedCompetitions.get(key);
 	}
 }
