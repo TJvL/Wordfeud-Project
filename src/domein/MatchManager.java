@@ -175,26 +175,29 @@ public class MatchManager {
 		int reply1 = JOptionPane.showConfirmDialog(null, "Want to invite "
 				+ opponent + " for a game?", "Game invite",
 				JOptionPane.YES_NO_OPTION);
-		if (!dbh.inviteExists(username, opponent)){	
-		if (reply1 == JOptionPane.YES_OPTION) {
-			int reply2 = JOptionPane.showConfirmDialog(null,
-					"Want a public game?", "Public game",
-					JOptionPane.YES_NO_OPTION);
-			if (reply2 == JOptionPane.YES_OPTION) {
-				privacy = "openbaar";
-			}
+		if (!dbh.inviteExists(username, opponent)) {
+			if (reply1 == JOptionPane.YES_OPTION) {
+				int reply2 = JOptionPane.showConfirmDialog(null,
+						"Want a public game?", "Public game",
+						JOptionPane.YES_NO_OPTION);
+				if (reply2 == JOptionPane.YES_OPTION) {
+					privacy = "openbaar";
+				}
 
-			int gameID = dbh.createGame(competitionID, username, opponent,
-					privacy, language);
-			int reply3 = JOptionPane.showConfirmDialog(null,
-					"Want to load the game?", "Load game",
-					JOptionPane.YES_NO_OPTION);
-			if (reply3 == JOptionPane.YES_OPTION) {
-				wf.startGame(gameID, false, true);
+				int gameID = dbh.createGame(competitionID, username, opponent,
+						privacy, language);
+				System.out.println("MatchMananger - GameID " + gameID
+						+ " is aangemaakt!");
+				// int reply3 = JOptionPane.showConfirmDialog(null,
+				// "Want to load the game?", "Load game",
+				// JOptionPane.YES_NO_OPTION);
+				// if (reply3 == JOptionPane.YES_OPTION) {
+				// wf.startGame(gameID, false, true);
+				// }
 			}
-		}
 		} else {
-			JOptionPane.showMessageDialog(null, "There is already a open invited for this game",
+			JOptionPane.showMessageDialog(null,
+					"There is already a open invited for this game",
 					"Game active", JOptionPane.INFORMATION_MESSAGE);
 		}
 	}

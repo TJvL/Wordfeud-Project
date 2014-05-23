@@ -328,7 +328,7 @@ public class Match implements Observer {
 		}
 
 		// Fills the player hands
-		fillHand();
+		fillHand(true);
 		getMaxTurnID();
 		// tijdelijk voor het zetten van een beurt van de tegenstander
 		// **************************************************************
@@ -543,12 +543,14 @@ public class Match implements Observer {
 	}
 
 	// Fills the hand back to 7
-	public void fillHand() {
+	public void fillHand(boolean newGame) {
 		getMaxTurnID();
-		if (maxTurn == 1 && myTurn) {
-			dbh.updateTurn(maxTurn, gameID, getOwnName(), 0, "Begin");
-		} else if (maxTurn == 2 && myTurn) {
-			dbh.updateTurn(maxTurn, gameID, getOwnName(), 0, "Begin");
+		if (newGame){
+		//	if (maxTurn == 1 && myTurn) {
+				dbh.updateTurn(maxTurn, gameID, getOwnName(), 0, "Begin");
+		//	} else if (maxTurn == 2 && myTurn) {
+				dbh.updateTurn(maxTurn, gameID, getOwnName(), 0, "Begin");
+		//	}
 		}
 
 		if (player.getHandSize() == 0 && jar.getJarSize() == 0) {
@@ -574,6 +576,18 @@ public class Match implements Observer {
 			dbh.addTileToHand(gameID, tilesNumber, maxTurn);
 			// dbh.addTileToHand(gameID, tileID, maxTurn);
 			board.setScore();
+		}
+		
+		if (newGame){
+			dbh.updateTurn(maxTurn + 1, gameID, getEnemyName(), 0, "Begin");
+			ArrayList<Integer> enemyHand = new ArrayList<Integer>();
+			for (int i = 0; i < 7; i++){
+				int id = getTileFromJar();
+				enemyHand.add(id);
+			}
+			
+			dbh.addTileToHand(gameID, enemyHand, maxTurn + 1);
+			getMaxTurnID();
 		}
 	}
 
