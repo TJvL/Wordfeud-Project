@@ -292,11 +292,11 @@ public class DatabaseHandler
 		return chat;
 	}
 
-	public synchronized int createCompetition(String username, Timestamp targetCompEnd, String summary, int minParticipants, int maxParticipants) // works
+	public synchronized int createCompetition(String username, String end, String summary, int minParticipants, int maxParticipants) // works
 	{
 		connection();
 		// convert string to timestamp
-		java.sql.Timestamp compEnd = targetCompEnd;
+		java.sql.Timestamp compEnd = java.sql.Timestamp.valueOf(end);
 
 		int compID = 0;
 
@@ -309,7 +309,6 @@ public class DatabaseHandler
 							"INSERT INTO competitie(account_naam_eigenaar, start, einde, omschrijving, minimum_aantal_deelnemers, maximum_aantal_deelnemers)VALUES(?,?,?,?,?,?)",
 							PreparedStatement.RETURN_GENERATED_KEYS);
 			// the ? represents anonymous values
-			
 
 			statement.setString(1, username);
 			statement.setTimestamp(2, getCurrentTimeStamp());
@@ -1268,6 +1267,32 @@ public class DatabaseHandler
 		}
 	}
 	
+	public synchronized boolean inviteExists(String challenger, String opponent){
+		connection();
+		boolean exists = true;
+		try
+		{
+			statement = con.prepareStatement("SELECT * FROM spel WHERE (account_naam_tegenstander = '" + challenger + "' AND account_naam_uitdager = '" + opponent + "') OR (account_naam_tegenstander = '" + opponent + "' AND account_naam_uitdager = '" + challenger + "')");
+
+			result = statement.executeQuery();
+
+			if (!result.next())
+			{
+				exists = false;
+			}
+			result.close();
+			statement.close();
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+			System.out.println("QUERRY ERROR");
+		} finally
+		{
+			closeConnection();
+		}
+		return exists;
+	}
+	
 	public synchronized int letterValue(String language, String letter)
 	{
 		connection();
@@ -1471,10 +1496,10 @@ public class DatabaseHandler
 		return winnerScore;
 	}
 
-	public synchronized ArrayList<String> competitionBayesian(int compID)
+	public synchronized HashMap<String, String> competitionBayesian(int compID)
 	{
 		connection();
-		ArrayList<String> bayesian = new ArrayList<String>();
+		HashMap<String, String> bayesian = new HashMap<String, String>();
 
 		try
 		{
@@ -1486,7 +1511,8 @@ public class DatabaseHandler
 
 			while (result.next())
 			{
-				bayesian.add(result.getString(1) + "---" + result.getDouble(2) + "---" + result.getInt(3));
+				bayesian.put(result.getString(1), result.getDouble(2) + "---" + result.getInt(3));
+				//bayesian.add(result.getString(1) + "---" + result.getDouble(2) + "---" + result.getInt(3));
 			}
 			result.close();
 			statement.close();
@@ -1501,21 +1527,21 @@ public class DatabaseHandler
 		return bayesian;
 	}
 
-	public synchronized ArrayList<String> competitionBayesianRating(int compID)
+	public synchronized HashMap<String, Double> competitionBayesianRating(int compID)
 	{
 		connection();
-		ArrayList<String> bayesianRating = new ArrayList<String>();
+		HashMap<String, Double> bayesianRating = new HashMap<String, Double>();
 
 		try
 		{
-			statement = con.prepareStatement("SELECT account_naam, bayesian_rating FROM rating WHERE competitie_id = '"
+			statement = con.prepareStatement("SELECT account_naam, avg_wins FROM rank_bayesian WHERE competitie_id = '"
 					+ compID + "'");
 
 			result = statement.executeQuery();
 
 			while (result.next())
 			{
-				bayesianRating.add(result.getString(1) + "---" + result.getDouble(2));
+				bayesianRating.put(result.getString(1), result.getDouble(2));
 			}
 			result.close();
 			statement.close();
@@ -1528,6 +1554,15 @@ public class DatabaseHandler
 			closeConnection();
 		}
 		return bayesianRating;
+	}
+	
+	public ArrayList<String> fetchCompetitionParticipants(int compID){
+		ArrayList<String> parts = new ArrayList<String>();
+		parts.add("username1---5---9000---388---5---0---1.0");
+		parts.add("username2---5---9000---388---5---0---1.0");
+		parts.add("username3---5---9000---388---5---0---1.0");
+		parts.add("username4---5---9000---388---5---0---1.0");
+		return parts;
 	}
 
 	public synchronized boolean triplePass(int gameID, String username)
@@ -1671,25 +1706,25 @@ public class DatabaseHandler
 	{
 		connection();
 		ArrayList<String> pendingGames = new ArrayList<String>();
-		String name = username;
+
 		try
 		{
 			statement = con
-					.prepareStatement("SELECT spel.id, spel.account_naam_uitdager, spel.account_naam_tegenstander, competitie.omschrijving FROM spel LEFT JOIN competitie ON spel.competitie_id = competitie.id WHERE (spel.account_naam_tegenstander = '" + username + "' OR spel.account_naam_uitdager = '" + username + "') AND reaktie_type = 'Unknown'");
+					.prepareStatement("SELECT spel.id, spel.account_naam_uitdager, spel.account_naam_tegenstander, competitie.omschrijving FROM spel LEFT JOIN competitie ON spel.competitie_id = competitie.id WHERE account_naam_tegenstander = '" + username + "' AND reaktie_type = 'Unknown'");
 
 			result = statement.executeQuery();
 
 			while (result.next())
 			{
-				if (result.getString(2) == name)
+				if (result.getString(2).equals(username))
 				{
-					pendingGames.add(result.getInt(1) + "," + result.getString(2) + " VS " + result.getString(3) + ";  from competition: "
-							+  result.getString(4) + ";  waiting for there responds");
+					pendingGames.add(result.getInt(1) + "," + result.getString(2) + " VS " + result.getString(3) + " from competition: "
+							+  result.getString(4));
 				}
-				else if (result.getString(3) == name)
+				else
 				{
-					pendingGames.add(result.getInt(1) + "," + result.getString(3) + " VS " + result.getString(2) + ";  from competition: "
-							+  result.getString(4) + ";  waiting for your reaction!");
+					pendingGames.add(result.getInt(1) + "," + result.getString(3) + " VS " + result.getString(2) + " from competition: "
+							+  result.getString(4));
 				}
 			}
 			result.close();

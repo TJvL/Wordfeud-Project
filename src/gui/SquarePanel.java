@@ -59,6 +59,7 @@ public class SquarePanel extends JPanel {
 
 	// Paints the TileImg if not empty, else it will paint the square img
 	public void paintComponent(Graphics g) {
+		super.paintComponent(g);
 		g.setColor(Color.blue);
 		g.fillRect(0, 0, 50, 50);
 		if (tileImage == null) {

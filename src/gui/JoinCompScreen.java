@@ -12,13 +12,13 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import javax.swing.JButton;
-import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import domein.Competition;
+import domein.CompetitionPlayer;
 
 /*
  * This screen contains all active competitions that the current user is not a participant in.
@@ -31,13 +31,13 @@ public class JoinCompScreen extends JPanel {
 
 	private MainFrame mainFrame;
 	private JPanel buttonPanel;
-	private JTable table;
-	private JScrollPane scrollTable;
-	private JScrollPane scrollList;
-	private ForcedListSelectionModel selectModel;
+	private JTable compTable;
+	private JTable partiTable;
+	private JScrollPane compPane;
+	private JScrollPane partiPane;
 	private String currentSelection;
 	private boolean neverViewed;
-	private ArrayList<String> participants;
+	private ArrayList<CompetitionPlayer> participants;
 
 	/*
 	 * Initialises the object.
@@ -45,12 +45,12 @@ public class JoinCompScreen extends JPanel {
 	public JoinCompScreen(MainFrame mainFrame) {
 		this.mainFrame = mainFrame;
 		buttonPanel = new JPanel();
-		participants = new ArrayList<String>();
+		participants = new ArrayList<CompetitionPlayer>();
 		buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 50, 20));
 		this.setLayout(null);
 		this.createButtons();
-		this.refreshParticipantList();
 		neverViewed =  true;
+		currentSelection = "";
 	}
 	/*
 	 * called when the this screen needs to be viewed
@@ -58,18 +58,17 @@ public class JoinCompScreen extends JPanel {
 	 * When never viewed the table is loaded and database calls are made.
 	 */
 	public void populateScreen(){
-		currentSelection = "";
 		if(neverViewed){
 			mainFrame.callLoadAllCompetitionsAction();
-			this.initTable();
+			this.initCompTable();
 		}
 		
-		scrollTable.setBounds(0, 0, 650, 700);
-		scrollList.setBounds(650, 0, 550, 550);
+		compPane.setBounds(0, 0, 650, 700);
+//		partiPane.setBounds(650, 0, 550, 550);
 		buttonPanel.setBounds(650, 550, 550, 150);
 		
-		this.add(scrollTable);
-		this.add(scrollList);
+		this.add(compPane);
+//		this.add(partiPane);
 		this.add(buttonPanel);
 		neverViewed = false;
 	}
@@ -103,7 +102,7 @@ public class JoinCompScreen extends JPanel {
 		back.addActionListener(new ActionListener() {			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				mainFrame.setPlayerScreen();
+				backButtonPressed();
 			}
 		});
 		
@@ -113,26 +112,14 @@ public class JoinCompScreen extends JPanel {
 	}
 	
 	/*
-	 * Refreshes the JList with the current value of participants
-	 */
-	private void refreshParticipantList(){
-		if (scrollList != null){
-			this.remove(scrollList);
-		}
-		JList<Object> partiList = new JList<>(participants.toArray());
-		scrollList = new JScrollPane(partiList);
-		scrollList.setBounds(650, 0, 550, 550);
-		this.add(scrollList);
-	}
-	/*
 	 * Initialises the table and its scroll pane to hold the most up to date data.
 	 */
-	private void initTable() {
-		if(scrollTable != null){
-			this.remove(scrollTable);
+	private void initCompTable() {
+		if(compPane != null){
+			this.remove(compPane);
 		}
-		table = null;
-		scrollTable = null;
+		compTable = null;
+		compPane = null;
 		
 		String[] columnNames = { "ID", "Summary", "Max Parts", "Current Parts", "Owner", "End Date/Time" };
 		Set<Entry<String, Competition>> competitions = mainFrame.callGetAllCompetitionsAction();
@@ -156,52 +143,54 @@ public class JoinCompScreen extends JPanel {
 			i++;
 		}
 
-		table = new JTable(tableData, columnNames) {
+		compTable = new JTable(tableData, columnNames) {
 			@Override
 			public boolean isCellEditable(int row, int column) {
 				return false;
 			}
 		};
-		table.getTableHeader().setResizingAllowed(false);
-		table.getTableHeader().setReorderingAllowed(false);
-		table.setColumnSelectionAllowed(false);
-		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		table.getColumnModel().getColumn(0).setPreferredWidth(30);
-		table.getColumnModel().getColumn(1).setPreferredWidth(230);
-		table.getColumnModel().getColumn(2).setPreferredWidth(80);
-		table.getColumnModel().getColumn(3).setPreferredWidth(80);
-		table.getColumnModel().getColumn(4).setPreferredWidth(80);
-		table.getColumnModel().getColumn(5).setPreferredWidth(150);
+		compTable.getTableHeader().setResizingAllowed(false);
+		compTable.getTableHeader().setReorderingAllowed(false);
+		compTable.setColumnSelectionAllowed(false);
+		compTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		compTable.getColumnModel().getColumn(0).setPreferredWidth(30);
+		compTable.getColumnModel().getColumn(1).setPreferredWidth(230);
+		compTable.getColumnModel().getColumn(2).setPreferredWidth(80);
+		compTable.getColumnModel().getColumn(3).setPreferredWidth(80);
+		compTable.getColumnModel().getColumn(4).setPreferredWidth(80);
+		compTable.getColumnModel().getColumn(5).setPreferredWidth(150);
 
-		selectModel = new ForcedListSelectionModel();
+		ForcedListSelectionModel selectModel = new ForcedListSelectionModel();
 		selectModel.addListSelectionListener(new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
 				if (e.getValueIsAdjusting()) {
 					setCompInfo();
-					refreshParticipantList();
 				}
 			}
 		});
-		table.setSelectionModel(selectModel);
-		scrollTable = new JScrollPane(table);
+		compTable.setSelectionModel(selectModel);
+		compTable.changeSelection(0, 0, false, false);
+		compPane = new JScrollPane(compTable);
+	}
+	
+	private void initPartiTable(){
+		
 	}
 	/*
 	 * This refreshes the JTable by removing it and rebuilding it.
 	 */
 	private void refreshTable(){
-		this.initTable();
-		scrollTable.setBounds(0, 0, 650, 700);
-		this.add(scrollTable);
+		this.initCompTable();
+		compPane.setBounds(0, 0, 650, 700);
+		this.add(compPane);
 		this.revalidate();
 	}
 	/*
 	 * Every time the selection is changed in the JTable this method is called to up date the currentSelection String with its corresponding ID
 	 */
 	private void setCompInfo(){
-		currentSelection = table.getValueAt(table.getSelectedRow(), 0).toString();
-		participants = null;
-		participants = mainFrame.callGetOneCompetitionAction(currentSelection).getParticipants();
+		currentSelection = compTable.getValueAt(compTable.getSelectedRow(), 0).toString();
 	}
 	/*
 	 * Is called when the user presses the join button
@@ -214,5 +203,13 @@ public class JoinCompScreen extends JPanel {
 	 */
 	public void clearLists() {
 		this.neverViewed = true;
+		this.removeAll();
+		this.revalidate();
+	}
+	
+	private void backButtonPressed(){
+		mainFrame.setPlayerScreen();
+		this.removeAll();
+		this.revalidate();
 	}
 }

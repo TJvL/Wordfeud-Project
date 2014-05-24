@@ -2,7 +2,6 @@ package domein;
 
 import gui.MainFrame;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Map.Entry;
 import java.util.Observer;
@@ -25,14 +24,6 @@ public class WordFeud {
 		matchManager = new MatchManager(this, framePanel);
 	}
 
-	/*
-	 * Gets the user from the player DOESNT WORK WELL
-	 * // A method to initialize the Thread public void initializeThread() {
-	 * secondThread = new SecondThread(framePanel.getGameScreen()
-	 * .getGameChatPanel(), framePanel.getGameScreen() .getButtonPanel(),
-	 * framePanel.getGameScreen().getScorePanel()); secondThread.start(); }
-	 */
-
 	// Stops the Thread
 	public void stopThread() {
 		matchManager.stopThread();
@@ -45,8 +36,7 @@ public class WordFeud {
 	public Player getUserPlayer() {
 		return currentUser.getPlayer();
 	}
-	
-	
+
 	public User getCurrentUser() {
 		return currentUser;
 	}
@@ -71,7 +61,9 @@ public class WordFeud {
 	}
 
 	public boolean doChangeRoleAction(String result) {
-		return currentUser.changeRole(result);}
+		return currentUser.changeRole(result);
+	}
+
 	/*
 	 * param uitleg: summary = de naam of omschrijving die in alle lijsten terug
 	 * komt als "naam". endDate = de eind datum van de competitie.
@@ -79,11 +71,12 @@ public class WordFeud {
 	 * te starten !!MOET >2 zijn!! maxParticipants = maximaal aantal deelnemers
 	 * dat in de compo mag zitten. - Thomas
 	 */
-	public void doCreateCompAction(String summary, Timestamp endDate,
+	public void doCreateCompAction(String summary, String endDate,
 			int minParticipants, int maxParticipants) {
-		compMan.createCompetition(getCurrentUsername(), summary, endDate, minParticipants, maxParticipants);
-	}
+		compMan.createCompetition(currentUser.getUsername(), summary, endDate,
+				minParticipants, maxParticipants);
 
+	}
 
 	public boolean doJoinCompAction(String compID) {
 		return compMan.joinCompetition(compID, currentUser.getUsername());
@@ -92,9 +85,13 @@ public class WordFeud {
 	public void doLoadAllCompetitionsAction() {
 		compMan.loadAllCompetitions(currentUser.getUsername());
 	}
-
-	public ArrayList<String> getParticipantListAction(int compID) {
-		return compMan.getParticipantList(compID);
+	
+	public void doLoadJoinedCompetitionsAction() {
+		compMan.loadJoinedCompetitions(currentUser.getUsername());
+	}
+	
+	public ArrayList<Competition> getJoinedCompetitions(){
+		return compMan.getJoinedCompetitions();
 	}
 
 	public String getCurrentUserRole() {
@@ -109,10 +106,10 @@ public class WordFeud {
 		return currentUser.getUsername();
 	}
 
-
 	public String getCurrentPassword() {
 		return currentUser.getPassword();
 	}
+
 	// Returns active games
 	public ArrayList<ActiveMatch> getActiveGames() {
 		return matchManager.getActiveMatches();
@@ -145,6 +142,13 @@ public class WordFeud {
 				getCurrentUsername(), string);
 	}
 
+	// Method to start a game
+	public void challengePlayer(int competitionID, String username,
+			String opponent, String language) {
+		matchManager.challengePlayer(competitionID, username, opponent,
+				language);
+	}
+	
 	public CompetitionManager getCompMan()
 	{
 		return compMan;

@@ -1,71 +1,202 @@
 package gui;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.GridLayout;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
 
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.ScrollPaneConstants;
+import javax.swing.JTable;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
+import domein.Competition;
+import domein.CompetitionPlayer;
 
 @SuppressWarnings("serial")
 public class JoinedCompScreen extends JPanel {
-	private RankingWindow rankingwindow;
-	private JPanel listPanel;
-	private JPanel buttonsPanel;
-	private String comps[] = { "lol" };
-
-	public JoinedCompScreen() {
-		rankingwindow = new RankingWindow();
-		this.setLayout(new BorderLayout());
-
-		createCompList();
-		createButtons();
-
-		this.add(listPanel, BorderLayout.WEST);
-		this.add(buttonsPanel, BorderLayout.EAST);
+	private MainFrame mainFrame;
+	private JPanel buttonPanel;
+	private JTable compTable;
+	private JTable partiTable;
+	private JScrollPane compPane;
+	private JScrollPane partiPane;
+	private String compSelection;
+	private String playerSelection;
+	private Boolean neverViewed;
+	
+	public JoinedCompScreen(MainFrame mainFrame){
+		this.mainFrame = mainFrame;
+		buttonPanel = new JPanel();
+		buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 50, 20));
+		this.setLayout(null);
+		this.createButtons();
+		compSelection = "";
+		playerSelection = "";
+		neverViewed = false;
 	}
-
-	private void createCompList() {
-		listPanel = new JPanel();
-		JList<String> compsList = new JList<String>(comps);
-		JLabel label = new JLabel("Joined competitions:");
-		JScrollPane scrollPane = new JScrollPane(compsList);
-
-		listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
-
-		scrollPane.setPreferredSize(new Dimension(800, 300));
-		scrollPane
-				.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-
-		listPanel.add(label);
-		listPanel.add(scrollPane);
+	
+	public void populateScreen(){
+		if(neverViewed){
+			this.initCompTable();
+			this.initPartiTable();
+		}
+		
+		compTable.setBounds(0, 0, 650, 700);
+		partiTable.setBounds(650, 0, 550, 550);
+		buttonPanel.setBounds(650, 550, 550, 150);
+		
+		this.add(compTable);
+		this.add(partiTable);
+		this.add(buttonPanel);
+		neverViewed = false;
 	}
+	
+	private void createButtons(){
+		JButton refresh = new JButton("Refresh");
+		JButton challenge = new JButton("Challenge");
+		JButton back = new JButton("Back");
+		
+		refresh.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+		});
+		challenge.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+		});
+		back.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+		});
+		
+		buttonPanel.add(challenge);
+		buttonPanel.add(refresh);
+		buttonPanel.add(back);
+	}
+	
+	private void initCompTable(){
+		if(compPane != null){
+			this.remove(compPane);
+		}
+		compTable = null;
+		compPane = null;
+		
+		String[] columnNames = { "ID", "Summary", "Max Parts", "Current Parts", "Owner", "End Date/Time" };
+		Set<Entry<String, Competition>> competitions = mainFrame.callGetAllCompetitionsAction();
+		String[][] tableData = new String[competitions.size()][6];
 
-	private void createButtons() {
-		buttonsPanel = new JPanel();
-		JPanel composedButtons = new JPanel();
+		Iterator<Entry<String, Competition>> it = competitions
+				.iterator();
+		int i = 0;
+		while (it.hasNext()) {
+			Map.Entry<String, Competition> pair = (Map.Entry<String, Competition>) it
+					.next();
+			tableData[i][0] = Integer.toString(pair.getValue().getCompID());
+			tableData[i][1] = pair.getValue().getSummary();
+			tableData[i][2] = Integer.toString(pair.getValue()
+					.getMaxParticipants());
+			tableData[i][3] = Integer.toString(pair.getValue()
+					.getMinParticipants());
+			tableData[i][4] = pair.getValue()
+					.getCompOwner();
+			tableData[i][5] = pair.getValue().getEndDate();
+			i++;
+		}
+
+		compTable = new JTable(tableData, columnNames) {
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
+		compTable.getTableHeader().setResizingAllowed(false);
+		compTable.getTableHeader().setReorderingAllowed(false);
+		compTable.setColumnSelectionAllowed(false);
+		compTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		compTable.getColumnModel().getColumn(0).setPreferredWidth(30);
+		compTable.getColumnModel().getColumn(1).setPreferredWidth(230);
+		compTable.getColumnModel().getColumn(2).setPreferredWidth(80);
+		compTable.getColumnModel().getColumn(3).setPreferredWidth(80);
+		compTable.getColumnModel().getColumn(4).setPreferredWidth(80);
+		compTable.getColumnModel().getColumn(5).setPreferredWidth(150);
+
+		ForcedListSelectionModel selectModel = new ForcedListSelectionModel();
+		selectModel.addListSelectionListener(new ListSelectionListener() {
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				if (e.getValueIsAdjusting()) {
+					
+				}
+			}
+		});
+		compTable.setSelectionModel(selectModel);
+		compTable.changeSelection(0, 0, false, false);
+		compPane = new JScrollPane(compTable);
+	}
+	
+	private void initPartiTable(){
+		String[] columnNames = { "Username", "Total Score", "Avg Score", "Played", "Won", "Lost", "Bay Avg" };
+		ArrayList<CompetitionPlayer> participants = mainFrame.callGetOneCompetitionAction(compSelection).getParticipants();
+		String[][] tableData = new String[participants.size()][7];
 		
-		JButton infoButton = new JButton("Ranglist");
+		int i = 0;
+		for (CompetitionPlayer cp : participants){
+			tableData[i][0] = cp.getUsername();
+			tableData[i][1] = Integer.toString(cp.getTotalScore());
+			tableData[i][2] = Integer.toString(cp.getAverageScore());
+			tableData[i][3] = Integer.toString(cp.getTotalGames());
+			tableData[i][4] = Integer.toString(cp.getTotalWins());
+			tableData[i][5] = Integer.toString(cp.getTotalLoss());
+			tableData[i][6] = Double.toString(cp.getBayesianAverage());
+			i++;
+		}
 		
-		infoButton.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent arg0) {
-				rankingwindow.showRanking();
-			}});
+		partiTable = new JTable(tableData, columnNames) {
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
+		partiTable.getTableHeader().setResizingAllowed(false);
+		partiTable.getTableHeader().setReorderingAllowed(false);
+		partiTable.setColumnSelectionAllowed(false);
+		partiTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		partiTable.getColumnModel().getColumn(0).setPreferredWidth(100);
+		partiTable.getColumnModel().getColumn(1).setPreferredWidth(75);
+		partiTable.getColumnModel().getColumn(2).setPreferredWidth(75);
+		partiTable.getColumnModel().getColumn(3).setPreferredWidth(75);
+		partiTable.getColumnModel().getColumn(4).setPreferredWidth(75);
+		partiTable.getColumnModel().getColumn(5).setPreferredWidth(75);
+		partiTable.getColumnModel().getColumn(5).setPreferredWidth(75);
 		
-		composedButtons.setLayout(new GridLayout(4, 1, 0, 50));
-		
-		buttonsPanel.setLayout(new BorderLayout());
-		buttonsPanel.setPreferredSize(new Dimension(300, 300));
-		
-		composedButtons.add(infoButton);
-		
-		buttonsPanel.add(composedButtons, BorderLayout.WEST);
+		ForcedListSelectionModel selectModel = new ForcedListSelectionModel();
+		selectModel.addListSelectionListener(new ListSelectionListener() {
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				if (e.getValueIsAdjusting()) {
+					setSelectionInfo();
+				}
+			}
+		});
+		partiTable.setSelectionModel(selectModel);
+		partiTable.changeSelection(0, 0, false, false);
+		partiPane = new JScrollPane(partiTable);
+	}
+	
+	private void setSelectionInfo(){
+		compSelection = compTable.getValueAt(compTable.getSelectedRow(), 0).toString();
 	}
 }

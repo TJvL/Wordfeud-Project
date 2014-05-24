@@ -1,7 +1,6 @@
 package gui;
 
 import java.awt.Dimension;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Map.Entry;
 import java.util.Observer;
@@ -63,7 +62,7 @@ public class MainFrame extends JFrame {
 		gameScreen = new GameScreen();
 		specScreen = new GameSpecScreen();
 		joincompscreen = new JoinCompScreen(this);
-		joinedcompscreen = new JoinedCompScreen();
+		joinedcompscreen = new JoinedCompScreen(this);
 		adminaccscreen = new AdminAccScreen(this);
 		admincompscreen = new AdminCompScreen(this);
 		modscreen = new ModScreen();
@@ -110,11 +109,12 @@ public class MainFrame extends JFrame {
 	}
 
 	public void setJoinedCompScreen() {
+		joinedcompscreen.populateScreen();
 		this.setContentPane(joinedcompscreen);
 		wf.stopThread();
 		revalidate();
 	}
-
+	
 	public void setAdminAccScreen() {
 		this.setContentPane(adminaccscreen);
 		wf.stopThread();
@@ -222,8 +222,8 @@ public class MainFrame extends JFrame {
 			String name = JOptionPane.showInputDialog(null,
 					"Please enter your GameID: ");
 			if (name == null || name.equals("")) {
-				int gameID = dbh.createGame(1, "mike", "wouter",
-						"openbaar", "EN");
+				int gameID = dbh.createGame(1, "mike", "wouter", "openbaar",
+						"EN");
 				wf.startGame(gameID, false, true);
 				System.out.println("GAMEID IS " + gameID);
 			} else if (name.equals("spec")) {
@@ -243,6 +243,11 @@ public class MainFrame extends JFrame {
 				}
 			}
 		}
+	}
+
+	public void challengePlayer(int competitionID, String username,
+			String opponent, String language) {
+		wf.challengePlayer(competitionID, username, opponent, language);
 	}
 
 	// Returns the gameScreen
@@ -306,7 +311,7 @@ public class MainFrame extends JFrame {
 		wf.acceptRejectGame(string, competionID, gameID);
 	}
 	
-	public void callCreateCompAction(String summaryString, Timestamp compEnd, int i, int maxPlayersInt){
+	public void callCreateCompAction(String summaryString, String compEnd, int i, int maxPlayersInt){
 		wf.doCreateCompAction(summaryString, compEnd, i, maxPlayersInt);
 	}
 
@@ -324,5 +329,9 @@ public class MainFrame extends JFrame {
 	
 	public void callJoinCompetitionAction(String compID){
 		wf.doJoinCompAction(compID);
+	}
+
+	public void callLoadJoinedCompetitionsAction() {
+		wf.doLoadJoinedCompetitionsAction();
 	}
 }

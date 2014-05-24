@@ -153,15 +153,16 @@ public class CreateCompWindow extends JFrame
 					
 					finalReturnString = (year + "-" + month + "-" + day + " "
 							+ hours + ":" + minutes + ":" + seconds);
-					//convert de enddate naar een timestamp
-					java.sql.Timestamp compEnd = java.sql.Timestamp.valueOf(finalReturnString);
+
+//					System.out.println("finalreturnstring"+ finalReturnString);
+
 			
 
 					// //
 					// //
 					// // FORMATTED
 //mainframe wordt hier aangeroepen omdat, als ik het in playerscreen doe je niet kan checken of confirmclicked al gedaan is 
-					playerScreen.callCreateComp(summary.getText(), compEnd, Integer.parseInt(minPlayers.getText()), Integer.parseInt(maxPlayers.getText()));
+					playerScreen.callCreateComp(summary.getText(), finalReturnString, Integer.parseInt(minPlayers.getText()), Integer.parseInt(maxPlayers.getText()));
 					gameCreatedLabel.setText("Competition has been created.");
 					buttonPanel.add(gameCreatedLabel);
 					this.revalidate();
