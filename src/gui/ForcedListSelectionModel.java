@@ -13,9 +13,11 @@ public class ForcedListSelectionModel extends DefaultListSelectionModel {
 
     @Override
 	public void clearSelection() {
+    	return;
 	}
 
     @Override
     public void removeSelectionInterval(int index0, int index1) {
+    	return;
     }
 }

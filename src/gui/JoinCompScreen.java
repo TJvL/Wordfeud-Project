@@ -6,17 +6,19 @@ import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
 import javax.swing.JButton;
+import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
 import domein.Competition;
 
 /////this screen contains all public active  competitions 
@@ -24,22 +26,23 @@ import domein.Competition;
 public class JoinCompScreen extends JPanel {
 
 	private MainFrame mainFrame;
-	private JPanel infoPanel;
 	private JPanel buttonPanel;
 	private JTable table;
 	private JScrollPane scrollTable;
-	private ListSelectionModel selectModel;
+	private JScrollPane scrollList;
+	private ForcedListSelectionModel selectModel;
 	private String currentSelection;
 	private boolean neverViewed;
+	private ArrayList<String> participants;
 
 	public JoinCompScreen(MainFrame mainFrame) {
 		this.mainFrame = mainFrame;
-		infoPanel = new JPanel();
 		buttonPanel = new JPanel();
-		infoPanel.setLayout(null);
+		participants = new ArrayList<String>();
 		buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 50, 20));
 		this.setLayout(null);
 		this.createButtons();
+		this.refreshParticipantList();
 		neverViewed =  true;
 		buttonPanel.setBackground(Color.BLACK);		
 	}
@@ -52,11 +55,11 @@ public class JoinCompScreen extends JPanel {
 		}
 		
 		scrollTable.setBounds(0, 0, 650, 700);
-		infoPanel.setBounds(650, 0, 550, 550);
+		scrollList.setBounds(650, 0, 550, 550);
 		buttonPanel.setBounds(650, 550, 550, 150);
 		
 		this.add(scrollTable);
-		this.add(infoPanel);
+		this.add(scrollList);
 		this.add(buttonPanel);
 		neverViewed = false;
 	}
@@ -92,6 +95,16 @@ public class JoinCompScreen extends JPanel {
 		buttonPanel.add(join);
 		buttonPanel.add(refresh);
 		buttonPanel.add(back);
+	}
+	
+	private void refreshParticipantList(){
+		if (scrollList != null){
+			this.remove(scrollList);
+		}
+		JList<Object> partiList = new JList<>(participants.toArray());
+		scrollList = new JScrollPane(partiList);
+		scrollList.setBounds(650, 0, 550, 550);
+		this.add(scrollList);
 	}
 
 	private void initTable() {
@@ -146,6 +159,7 @@ public class JoinCompScreen extends JPanel {
 			public void valueChanged(ListSelectionEvent e) {
 				if (e.getValueIsAdjusting()) {
 					setCompInfo();
+					refreshParticipantList();
 				}
 			}
 		});
@@ -162,6 +176,8 @@ public class JoinCompScreen extends JPanel {
 	
 	private void setCompInfo(){
 		currentSelection = table.getValueAt(table.getSelectedRow(), 0).toString();
+		participants = null;
+		participants = mainFrame.callGetOneCompetitionAction(currentSelection).getParticipants();
 	}
 	
 	private void joinSelectedCompetition(){
