@@ -2,7 +2,6 @@ package gui;
 
 import javax.swing.JPanel;
 
-import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -21,7 +20,12 @@ import javax.swing.event.ListSelectionListener;
 
 import domein.Competition;
 
-/////this screen contains all public active  competitions 
+/*
+ * This screen contains all active competitions that the current user is not a participant in.
+ * It uses a JTable to populate a list where competitions can be selected to view the current rankings and to join it. 
+ * A JList is updated every time another competition entry is selected to show its rankings. <<<<< CURRENTLY ONLY USERNAMES FOR JLIST
+ * This class may only be directly called from MainFrame,
+ */
 @SuppressWarnings("serial")
 public class JoinCompScreen extends JPanel {
 
@@ -35,6 +39,9 @@ public class JoinCompScreen extends JPanel {
 	private boolean neverViewed;
 	private ArrayList<String> participants;
 
+	/*
+	 * Initialises the object.
+	 */
 	public JoinCompScreen(MainFrame mainFrame) {
 		this.mainFrame = mainFrame;
 		buttonPanel = new JPanel();
@@ -44,9 +51,12 @@ public class JoinCompScreen extends JPanel {
 		this.createButtons();
 		this.refreshParticipantList();
 		neverViewed =  true;
-		buttonPanel.setBackground(Color.BLACK);		
 	}
-	
+	/*
+	 * called when the this screen needs to be viewed
+	 * neverViewed is to indicate if the user has ever viewed this screen in this session (reset when user logs out)
+	 * When never viewed the table is loaded and database calls are made.
+	 */
 	public void populateScreen(){
 		currentSelection = "";
 		if(neverViewed){
@@ -63,7 +73,12 @@ public class JoinCompScreen extends JPanel {
 		this.add(buttonPanel);
 		neverViewed = false;
 	}
-
+	/*
+	 * Creates the 3 buttons in the screen
+	 * Refresh: calls for a rebuild of the table and database calls are made.
+	 * Join: The selected entry in the JTable is used as a reference to get the right compID and send it to the CompetitionManager to join.
+	 * Back: Returns the user to the PlayerScreen.
+	 */
 	private void createButtons() {
 		JButton refresh = new JButton("Refresh");
 		JButton join = new JButton("Join");
@@ -97,6 +112,9 @@ public class JoinCompScreen extends JPanel {
 		buttonPanel.add(back);
 	}
 	
+	/*
+	 * Refreshes the JList with the current value of participants
+	 */
 	private void refreshParticipantList(){
 		if (scrollList != null){
 			this.remove(scrollList);
@@ -106,7 +124,9 @@ public class JoinCompScreen extends JPanel {
 		scrollList.setBounds(650, 0, 550, 550);
 		this.add(scrollList);
 	}
-
+	/*
+	 * Initialises the table and its scroll pane to hold the most up to date data.
+	 */
 	private void initTable() {
 		if(scrollTable != null){
 			this.remove(scrollTable);
@@ -166,24 +186,32 @@ public class JoinCompScreen extends JPanel {
 		table.setSelectionModel(selectModel);
 		scrollTable = new JScrollPane(table);
 	}
-	
+	/*
+	 * This refreshes the JTable by removing it and rebuilding it.
+	 */
 	private void refreshTable(){
 		this.initTable();
 		scrollTable.setBounds(0, 0, 650, 700);
 		this.add(scrollTable);
 		this.revalidate();
 	}
-	
+	/*
+	 * Every time the selection is changed in the JTable this method is called to up date the currentSelection String with its corresponding ID
+	 */
 	private void setCompInfo(){
 		currentSelection = table.getValueAt(table.getSelectedRow(), 0).toString();
 		participants = null;
 		participants = mainFrame.callGetOneCompetitionAction(currentSelection).getParticipants();
 	}
-	
+	/*
+	 * Is called when the user presses the join button
+	 */
 	private void joinSelectedCompetition(){
 		mainFrame.callJoinCompetitionAction(currentSelection);
 	}
-
+	/*
+	 * Is called when the user logs out
+	 */
 	public void clearLists() {
 		this.neverViewed = true;
 	}
