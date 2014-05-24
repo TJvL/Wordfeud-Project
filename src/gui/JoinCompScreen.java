@@ -95,6 +95,12 @@ public class JoinCompScreen extends JPanel {
 	}
 
 	private void initTable() {
+		if(scrollTable != null){
+			this.remove(scrollTable);
+		}
+		table = null;
+		scrollTable = null;
+		
 		String[] columnNames = { "ID", "Summary", "Max Parts", "Current Parts", "Owner", "End Date/Time" };
 		Set<Entry<String, Competition>> competitions = mainFrame.callGetAllCompetitionsAction();
 		String[][] tableData = new String[competitions.size()][6];
@@ -160,5 +166,9 @@ public class JoinCompScreen extends JPanel {
 	
 	private void joinSelectedCompetition(){
 		mainFrame.callJoinCompetitionAction(currentSelection);
+	}
+
+	public void clearLists() {
+		this.neverViewed = true;
 	}
 }

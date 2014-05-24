@@ -917,7 +917,7 @@ public class DatabaseHandler
 		try
 		{
 			statement = con
-					.prepareStatement("SELECT id, account_naam_eigenaar, `start`, einde, omschrijving, minimum_aantal_deelnemers, maximum_aantal_deelnemers FROM competitie LEFT JOIN deelnemer ON competitie.id = deelnemer.competitie_id WHERE NOT EXISTS ( SELECT * FROM competitie LEFT JOIN deelnemer ON competitie.id = deelnemer.competitie_id WHERE deelnemer.account_naam LIKE '" + username + "') GROUP BY id");
+					.prepareStatement("SELECT competitie.id, competitie.account_naam_eigenaar, competitie.`start`, competitie.einde, competitie.omschrijving, competitie.minimum_aantal_deelnemers, competitie.maximum_aantal_deelnemers FROM competitie WHERE competitie.id NOT IN ( SELECT competitie.id FROM competitie LEFT JOIN deelnemer ON competitie.id = deelnemer.competitie_id WHERE deelnemer.account_naam LIKE '" + username + "' )");
 
 			result = statement.executeQuery();
 

@@ -61,13 +61,13 @@ public class WordFeud {
 		String result = currentUser.login(username, password);
 		if (result.equals("Username and Password are correct")) {
 			compMan.loadJoinedCompetitions(currentUser.getUsername());
-			compMan.updateEachParticipants();
 		}
 		return result;
 	}
 
 	public void doLogoutAction() {
 		currentUser.logout();
+		compMan.logout();
 	}
 
 	public boolean doChangeRoleAction(String result) {

@@ -143,4 +143,9 @@ public class CompetitionManager {
 	public Competition getOneJoinedCompetition(String key){
 		return joinedCompetitions.get(key);
 	}
+
+	public void logout() {
+		joinedCompetitions.clear();
+		competitions.clear();
+	}
 }
