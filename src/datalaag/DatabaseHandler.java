@@ -1907,7 +1907,7 @@ public class DatabaseHandler
 			result.close();
 			statement.close();
 			
-			statistics = competitionsWon + "---" + gamesWon + "---" + mostValuableWord + "---" + numberOfGamesPlayed + "---" + highestGameScore;
+			statistics = competitionsWon + "a-b" + gamesWon + "c-d" + mostValuableWord + "e-f" + numberOfGamesPlayed + "g-h" + highestGameScore;
 			
 		} catch (SQLException e)
 		{
