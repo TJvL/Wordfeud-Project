@@ -56,7 +56,7 @@ public class StatWindow extends JFrame
 		this.userName = username;
 		this.highestGameScore = this.getHighestGameScore();
 		this.numGamesPlayed = this.getNumGamesPlayed();
-		this.mostValuableWord = this.mostValuableWord();
+		this.mostValuableWord = this.getMostValuableWord();
 		this.gamesWon = this.getGamesWon();
 		this.competitionsWon = this.getCompetitionsWon();
 		//
@@ -148,11 +148,16 @@ public class StatWindow extends JFrame
 		return numGamesPlayed;
 	}
 
-	public String mostValuableWord()
+	public String getMostValuableWord()
 	{
 		statistics = dbh.playerStatistics(userName);
 		mostValuableWord = statistics.substring(
 				statistics.lastIndexOf('d') + 1, statistics.lastIndexOf('e'));
+		if(mostValuableWord.equals("null"))
+		{
+			mostValuableWord = "No word found yet";
+		}
+		
 		System.out.println(mostValuableWord);
 		return mostValuableWord;
 	}
