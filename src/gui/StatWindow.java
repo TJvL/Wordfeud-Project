@@ -142,7 +142,7 @@ public class StatWindow extends JFrame
 	public String getNumGamesPlayed()
 	{
 		statistics = dbh.playerStatistics(userName);
-		numGamesPlayed = statistics.substring(statistics.lastIndexOf('f') + 1,
+		numGamesPlayed = statistics.substring(statistics.lastIndexOf('f')+1,
 				statistics.lastIndexOf('g'));
 		System.out.println(numGamesPlayed);
 		return numGamesPlayed;
