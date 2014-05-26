@@ -1296,16 +1296,16 @@ public class DatabaseHandler
 	
 	public synchronized boolean inviteExists(String challenger, String opponent){
 		connection();
-		boolean exists = true;
+		boolean exists = false;
 		try
 		{
-			statement = con.prepareStatement("SELECT * FROM spel WHERE (account_naam_tegenstander = '" + challenger + "' AND account_naam_uitdager = '" + opponent + "') OR (account_naam_tegenstander = '" + opponent + "' AND account_naam_uitdager = '" + challenger + "')");
+			statement = con.prepareStatement("SELECT * FROM spel WHERE ((account_naam_tegenstander = '" + challenger + "' AND account_naam_uitdager = '" + opponent + "') OR (account_naam_tegenstander = '" + opponent + "' AND account_naam_uitdager = '" + challenger + "')) AND toestand_type NOT LIKE 'Request'");
 
 			result = statement.executeQuery();
 
 			if (!result.next())
 			{
-				exists = false;
+				exists = true;
 			}
 			result.close();
 			statement.close();
