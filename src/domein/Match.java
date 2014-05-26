@@ -314,26 +314,6 @@ public class Match implements Observer {
 
 	// A method to start a new game by me
 	public void startNewGame() {
-		// gameField.clearField();
-		// board.clearField();
-		// player.clearHand();
-		// // Updates the turn
-		// getMaxTurnID();
-		//
-		// // Filling the board
-		// ArrayList<String> squares = dbh.squareCheck();
-		// for (int i = 0; i < squares.size(); i++) {
-		// String[] splits = squares.get(i).split("---");
-		// board.addSquaresNewBoard(Integer.parseInt(splits[0]) - 1,
-		// Integer.parseInt(splits[1]) - 1, splits[2]);
-		// }
-		//
-		// // Repainting and reseting jar
-		// gameField.repaintBoard();
-		// jar.resetJar();
-
-		// Method to add the tiles to the jar
-		// System.out.println(gameID + " DE GAME ID");
 		dbh.createJar(gameID, "EN");
 		ArrayList<String> tilesToLoad = dbh.jarContent(gameID);
 		Jar newJar = new Jar();

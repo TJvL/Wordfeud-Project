@@ -1,14 +1,16 @@
 package gui;
 
 import java.awt.Dimension;
-import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Map.Entry;
 import java.util.Observer;
+import java.util.Set;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import datalaag.DatabaseHandler;
+import domein.Competition;
 import domein.PendingMatch;
 import domein.WordFeud;
 
@@ -24,7 +26,6 @@ public class MainFrame extends JFrame {
 	private AdminCompScreen admincompscreen;
 	private JoinCompScreen joincompscreen;
 	private JoinedCompScreen joinedcompscreen;
-	private JoinedCompPlayerScreen joinedcompplayerscreen;
 	private ModScreen modscreen;
 	private StartMenuBar startMenuBar;
 	private PlayerMenuBar playerMenuBar;
@@ -34,25 +35,10 @@ public class MainFrame extends JFrame {
 	private UpdateGUIThread guiThread;
 	private WordFeud wf;
 
-	public MainFrame(final WordFeud wf) {
+	public MainFrame(WordFeud wf) {
+		this.wf = wf;
 		startMenuBar = new StartMenuBar();
-		specMenuBar = new SpecMenuBar(this);
-		playerMenuBar = new PlayerMenuBar(this);
-		modMenuBar = new ModMenuBar(this);
-		adminMenuBar = new AdminMenuBar(this);
 		loginscreen = new LoginScreen(this);
-		specscreen = new SpecScreen(this);
-		regscreen = new RegScreen(this);
-		playerscreen = new PlayerScreen(this);
-		gameScreen = new GameScreen();
-		specScreen = new GameSpecScreen();
-		joincompscreen = new JoinCompScreen();
-		joinedcompscreen = new JoinedCompScreen(this);
-		joinedcompplayerscreen = new JoinedCompPlayerScreen(this);
-		adminaccscreen = new AdminAccScreen(this);
-		admincompscreen = new AdminCompScreen(this);
-		modscreen = new ModScreen();
-
 		this.setPreferredSize(new Dimension(1200, 700));
 		this.setResizable(false);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -60,10 +46,26 @@ public class MainFrame extends JFrame {
 
 		this.setContentPane(loginscreen);
 		this.setJMenuBar(startMenuBar);
-		this.wf = wf;
 
 		this.pack();
 		this.setLocationRelativeTo(null);
+	}
+	
+	public void init(){
+		specMenuBar = new SpecMenuBar(this);
+		playerMenuBar = new PlayerMenuBar(this);
+		modMenuBar = new ModMenuBar(this);
+		adminMenuBar = new AdminMenuBar(this);
+		specscreen = new SpecScreen(this);
+		regscreen = new RegScreen(this);
+		playerscreen = new PlayerScreen(this);
+		gameScreen = new GameScreen();
+		specScreen = new GameSpecScreen();
+		joincompscreen = new JoinCompScreen(this);
+		joinedcompscreen = new JoinedCompScreen(this);
+		adminaccscreen = new AdminAccScreen(this);
+		admincompscreen = new AdminCompScreen(this);
+		modscreen = new ModScreen();
 		this.setVisible(true);
 	}
 
@@ -100,27 +102,18 @@ public class MainFrame extends JFrame {
 	}
 
 	public void setJoinCompScreen() {
+		joincompscreen.populateScreen();
 		this.setContentPane(joincompscreen);
 		wf.stopThread();
 		revalidate();
 	}
 
 	public void setJoinedCompScreen() {
+		joinedcompscreen.populateScreen();
 		this.setContentPane(joinedcompscreen);
-		joinedcompscreen.fillCompList(wf.getJoinedCompetitions());
 		wf.stopThread();
 		revalidate();
 	}
-
-	public void setJoinCompPlayerScreen(int compID) {
-		this.setContentPane(joinedcompplayerscreen);
-		// getJoinedCompetitions
-		joinedcompplayerscreen
-				.fillCompList(wf.getParticipantListAction(compID));
-		wf.stopThread();
-		revalidate();
-	}
-
 	public void setAdminAccScreen() {
 		this.setContentPane(adminaccscreen);
 		wf.stopThread();
@@ -179,6 +172,8 @@ public class MainFrame extends JFrame {
 
 	public void callLogoutAction() {
 		wf.doLogoutAction();
+		joincompscreen.clearLists();
+		joinedcompscreen.clearLists();
 	}
 
 	public void fillRoleWindow() {
@@ -273,7 +268,7 @@ public class MainFrame extends JFrame {
 		}
 	}
 
-	// Everything in this method will be updated every 7,5 second
+	// Everything in this method will be updated every 20 seconds
 	// Use synchronized for the methods
 	// That allows a method to be uses by multiple threads
 	// Only the current contentPane will auto update
@@ -318,5 +313,29 @@ public class MainFrame extends JFrame {
 	public void callCreateCompAction(String summaryString, String compEnd,
 			int i, int maxPlayersInt) {
 		wf.doCreateCompAction(summaryString, compEnd, i, maxPlayersInt);
+	}
+
+	public  Set<Entry<String, Competition>> callGetAllCompetitionsAction() {
+		return wf.doGetAllCompetitionsAction();
+	}
+	
+	public Set<Entry<String, Competition>> callGetJoinedCompetitionsAction() {
+		return wf.doGetJoinedCompetitionsAction();
+	}
+
+	public Competition callGetOneCompetitionAction(String key) {
+		return wf.doGetOneCompetitionAction(key);
+	}
+	
+	public void callLoadAllCompetitionsAction(){
+		wf.doLoadAllCompetitionsAction();
+	}
+	
+	public void callJoinCompetitionAction(String compID){
+		wf.doJoinCompAction(compID);
+	}
+
+	public void callLoadJoinedCompetitionsAction() {
+		wf.doLoadJoinedCompetitionsAction();
 	}
 }

@@ -1,7 +1,6 @@
 package domein;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import datalaag.DatabaseHandler;
 
@@ -15,8 +14,7 @@ public class Competition {
 	private int minParticipants;
 	private int maxParticipants;
 	private int amountParticipants;
-
-	private ArrayList<CompPlayer> participants;
+	private ArrayList<CompetitionPlayer> participants;
 
 	public Competition(int databaseID, String compOwner, String startDate,
 			String endDate, String summary, int minParticipants,
@@ -28,16 +26,10 @@ public class Competition {
 		this.summary = summary;
 		this.minParticipants = minParticipants;
 		this.maxParticipants = maxParticipants;
-		this.participants = new ArrayList<CompPlayer>();
-		this.updateParticipantsAmmount();
+		this.participants = new ArrayList<CompetitionPlayer>();
+		this.updateParticipants();
 	}
 
-	@Override
-	public String toString() {
-		// TODO Auto-generated method stub
-		return summary;
-	}
-	
 	public int getCompID() {
 		return compID;
 	}
@@ -70,46 +62,23 @@ public class Competition {
 		return amountParticipants;
 	}
 
-	public void updateParticipantsAmmount() {
-		ArrayList<String> playerNames = DatabaseHandler.getInstance()
-				.peopleInCompetition(compID);
-		amountParticipants = playerNames.size();
-	}
-
-	public ArrayList<CompPlayer> getParticipants() {
+	public ArrayList<CompetitionPlayer> getParticipants() {
 		return participants;
 	}
 
 	public void updateParticipants() {
 		participants.clear();
-		ArrayList<String> playerNames = DatabaseHandler.getInstance()
-				.peopleInCompetition(compID);
-		HashMap<String, String> playerScores = DatabaseHandler.getInstance()
-				.competitionBayesian(compID);
-		HashMap<String, Double> playerRaitings = DatabaseHandler.getInstance()
-				.competitionBayesianRaiting(compID);
-		double raiting = 0.0;
-		
-		for (String name : playerNames) {
-			String score;
-			String[] scores = new String[2];
-			if (playerScores.get(name) != null){
-			score = playerScores.get(name);
-			scores = score.split("---");
-			} else {
-				score = "0";
-				scores[0] = "0.0";
-				scores[1] = "0";
-			}
-			if (playerRaitings.get(name) != null){
-				raiting = playerRaitings.get(name);				
-			} else {
-				raiting = 0.0;
-			}
-			participants.add(new CompPlayer(name, Double.parseDouble(scores[0]),
-					Integer.parseInt(scores[1]), 0.0, 0.0, raiting, compID));
-		}
+		ArrayList<String> parts = DatabaseHandler.getInstance()
+				.fetchCompetitionParticipants(this.getCompID());
 
+		for (String s : parts) {
+			String[] data = s.split("---");
+			participants.add(new CompetitionPlayer(Integer.toString(this
+					.getCompID()), data[0], Integer.parseInt(data[1]), Integer
+					.parseInt(data[2]), Integer.parseInt(data[3]), Integer
+					.parseInt(data[4]), Integer.parseInt(data[5]), Double
+					.parseDouble(data[6])));
+		}
 		amountParticipants = participants.size();
 	}
 

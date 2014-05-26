@@ -3,7 +3,7 @@ package domein;
 public class MainClass {
 
 	public static void main(String[] args) {
-		new WordFeud();
-
+		WordFeud wf = new WordFeud();
+		wf.init();
 	}
 }

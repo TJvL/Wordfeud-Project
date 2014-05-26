@@ -12,7 +12,7 @@ public class UpdateGUIThread extends Thread{
 		while (running){	
 			mainFrame.updateGUI();
 			try {
-				Thread.sleep(7500);
+				Thread.sleep(20000);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
