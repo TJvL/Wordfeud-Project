@@ -1200,7 +1200,7 @@ public class DatabaseHandler
 			statement = con.prepareStatement("DELETE FROM accountrol WHERE account_naam = '" + username
 					+ "' AND rol_type = '" + role + "'");
 
-			statement.executeQuery();
+			statement.executeUpdate();
 			statement.close();
 		} catch (SQLException e)
 		{

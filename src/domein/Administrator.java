@@ -1,6 +1,10 @@
 package domein;
 
+import java.util.ArrayList;
+
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 
 import datalaag.DatabaseHandler;
 
@@ -39,6 +43,7 @@ public class Administrator extends Role {
 			response = username;
 		}
 		System.out.println("done");
+		System.out.println(response);
 		return response;
 	}
 
@@ -61,5 +66,70 @@ public class Administrator extends Role {
 			response = DatabaseHandler.getInstance().getPassword(username);
 		}
 		return response;
+	}
+
+	public ArrayList<String> changeRoles(String username,
+			ArrayList<String> roles) {
+		ArrayList<String> newRoles = new ArrayList<String>();
+		JPanel radioButtonPanel = new JPanel();
+		JRadioButton playerButton = new JRadioButton("Player");
+		JRadioButton modButton = new JRadioButton("Moderator");
+		JRadioButton adminButton = new JRadioButton("Administrator");
+		radioButtonPanel.add(playerButton);
+		radioButtonPanel.add(modButton);
+		radioButtonPanel.add(adminButton);
+
+		for (int i = 0; i < roles.size(); i++) {
+			if (roles.get(i).equals(playerButton.getText())) {
+				playerButton.setSelected(true);
+			} else if (roles.get(i).equals(modButton.getText())) {
+				modButton.setSelected(true);
+			} else if (roles.get(i).equals(adminButton.getText())) {
+				adminButton.setSelected(true);
+			}
+		}
+
+		JOptionPane.showOptionDialog(null, radioButtonPanel, "Select roles",
+				JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
+				null, null, null);
+
+		if (playerButton.isSelected()) {
+			if (!roles.contains(playerButton.getText())) {
+				DatabaseHandler.getInstance().setRole(username,
+						playerButton.getText());
+			}
+			newRoles.add(playerButton.getText());
+		} else {
+			if (roles.contains(playerButton.getText())) {
+				DatabaseHandler.getInstance().revokeRole(username,
+						playerButton.getText());
+			}
+		}
+		if (modButton.isSelected()) {
+			if (!roles.contains(modButton.getText())) {
+				DatabaseHandler.getInstance().setRole(username,
+						modButton.getText());
+			}
+			newRoles.add(modButton.getText());
+		} else {
+			if (roles.contains(modButton.getText())) {
+				DatabaseHandler.getInstance().revokeRole(username,
+						modButton.getText());
+			}
+		}
+		if (adminButton.isSelected()) {
+			if (!roles.contains(adminButton.getText())) {
+				DatabaseHandler.getInstance().setRole(username,
+						adminButton.getText());
+			}
+			newRoles.add(adminButton.getText());
+		} else {
+			if (roles.contains(adminButton.getText())) {
+				DatabaseHandler.getInstance().revokeRole(username,
+						adminButton.getText());
+			}
+		}
+
+		return newRoles;
 	}
 }

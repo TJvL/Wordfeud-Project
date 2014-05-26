@@ -76,6 +76,8 @@ public class AdminAccScreen extends JPanel {
 						playersList.getSelectedValue().toString(),
 						DatabaseHandler.getInstance().getPassword(
 								playersList.getSelectedValue().toString()));
+				accdatawindow.setRoles(DatabaseHandler.getInstance().getRole(
+						playersList.getSelectedValue().toString()));
 				accdatawindow.showAdminAccData();
 			}
 		});
