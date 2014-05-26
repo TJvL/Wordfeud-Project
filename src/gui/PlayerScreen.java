@@ -64,7 +64,6 @@ public class PlayerScreen extends JPanel {
 		gameList.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				// TODO Auto-generated method stub
 				ActiveMatch input = gameList.getSelectedValue();
 				if (input != null) {
 					int gameID = input.getGameID();

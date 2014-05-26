@@ -49,13 +49,19 @@ public class JoinedCompScreen extends JPanel {
 		}
 		
 		compPane.setBounds(0, 0, 650, 700);
-		partiPane.setBounds(665, 50, 520, 500);
+		partiPane.setBounds(665, 50, 525, 500);
 		buttonPanel.setBounds(650, 550, 550, 150);
 		
 		this.add(compPane);
 		this.add(partiPane);
 		this.add(buttonPanel);
 		neverViewed = false;
+	}
+	
+	public void clearLists() {
+		this.neverViewed = true;
+		this.removeAll();
+		this.revalidate();
 	}
 	
 	private void createButtons(){
@@ -66,6 +72,7 @@ public class JoinedCompScreen extends JPanel {
 		refresh.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				mainFrame.callLoadJoinedCompetitionsAction();
 				refreshCompetitionsList();
 			}
 		});
@@ -215,14 +222,15 @@ public class JoinedCompScreen extends JPanel {
 	
 	private void refreshCompetitionsList(){
 		this.initCompTable();
-		partiPane.setBounds(665, 50, 520, 500);
-		this.add(partiPane);
+		compPane.setBounds(0, 0, 650, 700);
+		this.add(compPane);
 		this.revalidate();
 		System.out.println("Refreshed competitions list!");
 	}
 	
 	private void challengeSelectedCompPlayer(){
 		// TODO Insert call to method for challenging someone here.
+		System.err.println("!NOT IMPLEMENTED!");
 	}
 	
 	private void backButtonPressed(){

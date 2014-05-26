@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
@@ -35,9 +36,9 @@ public class JoinCompScreen extends JPanel {
 	private JTable partiTable;
 	private JScrollPane compPane;
 	private JScrollPane partiPane;
+	private JLabel listLabel;
 	private String currentSelection;
 	private boolean neverViewed;
-	private ArrayList<CompetitionPlayer> participants;
 
 	/*
 	 * Initialises the object.
@@ -45,8 +46,8 @@ public class JoinCompScreen extends JPanel {
 	public JoinCompScreen(MainFrame mainFrame) {
 		this.mainFrame = mainFrame;
 		buttonPanel = new JPanel();
-		participants = new ArrayList<CompetitionPlayer>();
 		buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 50, 20));
+		listLabel = new JLabel("Participant List:");
 		this.setLayout(null);
 		this.createButtons();
 		neverViewed =  true;
@@ -61,16 +62,25 @@ public class JoinCompScreen extends JPanel {
 		if(neverViewed){
 			mainFrame.callLoadAllCompetitionsAction();
 			this.initCompTable();
+			this.initPartiTable();
 		}
 		
+		listLabel.setBounds(670, 20, 100, 20);
 		compPane.setBounds(0, 0, 650, 700);
-//		partiPane.setBounds(650, 0, 550, 550);
+		partiPane.setBounds(665, 50, 520, 500);
 		buttonPanel.setBounds(650, 550, 550, 150);
 		
+		this.add(listLabel);
 		this.add(compPane);
-//		this.add(partiPane);
+		this.add(partiPane);
 		this.add(buttonPanel);
 		neverViewed = false;
+	}
+	
+	public void clearLists() {
+		this.neverViewed = true;
+		this.removeAll();
+		this.revalidate();
 	}
 	/*
 	 * Creates the 3 buttons in the screen
@@ -87,7 +97,7 @@ public class JoinCompScreen extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				mainFrame.callLoadAllCompetitionsAction();
-				refreshTable();
+				refreshCompetitionsList();
 			}
 		});
 		join.addActionListener(new ActionListener() {			
@@ -95,7 +105,7 @@ public class JoinCompScreen extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				if (!currentSelection.equals("")){
 					joinSelectedCompetition();
-					refreshTable();
+					refreshCompetitionsList();
 				}
 			}
 		});
@@ -165,46 +175,85 @@ public class JoinCompScreen extends JPanel {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
 				if (e.getValueIsAdjusting()) {
-					setCompInfo();
+					currentSelection = compTable.getValueAt(compTable.getSelectedRow(), 0).toString();
+					refreshParticipantList();
 				}
 			}
 		});
 		compTable.setSelectionModel(selectModel);
 		compTable.changeSelection(0, 0, false, false);
+		currentSelection = compTable.getValueAt(compTable.getSelectedRow(), 0).toString();
 		compPane = new JScrollPane(compTable);
 	}
 	
 	private void initPartiTable(){
+		if(partiPane != null){
+			this.remove(partiPane);
+		}
+		partiTable = null;
+		partiPane = null;
 		
+		String[] columnNames = { "Username", "Total Score", "Avg Score", "Played", "Won", "Lost", "Bay Avg" };
+		ArrayList<CompetitionPlayer> participants = mainFrame.callGetOneCompetitionAction(currentSelection).getParticipants();
+		String[][] tableData = new String[participants.size()][7];
+		
+		int i = 0;
+		for (CompetitionPlayer cp : participants){
+			tableData[i][0] = cp.getUsername();
+			tableData[i][1] = Integer.toString(cp.getTotalScore());
+			tableData[i][2] = Integer.toString(cp.getAverageScore());
+			tableData[i][3] = Integer.toString(cp.getTotalGames());
+			tableData[i][4] = Integer.toString(cp.getTotalWins());
+			tableData[i][5] = Integer.toString(cp.getTotalLoss());
+			tableData[i][6] = Double.toString(cp.getBayesianAverage());
+			i++;
+		}
+		
+		partiTable = new JTable(tableData, columnNames) {
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
+		partiTable.getTableHeader().setResizingAllowed(false);
+		partiTable.getTableHeader().setReorderingAllowed(false);
+		partiTable.setColumnSelectionAllowed(false);
+		partiTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		partiTable.getColumnModel().getColumn(0).setPreferredWidth(100);
+		partiTable.getColumnModel().getColumn(1).setPreferredWidth(70);
+		partiTable.getColumnModel().getColumn(2).setPreferredWidth(70);
+		partiTable.getColumnModel().getColumn(3).setPreferredWidth(70);
+		partiTable.getColumnModel().getColumn(4).setPreferredWidth(70);
+		partiTable.getColumnModel().getColumn(5).setPreferredWidth(70);
+		partiTable.getColumnModel().getColumn(5).setPreferredWidth(70);
+		
+		ForcedListSelectionModel selectModel = new ForcedListSelectionModel();
+		partiTable.setSelectionModel(selectModel);
+		partiPane = new JScrollPane(partiTable);
 	}
 	/*
 	 * This refreshes the JTable by removing it and rebuilding it.
 	 */
-	private void refreshTable(){
+	private void refreshParticipantList(){
+		this.initPartiTable();
+		partiPane.setBounds(665, 50, 520, 500);
+		this.add(partiPane);
+		this.revalidate();
+		System.out.println("Refreshed participant list!");
+	}
+	
+	private void refreshCompetitionsList(){
 		this.initCompTable();
 		compPane.setBounds(0, 0, 650, 700);
 		this.add(compPane);
 		this.revalidate();
-	}
-	/*
-	 * Every time the selection is changed in the JTable this method is called to up date the currentSelection String with its corresponding ID
-	 */
-	private void setCompInfo(){
-		currentSelection = compTable.getValueAt(compTable.getSelectedRow(), 0).toString();
+		System.out.println("Refreshed competitions list!");
 	}
 	/*
 	 * Is called when the user presses the join button
 	 */
 	private void joinSelectedCompetition(){
 		mainFrame.callJoinCompetitionAction(currentSelection);
-	}
-	/*
-	 * Is called when the user logs out
-	 */
-	public void clearLists() {
-		this.neverViewed = true;
-		this.removeAll();
-		this.revalidate();
 	}
 	
 	private void backButtonPressed(){

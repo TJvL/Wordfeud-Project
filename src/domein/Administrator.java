@@ -1,7 +1,5 @@
 package domein;
 
-import javax.swing.JOptionPane;
-
 import datalaag.DatabaseHandler;
 
 public class Administrator  extends Role

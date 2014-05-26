@@ -174,6 +174,7 @@ public class MainFrame extends JFrame {
 	public void callLogoutAction() {
 		wf.doLogoutAction();
 		joincompscreen.clearLists();
+		joinedcompscreen.clearLists();
 	}
 
 	public void fillRoleWindow() {
