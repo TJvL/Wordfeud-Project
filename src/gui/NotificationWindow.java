@@ -88,7 +88,7 @@ public class NotificationWindow extends JFrame {
 					if (reply == JOptionPane.YES_OPTION) {
 						mainFrame.acceptRejectGame("Accepted", 2,
 								input.getGameID());
-					} else {
+					} else if (reply == JOptionPane.NO_OPTION){
 						mainFrame.acceptRejectGame("Rejected", 2,
 								input.getGameID());
 					}

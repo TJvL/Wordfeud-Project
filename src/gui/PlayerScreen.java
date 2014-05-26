@@ -100,7 +100,7 @@ public class PlayerScreen extends JPanel {
 		JPanel composedButtons = new JPanel();
 
 		JButton createCompButton = new JButton("Create competition");
-		JButton openGameButton = new JButton("Open game");
+		JButton openGameButton = new JButton("Refresh list");
 		JButton joinCompButton = new JButton("Join Competition");
 		JButton joinedCompButton = new JButton("Joined competitions");
 
@@ -111,7 +111,7 @@ public class PlayerScreen extends JPanel {
 
 		openGameButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				mainFrame.setGameScreen();
+				mainFrame.updatePlayerGameList();
 			}
 		});
 		joinedCompButton.addActionListener(new ActionListener() {
