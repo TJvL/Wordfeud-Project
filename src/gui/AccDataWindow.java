@@ -47,7 +47,7 @@ public class AccDataWindow extends JDialog {
 	}
 
 	public void showAccData() {
-		this.setTitle(userNameValue.getText() + " data");
+		this.setTitle(userNameValue.getText() + "'s data");
 
 		changeName.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -69,7 +69,11 @@ public class AccDataWindow extends JDialog {
 	}
 
 	public void showAdminAccData() {
-		this.setTitle(userNameValue.getText() + " data");
+		this.setTitle(userNameValue.getText() + "'s data");
+
+		roles.setText("Current roles");
+		labelPanel.add(roles);
+		labelPanel.add(rolesValue);
 
 		changeRoles.setText("Change roles");
 		buttonPanel.add(changeRoles);
@@ -116,14 +120,11 @@ public class AccDataWindow extends JDialog {
 
 		userName.setText("User Name:");
 		password.setText("Password:");
-		roles.setText("Current roles");
 
 		labelPanel.add(userName);
 		labelPanel.add(userNameValue);
 		labelPanel.add(password);
 		labelPanel.add(passwordValue);
-		labelPanel.add(roles);
-		labelPanel.add(rolesValue);
 	}
 
 	public void setValues(String username, String password) {
