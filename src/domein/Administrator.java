@@ -9,6 +9,8 @@ import javax.swing.JRadioButton;
 import datalaag.DatabaseHandler;
 
 public class Administrator extends Role {
+	private DatabaseHandler dbh = DatabaseHandler.getInstance();
+
 	public Administrator(boolean hasPermissions) {
 		super(hasPermissions);
 	}
@@ -21,11 +23,9 @@ public class Administrator extends Role {
 			System.out.println(response);
 			if (response.length() > 2 && response.length() < 16) {
 				System.out.println("good size");
-				if (DatabaseHandler.getInstance()
-						.changeUsername(username, response)
-						.equals("Your username has been succesfully changed")) {
-					DatabaseHandler.getInstance().changeUsername(username,
-							response);
+				if (dbh.changeUsername(username, response).equals(
+						"Your username has been succesfully changed")) {
+					dbh.changeUsername(username, response);
 				} else {
 					JOptionPane.showMessageDialog(null, DatabaseHandler
 							.getInstance().changeUsername(username, response),
@@ -42,8 +42,6 @@ public class Administrator extends Role {
 		} else {
 			response = username;
 		}
-		System.out.println("done");
-		System.out.println(response);
 		return response;
 	}
 
@@ -54,16 +52,15 @@ public class Administrator extends Role {
 		if (!response.equals("")) {
 			System.out.println(response);
 			if (response.length() > 5) {
-				DatabaseHandler.getInstance()
-						.changePassword(username, response);
+				dbh.changePassword(username, response);
 			} else {
 				JOptionPane.showMessageDialog(null,
 						"Password must contain at least 6 characters.",
 						"ERROR", JOptionPane.WARNING_MESSAGE);
-				response = DatabaseHandler.getInstance().getPassword(username);
+				response = dbh.getPassword(username);
 			}
 		} else {
-			response = DatabaseHandler.getInstance().getPassword(username);
+			response = dbh.getPassword(username);
 		}
 		return response;
 	}
@@ -95,41 +92,81 @@ public class Administrator extends Role {
 
 		if (playerButton.isSelected()) {
 			if (!roles.contains(playerButton.getText())) {
-				DatabaseHandler.getInstance().setRole(username,
-						playerButton.getText());
+				dbh.setRole(username, playerButton.getText());
 			}
 			newRoles.add(playerButton.getText());
 		} else {
 			if (roles.contains(playerButton.getText())) {
-				DatabaseHandler.getInstance().revokeRole(username,
-						playerButton.getText());
+				dbh.revokeRole(username, playerButton.getText());
 			}
 		}
 		if (modButton.isSelected()) {
 			if (!roles.contains(modButton.getText())) {
-				DatabaseHandler.getInstance().setRole(username,
-						modButton.getText());
+				dbh.setRole(username, modButton.getText());
 			}
 			newRoles.add(modButton.getText());
 		} else {
 			if (roles.contains(modButton.getText())) {
-				DatabaseHandler.getInstance().revokeRole(username,
-						modButton.getText());
+				dbh.revokeRole(username, modButton.getText());
 			}
 		}
 		if (adminButton.isSelected()) {
 			if (!roles.contains(adminButton.getText())) {
-				DatabaseHandler.getInstance().setRole(username,
-						adminButton.getText());
+				dbh.setRole(username, adminButton.getText());
 			}
 			newRoles.add(adminButton.getText());
 		} else {
 			if (roles.contains(adminButton.getText())) {
-				DatabaseHandler.getInstance().revokeRole(username,
-						adminButton.getText());
+				dbh.revokeRole(username, adminButton.getText());
 			}
 		}
 
 		return newRoles;
+	}
+
+	public String adminRegister(String usernameField, char[] passInputField,
+			char[] confirmPassInputField, boolean admin, boolean mod,
+			boolean player) {
+		boolean adminSelected = admin;
+		boolean modSelected = mod;
+		boolean playerSelected = player;
+		boolean allFieldFilled = false;
+
+		String username = usernameField;
+		char[] passInput = passInputField;
+		char[] confirmPassInput = confirmPassInputField;
+
+		String retValue = "U need to fill in all the fields";
+
+		String password = "";
+		for (char c : passInput) {
+			password = password + c;
+		}
+		String passConfirm = "";
+		for (char c : confirmPassInput) {
+			passConfirm = passConfirm + c;
+		}
+
+		if ((!username.isEmpty() && !password.isEmpty() && !passConfirm
+				.isEmpty())) {
+
+			if ((adminSelected || modSelected || playerSelected)) {
+				if (username.length() < 3 || username.length() > 15) {
+					retValue = "Username must be between 3 and 15 characters.";
+				} else if (password.length() < 6) {
+					retValue = "The password must contain at least 6 characters.";
+				} else if (!password.equals(passConfirm)) {
+					retValue = "The given passwords do not match.";
+				} else {
+					allFieldFilled = true;
+					dbh.adminRegister(username, password, adminSelected,
+							modSelected, playerSelected);
+					retValue = "Register confirmed";
+				}
+			} else {
+				retValue = "U need to select at least 1 role";
+			}
+		}
+		return retValue + "---" + allFieldFilled;
 	}
 }

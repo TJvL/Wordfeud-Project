@@ -9,10 +9,10 @@ public class UpdateGUIThread extends Thread{
 	}
 	
 	public void run(){
-		while (running){		
+		while (running){	
 			mainFrame.updateGUI();
 			try {
-				Thread.sleep(7500);
+				Thread.sleep(10000);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

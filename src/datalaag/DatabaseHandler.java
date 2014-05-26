@@ -1220,7 +1220,7 @@ public class DatabaseHandler
 			if (reaction.equalsIgnoreCase("Accepted"))
 			{
 				statement = con
-						.prepareStatement("UPDATE spel SET toestand_type = 'Playing', reactie = 'Accepted', moment_reaktie = '"
+						.prepareStatement("UPDATE spel SET toestand_type = 'Playing', reaktie_type = 'Accepted', moment_reaktie = '"
 								+ getCurrentTimeStamp() + "' WHERE id = '" + gameID + "'");
 
 				statement.executeUpdate();
@@ -1240,7 +1240,7 @@ public class DatabaseHandler
 			else if (reaction.equalsIgnoreCase("Rejected"))
 			{
 				statement = con
-						.prepareStatement("UPDATE spel SET toestand_type = 'Resigned', reactie = 'Rejected', moment_reaktie = '"
+						.prepareStatement("UPDATE spel SET toestand_type = 'Resigned', reaktie_type = 'Rejected', moment_reaktie = '"
 								+ getCurrentTimeStamp() + "' WHERE id = '" + gameID + "'");
 
 				statement.executeUpdate();
@@ -1265,6 +1265,32 @@ public class DatabaseHandler
 		{
 			closeConnection();
 		}
+	}
+	
+	public synchronized boolean inviteExists(String challenger, String opponent){
+		connection();
+		boolean exists = true;
+		try
+		{
+			statement = con.prepareStatement("SELECT * FROM spel WHERE (account_naam_tegenstander = '" + challenger + "' AND account_naam_uitdager = '" + opponent + "') OR (account_naam_tegenstander = '" + opponent + "' AND account_naam_uitdager = '" + challenger + "')");
+
+			result = statement.executeQuery();
+
+			if (!result.next())
+			{
+				exists = false;
+			}
+			result.close();
+			statement.close();
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+			System.out.println("QUERRY ERROR");
+		} finally
+		{
+			closeConnection();
+		}
+		return exists;
 	}
 	
 	public synchronized int letterValue(String language, String letter)
@@ -1470,10 +1496,10 @@ public class DatabaseHandler
 		return winnerScore;
 	}
 
-	public synchronized ArrayList<String> competitionBayesian(int compID)
+	public synchronized HashMap<String, String> competitionBayesian(int compID)
 	{
 		connection();
-		ArrayList<String> bayesian = new ArrayList<String>();
+		HashMap<String, String> bayesian = new HashMap<String, String>();
 
 		try
 		{
@@ -1485,7 +1511,8 @@ public class DatabaseHandler
 
 			while (result.next())
 			{
-				bayesian.add(result.getString(1) + "---" + result.getDouble(2) + "---" + result.getInt(3));
+				bayesian.put(result.getString(1), result.getDouble(2) + "---" + result.getInt(3));
+				//bayesian.add(result.getString(1) + "---" + result.getDouble(2) + "---" + result.getInt(3));
 			}
 			result.close();
 			statement.close();
@@ -1500,21 +1527,22 @@ public class DatabaseHandler
 		return bayesian;
 	}
 
-	public synchronized ArrayList<String> competitionBayesianRating(int compID)
+	public synchronized HashMap<String, Double> competitionBayesianRaiting(int compID)
 	{
 		connection();
-		ArrayList<String> bayesianRating = new ArrayList<String>();
+		HashMap<String, Double> bayesianRating = new HashMap<String, Double>();
 
 		try
 		{
-			statement = con.prepareStatement("SELECT account_naam, bayesian_rating FROM rating WHERE competitie_id = '"
+			statement = con.prepareStatement("SELECT account_naam, avg_wins FROM rank_bayesian WHERE competitie_id = '"
 					+ compID + "'");
 
 			result = statement.executeQuery();
 
 			while (result.next())
 			{
-				bayesianRating.add(result.getString(1) + "---" + result.getDouble(2));
+				bayesianRating.put(result.getString(1), result.getDouble(2));
+		//		bayesianRating.add(result.getString(1) + "---" + result.getDouble(2));
 			}
 			result.close();
 			statement.close();

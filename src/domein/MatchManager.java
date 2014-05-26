@@ -4,6 +4,8 @@ import gui.MainFrame;
 
 import java.util.ArrayList;
 
+import javax.swing.JOptionPane;
+
 import datalaag.DatabaseHandler;
 
 public class MatchManager {
@@ -17,8 +19,7 @@ public class MatchManager {
 	private MainFrame framePanel;
 	private SecondThread secondThread;
 
-	public MatchManager(WordFeud wf, MainFrame framePanel,
-			SecondThread secondThread) {
+	public MatchManager(WordFeud wf, MainFrame framePanel) {
 		this.dbh = DatabaseHandler.getInstance();
 		this.matches = new ArrayList<Match>();
 		this.pendingMatchs = new ArrayList<PendingMatch>();
@@ -26,7 +27,6 @@ public class MatchManager {
 		this.myActiveMatches = new ArrayList<ActiveMatch>();
 		this.wf = wf;
 		this.framePanel = framePanel;
-		this.secondThread = secondThread;
 	}
 
 	public ArrayList<PendingMatch> getPendingMatchs() {
@@ -37,7 +37,7 @@ public class MatchManager {
 		for (String game : games) {
 			String[] split = game.split(",");
 			pendingMatchs.add(new PendingMatch(Integer.parseInt(split[0]),
-					Integer.parseInt(split[1]), split[2]));
+					split[1]));
 		}
 		return pendingMatchs;
 	}
@@ -46,38 +46,41 @@ public class MatchManager {
 		if (activeMatches != null) {
 			activeMatches.clear();
 		}
-		
+
 		ArrayList<String> games = dbh.spectateList();
 		for (String game : games) {
 			String[] split = game.split(",");
-			activeMatches.add(new ActiveMatch(Integer.parseInt(split[0]), split[1]));
+			activeMatches.add(new ActiveMatch(Integer.parseInt(split[0]),
+					split[1]));
 		}
 		return activeMatches;
 	}
 
-	public ArrayList<ActiveMatch> getMyActiveMatches(){
+	public ArrayList<ActiveMatch> getMyActiveMatches() {
 		if (myActiveMatches != null) {
 			myActiveMatches.clear();
-		}	
+		}
 		ArrayList<String> games = dbh.activeGames(wf.getCurrentUsername());
 		for (String game : games) {
 			String[] split = game.split(",");
-			myActiveMatches.add(new ActiveMatch(Integer.parseInt(split[0]), split[1]));
+			myActiveMatches.add(new ActiveMatch(Integer.parseInt(split[0]),
+					split[1]));
 		}
 		return myActiveMatches;
 	}
-	
+
 	// A method to initialize the Thread
-	public void initializeThread() {
-		secondThread = new SecondThread(framePanel.getGameScreen()
+	public void initializeThread(Match match) {
+		this.secondThread = new SecondThread(framePanel.getGameScreen()
 				.getGameChatPanel(), framePanel.getGameScreen()
-				.getButtonPanel(), framePanel.getGameScreen().getScorePanel());
+				.getButtonPanel(), framePanel.getGameScreen().getScorePanel(),
+				match);
 		secondThread.start();
 	}
 
 	// A method to start the Thread
-	public void startThread() {
-		this.initializeThread();
+	public void startThread(Match match) {
+		initializeThread(match);
 		secondThread.setRunning(true);
 	}
 
@@ -91,7 +94,6 @@ public class MatchManager {
 	// Depends if someone is spectating - starting new game
 	// or want to load a game
 	public void startGame(int gameID, boolean spectate, boolean newGame) {
-		wf.startThread();
 		if (spectate) {
 			spectateMatch(gameID);
 		} else {
@@ -110,13 +112,10 @@ public class MatchManager {
 		// Adds the observers
 		wf.addObservers(match, false);
 		// Sets the thread
-		secondThread.setMatch(match);
+		startThread(match);
 		match.startNewGame();
-		framePanel
-				.getGameScreen()
-				.getGameChatPanel()
-				.setChatVariables(match.getOwnName(),
-						match.getGameID());
+		framePanel.getGameScreen().getGameChatPanel()
+				.setChatVariables(match.getOwnName(), match.getGameID());
 		matches.add(match);
 		secondThread.setRunning(true);
 	}
@@ -130,7 +129,7 @@ public class MatchManager {
 				exists = true;
 				// Adds the observers
 				wf.addObservers(match, false);
-				secondThread.setMatch(match);
+				startThread(match);
 				framePanel
 						.getGameScreen()
 						.getGameChatPanel()
@@ -145,13 +144,10 @@ public class MatchManager {
 					wf.getCurrentUsername());
 			// Adds the observers
 			wf.addObservers(match, false);
-			secondThread.setMatch(match);
+			startThread(match);
 			match.loadGame();
-			framePanel
-					.getGameScreen()
-					.getGameChatPanel()
-					.setChatVariables(match.getOwnName(),
-							match.getGameID());
+			framePanel.getGameScreen().getGameChatPanel()
+					.setChatVariables(match.getOwnName(), match.getGameID());
 			matches.add(match);
 			secondThread.setRunning(true);
 		}
@@ -171,4 +167,35 @@ public class MatchManager {
 		dbh.acceptRejectGame(competionID, gameID, name, string);
 	}
 
+	// Method to start a new game
+	public void challengePlayer(int competitionID, String username,
+			String opponent, String language) {
+		String privacy = "prive";
+
+		int reply1 = JOptionPane.showConfirmDialog(null, "Want to invite "
+				+ opponent + " for a game?", "Game invite",
+				JOptionPane.YES_NO_OPTION);
+		if (!dbh.inviteExists(username, opponent)){	
+		if (reply1 == JOptionPane.YES_OPTION) {
+			int reply2 = JOptionPane.showConfirmDialog(null,
+					"Want a public game?", "Public game",
+					JOptionPane.YES_NO_OPTION);
+			if (reply2 == JOptionPane.YES_OPTION) {
+				privacy = "openbaar";
+			}
+
+			int gameID = dbh.createGame(competitionID, username, opponent,
+					privacy, language);
+			int reply3 = JOptionPane.showConfirmDialog(null,
+					"Want to load the game?", "Load game",
+					JOptionPane.YES_NO_OPTION);
+			if (reply3 == JOptionPane.YES_OPTION) {
+				wf.startGame(gameID, false, true);
+			}
+		}
+		} else {
+			JOptionPane.showMessageDialog(null, "There is already a open invited for this game",
+					"Game active", JOptionPane.INFORMATION_MESSAGE);
+		}
+	}
 }

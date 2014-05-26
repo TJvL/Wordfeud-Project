@@ -1,5 +1,6 @@
 package domein;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -39,6 +40,7 @@ public class CompetitionManager {
 						.parseInt(compData[0]), compData[1], compData[2], compData[3],
 						compData[4], Integer.parseInt(compData[5]), Integer
 								.parseInt(compData[6])));
+				
 			}
 			
 			System.out.println("Succesfully loaded all joined competitions.");
@@ -91,7 +93,7 @@ public class CompetitionManager {
 
 	public void createCompetition(String currentUsername, String summary, String endDate, int minParticipants, int maxParticipants) {
 		
-		DatabaseHandler.getInstance().createCompetition(currentUsername, summary, endDate, minParticipants, maxParticipants);
+		DatabaseHandler.getInstance().createCompetition(currentUsername, endDate, summary, minParticipants, maxParticipants);
 		this.loadJoinedCompetitions(currentUsername);
 		this.loadAllCompetitions(currentUsername);
 	}
@@ -114,19 +116,30 @@ public class CompetitionManager {
 		return competitions;
 	}
 
-	public ArrayList<String> getParticipantList(int compID) {
-		ArrayList<String> participantList;
+	public ArrayList<CompPlayer> getParticipantList(int compID) {
+		ArrayList<CompPlayer> participantList;
 		
-		if (joinedCompetitions.containsKey(compID)){
-			participantList = joinedCompetitions.get(compID).getParticipants();
+		if (joinedCompetitions.containsKey("" + compID)){
+			joinedCompetitions.get("" + compID).updateParticipants();
+			participantList = joinedCompetitions.get("" + compID).getParticipants();
 			return participantList;
 		}
-		else if (competitions.containsKey(compID)){
-			participantList = competitions.get(compID).getParticipants();
+		else if (competitions.containsKey("" + compID)){
+			competitions.get("" + compID).updateParticipantsAmmount();
+			participantList = competitions.get("" + compID).getParticipants();
 			return participantList;
 		}
 		else{
 		return null;
 		}
+	}
+	
+	public ArrayList<Competition> getJoinedCompetitions(){
+		ArrayList<Competition> arrayCompetitions = new ArrayList<Competition>();
+		for (Competition value : joinedCompetitions.values()) {
+			arrayCompetitions.add(value);
+		}
+		return arrayCompetitions;
+		
 	}
 }
