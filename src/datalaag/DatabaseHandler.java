@@ -916,7 +916,7 @@ public class DatabaseHandler
 		try
 		{
 			statement = con
-					.prepareStatement("SELECT id, account_naam_eigenaar, `start`, einde, omschrijving, minimum_aantal_deelnemers, maximum_aantal_deelnemers FROM competitie LEFT JOIN deelnemer ON competitie.id = deelnemer.competitie_id WHERE NOT EXISTS ( SELECT * FROM competitie LEFT JOIN deelnemer ON competitie.id = deelnemer.competitie_id WHERE deelnemer.account_naam LIKE '" + username + "') GROUP BY id");
+					.prepareStatement("SELECT competitie.id, competitie.account_naam_eigenaar, competitie.`start`, competitie.einde, competitie.omschrijving, competitie.minimum_aantal_deelnemers, competitie.maximum_aantal_deelnemers FROM competitie WHERE competitie.id NOT IN ( SELECT competitie.id FROM competitie LEFT JOIN deelnemer ON competitie.id = deelnemer.competitie_id WHERE deelnemer.account_naam LIKE '" + username + "' )");
 
 			result = statement.executeQuery();
 
@@ -1527,7 +1527,7 @@ public class DatabaseHandler
 		return bayesian;
 	}
 
-	public synchronized HashMap<String, Double> competitionBayesianRaiting(int compID)
+	public synchronized HashMap<String, Double> competitionBayesianRating(int compID)
 	{
 		connection();
 		HashMap<String, Double> bayesianRating = new HashMap<String, Double>();
@@ -1542,7 +1542,6 @@ public class DatabaseHandler
 			while (result.next())
 			{
 				bayesianRating.put(result.getString(1), result.getDouble(2));
-		//		bayesianRating.add(result.getString(1) + "---" + result.getDouble(2));
 			}
 			result.close();
 			statement.close();
@@ -1555,6 +1554,15 @@ public class DatabaseHandler
 			closeConnection();
 		}
 		return bayesianRating;
+	}
+	
+	public ArrayList<String> fetchCompetitionParticipants(int compID){
+		ArrayList<String> parts = new ArrayList<String>();
+		parts.add("username1---5---9000---388---5---0---1.0");
+		parts.add("username2---5---9000---388---5---0---1.0");
+		parts.add("username3---5---9000---388---5---0---1.0");
+		parts.add("username4---5---9000---388---5---0---1.0");
+		return parts;
 	}
 
 	public synchronized boolean triplePass(int gameID, String username)

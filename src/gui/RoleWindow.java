@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
+@SuppressWarnings("serial")
 public class RoleWindow extends JFrame {
 	private ArrayList<String> roles = new ArrayList<String>();
 
