@@ -39,7 +39,7 @@ public class JoinedCompScreen extends JPanel {
 		this.createButtons();
 		compSelection = "";
 		playerSelection = "";
-		neverViewed = false;
+		neverViewed = true;
 	}
 	
 	public void populateScreen(){
@@ -48,12 +48,12 @@ public class JoinedCompScreen extends JPanel {
 			this.initPartiTable();
 		}
 		
-		compTable.setBounds(0, 0, 650, 700);
-		partiTable.setBounds(650, 0, 550, 550);
+		compPane.setBounds(0, 0, 650, 700);
+		partiPane.setBounds(665, 50, 520, 500);
 		buttonPanel.setBounds(650, 550, 550, 150);
 		
-		this.add(compTable);
-		this.add(partiTable);
+		this.add(compPane);
+		this.add(partiPane);
 		this.add(buttonPanel);
 		neverViewed = false;
 	}
@@ -66,19 +66,19 @@ public class JoinedCompScreen extends JPanel {
 		refresh.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
+				refreshCompetitionsList();
 			}
 		});
 		challenge.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
+				challengeSelectedCompPlayer();
 			}
 		});
 		back.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
+				backButtonPressed();
 			}
 		});
 		
@@ -95,7 +95,7 @@ public class JoinedCompScreen extends JPanel {
 		compPane = null;
 		
 		String[] columnNames = { "ID", "Summary", "Max Parts", "Current Parts", "Owner", "End Date/Time" };
-		Set<Entry<String, Competition>> competitions = mainFrame.callGetAllCompetitionsAction();
+		Set<Entry<String, Competition>> competitions = mainFrame.callGetJoinedCompetitionsAction();
 		String[][] tableData = new String[competitions.size()][6];
 
 		Iterator<Entry<String, Competition>> it = competitions
@@ -138,16 +138,24 @@ public class JoinedCompScreen extends JPanel {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
 				if (e.getValueIsAdjusting()) {
-					
+					compSelection = compTable.getValueAt(compTable.getSelectedRow(), 0).toString();
+					refreshParticipantList();
 				}
 			}
 		});
 		compTable.setSelectionModel(selectModel);
 		compTable.changeSelection(0, 0, false, false);
+		compSelection = compTable.getValueAt(compTable.getSelectedRow(), 0).toString();
 		compPane = new JScrollPane(compTable);
 	}
 	
 	private void initPartiTable(){
+		if(partiPane != null){
+			this.remove(partiPane);
+		}
+		partiTable = null;
+		partiPane = null;
+		
 		String[] columnNames = { "Username", "Total Score", "Avg Score", "Played", "Won", "Lost", "Bay Avg" };
 		ArrayList<CompetitionPlayer> participants = mainFrame.callGetOneCompetitionAction(compSelection).getParticipants();
 		String[][] tableData = new String[participants.size()][7];
@@ -175,28 +183,51 @@ public class JoinedCompScreen extends JPanel {
 		partiTable.setColumnSelectionAllowed(false);
 		partiTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		partiTable.getColumnModel().getColumn(0).setPreferredWidth(100);
-		partiTable.getColumnModel().getColumn(1).setPreferredWidth(75);
-		partiTable.getColumnModel().getColumn(2).setPreferredWidth(75);
-		partiTable.getColumnModel().getColumn(3).setPreferredWidth(75);
-		partiTable.getColumnModel().getColumn(4).setPreferredWidth(75);
-		partiTable.getColumnModel().getColumn(5).setPreferredWidth(75);
-		partiTable.getColumnModel().getColumn(5).setPreferredWidth(75);
+		partiTable.getColumnModel().getColumn(1).setPreferredWidth(70);
+		partiTable.getColumnModel().getColumn(2).setPreferredWidth(70);
+		partiTable.getColumnModel().getColumn(3).setPreferredWidth(70);
+		partiTable.getColumnModel().getColumn(4).setPreferredWidth(70);
+		partiTable.getColumnModel().getColumn(5).setPreferredWidth(70);
+		partiTable.getColumnModel().getColumn(5).setPreferredWidth(70);
 		
 		ForcedListSelectionModel selectModel = new ForcedListSelectionModel();
 		selectModel.addListSelectionListener(new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
 				if (e.getValueIsAdjusting()) {
-					setSelectionInfo();
+					playerSelection = partiTable.getValueAt(partiTable.getSelectedRow(), 0).toString();
 				}
 			}
 		});
 		partiTable.setSelectionModel(selectModel);
 		partiTable.changeSelection(0, 0, false, false);
+		playerSelection = partiTable.getValueAt(partiTable.getSelectedRow(), 0).toString();
 		partiPane = new JScrollPane(partiTable);
 	}
 	
-	private void setSelectionInfo(){
-		compSelection = compTable.getValueAt(compTable.getSelectedRow(), 0).toString();
+	private void refreshParticipantList(){
+		this.initPartiTable();
+		partiPane.setBounds(665, 50, 520, 500);
+		this.add(partiPane);
+		this.revalidate();
+		System.out.println("Refreshed participant list!");
+	}
+	
+	private void refreshCompetitionsList(){
+		this.initCompTable();
+		partiPane.setBounds(665, 50, 520, 500);
+		this.add(partiPane);
+		this.revalidate();
+		System.out.println("Refreshed competitions list!");
+	}
+	
+	private void challengeSelectedCompPlayer(){
+		// TODO Insert call to method for challenging someone here.
+	}
+	
+	private void backButtonPressed(){
+		mainFrame.setPlayerScreen();
+		this.removeAll();
+		this.revalidate();
 	}
 }

@@ -157,6 +157,10 @@ public class WordFeud {
 	public  Set<Entry<String, Competition>> doGetAllCompetitionsAction() {
 		return compMan.getAllCompEntries();
 	}
+	
+	public Set<Entry<String, Competition>> doGetJoinedCompetitionsAction() {
+		return compMan.getJoinedCompEntries();
+	}
 
 	public Competition doGetOneCompetitionAction(String key) {
 		return compMan.getOneCompetition(key);

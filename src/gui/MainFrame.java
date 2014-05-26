@@ -318,6 +318,10 @@ public class MainFrame extends JFrame {
 	public  Set<Entry<String, Competition>> callGetAllCompetitionsAction() {
 		return wf.doGetAllCompetitionsAction();
 	}
+	
+	public Set<Entry<String, Competition>> callGetJoinedCompetitionsAction() {
+		return wf.doGetJoinedCompetitionsAction();
+	}
 
 	public Competition callGetOneCompetitionAction(String key) {
 		return wf.doGetOneCompetitionAction(key);

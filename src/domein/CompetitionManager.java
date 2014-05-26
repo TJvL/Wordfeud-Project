@@ -119,7 +119,15 @@ public class CompetitionManager {
 	} 
 
 	public Competition getOneCompetition(String key){
-		return competitions.get(key);
+		if (competitions.containsKey(key)){
+			return competitions.get(key);
+		}
+		else if (joinedCompetitions.containsKey(key)){
+			return joinedCompetitions.get(key);
+		}
+		else{
+			return null;
+		}
 	}
 	
 	public Competition getOneJoinedCompetition(String key){
