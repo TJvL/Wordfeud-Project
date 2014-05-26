@@ -1436,125 +1436,6 @@ public class DatabaseHandler
 		}
 		return score;
 	}
-
-	public synchronized ArrayList<String> competitionRanking(int compID)
-	{
-		connection();
-		ArrayList<String> compRanking = new ArrayList<String>();
-
-		try
-		{
-			statement = con.prepareStatement("SELECT account_naam, wins FROM rank_winner WHERE competitie_id = '"
-					+ compID + "' ORDER BY wins DESC");
-
-			result = statement.executeQuery();
-
-			while (result.next())
-			{
-				compRanking.add(result.getString(1) + "---" + result.getInt(2));
-			}
-			result.close();
-			statement.close();
-		} catch (SQLException e)
-		{
-			e.printStackTrace();
-			System.out.println("QUERRY ERROR!!!");
-		} finally
-		{
-			closeConnection();
-		}
-		return compRanking;
-	}
-
-	public synchronized ArrayList<String> competitionWinScore(int compID)
-	{
-		connection();
-		ArrayList<String> winnerScore = new ArrayList<String>();
-
-		try
-		{
-			statement = con
-					.prepareStatement("SELECT spel_id, winnerscore FROM rank_winnerscore WHERE competitie_id = '"
-							+ compID + "'");
-
-			result = statement.executeQuery();
-
-			while (result.next())
-			{
-				winnerScore.add(result.getString(1) + "---" + result.getInt(2));
-			}
-			result.close();
-			statement.close();
-		} catch (SQLException e)
-		{
-			e.printStackTrace();
-			System.out.println("QUERRY ERROR!!!");
-		} finally
-		{
-			closeConnection();
-		}
-		return winnerScore;
-	}
-
-	public synchronized HashMap<String, String> competitionBayesian(int compID)
-	{
-		connection();
-		HashMap<String, String> bayesian = new HashMap<String, String>();
-
-		try
-		{
-			statement = con
-					.prepareStatement("SELECT account_naam, this_wins, this_num_games FROM rank_bayesian WHERE competitie_id = '"
-							+ compID + "'");
-
-			result = statement.executeQuery();
-
-			while (result.next())
-			{
-				bayesian.put(result.getString(1), result.getDouble(2) + "---" + result.getInt(3));
-				//bayesian.add(result.getString(1) + "---" + result.getDouble(2) + "---" + result.getInt(3));
-			}
-			result.close();
-			statement.close();
-		} catch (SQLException e)
-		{
-			e.printStackTrace();
-			System.out.println("QUERRY ERROR!!!");
-		} finally
-		{
-			closeConnection();
-		}
-		return bayesian;
-	}
-
-	public synchronized HashMap<String, Double> competitionBayesianRating(int compID)
-	{
-		connection();
-		HashMap<String, Double> bayesianRating = new HashMap<String, Double>();
-
-		try
-		{
-			statement = con.prepareStatement("SELECT account_naam, avg_wins FROM rank_bayesian WHERE competitie_id = '"
-					+ compID + "'");
-
-			result = statement.executeQuery();
-
-			while (result.next())
-			{
-				bayesianRating.put(result.getString(1), result.getDouble(2));
-			}
-			result.close();
-			statement.close();
-		} catch (SQLException e)
-		{
-			e.printStackTrace();
-			System.out.println("QUERRY ERROR!!!");
-		} finally
-		{
-			closeConnection();
-		}
-		return bayesianRating;
-	}
 	
 	public synchronized ArrayList<String> fetchCompetitionParticipants(int compID)
 	{
@@ -1630,7 +1511,7 @@ public class DatabaseHandler
 				int bayesainRaiting = 0;
 				int bayesainWinRaiting = 0;
 				
-				if (totalGames != 0){				
+				if (totalGames != 0 && totalGamesPlayed != 0){				
 				// Realisticly totalGamesPlayed is two times the games that happened
 				// There is no way for a draw yet - not accounted for
 				bayesainRaiting = (((totalGamesPlayed/playerNames.size()) * (totalScoreAccumulated/totalGamesPlayed)) + (totalGames * avgScore)) / ((totalGamesPlayed/playerNames.size()) + (totalGames));

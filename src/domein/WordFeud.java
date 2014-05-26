@@ -143,10 +143,9 @@ public class WordFeud {
 	}
 
 	// Method to start a game
-	public void challengePlayer(int competitionID, String username,
-			String opponent, String language) {
-		matchManager.challengePlayer(competitionID, username, opponent,
-				language);
+	public void doChallengePlayerAction(String competitionID, String opponent) {
+		matchManager.challengePlayer(Integer.parseInt(competitionID), currentUser.getUsername(), opponent,
+				"EN");
 	}
 	
 	public CompetitionManager getCompMan()
