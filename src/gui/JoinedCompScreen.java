@@ -229,8 +229,7 @@ public class JoinedCompScreen extends JPanel {
 	}
 	
 	private void challengeSelectedCompPlayer(){
-		// TODO Insert call to method for challenging someone here.
-		System.err.println("!NOT IMPLEMENTED!");
+		mainFrame.callChallengePlayerAction(compSelection, playerSelection);
 	}
 	
 	private void backButtonPressed(){

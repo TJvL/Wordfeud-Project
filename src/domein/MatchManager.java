@@ -151,9 +151,9 @@ public class MatchManager {
 	}
 
 	// Method to accept/reject game in the database
-	public void acceptRejectGame(int competionID, int gameID, String name,
+	public void acceptRejectGame(int competitionID, int gameID, String name,
 			String string) {
-		dbh.acceptRejectGame(competionID, gameID, name, string);
+		dbh.acceptRejectGame(competitionID, gameID, name, string);
 	}
 
 	// Method to start a new game

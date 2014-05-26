@@ -238,10 +238,8 @@ public class MainFrame extends JFrame {
 		 */
 	}
 
-	// Method to challenge a player in a competition
-	public void challengePlayer(int competitionID, String username,
-			String opponent, String language) {
-		wf.challengePlayer(competitionID, username, opponent, language);
+	public void callChallengePlayerAction(String competitionID, String opponent) {
+		wf.doChallengePlayerAction(competitionID, opponent);
 	}
 
 	// Returns the gameScreen
