@@ -1220,7 +1220,7 @@ public class DatabaseHandler
 			if (reaction.equalsIgnoreCase("Accepted"))
 			{
 				statement = con
-						.prepareStatement("UPDATE spel SET toestand_type = 'Playing', reaktie_type = 'Accepted', moment_reaktie = '"
+						.prepareStatement("UPDATE spel SET toestand_type = 'Request', reaktie_type = 'Accepted', moment_reaktie = '"
 								+ getCurrentTimeStamp() + "' WHERE id = '" + gameID + "'");
 
 				statement.executeUpdate();
@@ -1266,6 +1266,33 @@ public class DatabaseHandler
 			closeConnection();
 		}
 	}
+	
+	public synchronized ArrayList<Integer> gameToLoad(String name){
+		ArrayList<Integer> gameID = new ArrayList<Integer>();
+		connection();
+		try
+		{
+			statement = con.prepareStatement("SELECT id FROM spel WHERE account_naam_uitdager = '" + name + "' AND reaktie_type = 'Accepted' AND toestand_type = 'Request'");
+
+			result = statement.executeQuery();
+			
+			if (result.next())
+			{
+				gameID.add(result.getInt(1));
+			}
+			result.close();
+			statement.close();
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+			System.out.println("QUERRY ERROR!!!");
+		} finally
+		{
+			closeConnection();
+		}
+		return gameID;
+	}
+	
 	
 	public synchronized boolean inviteExists(String challenger, String opponent){
 		connection();
