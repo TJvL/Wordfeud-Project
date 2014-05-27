@@ -1453,6 +1453,9 @@ public class DatabaseHandler
 			if (result.next())
 			{
 				score = result.getInt(1);
+				if (score < 0){
+					score = 0;
+				}
 			}
 
 			result.close();
@@ -1675,8 +1678,7 @@ public class DatabaseHandler
 	
 			while (result.next())
 			{
-				//System.out.println(result.getInt(1) + "," + result.getString(2) + " VS " + result.getString(3) + " From competition: "
-				//		+ competitionName(result.getInt(4)) + " TOESTAND TIJDELIJK OP REQUEST - DBH");
+	
 				if (result.getString(2).equals(username))
 				{
 					activeGames.add(result.getInt(1) + "," + result.getString(2) + " VS " + result.getString(3) + " From competition: "

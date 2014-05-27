@@ -247,7 +247,7 @@ public class Match implements Observer {
 		}
 		// Els it will decrease it by 1
 		else {
-			if (maxTurn - 1 > 0) {
+			if (maxTurn - 1 > 2) {
 				maxTurn -= 1;
 				myTurn = !myTurn;
 			}
@@ -261,14 +261,14 @@ public class Match implements Observer {
 		if (myTurn) {
 			handTilesP1 = dbh.handContent(gameID, maxTurn - 1);
 			handTilesP2 = dbh.handContent(gameID, maxTurn);
-			gameSpec.setTurnScoreP1(dbh.turnScore(gameID, maxTurn - 1));
+			gameSpec.setTurnScoreP1(dbh.turnScore(gameID, maxTurn + 1));
 			gameSpec.setTurnScoreP2(dbh.turnScore(gameID, maxTurn));
 			gameSpec.setTurn(true);
 		} else {
 			handTilesP1 = dbh.handContent(gameID, maxTurn);
 			handTilesP2 = dbh.handContent(gameID, maxTurn - 1);
 			gameSpec.setTurnScoreP1(dbh.turnScore(gameID, maxTurn));
-			gameSpec.setTurnScoreP2(dbh.turnScore(gameID, maxTurn - 1));
+			gameSpec.setTurnScoreP2(dbh.turnScore(gameID, maxTurn + 1));
 			gameSpec.setTurn(false);
 		}
 
