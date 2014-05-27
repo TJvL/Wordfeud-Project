@@ -101,10 +101,14 @@ public class DatabaseHandler
 
 			result = statement.executeQuery();
 
+			
 			if (result.next())
 			{
-				// System.out.println("username + password correct");
+				if(result.getString(1).equals(username) && result.getString(2).equals(password)){
 				login = "Username and Password are correct";
+				
+				}
+				// System.out.println("username + password correct");
 				result.close();
 			}
 			// else

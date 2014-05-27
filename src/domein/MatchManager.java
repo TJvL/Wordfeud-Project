@@ -107,7 +107,7 @@ public class MatchManager {
 		framePanel.getGameScreen().getGameChatPanel()
 				.setChatVariables(match.getOwnName(), match.getGameID());
 //		matches.add(match);
-		gameThread.setRunning(match);
+	//	gameThread.setRunning(match);
 	}
 
 	// Loads a match
