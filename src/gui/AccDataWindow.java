@@ -95,6 +95,9 @@ public class AccDataWindow extends JDialog {
 			}
 		});
 
+		this.add(buttonPanel, BorderLayout.SOUTH);
+		this.add(labelPanel, BorderLayout.CENTER);
+
 		this.pack();
 		this.setLocationRelativeTo(null);
 		this.setVisible(true);
