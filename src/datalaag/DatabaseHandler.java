@@ -101,10 +101,14 @@ public class DatabaseHandler
 
 			result = statement.executeQuery();
 
+			
 			if (result.next())
 			{
-				// System.out.println("username + password correct");
+				if(result.getString(1).equals(username) && result.getString(2).equals(password)){
 				login = "Username and Password are correct";
+				
+				}
+				// System.out.println("username + password correct");
 				result.close();
 			}
 			// else
@@ -1946,10 +1950,10 @@ public class DatabaseHandler
 		return password;
 	}
 	
-	public synchronized ArrayList<String> activeCompetitions()
+	public synchronized HashMap<Integer,String> activeCompetitions()
 	{
 		connection();
-		ArrayList<String> activeComps = new ArrayList<String>();
+		HashMap<Integer,String> activeComps = new HashMap<Integer,String>();
 		
 		try
 		{
@@ -1959,7 +1963,8 @@ public class DatabaseHandler
 			
 			while(result.next())
 			{
-				activeComps.add(result.getInt(1) + "---" + result.getString(2) + "---" + result.getTimestamp(3) + "---" + result.getTimestamp(4) + "---" + result.getString(5) + "---" + result.getInt(6) + "---" + result.getString(7));
+//				activeComps.add(result.getInt(1) + "---" + result.getString(2) + "---" + result.getTimestamp(3) + "---" + result.getTimestamp(4) + "---" + result.getString(5) + "---" + result.getInt(6) + "---" + result.getString(7));
+				activeComps.put(result.getInt(1), result.getString(2) + "---" + result.getTimestamp(3) + "---" + result.getTimestamp(4) + "---" + result.getString(5) + "---" + result.getInt(6) + "---" + result.getString(7));
 			}
 			result.close();
 			statement.close();

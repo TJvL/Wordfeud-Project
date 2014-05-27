@@ -1,12 +1,12 @@
 package domein;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import datalaag.DatabaseHandler;
 
 public class Administrator  extends Role
 {
-	
 	private DatabaseHandler dbh = DatabaseHandler.getInstance();
-
 	
 	public Administrator(boolean hasPermissions)
 		{
@@ -37,7 +37,6 @@ public class Administrator  extends Role
 
 		if((!username.isEmpty() && !password.isEmpty() && !passConfirm.isEmpty()))
 		{
-			
 			if((adminSelected || modSelected || playerSelected))
 			{
 				if (username.length() < 3 || username.length() > 15) 
@@ -67,4 +66,13 @@ public class Administrator  extends Role
 		return retValue + "---" + allFieldFilled;
 	}
 	
+	public HashMap<Integer, String> adminCompetitions()
+	{
+		return dbh.activeCompetitions();
+	}
+	
+	public ArrayList<String> adminCompetitionParticipants(int compID)
+	{
+		return dbh.peopleInCompetition(compID);
+	}
 }

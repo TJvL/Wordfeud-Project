@@ -38,7 +38,7 @@ public class Match implements Observer {
 
 		// Dit is tijdelijk todat je mensen kunt uitdagen
 		if (myName.equals("Spectator")) {
-			myName = "mike";
+			myName = "testSubject";
 		}
 
 		this.myName = myName;
@@ -58,7 +58,7 @@ public class Match implements Observer {
 		this.gameID = gameID;
 		// Dit is tijdelijk todat je mensen kunt uitdagen
 		if (myName.equals("Spectator")) {
-			myName = "mike";
+			myName = "testSubject";
 		}
 
 		this.myName = myName;
@@ -383,6 +383,7 @@ public class Match implements Observer {
 		// Loads the player hand
 		if (!dbh.getGameStatusValue(gameID).equals("Finished")
 				|| !dbh.getGameStatusValue(gameID).equals("Resigned")) {
+			System.out.println("RAW DATA, laden van de match " + myTurn + " beurt: " + maxTurn);
 			ArrayList<String> handTiles;
 			if (myTurn) {
 				handTiles = dbh.handContent(gameID, maxTurn - 2);
