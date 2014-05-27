@@ -1298,18 +1298,19 @@ public class DatabaseHandler
 	}
 	
 	
-	public synchronized boolean inviteExists(String challenger, String opponent){
+	public synchronized boolean inviteExists(String challenger, String opponent, int compID){
 		connection();
-		boolean exists = false;
+		boolean exists = true;
 		try
 		{
-			statement = con.prepareStatement("SELECT * FROM spel WHERE ((account_naam_tegenstander = '" + challenger + "' AND account_naam_uitdager = '" + opponent + "') OR (account_naam_tegenstander = '" + opponent + "' AND account_naam_uitdager = '" + challenger + "')) AND toestand_type NOT LIKE 'Request'");
+			statement = con.prepareStatement("SELECT * FROM spel WHERE ((account_naam_tegenstander = '" + challenger + "' AND account_naam_uitdager = '" + opponent + "') "
+					+ "OR (account_naam_tegenstander = '" + opponent + "' AND account_naam_uitdager = '" + challenger + "')) AND toestand_type <> 'Finished' AND toestand_type <> 'Resigned' AND competitie_id = '" + compID + "'");
 
 			result = statement.executeQuery();
 
 			if (!result.next())
 			{
-				exists = true;
+				exists = false;
 			}
 			result.close();
 			statement.close();
@@ -1452,6 +1453,9 @@ public class DatabaseHandler
 			if (result.next())
 			{
 				score = result.getInt(1);
+				if (score < 0){
+					score = 0;
+				}
 			}
 
 			result.close();
@@ -1528,10 +1532,11 @@ public class DatabaseHandler
 					statement.close();
 				}
 				if (totalGames == 0){
-					totalGames = 1;
+					storeScore.add(name + "---" + 0 + "---" + 0 + "---" + (0) + "---" + 0 + "---" + (0));		
+				} else {
+					storeScore.add(name + "---" + totalGames + "---" + totalScore + "---" + (totalScore/totalGames) + "---" + totalWins + "---" + (totalGames-totalWins));
 				}
-				storeScore.add(name + "---" + totalGames + "---" + totalScore + "---" + (totalScore/totalGames) + "---" + totalWins + "---" + (totalGames-totalWins));
-			}
+				}
 			
 			for (String match: storeScore){
 				// Here need to be added a bunch of checks to make sure a var is not ZERO
@@ -1539,20 +1544,17 @@ public class DatabaseHandler
 				int totalGames = Integer.parseInt(split[1]);
 				int avgScore = Integer.parseInt(split[3]);
 				int totalWins = Integer.parseInt(split[4]);
+		
 				int bayesainRaiting = 0;
 				int bayesainWinRaiting = 0;
-				
+		
 				if (totalGames != 0 && totalGamesPlayed != 0){				
 				// Realisticly totalGamesPlayed is two times the games that happened
 				// There is no way for a draw yet - not accounted for
 				bayesainRaiting = (((totalGamesPlayed/playerNames.size()) * (totalScoreAccumulated/totalGamesPlayed)) + (totalGames * avgScore)) / ((totalGamesPlayed/playerNames.size()) + (totalGames));
 				// Bayesain Raiting for win
 				bayesainWinRaiting = (((totalGamesPlayed/playerNames.size()) * (totalGamesWon/totalGamesPlayed)) + (totalWins)) / ((totalGamesPlayed/playerNames.size()) + (totalGames));
-				} else {
-					totalGames = 0;
-					avgScore = 0;
-					totalWins = 0;
-				}		
+				} 	
 				playerScore.add(match +"---" + bayesainRaiting);
 			}
 			} 
@@ -1676,8 +1678,7 @@ public class DatabaseHandler
 	
 			while (result.next())
 			{
-				//System.out.println(result.getInt(1) + "," + result.getString(2) + " VS " + result.getString(3) + " From competition: "
-				//		+ competitionName(result.getInt(4)) + " TOESTAND TIJDELIJK OP REQUEST - DBH");
+	
 				if (result.getString(2).equals(username))
 				{
 					activeGames.add(result.getInt(1) + "," + result.getString(2) + " VS " + result.getString(3) + " From competition: "
@@ -1710,21 +1711,21 @@ public class DatabaseHandler
 		try
 		{
 			statement = con
-					.prepareStatement("SELECT spel.id, spel.account_naam_uitdager, spel.account_naam_tegenstander, competitie.omschrijving FROM spel LEFT JOIN competitie ON spel.competitie_id = competitie.id WHERE account_naam_tegenstander = '" + username + "' AND reaktie_type = 'Unknown'");
+					.prepareStatement("SELECT spel.id, spel.account_naam_uitdager, spel.account_naam_tegenstander, competitie.omschrijving FROM spel LEFT JOIN competitie ON spel.competitie_id = competitie.id WHERE (account_naam_tegenstander = '" + username + "' OR account_naam_uitdager = '" + username + "') AND reaktie_type = 'Unknown'");
 
 			result = statement.executeQuery();
 
 			while (result.next())
 			{
-				if (result.getString(2).equals(username))
+				if (result.getString(3).equals(username))
 				{
 					pendingGames.add(result.getInt(1) + "," + result.getString(2) + " VS " + result.getString(3) + " from competition: "
-							+  result.getString(4));
+							+  result.getString(4) + " waiting for you to accept");
 				}
 				else
 				{
 					pendingGames.add(result.getInt(1) + "," + result.getString(3) + " VS " + result.getString(2) + " from competition: "
-							+  result.getString(4));
+							+  result.getString(4) + " waiting for his reaction");
 				}
 			}
 			result.close();

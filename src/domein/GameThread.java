@@ -7,6 +7,7 @@ import javax.swing.JOptionPane;
 import datalaag.DatabaseHandler;
 import gui.GameButtonPanel;
 import gui.GameChatPanel;
+import gui.MainFrame;
 import gui.ScorePanel;
 
 // Thread for updating ScorePanel
@@ -20,18 +21,20 @@ public class GameThread extends Thread {
 	private ScorePanel scorePanel;
 	private GameChatPanel chatPanel;
 	private MatchManager matchManager;
+	private MainFrame framePanel;
 	private int storeScore;
 	private boolean running = true;
 	private boolean turnSwap = true;
 
 	public GameThread(GameChatPanel chatPanel, GameButtonPanel buttonPanel,
-			ScorePanel scorePanel, MatchManager matchManager) {
+			ScorePanel scorePanel, MatchManager matchManager, MainFrame framePanel) {
 		super("thread");
 		this.chatPanel = chatPanel;
 		this.buttonPanel = buttonPanel;
 		this.scorePanel = scorePanel;
 		this.dbh = DatabaseHandler.getInstance();
 		this.matchManager = matchManager;
+		this.framePanel = framePanel;
 	}
 
 	// The method that will be running
@@ -48,7 +51,7 @@ public class GameThread extends Thread {
 				// Gets the gameID;
 				match.getMaxTurnID();
 				int gameID = match.getGameID();
-				// System.out.println("LOOK AT ME - THREAD " + gameID);
+				//System.out.println("LOOK AT ME - THREAD " + gameID);
 				// Setting the scores
 				scorePanel
 						.setEnemyScore(dbh.score(gameID, match.getEnemyName()));
@@ -71,6 +74,7 @@ public class GameThread extends Thread {
 				}
 
 				// Update chat
+				chatPanel.setChatVariables(match.getOwnName(), gameID);
 				chatPanel.checkForMessages();
 
 				// A method to disable swap when fewer then 7 tiles
@@ -132,6 +136,8 @@ public class GameThread extends Thread {
 				}
 			}
 
+			framePanel.updateNotificationList();
+			
 			// } else {
 			// buttonPanel.setTurn(false);
 			// buttonPanel.disableSurrender();

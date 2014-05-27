@@ -51,7 +51,6 @@ public class StandardMenuBar extends JMenuBar {
 				mainFrame.setLoginScreen();
 				mainFrame.setStartMenuBar();
 				mainFrame.callLogoutAction();
-				mainFrame.stopThread();
 			}
 		});
 		exitMenuItem.addActionListener(new ActionListener() {

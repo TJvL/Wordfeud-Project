@@ -38,7 +38,7 @@ public class Match implements Observer {
 
 		// Dit is tijdelijk todat je mensen kunt uitdagen
 		if (myName.equals("Spectator")) {
-			myName = "mike";
+			myName = "testSubject";
 		}
 
 		this.myName = myName;
@@ -58,7 +58,7 @@ public class Match implements Observer {
 		this.gameID = gameID;
 		// Dit is tijdelijk todat je mensen kunt uitdagen
 		if (myName.equals("Spectator")) {
-			myName = "mike";
+			myName = "testSubject";
 		}
 
 		this.myName = myName;
@@ -247,7 +247,7 @@ public class Match implements Observer {
 		}
 		// Els it will decrease it by 1
 		else {
-			if (maxTurn - 1 > 0) {
+			if (maxTurn - 1 > 2) {
 				maxTurn -= 1;
 				myTurn = !myTurn;
 			}
@@ -261,14 +261,14 @@ public class Match implements Observer {
 		if (myTurn) {
 			handTilesP1 = dbh.handContent(gameID, maxTurn - 1);
 			handTilesP2 = dbh.handContent(gameID, maxTurn);
-			gameSpec.setTurnScoreP1(dbh.turnScore(gameID, maxTurn - 1));
+			gameSpec.setTurnScoreP1(dbh.turnScore(gameID, maxTurn + 1));
 			gameSpec.setTurnScoreP2(dbh.turnScore(gameID, maxTurn));
 			gameSpec.setTurn(true);
 		} else {
 			handTilesP1 = dbh.handContent(gameID, maxTurn);
 			handTilesP2 = dbh.handContent(gameID, maxTurn - 1);
 			gameSpec.setTurnScoreP1(dbh.turnScore(gameID, maxTurn));
-			gameSpec.setTurnScoreP2(dbh.turnScore(gameID, maxTurn - 1));
+			gameSpec.setTurnScoreP2(dbh.turnScore(gameID, maxTurn + 1));
 			gameSpec.setTurn(false);
 		}
 
@@ -383,9 +383,10 @@ public class Match implements Observer {
 		// Loads the player hand
 		if (!dbh.getGameStatusValue(gameID).equals("Finished")
 				|| !dbh.getGameStatusValue(gameID).equals("Resigned")) {
+			System.out.println("RAW DATA, laden van de match " + myTurn + " beurt: " + maxTurn);
 			ArrayList<String> handTiles;
 			if (myTurn) {
-				handTiles = dbh.handContent(gameID, maxTurn - 1);
+				handTiles = dbh.handContent(gameID, maxTurn - 2);
 			} else {
 				handTiles = dbh.handContent(gameID, maxTurn);
 			}
@@ -567,7 +568,7 @@ public class Match implements Observer {
 				for (Tile tile : tilesInHand) {
 					tilesNumber.add(tile.getTileID());
 				}
-
+				
 				dbh.addTileToHand(gameID, tilesNumber, maxTurn);
 				// dbh.addTileToHand(gameID, tileID, maxTurn);
 				board.setScore();

@@ -100,7 +100,7 @@ public class PlayerScreen extends JPanel {
 		JPanel composedButtons = new JPanel();
 
 		JButton createCompButton = new JButton("Create competition");
-		JButton openGameButton = new JButton("Refresh list");
+		JButton refreshList = new JButton("Refresh list");
 		JButton joinCompButton = new JButton("Join Competition");
 		JButton joinedCompButton = new JButton("Joined competitions");
 
@@ -109,7 +109,7 @@ public class PlayerScreen extends JPanel {
 		buttonsPanel.setLayout(new BorderLayout());
 		buttonsPanel.setPreferredSize(new Dimension(300, 300));
 
-		openGameButton.addActionListener(new ActionListener() {
+		refreshList.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				mainFrame.updatePlayerGameList();
 			}
@@ -131,7 +131,7 @@ public class PlayerScreen extends JPanel {
 		});
 
 		composedButtons.add(createCompButton);
-		composedButtons.add(openGameButton);
+		composedButtons.add(refreshList);
 		composedButtons.add(joinedCompButton);
 		composedButtons.add(joinCompButton);
 
