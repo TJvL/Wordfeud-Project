@@ -7,7 +7,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 
 import javax.swing.BoxLayout;
@@ -65,7 +64,6 @@ public class PlayerScreen extends JPanel {
 		gameList.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				// TODO Auto-generated method stub
 				ActiveMatch input = gameList.getSelectedValue();
 				if (input != null) {
 					int gameID = input.getGameID();
@@ -102,7 +100,7 @@ public class PlayerScreen extends JPanel {
 		JPanel composedButtons = new JPanel();
 
 		JButton createCompButton = new JButton("Create competition");
-		JButton openGameButton = new JButton("Open game");
+		JButton openGameButton = new JButton("Refresh list");
 		JButton joinCompButton = new JButton("Join Competition");
 		JButton joinedCompButton = new JButton("Joined competitions");
 
@@ -113,7 +111,7 @@ public class PlayerScreen extends JPanel {
 
 		openGameButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				mainFrame.setGameScreen();
+				mainFrame.updatePlayerGameList();
 			}
 		});
 		joinedCompButton.addActionListener(new ActionListener() {

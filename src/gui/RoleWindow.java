@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
+@SuppressWarnings("serial")
 public class RoleWindow extends JDialog {
 	private ArrayList<String> roles = new ArrayList<String>();
 
@@ -22,7 +23,6 @@ public class RoleWindow extends JDialog {
 		} else {
 			return null;
 		}
-
 	}
 
 	public void fillRoleList(ArrayList<String> roles) {

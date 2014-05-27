@@ -14,8 +14,7 @@ public class Competition {
 	private int minParticipants;
 	private int maxParticipants;
 	private int amountParticipants;
-	
-	private ArrayList<String> participants;
+	private ArrayList<CompetitionPlayer> participants;
 
 	public Competition(int databaseID, String compOwner, String startDate,
 			String endDate, String summary, int minParticipants,
@@ -27,6 +26,7 @@ public class Competition {
 		this.summary = summary;
 		this.minParticipants = minParticipants;
 		this.maxParticipants = maxParticipants;
+		this.participants = new ArrayList<CompetitionPlayer>();
 		this.updateParticipants();
 	}
 
@@ -61,25 +61,36 @@ public class Competition {
 	public int getAmountParticipants() {
 		return amountParticipants;
 	}
-	
-	public ArrayList<String> getParticipants(){
+
+	public ArrayList<CompetitionPlayer> getParticipants() {
 		return participants;
 	}
-	
+
 	public void updateParticipants() {
-		this.participants = DatabaseHandler.getInstance().peopleInCompetition(compID);
+		participants.clear();
+		ArrayList<String> parts = DatabaseHandler.getInstance()
+				.fetchCompetitionParticipants(this.getCompID());
+
+		for (String s : parts) {
+			String[] data = s.split("---");
+			participants.add(new CompetitionPlayer(Integer.toString(this
+					.getCompID()), data[0], Integer.parseInt(data[1]), Integer
+					.parseInt(data[2]), Integer.parseInt(data[3]), Integer
+					.parseInt(data[4]), Integer.parseInt(data[5]), Double
+					.parseDouble(data[6])));
+		}
 		amountParticipants = participants.size();
 	}
-	
-	public boolean isRoomForMore(){
+
+	public boolean isRoomForMore() {
 		boolean roomForMore = false;
-		
+
 		this.updateParticipants();
-		
-		if (amountParticipants < maxParticipants){
+
+		if (amountParticipants < maxParticipants) {
 			roomForMore = true;
 		}
-		
+
 		return roomForMore;
 	}
 

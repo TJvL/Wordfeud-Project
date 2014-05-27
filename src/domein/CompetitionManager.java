@@ -1,11 +1,11 @@
 package domein;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import datalaag.DatabaseHandler;
 
@@ -14,14 +14,12 @@ public class CompetitionManager {
 	private HashMap<String, Competition> joinedCompetitions;
 	private HashMap<String, Competition> competitions;
 
-	public CompetitionManager(WordFeud wf) {
-		
+	public CompetitionManager() {	
 		competitions = new HashMap<String, Competition>();
 		joinedCompetitions = new HashMap<String, Competition>();
 	}
 
 	public void loadJoinedCompetitions(String username) {
-		
 		joinedCompetitions.clear();
 		System.out.println("Loading joined competitions...");
 
@@ -40,6 +38,7 @@ public class CompetitionManager {
 						.parseInt(compData[0]), compData[1], compData[2], compData[3],
 						compData[4], Integer.parseInt(compData[5]), Integer
 								.parseInt(compData[6])));
+				
 			}
 			
 			System.out.println("Succesfully loaded all joined competitions.");
@@ -75,14 +74,15 @@ public class CompetitionManager {
 		}
 	}
 	
-	public boolean joinCompetition(int compID, String username){
+	public boolean joinCompetition(String compID, String username){
 		boolean actionSuccesfull = false;
 		if (competitions.get(compID).isRoomForMore()){
-			DatabaseHandler.getInstance().joinCompetition(compID, username);
+			DatabaseHandler.getInstance().joinCompetition(Integer.parseInt(compID), username);
 			Competition comp = competitions.get(compID);
-			joinedCompetitions.put(Integer.toString(compID), comp);
+			joinedCompetitions.put(compID, comp);
 			competitions.remove(compID);
 			actionSuccesfull = true;
+			System.out.println("Joined competition succesfully! CompObject ID: " + comp.getCompID());
 		}
 		else{
 			System.err.println("ERROR: Could not join selected competition");
@@ -90,8 +90,7 @@ public class CompetitionManager {
 		return actionSuccesfull;
 	}
 
-	public void createCompetition(String currentUsername, String summary, String endDate, int minParticipants, int maxParticipants) {
-		
+	public void createCompetition(String currentUsername, String summary, String endDate, int minParticipants, int maxParticipants) {		
 		DatabaseHandler.getInstance().createCompetition(currentUsername, endDate, summary, minParticipants, maxParticipants);
 		this.loadJoinedCompetitions(currentUsername);
 		this.loadAllCompetitions(currentUsername);
@@ -111,23 +110,40 @@ public class CompetitionManager {
 		}
 	}
 	
-	public HashMap<String, Competition>  getCompetitionsMap(){
-		return competitions;
+	public Set<Entry<String, Competition>> getAllCompEntries(){
+		return competitions.entrySet();
 	}
+	
+	public Set<Entry<String, Competition>> getJoinedCompEntries(){
+		return joinedCompetitions.entrySet();
+	} 
 
-	public ArrayList<String> getParticipantList(int compID) {
-		ArrayList<String> participantList;
-		
-		if (joinedCompetitions.containsKey(compID)){
-			participantList = joinedCompetitions.get(compID).getParticipants();
-			return participantList;
+	public Competition getOneCompetition(String key){
+		if (competitions.containsKey(key)){
+			return competitions.get(key);
 		}
-		else if (competitions.containsKey(compID)){
-			participantList = competitions.get(compID).getParticipants();
-			return participantList;
+		else if (joinedCompetitions.containsKey(key)){
+			return joinedCompetitions.get(key);
 		}
 		else{
-		return null;
+			return null;
 		}
+	}
+	
+	public Competition getOneJoinedCompetition(String key){
+		return joinedCompetitions.get(key);
+	}
+
+	public void logout() {
+		joinedCompetitions.clear();
+		competitions.clear();
+	}
+		
+	public ArrayList<Competition> getJoinedCompetitions(){
+		ArrayList<Competition> arrayCompetitions = new ArrayList<Competition>();
+		for (Competition value : joinedCompetitions.values()) {
+			arrayCompetitions.add(value);
+		}
+		return arrayCompetitions;
 	}
 }

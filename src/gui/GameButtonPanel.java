@@ -32,10 +32,11 @@ public class GameButtonPanel extends JPanel
 		this.swapPressed = false;
 		observerButtons = new ObserverButtons();
 	}
-	
+
 	// Adds the observers
-	public void addObserverToObserverButtons(Observer observer)
-	{
+
+	public void addObserverToObserverButtons(Observer observer) {
+
 		observerButtons.addObserver(observer);
 	}
 
@@ -43,6 +44,11 @@ public class GameButtonPanel extends JPanel
 	public synchronized void disableSurrender() 
 	{
 		surr.setEnabled(false);
+	}
+
+	// A method to disable the swap button
+	public synchronized void disableSwap() {
+		swap.setEnabled(false);
 	}
 
 	// Enables or disables the buttons
@@ -150,7 +156,7 @@ public class GameButtonPanel extends JPanel
 			pass.setEnabled(true);
 			shuffle.setEnabled(true);
 			clear.setEnabled(true);
-		} 
+		}
 		// Warning to show that you are going to swap
 		else 
 		{
@@ -166,6 +172,7 @@ public class GameButtonPanel extends JPanel
 				shuffle.setEnabled(false);
 				clear.setEnabled(false);
 				boardP.setSwapPressed(true);
+
 				// yes option
 			}
 		}

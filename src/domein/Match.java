@@ -53,6 +53,26 @@ public class Match implements Observer {
 		myTurn = true;
 	}
 
+	// Constructor for starting a game where you are playing in
+	public Match(int gameID, String myName) {
+		this.gameID = gameID;
+		// Dit is tijdelijk todat je mensen kunt uitdagen
+		if (myName.equals("Spectator")) {
+			myName = "mike";
+		}
+
+		this.myName = myName;
+		dbh = DatabaseHandler.getInstance();
+		String inputName = dbh.opponentName(gameID);
+		String[] splitName = inputName.split("---");
+		if (splitName[0].equals(myName)) {
+			this.opponentName = splitName[1];
+		} else {
+			this.opponentName = splitName[0];
+		}
+		myTurn = true;
+	}
+
 	// Constructor for a spectator game - does not need a player
 	public Match(int gameID) {
 		this.gameID = gameID;
@@ -72,7 +92,7 @@ public class Match implements Observer {
 		if (myName.equals("Spectator")) {
 			myName = "mike";
 		}
-		//System.out.println("MIJN NAAM IS: " + myName);
+		// System.out.println("MIJN NAAM IS: " + myName);
 		return myName;
 	}
 
@@ -139,9 +159,7 @@ public class Match implements Observer {
 	public void loadSpecateGame(GameSpecScreen gameSpecScreen) {
 		this.gameSpec = gameSpecScreen;
 
-		gameField.clearField();
 		board.clearField();
-		player.clearHand();
 
 		// Filling the field
 		ArrayList<String> squares = dbh.squareCheck();
@@ -295,48 +313,22 @@ public class Match implements Observer {
 	}
 
 	// A method to start a new game by me
-	// Sets the gamefieldpanel
 	public void startNewGame() {
-		gameField.clearField();
-		board.clearField();
-		player.clearHand();
-		// Updates the turn
-		getMaxTurnID();
-
-		// Filling the board
-		ArrayList<String> squares = dbh.squareCheck();
-		for (int i = 0; i < squares.size(); i++) {
-			String[] splits = squares.get(i).split("---");
-			board.addSquaresNewBoard(Integer.parseInt(splits[0]) - 1,
-					Integer.parseInt(splits[1]) - 1, splits[2]);
-		}
-
-		// Repainting and reseting jar
-		gameField.repaintBoard();
-		jar.resetJar();
-
-		// Method to add the tiles to the jar
-		System.out.println(gameID + " DE GAME ID");
 		dbh.createJar(gameID, "EN");
-		tilesForJar = dbh.jarContent(gameID);
+		ArrayList<String> tilesToLoad = dbh.jarContent(gameID);
+		Jar newJar = new Jar();
 		// Creating the jar - This loads the jar from the database
-		for (String tiles : tilesForJar) {
+		for (String tiles : tilesToLoad) {
 			String[] splits = tiles.split("---");
-			Tile t = jar.createTile(Integer.parseInt(splits[0]), splits[1],
+			Tile t = newJar.createTile(Integer.parseInt(splits[0]), splits[1],
 					Integer.parseInt(splits[2]));
-			jar.addNewTile(t);
+			newJar.addNewTile(t);
 		}
 
 		// Fills the player hands
-		fillHand();
-		getMaxTurnID();
-		// tijdelijk voor het zetten van een beurt van de tegenstander
-		// **************************************************************
-		// dbh.updateTurn(maxTurn + 1, gameID, getEnemyName(), 0, "Begin");
+		fillHand(newJar);
 
-		// Calls the method to make the field and gives it this Match as param
-		gameField.addSquares(this);
-		gameField.repaintBoard();
+		dbh.gameStatusUpdate(gameID, "Playing");
 	}
 
 	// Loads a game from the database
@@ -370,49 +362,42 @@ public class Match implements Observer {
 		// Checks if the game being loaded has not started and the player was
 		// invited
 		// The enemy then started so there are no words to load or hand to load
-		if (maxTurn != 2 && !myTurn) {
-			// Loads all the played words
-			ArrayList<String> playedWords = dbh.playedWords(gameID);
-			for (String played : playedWords) {
-				String[] splits = played.split("---");
-				String[] letters = splits[0].split(",");
-				String[] xPos = splits[1].split(",");
-				String[] yPos = splits[2].split(",");
+		// Loads all the played words
+		ArrayList<String> playedWords = dbh.playedWords(gameID);
+		for (String played : playedWords) {
+			String[] splits = played.split("---");
+			String[] letters = splits[0].split(",");
+			String[] xPos = splits[1].split(",");
+			String[] yPos = splits[2].split(",");
 
-				for (int p = 0; p < letters.length; p++) {
-					int value = dbh.letterValue("EN", letters[p]);
-					Tile t = jar.createTile(letters[p], value);
-					board.addTileToSquare(t, Integer.parseInt(xPos[p]) - 1,
-							Integer.parseInt(yPos[p]) - 1);
-					gameField.addSquarePanel(Integer.parseInt(xPos[p]) - 1,
-							Integer.parseInt(yPos[p]) - 1, t.getImage());
-				}
-			}
-
-			// Loads the player hand
-			if (!dbh.getGameStatusValue(gameID).equals("Finished")
-					|| !dbh.getGameStatusValue(gameID).equals("Resigned")) {
-				ArrayList<String> handTiles;
-				if (myTurn) {
-					handTiles = dbh.handContent(gameID, maxTurn - 1);
-				} else {
-					handTiles = dbh.handContent(gameID, maxTurn);
-				}
-
-				for (int z = 0; z < handTiles.size(); z++) {
-					String[] tiles = handTiles.get(z).split("---");
-					Tile t = jar.createTile(Integer.parseInt(tiles[0]),
-							tiles[1], Integer.parseInt(tiles[2]));
-					addTileToHand(t);
-				}
-			} else {
-				System.out.println(gameID + " De game is al over");
+			for (int p = 0; p < letters.length; p++) {
+				int value = dbh.letterValue("EN", letters[p]);
+				Tile t = jar.createTile(letters[p], value);
+				board.addTileToSquare(t, Integer.parseInt(xPos[p]) - 1,
+						Integer.parseInt(yPos[p]) - 1);
+				gameField.addSquarePanel(Integer.parseInt(xPos[p]) - 1,
+						Integer.parseInt(yPos[p]) - 1, t.getImage());
 			}
 		}
 
-		// Method of fill the hand at the beginning of a game
-		else {
-			fillHand();
+		// Loads the player hand
+		if (!dbh.getGameStatusValue(gameID).equals("Finished")
+				|| !dbh.getGameStatusValue(gameID).equals("Resigned")) {
+			ArrayList<String> handTiles;
+			if (myTurn) {
+				handTiles = dbh.handContent(gameID, maxTurn - 1);
+			} else {
+				handTiles = dbh.handContent(gameID, maxTurn);
+			}
+
+			for (int z = 0; z < handTiles.size(); z++) {
+				String[] tiles = handTiles.get(z).split("---");
+				Tile t = jar.createTile(Integer.parseInt(tiles[0]), tiles[1],
+						Integer.parseInt(tiles[2]));
+				addTileToHand(t);
+			}
+		} else {
+			System.out.println(gameID + " De game is al over");
 		}
 		gameField.repaintBoard();
 	}
@@ -543,37 +528,50 @@ public class Match implements Observer {
 	}
 
 	// Fills the hand back to 7
-	public void fillHand() {
+	public synchronized void fillHand(Jar newJar) {
 		getMaxTurnID();
-		if (maxTurn == 1 && myTurn) {
-			dbh.updateTurn(maxTurn, gameID, getOwnName(), 0, "Begin");
-		} else if (maxTurn == 2 && myTurn) {
-			dbh.updateTurn(maxTurn, gameID, getOwnName(), 0, "Begin");
-		}
 
-		if (player.getHandSize() == 0 && jar.getJarSize() == 0) {
-			this.winGame();
+		// Method to fill the hands for a new game
+		if (newJar != null) {
+			ArrayList<Integer> ownHand = new ArrayList<Integer>();
+			for (int i = 0; i < 7; i++) {
+				int id = (newJar.getNewTile()).getTileID();
+				ownHand.add(id);
+			}
+			dbh.addTileToHand(gameID, ownHand, 1);
+
+			ArrayList<Integer> enemyHand = new ArrayList<Integer>();
+			for (int i = 0; i < 7; i++) {
+				int id = (newJar.getNewTile()).getTileID();
+				enemyHand.add(id);
+			}
+			dbh.addTileToHand(gameID, enemyHand, 2);
 		} else {
-			// ArrayList<Integer> tileID = new ArrayList<Integer>();
-			while (player.getHandSize() < 7 && jar.getJarSize() > 0) {
-				int id = getTileFromJar();
-				if (id != -1) {
-					// tileID.add(id);
-				} else {
-					System.out.println("ER IS IETS FOUT GEGAAN BY FILLHAND");
+			if (player.getHandSize() == 0 && jar.getJarSize() == 0) {
+				this.winGame();
+			} else {
+				// ArrayList<Integer> tileID = new ArrayList<Integer>();
+				while (player.getHandSize() < 7 && jar.getJarSize() > 0) {
+					int id = getTileFromJar();
+					if (id != -1) {
+						// tileID.add(id);
+					} else {
+						System.out
+								.println("ER IS IETS FOUT GEGAAN BY FILLHAND");
+					}
+					gameField.repaintBoard();
 				}
-				gameField.repaintBoard();
-			}
 
-			ArrayList<Tile> tilesInHand = player.getHand();
-			ArrayList<Integer> tilesNumber = new ArrayList<Integer>();
-			for (Tile tile : tilesInHand) {
-				tilesNumber.add(tile.getTileID());
-			}
+				ArrayList<Tile> tilesInHand = player.getHand();
+				ArrayList<Integer> tilesNumber = new ArrayList<Integer>();
+				for (Tile tile : tilesInHand) {
+					tilesNumber.add(tile.getTileID());
+				}
 
-			dbh.addTileToHand(gameID, tilesNumber, maxTurn);
-			// dbh.addTileToHand(gameID, tileID, maxTurn);
-			board.setScore();
+				dbh.addTileToHand(gameID, tilesNumber, maxTurn);
+				// dbh.addTileToHand(gameID, tileID, maxTurn);
+				board.setScore();
+			}
 		}
 	}
 
@@ -589,7 +587,7 @@ public class Match implements Observer {
 			dbh.updateTurn(maxTurn, gameID, getOwnName(), 0, "Swap");
 			tilesToSwap.clear();
 			gameField.swapTiles();
-			fillHand();
+			fillHand(null);
 
 		}
 		// ***** dbh.updateTurn(maxTurn + 1, gameID, getEnemyName(), 25,
@@ -649,7 +647,7 @@ public class Match implements Observer {
 
 				board.setTilesPlayed();
 
-				fillHand();
+				fillHand(null);
 
 				// Tijdelijke reactie van de tegenstander
 				// *****
@@ -723,8 +721,12 @@ public class Match implements Observer {
 		int handTileFromTurn = 0;
 		if (dbh.score(gameID, getOwnName()) > dbh.score(gameID, getEnemyName())) {
 			handTileFromTurn = maxTurn - 1;
+			JOptionPane.showMessageDialog(null, "YOU WON THE GAME!",
+					"Game ended", JOptionPane.INFORMATION_MESSAGE);
 		} else {
 			handTileFromTurn = maxTurn;
+			JOptionPane.showMessageDialog(null, "YOU LOST THE GAME!",
+					"Game ended", JOptionPane.INFORMATION_MESSAGE);
 		}
 
 		int handScore = 0;
@@ -738,5 +740,9 @@ public class Match implements Observer {
 		dbh.updateTurn(maxTurn + 1, gameID, getOwnName(), handScore, "End");
 		dbh.updateTurn(maxTurn + 2, gameID, getEnemyName(), -handScore, "End");
 		dbh.gameStatusUpdate(gameID, "Finished");
+	}
+
+	public synchronized int getJarSize() {
+		return jar.getJarSize();
 	}
 }

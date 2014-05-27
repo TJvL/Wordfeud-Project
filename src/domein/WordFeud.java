@@ -2,32 +2,27 @@ package domein;
 
 import gui.MainFrame;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Map.Entry;
 import java.util.Observer;
+import java.util.Set;
 
 public class WordFeud {
-	private final User currentUser;
-	private final CompetitionManager compMan;
+	private User currentUser;
+	private CompetitionManager compMan;
 	private MainFrame framePanel;
 	private MatchManager matchManager;
 
 	public WordFeud() {
 		currentUser = new User();
-		compMan = new CompetitionManager(this);
+		compMan = new CompetitionManager();
+	}
+	
+	public void init() {
 		framePanel = new MainFrame(this);
+		framePanel.init();
 		matchManager = new MatchManager(this, framePanel);
 	}
-
-	/*
-<<<<<<< HEAD
-	 * Gets the user from the player DOESNT WORK WELL
-=======
-	 * // A method to initialize the Thread public void initializeThread() {
-	 * secondThread = new SecondThread(framePanel.getGameScreen()
-	 * .getGameChatPanel(), framePanel.getGameScreen() .getButtonPanel(),
-	 * framePanel.getGameScreen().getScorePanel()); secondThread.start(); }
-	 */
 
 	// Stops the Thread
 	public void stopThread() {
@@ -36,14 +31,12 @@ public class WordFeud {
 
 	/*
 	 * Returns the user from the player DOESNT WORK WELL
->>>>>>> refs/remotes/origin/master-development
 	 * ****************************************
 	 */
 	public Player getUserPlayer() {
 		return currentUser.getPlayer();
 	}
-	
-	
+
 	public User getCurrentUser() {
 		return currentUser;
 	}
@@ -58,17 +51,19 @@ public class WordFeud {
 		String result = currentUser.login(username, password);
 		if (result.equals("Username and Password are correct")) {
 			compMan.loadJoinedCompetitions(currentUser.getUsername());
-			compMan.updateEachParticipants();
 		}
 		return result;
 	}
 
 	public void doLogoutAction() {
 		currentUser.logout();
+		compMan.logout();
 	}
 
 	public boolean doChangeRoleAction(String result) {
-		return currentUser.changeRole(result);}
+		return currentUser.changeRole(result);
+	}
+
 	/*
 	 * param uitleg: summary = de naam of omschrijving die in alle lijsten terug
 	 * komt als "naam". endDate = de eind datum van de competitie.
@@ -78,20 +73,25 @@ public class WordFeud {
 	 */
 	public void doCreateCompAction(String summary, String endDate,
 			int minParticipants, int maxParticipants) {
-		compMan.createCompetition(getCurrentUsername(), summary, endDate, minParticipants, maxParticipants);
+		compMan.createCompetition(currentUser.getUsername(), summary, endDate,
+				minParticipants, maxParticipants);
+
 	}
 
-
-	public boolean doJoinCompAction(int compID) {
+	public boolean doJoinCompAction(String compID) {
 		return compMan.joinCompetition(compID, currentUser.getUsername());
 	}
 
 	public void doLoadAllCompetitionsAction() {
 		compMan.loadAllCompetitions(currentUser.getUsername());
 	}
-
-	public ArrayList<String> getParticipantListAction(int compID) {
-		return compMan.getParticipantList(compID);
+	
+	public void doLoadJoinedCompetitionsAction() {
+		compMan.loadJoinedCompetitions(currentUser.getUsername());
+	}
+	
+	public ArrayList<Competition> getJoinedCompetitions(){
+		return compMan.getJoinedCompetitions();
 	}
 
 	public String getCurrentUserRole() {
@@ -106,10 +106,10 @@ public class WordFeud {
 		return currentUser.getUsername();
 	}
 
-
 	public String getCurrentPassword() {
 		return currentUser.getPassword();
 	}
+
 	// Returns active games
 	public ArrayList<ActiveMatch> getActiveGames() {
 		return matchManager.getActiveMatches();
@@ -142,10 +142,26 @@ public class WordFeud {
 				getCurrentUsername(), string);
 	}
 
+	// Method to start a game
+	public void doChallengePlayerAction(String competitionID, String opponent) {
+		matchManager.challengePlayer(Integer.parseInt(competitionID), currentUser.getUsername(), opponent,
+				"EN");
+	}
+	
 	public CompetitionManager getCompMan()
 	{
 		return compMan;
 	}
+
+	public Set<Entry<String, Competition>> doGetAllCompetitionsAction() {
+		return compMan.getAllCompEntries();
+	}
 	
-	
+	public Set<Entry<String, Competition>> doGetJoinedCompetitionsAction() {
+		return compMan.getJoinedCompEntries();
+	}
+
+	public Competition doGetOneCompetitionAction(String key) {
+		return compMan.getOneCompetition(key);
+	}
 }

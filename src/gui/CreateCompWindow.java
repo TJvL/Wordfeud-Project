@@ -35,12 +35,10 @@ public class CreateCompWindow extends JDialog
 	private JButton confirm = new JButton();
 	private JPanel buttonPanel = new JPanel();
 	private JPanel inputPanel = new JPanel();
-	private JTextField minPlayers = new JTextField();
 	private JTextField maxPlayers = new JTextField();
 	private JTextField summary = new JTextField();
 	private JPanel mainPanel = new JPanel();
 	private JLabel maxPlayersLabel = new JLabel();
-	private JLabel minPlayersLabel = new JLabel();
 	private JLabel gameCreatedLabel = new JLabel();
 	private JLabel summaryLabel = new JLabel();
 	private PlayerScreen playerScreen;
@@ -65,9 +63,8 @@ public class CreateCompWindow extends JDialog
 		this.createInputPanel();
 		this.createMainPanel();
 		this.add(dtp, BorderLayout.NORTH);
-		
 		this.setModal(true);
-		
+
 		this.setBackground(Color.DARK_GRAY);
 		mainPanel.setBackground(Color.DARK_GRAY);
 		inputPanel.setBackground(Color.DARK_GRAY);
@@ -75,8 +72,7 @@ public class CreateCompWindow extends JDialog
 		confirm.setBackground(Color.CYAN);
 		summaryLabel.setForeground(Color.WHITE);
 		maxPlayersLabel.setForeground(Color.WHITE);
-		minPlayersLabel.setForeground(Color.WHITE);
-		
+
 		this.pack();
 		this.setLocationRelativeTo(null);
 		this.setVisible(true);
@@ -104,13 +100,10 @@ public class CreateCompWindow extends JDialog
 	{
 		inputPanel.setLayout(new GridLayout(3, 2, 50, 25));
 		summaryLabel.setText("Competition name");
-		minPlayersLabel.setText("Min Players(2-22)");
 		maxPlayersLabel.setText("Max Players(2-24)");
 		
 		inputPanel.add(summaryLabel);
 		inputPanel.add(summary);
-		inputPanel.add(minPlayersLabel);
-		inputPanel.add(minPlayers);
 		inputPanel.add(maxPlayersLabel);
 		inputPanel.add(maxPlayers);
 	}
@@ -124,13 +117,12 @@ public class CreateCompWindow extends JDialog
 	{
 
 		if (!maxPlayers.getText().equals("") && !summary.getText().equals("")
-				&& !minPlayers.getText().equals("")	&& summary.getText().length() < 255)
+				&& summary.getText().length() < 255)
 		{
 			try
 			{
-				if ((Integer.parseInt(maxPlayers.getText()) >= 2 && Integer.parseInt(maxPlayers.getText()) <= 24)
-							&& (Integer.parseInt(minPlayers.getText()) >= 2	&& Integer.parseInt(minPlayers.getText()) <= 24) 
-								&& (Integer.parseInt(minPlayers.getText()) <= Integer.parseInt(maxPlayers.getText())))
+				if (Integer.parseInt(maxPlayers.getText()) >= 2
+						&& Integer.parseInt(maxPlayers.getText()) <= 24)
 				{
 
 					// get the values we have to send to our database
@@ -146,24 +138,30 @@ public class CreateCompWindow extends JDialog
 					year = dateTimeSplit[5];
 					month = monthToInt(dateTimeSplit[1]);
 					day = dateTimeSplit[2];
-
 					String[] timeSplit = dateTimeSplit[3].split(":");
 					hours = timeSplit[0];
 					minutes = timeSplit[1];
 					seconds = timeSplit[2];
-					
 					finalReturnString = (year + "-" + month + "-" + day + " "
 							+ hours + ":" + minutes + ":" + seconds);
 
-//					System.out.println("finalreturnstring"+ finalReturnString);
 
+//					System.out.println("finalreturnstring"+ finalReturnString);
 					// //
 					// //
 					// // FORMATTED
+
 //mainframe wordt hier aangeroepen omdat, als ik het in playerscreen doe je niet kan checken of confirmclicked al gedaan is 
-					playerScreen.callCreateComp(summary.getText(), finalReturnString, Integer.parseInt(minPlayers.getText()), Integer.parseInt(maxPlayers.getText()));
+					playerScreen.callCreateComp(summary.getText(), finalReturnString, 1, Integer.parseInt(maxPlayers.getText()));
 					
 					JOptionPane.showMessageDialog(null, "Your competition has been made", "Confirm", JOptionPane.INFORMATION_MESSAGE);
+					// mainframe wordt hier aangeroepen omdat, als ik het in
+					// playerscreen doe je niet kan checken of confirmclicked al
+					// gedaan is
+					playerScreen.callCreateComp(summary.getText(),
+							finalReturnString, 1,
+							Integer.parseInt(maxPlayers.getText()));
+					gameCreatedLabel.setText("Competition has been created.");
 					buttonPanel.add(gameCreatedLabel);
 					this.revalidate();
 
@@ -196,48 +194,37 @@ public class CreateCompWindow extends JDialog
 		if (month.equals("Jan"))
 		{
 			monthInt = "01";
-		}
-		else if (month.equals("Feb"))
+		} else if (month.equals("Feb"))
 		{
 			monthInt = "02";
-		}
-		else if (month.equals("Mar"))
+		} else if (month.equals("Mar"))
 		{
 			monthInt = "03";
-		}
-		else if (month.equals("Apr"))
+		} else if (month.equals("Apr"))
 		{
 			monthInt = "04";
-		}
-		else if (month.equals("May"))
+		} else if (month.equals("May"))
 		{
 			monthInt = "05";
-		}
-		else if (month.equals("Jun"))
+		} else if (month.equals("Jun"))
 		{
 			monthInt = "06";
-		}
-		else if (month.equals("Jul"))
+		} else if (month.equals("Jul"))
 		{
 			monthInt = "07";
-		}
-		else if (month.equals("Aug"))
+		} else if (month.equals("Aug"))
 		{
 			monthInt = "08";
-		}
-		else if (month.equals("Sep"))
+		} else if (month.equals("Sep"))
 		{
 			monthInt = "09";
-		}
-		else if (month.equals("Oct"))
+		} else if (month.equals("Oct"))
 		{
 			monthInt = "10";
-		}
-		else if (month.equals("Nov"))
+		} else if (month.equals("Nov"))
 		{
 			monthInt = "11";
-		}
-		else if (month.equals("Dec"))
+		} else if (month.equals("Dec"))
 		{
 			monthInt = "12";
 		}
