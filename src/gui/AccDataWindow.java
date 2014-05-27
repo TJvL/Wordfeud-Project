@@ -1,41 +1,99 @@
 package gui;
-
-
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
+import javax.swing.JList;
 import javax.swing.JPanel;
 
 import datalaag.DatabaseHandler;
 
 @SuppressWarnings("serial")
 public class AccDataWindow extends JDialog {
+	private MainFrame mainFrame;
+
+	private ArrayList<String> currentRoles = new ArrayList<String>();
 	private JPanel buttonPanel = new JPanel();
 	private JPanel labelPanel = new JPanel();
 	private JButton changeName = new JButton();
 	private JButton changePassword = new JButton();
+	private JButton changeRoles = new JButton();
 
 	private JLabel userName = new JLabel();
 	private JLabel userNameValue = new JLabel();
 	private JLabel password = new JLabel();
 	private JLabel passwordValue = new JLabel();
-	private String response;
-	private String dbResponse;
+	private JLabel roles = new JLabel();
+	private JList rolesValue = new JList();
 
-	public void showAccData() {
-		createButtonPanel();
-		createLabelPanel();
-
+	public AccDataWindow(MainFrame mainFrame) {
+		this.mainFrame = mainFrame;
 		this.setModal(true);
 		this.setResizable(false);
-		this.setTitle("PlayerName's Statistics");
+		
+		rolesValue.setBackground(null);
+
+		createButtonPanel();
+		createLabelPanel();
+	}
+	
+	public void showAccData() {
+		this.setTitle(userNameValue.getText() + "'s data");
+
+		changeName.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				userNameValue.setText(mainFrame.getuser().changeUsername());
+			}
+		});
+		changePassword.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				passwordValue.setText(mainFrame.getuser().changePassword());
+			}
+		});
+
+		this.add(buttonPanel, BorderLayout.SOUTH);
+		this.add(labelPanel, BorderLayout.CENTER);
+
+		this.pack();
+		this.setLocationRelativeTo(null);
+		this.setVisible(true);
+	}
+
+	public void showAdminAccData() {
+		this.setTitle(userNameValue.getText() + "'s data");
+
+		roles.setText("Current roles");
+		labelPanel.add(roles);
+		labelPanel.add(rolesValue);
+
+		changeRoles.setText("Change roles");
+		buttonPanel.add(changeRoles);
+
+		changeName.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				userNameValue.setText(mainFrame.getAdmin().changeUsername(
+						userNameValue.getText()));
+			}
+		});
+		changePassword.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				passwordValue.setText(mainFrame.getAdmin().changePassword(
+						userNameValue.getText()));
+			}
+		});
+		changeRoles.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				setRoles(mainFrame.getAdmin().changeRoles(userNameValue.getText(), 
+						DatabaseHandler.getInstance().getRole(
+								userNameValue.getText())));
+			}
+		});
 
 		this.add(buttonPanel, BorderLayout.SOUTH);
 		this.add(labelPanel, BorderLayout.CENTER);
@@ -51,64 +109,10 @@ public class AccDataWindow extends JDialog {
 
 		buttonPanel.add(changeName);
 		buttonPanel.add(changePassword);
-
-		changeName.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				response = JOptionPane.showInputDialog(null, "What is your desired name?",
-								"Enter your desired name", JOptionPane.QUESTION_MESSAGE);
-				if (!response.equals(""))
-				{
-					System.out.println(response);
-					dbResponse = DatabaseHandler.getInstance().changeUsername(userNameValue.getText(), response);
-					if (response.length() > 2 && response.length() < 16) 
-					{
-						if (dbResponse.equals("Your username has been succesfully changed")) 
-						{
-							DatabaseHandler.getInstance().changeUsername(userNameValue.getText(), response);
-							userNameValue.setText(response);
-						} 
-						else 
-						{
-							JOptionPane.showMessageDialog(null, dbResponse,
-									"ERROR", JOptionPane.WARNING_MESSAGE);
-						}
-					} 
-					else 
-					{
-						JOptionPane.showMessageDialog(null, "Username must contain 3-15 characters.",
-								"ERROR", JOptionPane.WARNING_MESSAGE);
-					}
-				}
-			}});
-
-		changePassword.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				
-				response = JOptionPane.showInputDialog(null, "What is your desired password?", 
-						"Enter your desired password", JOptionPane.QUESTION_MESSAGE);
-				if (!response.equals("")) 
-				{
-					System.out.println(response);
-					if (response.length() > 5) 
-					{
-						DatabaseHandler.getInstance().changePassword(
-								userNameValue.getText(), response);
-						passwordValue.setText(response);
-					} 
-					else 
-					{
-						JOptionPane.showMessageDialog(null,	"Password must contain at least 6 characters.",
-								"ERROR", JOptionPane.WARNING_MESSAGE);
-					}
-				}
-			}});
 	}
 
 	public void createLabelPanel() {
-		labelPanel.setLayout(new GridLayout(2, 2, 0, 5));
+		labelPanel.setLayout(new GridLayout(3, 2, 0, 5));
 		labelPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
 		userName.setText("User Name:");
@@ -125,8 +129,11 @@ public class AccDataWindow extends JDialog {
 		passwordValue.setText(password);
 	}
 
-	public String getInput() {
-		return response;
+	public void setRoles(ArrayList<String> roles) {
+		currentRoles = roles;
+		currentRoles.add("Spectator");
+		rolesValue.setListData(currentRoles.toArray());
+		this.pack();
 	}
 
 }

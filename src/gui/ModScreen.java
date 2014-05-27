@@ -88,10 +88,6 @@ public class ModScreen extends JPanel {
 		listScrollPane
 				.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		modScreenListPanel.add(listScrollPane, BorderLayout.CENTER);
-		// //////
-
-		fillList();
-
 	}
 
 	public void createRequestsButtonPanel()
