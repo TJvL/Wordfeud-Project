@@ -2,30 +2,27 @@ package domein;
 
 import gui.MainFrame;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Map.Entry;
 import java.util.Observer;
+import java.util.Set;
 
 public class WordFeud {
-	private final User currentUser;
-	private final CompetitionManager compMan;
+	private User currentUser;
+	private CompetitionManager compMan;
 	private MainFrame framePanel;
 	private MatchManager matchManager;
 
 	public WordFeud() {
 		currentUser = new User();
-		compMan = new CompetitionManager(this);
+		compMan = new CompetitionManager();
+	}
+	
+	public void init() {
 		framePanel = new MainFrame(this);
+		framePanel.init();
 		matchManager = new MatchManager(this, framePanel);
 	}
-
-	/*
-	 * <<<<<<< HEAD Gets the user from the player DOESNT WORK WELL ======= // A
-	 * method to initialize the Thread public void initializeThread() {
-	 * secondThread = new SecondThread(framePanel.getGameScreen()
-	 * .getGameChatPanel(), framePanel.getGameScreen() .getButtonPanel(),
-	 * framePanel.getGameScreen().getScorePanel()); secondThread.start(); }
-	 */
 
 	// Stops the Thread
 	public void stopThread() {
@@ -33,8 +30,7 @@ public class WordFeud {
 	}
 
 	/*
-	 * Returns the user from the player DOESNT WORK WELL >>>>>>>
-	 * refs/remotes/origin/master-development
+	 * Returns the user from the player DOESNT WORK WELL
 	 * ****************************************
 	 */
 	public Player getUserPlayer() {
@@ -55,13 +51,13 @@ public class WordFeud {
 		String result = currentUser.login(username, password);
 		if (result.equals("Username and Password are correct")) {
 			compMan.loadJoinedCompetitions(currentUser.getUsername());
-			compMan.updateEachParticipants();
 		}
 		return result;
 	}
 
 	public void doLogoutAction() {
 		currentUser.logout();
+		compMan.logout();
 	}
 
 	public boolean doChangeRoleAction(String result) {
@@ -82,16 +78,16 @@ public class WordFeud {
 
 	}
 
-	public boolean doJoinCompAction(int compID) {
+	public boolean doJoinCompAction(String compID) {
 		return compMan.joinCompetition(compID, currentUser.getUsername());
 	}
 
 	public void doLoadAllCompetitionsAction() {
 		compMan.loadAllCompetitions(currentUser.getUsername());
 	}
-
-	public ArrayList<CompPlayer> getParticipantListAction(int compID) {
-		return compMan.getParticipantList(compID);
+	
+	public void doLoadJoinedCompetitionsAction() {
+		compMan.loadJoinedCompetitions(currentUser.getUsername());
 	}
 	
 	public ArrayList<Competition> getJoinedCompetitions(){
@@ -147,15 +143,25 @@ public class WordFeud {
 	}
 
 	// Method to start a game
-	public void challengePlayer(int competitionID, String username,
-			String opponent, String language) {
-		matchManager.challengePlayer(competitionID, username, opponent,
-				language);
+	public void doChallengePlayerAction(String competitionID, String opponent) {
+		matchManager.challengePlayer(Integer.parseInt(competitionID), currentUser.getUsername(), opponent,
+				"EN");
 	}
 	
 	public CompetitionManager getCompMan()
 	{
 		return compMan;
 	}
+
+	public Set<Entry<String, Competition>> doGetAllCompetitionsAction() {
+		return compMan.getAllCompEntries();
+	}
 	
+	public Set<Entry<String, Competition>> doGetJoinedCompetitionsAction() {
+		return compMan.getJoinedCompEntries();
+	}
+
+	public Competition doGetOneCompetitionAction(String key) {
+		return compMan.getOneCompetition(key);
+	}
 }

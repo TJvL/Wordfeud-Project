@@ -916,7 +916,7 @@ public class DatabaseHandler
 		try
 		{
 			statement = con
-					.prepareStatement("SELECT id, account_naam_eigenaar, `start`, einde, omschrijving, minimum_aantal_deelnemers, maximum_aantal_deelnemers FROM competitie LEFT JOIN deelnemer ON competitie.id = deelnemer.competitie_id WHERE NOT EXISTS ( SELECT * FROM competitie LEFT JOIN deelnemer ON competitie.id = deelnemer.competitie_id WHERE deelnemer.account_naam LIKE '" + username + "') GROUP BY id");
+					.prepareStatement("SELECT competitie.id, competitie.account_naam_eigenaar, competitie.`start`, competitie.einde, competitie.omschrijving, competitie.minimum_aantal_deelnemers, competitie.maximum_aantal_deelnemers FROM competitie WHERE competitie.id NOT IN ( SELECT competitie.id FROM competitie LEFT JOIN deelnemer ON competitie.id = deelnemer.competitie_id WHERE deelnemer.account_naam LIKE '" + username + "' )");
 
 			result = statement.executeQuery();
 
@@ -1220,7 +1220,7 @@ public class DatabaseHandler
 			if (reaction.equalsIgnoreCase("Accepted"))
 			{
 				statement = con
-						.prepareStatement("UPDATE spel SET toestand_type = 'Playing', reaktie_type = 'Accepted', moment_reaktie = '"
+						.prepareStatement("UPDATE spel SET toestand_type = 'Request', reaktie_type = 'Accepted', moment_reaktie = '"
 								+ getCurrentTimeStamp() + "' WHERE id = '" + gameID + "'");
 
 				statement.executeUpdate();
@@ -1267,18 +1267,45 @@ public class DatabaseHandler
 		}
 	}
 	
-	public synchronized boolean inviteExists(String challenger, String opponent){
+	public synchronized ArrayList<Integer> gameToLoad(String name){
+		ArrayList<Integer> gameID = new ArrayList<Integer>();
 		connection();
-		boolean exists = true;
 		try
 		{
-			statement = con.prepareStatement("SELECT * FROM spel WHERE (account_naam_tegenstander = '" + challenger + "' AND account_naam_uitdager = '" + opponent + "') OR (account_naam_tegenstander = '" + opponent + "' AND account_naam_uitdager = '" + challenger + "')");
+			statement = con.prepareStatement("SELECT id FROM spel WHERE account_naam_uitdager = '" + name + "' AND reaktie_type = 'Accepted' AND toestand_type = 'Request'");
+
+			result = statement.executeQuery();
+			
+			if (result.next())
+			{
+				gameID.add(result.getInt(1));
+			}
+			result.close();
+			statement.close();
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+			System.out.println("QUERRY ERROR!!!");
+		} finally
+		{
+			closeConnection();
+		}
+		return gameID;
+	}
+	
+	
+	public synchronized boolean inviteExists(String challenger, String opponent){
+		connection();
+		boolean exists = false;
+		try
+		{
+			statement = con.prepareStatement("SELECT * FROM spel WHERE ((account_naam_tegenstander = '" + challenger + "' AND account_naam_uitdager = '" + opponent + "') OR (account_naam_tegenstander = '" + opponent + "' AND account_naam_uitdager = '" + challenger + "')) AND toestand_type NOT LIKE 'Request'");
 
 			result = statement.executeQuery();
 
 			if (!result.next())
 			{
-				exists = false;
+				exists = true;
 			}
 			result.close();
 			statement.close();
@@ -1436,125 +1463,102 @@ public class DatabaseHandler
 		}
 		return score;
 	}
-
-	public synchronized ArrayList<String> competitionRanking(int compID)
+	
+	public synchronized ArrayList<String> fetchCompetitionParticipants(int compID)
 	{
+		ArrayList<String> playerNames = peopleInCompetition(compID);
 		connection();
-		ArrayList<String> compRanking = new ArrayList<String>();
-
+		ArrayList<String> playerScore = new ArrayList<String>();	
+		ArrayList<Integer> storeGames = new ArrayList<Integer>();
+		ArrayList<String> storeScore = new ArrayList<String>();
+		int totalGamesPlayed = 0;
+		int totalGamesWon = 0;
+		int totalScoreAccumulated = 0;
+		
+		
 		try
 		{
-			statement = con.prepareStatement("SELECT account_naam, wins FROM rank_winner WHERE competitie_id = '"
-					+ compID + "' ORDER BY wins DESC");
+			for (String name: playerNames){
+				int totalWins = 0;
+				int totalGames = 0;
+				int totalScore = 0;
+				storeGames.clear();
+				
+				statement = con
+						.prepareStatement("SELECT id FROM spel WHERE competitie_id = '"
+								+ compID + "' AND (account_naam_uitdager = '" + name + "' OR account_naam_tegenstander = '" + name + "')");
 
-			result = statement.executeQuery();
+				result = statement.executeQuery();
 
-			while (result.next())
-			{
-				compRanking.add(result.getString(1) + "---" + result.getInt(2));
+				while (result.next())
+				{
+					totalGames++;
+					storeGames.add(result.getInt(1));
+				}
+			
+				result.close();
+				statement.close();
+		
+				for (Integer game: storeGames){
+					int opponentScore = 0;
+					int ownScore = 0;
+					totalGamesPlayed++;
+					statement = con
+							.prepareStatement("SELECT account_naam, score FROM beurt WHERE spel_id = '"	+ game + "'");
+
+					result = statement.executeQuery();
+					while (result.next()){
+						if (result.getString(1).equals(name)){
+							ownScore += result.getInt(2);
+						} else {
+							opponentScore += result.getInt(2);
+						}
+					}
+					if (ownScore > opponentScore){
+						totalWins++;
+						totalGamesWon++;
+					}
+					totalScore += ownScore;
+					totalScoreAccumulated += totalScore;
+					result.close();
+					statement.close();
+				}
+				if (totalGames == 0){
+					totalGames = 1;
+				}
+				storeScore.add(name + "---" + totalGames + "---" + totalScore + "---" + (totalScore/totalGames) + "---" + totalWins + "---" + (totalGames-totalWins));
 			}
-			result.close();
-			statement.close();
-		} catch (SQLException e)
+			
+			for (String match: storeScore){
+				// Here need to be added a bunch of checks to make sure a var is not ZERO
+				String[] split = match.split("---");
+				int totalGames = Integer.parseInt(split[1]);
+				int avgScore = Integer.parseInt(split[3]);
+				int totalWins = Integer.parseInt(split[4]);
+				int bayesainRaiting = 0;
+				int bayesainWinRaiting = 0;
+				
+				if (totalGames != 0 && totalGamesPlayed != 0){				
+				// Realisticly totalGamesPlayed is two times the games that happened
+				// There is no way for a draw yet - not accounted for
+				bayesainRaiting = (((totalGamesPlayed/playerNames.size()) * (totalScoreAccumulated/totalGamesPlayed)) + (totalGames * avgScore)) / ((totalGamesPlayed/playerNames.size()) + (totalGames));
+				// Bayesain Raiting for win
+				bayesainWinRaiting = (((totalGamesPlayed/playerNames.size()) * (totalGamesWon/totalGamesPlayed)) + (totalWins)) / ((totalGamesPlayed/playerNames.size()) + (totalGames));
+				} else {
+					totalGames = 0;
+					avgScore = 0;
+					totalWins = 0;
+				}		
+				playerScore.add(match +"---" + bayesainRaiting);
+			}
+			} 
+			catch (SQLException e)
 		{
 			e.printStackTrace();
-			System.out.println("QUERRY ERROR!!!");
-		} finally
-		{
-			closeConnection();
-		}
-		return compRanking;
-	}
-
-	public synchronized ArrayList<String> competitionWinScore(int compID)
-	{
-		connection();
-		ArrayList<String> winnerScore = new ArrayList<String>();
-
-		try
-		{
-			statement = con
-					.prepareStatement("SELECT spel_id, winnerscore FROM rank_winnerscore WHERE competitie_id = '"
-							+ compID + "'");
-
-			result = statement.executeQuery();
-
-			while (result.next())
-			{
-				winnerScore.add(result.getString(1) + "---" + result.getInt(2));
-			}
-			result.close();
-			statement.close();
-		} catch (SQLException e)
-		{
-			e.printStackTrace();
-			System.out.println("QUERRY ERROR!!!");
-		} finally
-		{
-			closeConnection();
-		}
-		return winnerScore;
-	}
-
-	public synchronized HashMap<String, String> competitionBayesian(int compID)
-	{
-		connection();
-		HashMap<String, String> bayesian = new HashMap<String, String>();
-
-		try
-		{
-			statement = con
-					.prepareStatement("SELECT account_naam, this_wins, this_num_games FROM rank_bayesian WHERE competitie_id = '"
-							+ compID + "'");
-
-			result = statement.executeQuery();
-
-			while (result.next())
-			{
-				bayesian.put(result.getString(1), result.getDouble(2) + "---" + result.getInt(3));
-				//bayesian.add(result.getString(1) + "---" + result.getDouble(2) + "---" + result.getInt(3));
-			}
-			result.close();
-			statement.close();
-		} catch (SQLException e)
-		{
-			e.printStackTrace();
-			System.out.println("QUERRY ERROR!!!");
-		} finally
-		{
-			closeConnection();
-		}
-		return bayesian;
-	}
-
-	public synchronized HashMap<String, Double> competitionBayesianRaiting(int compID)
-	{
-		connection();
-		HashMap<String, Double> bayesianRating = new HashMap<String, Double>();
-
-		try
-		{
-			statement = con.prepareStatement("SELECT account_naam, avg_wins FROM rank_bayesian WHERE competitie_id = '"
-					+ compID + "'");
-
-			result = statement.executeQuery();
-
-			while (result.next())
-			{
-				bayesianRating.put(result.getString(1), result.getDouble(2));
-		//		bayesianRating.add(result.getString(1) + "---" + result.getDouble(2));
-			}
-			result.close();
-			statement.close();
-		} catch (SQLException e)
-		{
-			e.printStackTrace();
-			System.out.println("QUERRY ERROR!!!");
-		} finally
-		{
-			closeConnection();
-		}
-		return bayesianRating;
+		} 
+		
+		finally{closeConnection();}
+		return playerScore;			
 	}
 
 	public synchronized boolean triplePass(int gameID, String username)
