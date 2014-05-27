@@ -1,6 +1,7 @@
 package domein;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -123,50 +124,67 @@ public class Administrator extends Role {
 
 		return newRoles;
 	}
-
-	public String adminRegister(String usernameField, char[] passInputField,
-			char[] confirmPassInputField, boolean admin, boolean mod,
-			boolean player) {
+	
+	public String adminRegister(String usernameField, char[] passInputField, char[] confirmPassInputField, boolean admin, boolean mod, boolean player)
+	{	
 		boolean adminSelected = admin;
 		boolean modSelected = mod;
 		boolean playerSelected = player;
 		boolean allFieldFilled = false;
-
+		
 		String username = usernameField;
 		char[] passInput = passInputField;
 		char[] confirmPassInput = confirmPassInputField;
-
+		
 		String retValue = "U need to fill in all the fields";
 
 		String password = "";
-		for (char c : passInput) {
+		for (char c : passInput){
 			password = password + c;
 		}
 		String passConfirm = "";
-		for (char c : confirmPassInput) {
+		for (char c : confirmPassInput){
 			passConfirm = passConfirm + c;
 		}
 
-		if ((!username.isEmpty() && !password.isEmpty() && !passConfirm
-				.isEmpty())) {
-
-			if ((adminSelected || modSelected || playerSelected)) {
-				if (username.length() < 3 || username.length() > 15) {
+		if((!username.isEmpty() && !password.isEmpty() && !passConfirm.isEmpty()))
+		{
+			if((adminSelected || modSelected || playerSelected))
+			{
+				if (username.length() < 3 || username.length() > 15) 
+				{
 					retValue = "Username must be between 3 and 15 characters.";
-				} else if (password.length() < 6) {
+				}
+				else if (password.length() < 6) 
+				{
 					retValue = "The password must contain at least 6 characters.";
-				} else if (!password.equals(passConfirm)) {
+				}
+				else if (!password.equals(passConfirm)) 
+				{
 					retValue = "The given passwords do not match.";
-				} else {
+				}
+				else
+				{	
 					allFieldFilled = true;
-					dbh.adminRegister(username, password, adminSelected,
-							modSelected, playerSelected);
+					dbh.adminRegister(username, password, adminSelected, modSelected, playerSelected);
 					retValue = "Register confirmed";
 				}
-			} else {
+			}
+			else
+			{
 				retValue = "U need to select at least 1 role";
 			}
 		}
 		return retValue + "---" + allFieldFilled;
+	}
+	
+	public HashMap<Integer, String> adminCompetitions()
+	{
+		return dbh.activeCompetitions();
+	}
+	
+	public ArrayList<String> adminCompetitionParticipants(int compID)
+	{
+		return dbh.peopleInCompetition(compID);
 	}
 }

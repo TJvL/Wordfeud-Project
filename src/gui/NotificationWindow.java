@@ -9,7 +9,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
-import javax.swing.JFrame;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -17,7 +17,7 @@ import javax.swing.JOptionPane;
 import domein.PendingMatch;
 
 @SuppressWarnings("serial")
-public class NotificationWindow extends JFrame {
+public class NotificationWindow extends JDialog {
 	private JLabel title = new JLabel();
 	private JList<PendingMatch> notificationList;
 	private JButton refresh = new JButton();;
@@ -32,6 +32,7 @@ public class NotificationWindow extends JFrame {
 
 	public void openNotificationWindow() {
 
+		this.setModal(true);
 		// notificationList.setModel(listModel);
 		this.setPreferredSize(new Dimension(500,500));
 		fillNotificationList();

@@ -1,5 +1,4 @@
 package gui;
-
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -20,7 +19,6 @@ public class AccDataWindow extends JDialog {
 	private MainFrame mainFrame;
 
 	private ArrayList<String> currentRoles = new ArrayList<String>();
-
 	private JPanel buttonPanel = new JPanel();
 	private JPanel labelPanel = new JPanel();
 	private JButton changeName = new JButton();
@@ -44,7 +42,7 @@ public class AccDataWindow extends JDialog {
 		createButtonPanel();
 		createLabelPanel();
 	}
-
+	
 	public void showAccData() {
 		this.setTitle(userNameValue.getText() + "'s data");
 
@@ -96,9 +94,6 @@ public class AccDataWindow extends JDialog {
 								userNameValue.getText())));
 			}
 		});
-
-		this.add(buttonPanel, BorderLayout.SOUTH);
-		this.add(labelPanel, BorderLayout.CENTER);
 
 		this.pack();
 		this.setLocationRelativeTo(null);

@@ -92,7 +92,7 @@ public class User {
 		String retValue = datalaag.DatabaseHandler.getInstance().login(
 				username, passInput);
 
-		if (retValue.equalsIgnoreCase("Username and Password are correct")) {
+		if (retValue.equals("Username and Password are correct")) {
 			// set Username in User Class
 			this.username = username;
 			this.setLoggedIn(true);

@@ -81,13 +81,15 @@ public class AdminAccScreen extends JPanel {
 				accdatawindow.showAdminAccData();
 			}
 		});
-		addAccButton.addActionListener(new ActionListener() {
+		
+		addAccButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent arg0) {
 				admincreateplayerwindow = new AdminCreatePlayerWindow();
 				admincreateplayerwindow.ShowAdminCreatePlayer();
 			}
 		});
-		compScreenButton.addActionListener(new ActionListener() {
+		
+		compScreenButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				mainFrame.setAdminCompScreen();
 			}
