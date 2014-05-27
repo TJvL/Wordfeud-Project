@@ -25,7 +25,7 @@ public class StandardMenuBar extends JMenuBar {
 		rolewindow = new RoleWindow();
 		statwindow = new StatWindow();
 		notificationwindow = new NotificationWindow(mainFrame);
-		accdatawindow = new AccDataWindow();
+		accdatawindow = new AccDataWindow(mainFrame);
 		optionsMenu = new JMenu("Options");
 		playerdataMenu = new JMenu("Playerdata");
 		notificationsMenu = new JMenu(notificationWindowName);
@@ -60,6 +60,7 @@ public class StandardMenuBar extends JMenuBar {
 		});
 		changeroleMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				mainFrame.fillRoleWindow();
 				String result = rolewindow.showChangeRole();
 				boolean isSuccesful = mainFrame.callChangeRoleAction(result);
 				if (isSuccesful) {

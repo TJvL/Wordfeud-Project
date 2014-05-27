@@ -7,11 +7,10 @@ import java.util.Observer;
 import java.util.Set;
 
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-
-import datalaag.DatabaseHandler;
+import domein.Administrator;
 import domein.Competition;
 import domein.PendingMatch;
+import domein.User;
 import domein.WordFeud;
 
 @SuppressWarnings("serial")
@@ -115,6 +114,7 @@ public class MainFrame extends JFrame {
 	}
 	public void setAdminAccScreen() {
 		this.setContentPane(adminaccscreen);
+		adminaccscreen.fillPlayerList();
 		wf.stopThread();
 		revalidate();
 	}
@@ -127,6 +127,7 @@ public class MainFrame extends JFrame {
 
 	public void setModScreen() {
 		this.setContentPane(modscreen);
+		modscreen.fillList();
 		wf.stopThread();
 		revalidate();
 	}
@@ -186,6 +187,14 @@ public class MainFrame extends JFrame {
 
 	public String getName() {
 		return wf.getCurrentUsername();
+	}
+
+	public User getuser() {
+		return wf.getCurrentUser();
+	}
+
+	public Administrator getAdmin() {
+		return wf.getCurrentUser().getAdmin();
 	}
 
 	// PlayGame/Spectator part
@@ -262,6 +271,7 @@ public class MainFrame extends JFrame {
 			this.setPlayerScreen();
 		} else if (currentRole.equals("Spectator")) {
 			this.setSpecScreen();
+			
 		}
 	}
 
