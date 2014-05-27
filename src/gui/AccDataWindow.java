@@ -36,7 +36,8 @@ public class AccDataWindow extends JDialog {
 		this.mainFrame = mainFrame;
 		this.setModal(true);
 		this.setResizable(false);
-		
+		this.setLocationRelativeTo(null);
+
 		rolesValue.setBackground(null);
 
 		createButtonPanel();

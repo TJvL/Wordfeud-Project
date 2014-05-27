@@ -13,6 +13,7 @@ import java.util.Map.Entry;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
@@ -103,9 +104,14 @@ public class JoinCompScreen extends JPanel {
 		join.addActionListener(new ActionListener() {			
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				Competition compName = mainFrame.callGetOneCompetitionAction(currentSelection);
 				if (!currentSelection.equals("")){
+					int response = JOptionPane.showConfirmDialog(null, "Are u sure u want to join: \"" + compName.getSummary() + "\"?",
+			                   "", JOptionPane.OK_OPTION, JOptionPane.PLAIN_MESSAGE);
+					if(response == JOptionPane.OK_OPTION){
 					joinSelectedCompetition();
 					refreshCompetitionsList();
+					}
 				}
 			}
 		});
