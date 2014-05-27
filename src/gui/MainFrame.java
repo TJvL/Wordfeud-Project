@@ -287,12 +287,16 @@ public class MainFrame extends JFrame {
 
 		if (currentRole.equals("Administrator")) {
 			this.setAdminCompScreen();
+			this.setAdminMenuBar();
 		} else if (currentRole.equals("Moderator")) {
 			this.setModScreen();
+			this.setModMenuBar();
 		} else if (currentRole.equals("Player")) {
 			this.setPlayerScreen();
+			this.setPlayerMenuBar();
 		} else if (currentRole.equals("Spectator")) {
 			this.setSpecScreen();
+			
 		}
 	}
 
