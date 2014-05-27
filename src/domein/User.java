@@ -2,6 +2,8 @@ package domein;
 
 import java.util.ArrayList;
 
+import javax.swing.JOptionPane;
+
 import datalaag.DatabaseHandler;
 
 public class User {
@@ -206,6 +208,62 @@ public class User {
 	public ArrayList<String> getRoles() {
 		ArrayList<String> roles = DatabaseHandler.getInstance().getRole(
 				username);
+		roles.add("Spectator");
+
 		return roles;
+	}
+
+	public String changeUsername() {
+		String response = JOptionPane.showInputDialog(null,
+				"What is your desired name?", "Enter your desired name",
+				JOptionPane.QUESTION_MESSAGE);
+		if (!response.equals("")) {
+			System.out.println(response);
+			if (response.length() > 2 && response.length() < 16) {
+				if (DatabaseHandler.getInstance()
+						.changeUsername(getUsername(), response)
+						.equals("Your username has been succesfully changed")) {
+					DatabaseHandler.getInstance().changeUsername(getUsername(),
+							response);
+					username = response;
+				} else {
+					JOptionPane.showMessageDialog(
+							null,
+							DatabaseHandler.getInstance().changeUsername(
+									getUsername(), response), "ERROR",
+							JOptionPane.WARNING_MESSAGE);
+					response = getUsername();
+				}
+			} else {
+				JOptionPane.showMessageDialog(null,
+						"Username must contain 3-15 characters.", "ERROR",
+						JOptionPane.WARNING_MESSAGE);
+				response = getUsername();
+			}
+		} else {
+			response = getUsername();
+		}
+		return response;
+	}
+
+	public String changePassword() {
+		String response = JOptionPane.showInputDialog(null,
+				"What is your desired password?",
+				"Enter your desired password", JOptionPane.QUESTION_MESSAGE);
+		if (!response.equals("")) {
+			System.out.println(response);
+			if (response.length() > 5) {
+				DatabaseHandler.getInstance().changePassword(getUsername(),
+						response);
+			} else {
+				JOptionPane.showMessageDialog(null,
+						"Password must contain at least 6 characters.",
+						"ERROR", JOptionPane.WARNING_MESSAGE);
+				response = getPassword();
+			}
+		} else {
+			response = getPassword();
+		}
+		return response;
 	}
 }
