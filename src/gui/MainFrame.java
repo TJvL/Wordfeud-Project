@@ -27,10 +27,8 @@ public class MainFrame extends JFrame {
 	private JoinedCompScreen joinedcompscreen;
 	private ModScreen modscreen;
 	private StartMenuBar startMenuBar;
-	private PlayerMenuBar playerMenuBar;
+	private StandardMenuBar standardMenuBar;
 	private SpecMenuBar specMenuBar;
-	private AdminMenuBar adminMenuBar;
-	private ModMenuBar modMenuBar;
 	private UpdateGUIThread guiThread;
 	private WordFeud wf;
 
@@ -38,6 +36,7 @@ public class MainFrame extends JFrame {
 		this.wf = wf;
 		startMenuBar = new StartMenuBar();
 		loginscreen = new LoginScreen(this);
+		standardMenuBar = new StandardMenuBar(this);
 		this.setPreferredSize(new Dimension(1200, 700));
 		this.setResizable(false);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -52,9 +51,6 @@ public class MainFrame extends JFrame {
 	
 	public void init(){
 		specMenuBar = new SpecMenuBar(this);
-		playerMenuBar = new PlayerMenuBar(this);
-		modMenuBar = new ModMenuBar(this);
-		adminMenuBar = new AdminMenuBar(this);
 		specscreen = new SpecScreen(this);
 		regscreen = new RegScreen(this);
 		playerscreen = new PlayerScreen(this);
@@ -143,18 +139,8 @@ public class MainFrame extends JFrame {
 		revalidate();
 	}
 
-	public void setPlayerMenuBar() {
-		this.setJMenuBar(playerMenuBar);
-		revalidate();
-	}
-
-	public void setModMenuBar() {
-		this.setJMenuBar(modMenuBar);
-		revalidate();
-	}
-
-	public void setAdminMenuBar() {
-		this.setJMenuBar(adminMenuBar);
+	public void setStandardMenuBar() {
+		this.setJMenuBar(standardMenuBar);
 		revalidate();
 	}
 
@@ -178,11 +164,11 @@ public class MainFrame extends JFrame {
 	}
 
 	public void fillRoleWindow() {
-		playerMenuBar.fillRoleWindow(wf.getCurrentUserPossibleRoles());
+		standardMenuBar.fillRoleWindow(wf.getCurrentUserPossibleRoles());
 	}
 
 	public void setAccDataValues() {
-		playerMenuBar.fillAccDataValues(wf.getCurrentUsername(),
+		standardMenuBar.fillAccDataValues(wf.getCurrentUsername(),
 				wf.getCurrentPassword());
 	}
 
@@ -203,14 +189,14 @@ public class MainFrame extends JFrame {
 	// Sets the right ContentPane
 	public void addObservers(Observer observer, boolean spectator) {
 		if (spectator) {
-			this.setJMenuBar(playerMenuBar);
+			this.setJMenuBar(standardMenuBar);
 			this.setContentPane(specScreen);
 			this.pack();
 			System.out.println("MainFRAMEPANEL - set content specScreen");
 			specScreen.addObserverToObserverButtons(observer);
 			revalidate();
 		} else {
-			this.setJMenuBar(playerMenuBar);
+			this.setJMenuBar(standardMenuBar);
 			this.setContentPane(gameScreen);
 			this.pack();
 			gameScreen.addObservers(observer);
@@ -281,7 +267,7 @@ public class MainFrame extends JFrame {
 	// That allows a method to be uses by multiple threads
 	// Only the current contentPane will auto update
 	public synchronized void updateGUI() {
-		playerMenuBar.updateNotificationList();
+		standardMenuBar.updateNotificationList();
 		if (this.getContentPane() instanceof PlayerScreen) {
 			updatePlayerGameList();
 		} else if (this.getContentPane() instanceof SpecScreen) {
