@@ -61,7 +61,8 @@ public class AdminCreatePlayerWindow extends JDialog
 		this.setVisible(true);
 	}
 	
-	private void createDataField() {
+	private void createDataField() 
+	{
 		dataField = new JPanel();
 		JPanel labels = new JPanel(new GridLayout(3, 1));
 		JPanel fields = new JPanel(new GridLayout(3, 1));
@@ -101,8 +102,7 @@ public class AdminCreatePlayerWindow extends JDialog
 			public void actionPerformed(ActionEvent arg0) {
 				dispose(); // removes the screen
 				clearInput();	
-			}
-		});
+			}});
 
 		confirmButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -116,17 +116,14 @@ public class AdminCreatePlayerWindow extends JDialog
 				
 
 				ret = administrator.adminRegister(usernameField.getText(), passwordField.getPassword(), confirmPasswordField.getPassword(), admin.isSelected(), mod.isSelected(), player.isSelected()).split("---");
-			System.out.println(ret);
 
 				JOptionPane.showMessageDialog(null, ret[0], "ERROR", JOptionPane.WARNING_MESSAGE);
-			System.out.println(ret);
 
 				if(ret[1].equals("true"))
 				{
 				dispose();
-				}System.out.println(ret);
-			}
-		});
+				}
+			}});
 	}
 	
 	private void clearInput()

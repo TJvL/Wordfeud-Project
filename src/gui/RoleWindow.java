@@ -2,10 +2,10 @@ package gui;
 
 import java.util.ArrayList;
 
-import javax.swing.JFrame;
+import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
-public class RoleWindow extends JFrame {
+public class RoleWindow extends JDialog {
 	private ArrayList<String> roles = new ArrayList<String>();
 
 	// ///this method returns a string with the chosen value, if th eplayer

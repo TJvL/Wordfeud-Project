@@ -1,5 +1,8 @@
 package domein;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import javax.swing.JOptionPane;
 
 import datalaag.DatabaseHandler;
@@ -69,4 +72,13 @@ public class Administrator  extends Role
 		return retValue + "---" + allFieldFilled;
 	}
 	
+	public HashMap<Integer, String> adminCompetitions()
+	{
+		return dbh.activeCompetitions();
+	}
+	
+	public ArrayList<String> adminCompetitionParticipants(int compID)
+	{
+		return dbh.peopleInCompetition(compID);
+	}
 }

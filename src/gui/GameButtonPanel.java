@@ -11,7 +11,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 @SuppressWarnings("serial")
-public class GameButtonPanel extends JPanel {
+public class GameButtonPanel extends JPanel 
+{
 	private GameFieldPanel boardP;
 	private boolean swapPressed;
 	private JButton swap;
@@ -23,7 +24,8 @@ public class GameButtonPanel extends JPanel {
 	private ObserverButtons observerButtons;
 
 	// This uses a gameFieldPanel
-	public GameButtonPanel(GameFieldPanel boardP) {
+	public GameButtonPanel(GameFieldPanel boardP) 
+	{
 		this.boardP = boardP;
 		this.setBackground(Color.green);
 		this.addButtons();
@@ -32,23 +34,29 @@ public class GameButtonPanel extends JPanel {
 	}
 	
 	// Adds the observers
-	public void addObserverToObserverButtons(Observer observer){
+	public void addObserverToObserverButtons(Observer observer)
+	{
 		observerButtons.addObserver(observer);
 	}
 
 	// A method to disable the surrender button
-	public synchronized void disableSurrender() {
+	public synchronized void disableSurrender() 
+	{
 		surr.setEnabled(false);
 	}
 
 	// Enables or disables the buttons
-	public synchronized void setTurn(boolean turn) {
-		if (turn) {
+	public synchronized void setTurn(boolean turn) 
+	{
+		if (turn)
+		{
 			swap.setEnabled(true);
 			play.setEnabled(true);
 			pass.setEnabled(true);
 			surr.setEnabled(true);
-		} else {
+		} 
+		else 
+		{
 			swap.setEnabled(false);
 			play.setEnabled(false);
 			pass.setEnabled(false);
@@ -56,7 +64,8 @@ public class GameButtonPanel extends JPanel {
 	}
 
 	// Adds the buttons to the field
-	public void addButtons() {
+	public void addButtons() 
+	{
 		swap = new JButton("Swap");
 		play = new JButton("Play");
 		pass = new JButton("Pass");
@@ -69,38 +78,37 @@ public class GameButtonPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				playTiles();
-			}
-		});
+			}});
+		
 		pass.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				skipTurn();
-			}
-		});
+			}});
+		
 		swap.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				swapTiles();
-			}
-		});
+			}});
+		
 		surr.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				surrenderGame();
-			}
-		});
+			}});
+		
 		clear.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				clearTiles();
-			}
-		});
+			}});
+		
 		shuffle.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				shuffleTiles();
-			}
-		});
+			}});
 
 		// Adds the buttons
 		this.add(play);
@@ -129,8 +137,8 @@ public class GameButtonPanel extends JPanel {
 	// methodes to allow swapping of tiles
 	// If you press swap all buttons will be disabled
 	// Select tiles and click on the confirm button
-	private void swapTiles() {
-
+	private void swapTiles()
+	{
 		if (swapPressed) {
 			swap.setText("Swap");
 			boardP.setSwapPressed(false);
@@ -144,11 +152,12 @@ public class GameButtonPanel extends JPanel {
 			clear.setEnabled(true);
 		} 
 		// Warning to show that you are going to swap
-		else {
-			if (JOptionPane.showConfirmDialog(null,
-					"Are you sure you want to start swapping tiles?"
-							+ "\n Select the tiles you want to swap",
-					"WARNING", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+		else 
+		{
+			if (JOptionPane.showConfirmDialog(null,	"Are you sure you want to start swapping tiles?"
+							+ "\n Select the tiles you want to swap", "WARNING", 
+							JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) 
+			{
 				swap.setText("Confirm swap");
 				swapPressed = true;
 				surr.setEnabled(false);
@@ -157,26 +166,28 @@ public class GameButtonPanel extends JPanel {
 				shuffle.setEnabled(false);
 				clear.setEnabled(false);
 				boardP.setSwapPressed(true);
-
 				// yes option
 			}
 		}
-
 	}
 
 	// Sets the observer
-	private void clearTiles() {
+	private void clearTiles() 
+	{
 		observerButtons.changeActionRequest("clear");
 	}
 
 	// Sets the observer
-	private void surrenderGame() {
+	private void surrenderGame() 
+	{
 		observerButtons.changeActionRequest("surrender");
 	}
 
 	// A class to be able to extend obserable for the buttons
-	class ObserverButtons extends Observable {
-		public void changeActionRequest(String actionRequest) {
+	class ObserverButtons extends Observable 
+	{
+		public void changeActionRequest(String actionRequest) 
+		{
 			System.out.println("action requested: " + actionRequest);
 			this.setChanged();
 			this.notifyObservers(actionRequest);

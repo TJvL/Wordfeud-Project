@@ -14,8 +14,10 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -23,7 +25,7 @@ import com.lavantech.gui.comp.DateTimePicker;
 import com.toedter.calendar.JDateChooser;
 
 @SuppressWarnings("serial")
-public class CreateCompWindow extends JFrame
+public class CreateCompWindow extends JDialog
 {
 	@SuppressWarnings("unused")
 	private static final DateFormat df = new SimpleDateFormat(
@@ -64,6 +66,8 @@ public class CreateCompWindow extends JFrame
 		this.createMainPanel();
 		this.add(dtp, BorderLayout.NORTH);
 		
+		this.setModal(true);
+		
 		this.setBackground(Color.DARK_GRAY);
 		mainPanel.setBackground(Color.DARK_GRAY);
 		inputPanel.setBackground(Color.DARK_GRAY);
@@ -85,25 +89,24 @@ public class CreateCompWindow extends JFrame
 		cal1.setDateFormatString("yyyy-MM-dd HH:mm:SS");
 		buttonPanel.add(confirm);
 		confirm.setText("Confirm ");
-		confirm.addActionListener(new ActionListener()
-		{
-
+		
+		confirm.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0)
 			{
 				confirmClicked();
-			}
-
-		});
+				dispose();
+			}});
 
 	}
 
 	public void createInputPanel()
 	{
 		inputPanel.setLayout(new GridLayout(3, 2, 50, 25));
-		maxPlayersLabel.setText("Max Players(2-24)");
-		minPlayersLabel.setText("Min Players(2-22)");
 		summaryLabel.setText("Competition name");
+		minPlayersLabel.setText("Min Players(2-22)");
+		maxPlayersLabel.setText("Max Players(2-24)");
+		
 		inputPanel.add(summaryLabel);
 		inputPanel.add(summary);
 		inputPanel.add(minPlayersLabel);
@@ -121,15 +124,13 @@ public class CreateCompWindow extends JFrame
 	{
 
 		if (!maxPlayers.getText().equals("") && !summary.getText().equals("")
-				&& !minPlayers.getText().equals("")
-				&& summary.getText().length() < 255)
+				&& !minPlayers.getText().equals("")	&& summary.getText().length() < 255)
 		{
 			try
 			{
-				if (Integer.parseInt(maxPlayers.getText()) >= 2
-						&& Integer.parseInt(maxPlayers.getText()) <= 24
-							&& Integer.parseInt(minPlayers.getText()) >= 2
-								&& Integer.parseInt(minPlayers.getText()) <= 22)
+				if ((Integer.parseInt(maxPlayers.getText()) >= 2 && Integer.parseInt(maxPlayers.getText()) <= 24)
+							&& (Integer.parseInt(minPlayers.getText()) >= 2	&& Integer.parseInt(minPlayers.getText()) <= 24) 
+								&& (Integer.parseInt(minPlayers.getText()) <= Integer.parseInt(maxPlayers.getText())))
 				{
 
 					// get the values we have to send to our database
@@ -156,36 +157,33 @@ public class CreateCompWindow extends JFrame
 
 //					System.out.println("finalreturnstring"+ finalReturnString);
 
-			
-
 					// //
 					// //
 					// // FORMATTED
 //mainframe wordt hier aangeroepen omdat, als ik het in playerscreen doe je niet kan checken of confirmclicked al gedaan is 
 					playerScreen.callCreateComp(summary.getText(), finalReturnString, Integer.parseInt(minPlayers.getText()), Integer.parseInt(maxPlayers.getText()));
-					gameCreatedLabel.setText("Competition has been created.");
+					
+					JOptionPane.showMessageDialog(null, "Your competition has been made", "Confirm", JOptionPane.INFORMATION_MESSAGE);
 					buttonPanel.add(gameCreatedLabel);
 					this.revalidate();
 
-				} else
+				} 
+				else
 				{
-					gameCreatedLabel
-							.setText("Invalid Values, max or min Player nr. was exceeded");
+					JOptionPane.showMessageDialog(null, "Invalid Values, max or min Player nr. was exceeded", "ERROR", JOptionPane.ERROR_MESSAGE);
 					buttonPanel.add(gameCreatedLabel);
 					this.revalidate();
 				}
-			} catch (NumberFormatException nfe)
-			{
-				gameCreatedLabel.setText("Invalid Values");
+			} catch (NumberFormatException nfe)	{
+				JOptionPane.showMessageDialog(null, "Invalid Values", "ERROR", JOptionPane.ERROR_MESSAGE);
 				buttonPanel.add(gameCreatedLabel);
 				this.revalidate();
 			}
-		} else
+		} 
+		else
 		{
-			gameCreatedLabel.setText("Missing or invalid values!");
+			JOptionPane.showMessageDialog(null, "Missing or invalid values!", "ERROR", JOptionPane.ERROR_MESSAGE);
 			buttonPanel.add(gameCreatedLabel);
-
-			System.out.println("test");
 			this.revalidate();
 		}
 
@@ -242,7 +240,6 @@ public class CreateCompWindow extends JFrame
 		else if (month.equals("Dec"))
 		{
 			monthInt = "12";
-
 		}
 		return monthInt;
 	}

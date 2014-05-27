@@ -4,11 +4,11 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 
-import javax.swing.JFrame;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 
 @SuppressWarnings("serial")
-public class StatWindow extends JFrame {
+public class StatWindow extends JDialog {
 
 	private JLabel playedGames = new JLabel();
 	private JLabel gamesWon = new JLabel();
@@ -23,7 +23,7 @@ public class StatWindow extends JFrame {
 	private JLabel compsWonValue = new JLabel();
 
 	public void showStats() {
-
+		this.setModal(true);
 		this.setLayout(new GridLayout(6, 2, 10, 10));
 		this.setPreferredSize(new Dimension(500, 500));
 		this.setResizable(false);

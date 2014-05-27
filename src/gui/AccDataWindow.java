@@ -1,6 +1,5 @@
 package gui;
 
-import javax.swing.JFrame;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -11,6 +10,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -18,7 +18,7 @@ import javax.swing.JPanel;
 import datalaag.DatabaseHandler;
 
 @SuppressWarnings("serial")
-public class AccDataWindow extends JFrame {
+public class AccDataWindow extends JDialog {
 	private JPanel buttonPanel = new JPanel();
 	private JPanel labelPanel = new JPanel();
 	private JButton changeName = new JButton();
@@ -35,8 +35,9 @@ public class AccDataWindow extends JFrame {
 		createButtonPanel();
 		createLabelPanel();
 
+		this.setModal(true);
 		this.setResizable(false);
-		this.setTitle(" PlayerName's Statistics");
+		this.setTitle("PlayerName's Statistics");
 
 		this.add(buttonPanel, BorderLayout.SOUTH);
 		this.add(labelPanel, BorderLayout.CENTER);
@@ -57,55 +58,55 @@ public class AccDataWindow extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				response = JOptionPane
-						.showInputDialog(null, "What is your desired name?",
-								"Enter your desired name",
-								JOptionPane.QUESTION_MESSAGE);
-				if (!response.equals("")) {
+				response = JOptionPane.showInputDialog(null, "What is your desired name?",
+								"Enter your desired name", JOptionPane.QUESTION_MESSAGE);
+				if (!response.equals(""))
+				{
 					System.out.println(response);
-					dbResponse = DatabaseHandler.getInstance().changeUsername(
-							userNameValue.getText(), response);
-					if (response.length() > 2 && response.length() < 16) {
-						if (dbResponse
-								.equals("Your username has been succesfully changed")) {
-							DatabaseHandler.getInstance().changeUsername(
-									userNameValue.getText(), response);
+					dbResponse = DatabaseHandler.getInstance().changeUsername(userNameValue.getText(), response);
+					if (response.length() > 2 && response.length() < 16) 
+					{
+						if (dbResponse.equals("Your username has been succesfully changed")) 
+						{
+							DatabaseHandler.getInstance().changeUsername(userNameValue.getText(), response);
 							userNameValue.setText(response);
-						} else {
+						} 
+						else 
+						{
 							JOptionPane.showMessageDialog(null, dbResponse,
 									"ERROR", JOptionPane.WARNING_MESSAGE);
 						}
-					} else {
+					} 
+					else 
+					{
 						JOptionPane.showMessageDialog(null, "Username must contain 3-15 characters.",
 								"ERROR", JOptionPane.WARNING_MESSAGE);
 					}
 				}
-			}
-		});
+			}});
 
 		changePassword.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				// TODO Auto-generated method stub
-				response = JOptionPane.showInputDialog(null,
-						"What is your desired password?",
-						"Enter your desired password",
-						JOptionPane.QUESTION_MESSAGE);
-				if (!response.equals("")) {
+				
+				response = JOptionPane.showInputDialog(null, "What is your desired password?", 
+						"Enter your desired password", JOptionPane.QUESTION_MESSAGE);
+				if (!response.equals("")) 
+				{
 					System.out.println(response);
-					if (response.length() > 5) {
+					if (response.length() > 5) 
+					{
 						DatabaseHandler.getInstance().changePassword(
 								userNameValue.getText(), response);
 						passwordValue.setText(response);
-					} else {
-						JOptionPane.showMessageDialog(null,
-								"Password must contain at least 6 characters.",
+					} 
+					else 
+					{
+						JOptionPane.showMessageDialog(null,	"Password must contain at least 6 characters.",
 								"ERROR", JOptionPane.WARNING_MESSAGE);
 					}
 				}
-			}
-
-		});
+			}});
 	}
 
 	public void createLabelPanel() {
