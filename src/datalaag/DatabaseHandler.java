@@ -1303,7 +1303,8 @@ public class DatabaseHandler
 		boolean exists = true;
 		try
 		{
-			statement = con.prepareStatement("SELECT * FROM spel WHERE ((account_naam_tegenstander = '" + challenger + "' AND account_naam_uitdager = '" + opponent + "') OR (account_naam_tegenstander = '" + opponent + "' AND account_naam_uitdager = '" + challenger + "')) AND toestand_type <> 'Finished' AND competitie_id = '" + compID + "'");
+			statement = con.prepareStatement("SELECT * FROM spel WHERE ((account_naam_tegenstander = '" + challenger + "' AND account_naam_uitdager = '" + opponent + "') "
+					+ "OR (account_naam_tegenstander = '" + opponent + "' AND account_naam_uitdager = '" + challenger + "')) AND toestand_type <> 'Finished' AND toestand_type <> 'Resigned' AND competitie_id = '" + compID + "'");
 
 			result = statement.executeQuery();
 
@@ -1528,10 +1529,11 @@ public class DatabaseHandler
 					statement.close();
 				}
 				if (totalGames == 0){
-					totalGames = 1;
+					storeScore.add(name + "---" + 0 + "---" + 0 + "---" + (0) + "---" + 0 + "---" + (0));		
+				} else {
+					storeScore.add(name + "---" + totalGames + "---" + totalScore + "---" + (totalScore/totalGames) + "---" + totalWins + "---" + (totalGames-totalWins));
 				}
-				storeScore.add(name + "---" + totalGames + "---" + totalScore + "---" + (totalScore/totalGames) + "---" + totalWins + "---" + (totalGames-totalWins));
-			}
+				}
 			
 			for (String match: storeScore){
 				// Here need to be added a bunch of checks to make sure a var is not ZERO
@@ -1539,20 +1541,17 @@ public class DatabaseHandler
 				int totalGames = Integer.parseInt(split[1]);
 				int avgScore = Integer.parseInt(split[3]);
 				int totalWins = Integer.parseInt(split[4]);
+		
 				int bayesainRaiting = 0;
 				int bayesainWinRaiting = 0;
-				
+		
 				if (totalGames != 0 && totalGamesPlayed != 0){				
 				// Realisticly totalGamesPlayed is two times the games that happened
 				// There is no way for a draw yet - not accounted for
 				bayesainRaiting = (((totalGamesPlayed/playerNames.size()) * (totalScoreAccumulated/totalGamesPlayed)) + (totalGames * avgScore)) / ((totalGamesPlayed/playerNames.size()) + (totalGames));
 				// Bayesain Raiting for win
 				bayesainWinRaiting = (((totalGamesPlayed/playerNames.size()) * (totalGamesWon/totalGamesPlayed)) + (totalWins)) / ((totalGamesPlayed/playerNames.size()) + (totalGames));
-				} else {
-					totalGames = 0;
-					avgScore = 0;
-					totalWins = 0;
-				}		
+				} 	
 				playerScore.add(match +"---" + bayesainRaiting);
 			}
 			} 
