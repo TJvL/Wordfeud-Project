@@ -1,24 +1,24 @@
 package gui;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JMenuItem;
+
 @SuppressWarnings("serial")
-public class AdminMenuBar extends StandardMenuBar{
+public class AdminMenuBar extends StandardMenuBar {
 
-	public AdminMenuBar(MainFrame mainFrame) {
+	public AdminMenuBar(final MainFrame mainFrame) {
 		super(mainFrame);
+
+		JMenuItem mainscreenMenuItem = new JMenuItem("Mainscreen");
+
+		optionsMenu.add(mainscreenMenuItem);
+
+		mainscreenMenuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				mainFrame.setAdminAccScreen();
+			}
+		});
 	}
-
-	/*public AdminMenuBar(MainFrame mainFrame) {
-		super(mainFrame);
-		
-		JMenu adminoptionsMenu = new JMenu("Administrator options");
-		JMenuItem playeroptionsMenuItem = new JMenuItem("Player options");
-		JMenuItem competitionoptionsMenuItem = new JMenuItem(
-				"Competition options");
-		
-		adminoptionsMenu.add(playeroptionsMenuItem);
-		adminoptionsMenu.add(competitionoptionsMenuItem);
-
-		this.add(adminoptionsMenu);
-	}*/
-
 }

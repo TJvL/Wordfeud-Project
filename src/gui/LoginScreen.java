@@ -56,7 +56,7 @@ public class LoginScreen extends JPanel {
 		loginButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (login()) {
-					mainFrame.startThread();
+					
 				}
 			}
 		});
@@ -112,6 +112,7 @@ public class LoginScreen extends JPanel {
 	}
 
 	private boolean login() {
+		mainFrame.setLoadingScreen();
 		String ret;
 		boolean loginSucces = true;
 		String username = this.usernameField.getText();
@@ -124,11 +125,11 @@ public class LoginScreen extends JPanel {
 		if (ret.equals("Username and Password are correct")) {
 			mainFrame.setPlayerScreen();
 			mainFrame.setPlayerMenuBar();
-
 			clearInput();
 		} else {
 			loginSucces = false;
 		}
+		
 		
 		mainFrame.fillRoleWindow();
 		mainFrame.setAccDataValues();

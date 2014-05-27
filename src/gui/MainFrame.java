@@ -31,7 +31,8 @@ public class MainFrame extends JFrame {
 	private SpecMenuBar specMenuBar;
 	private AdminMenuBar adminMenuBar;
 	private ModMenuBar modMenuBar;
-	private UpdateGUIThread guiThread;
+	private LoadingPanel loadingPanel;
+	private Thread t;
 	private WordFeud wf;
 
 	public MainFrame(WordFeud wf) {
@@ -65,9 +66,21 @@ public class MainFrame extends JFrame {
 		adminaccscreen = new AdminAccScreen(this);
 		admincompscreen = new AdminCompScreen(this);
 		modscreen = new ModScreen();
+		loadingPanel = new LoadingPanel();
 		this.setVisible(true);
 	}
 
+	public void setLoadingScreen(){
+		t = new Thread(loadingPanel);
+		loadingPanel.setRunning(true);
+		t.start();
+		this.setContentPane(loadingPanel);
+	}
+	
+	public void stopLoadingScreen(){
+		loadingPanel.setRunning(false);
+	}
+	
 	public void setRegScreen() {
 		this.setContentPane(regscreen);
 		wf.stopThread();
@@ -83,12 +96,15 @@ public class MainFrame extends JFrame {
 	public void setPlayerScreen() {
 		this.setContentPane(playerscreen);
 		playerscreen.setGameList(wf.myActiveGames(), this.getName());
+		this.setPlayerMenuBar();
 		wf.stopThread();
+		stopLoadingScreen();
 		revalidate();
 	}
 
 	public void setGameScreen() {
 		this.setContentPane(gameScreen);
+		this.setPlayerMenuBar();
 		wf.stopThread();
 		revalidate();
 	}
@@ -96,6 +112,7 @@ public class MainFrame extends JFrame {
 	public void setSpecScreen() {
 		specscreen.setGameList(wf.getActiveGames());
 		this.setContentPane(specscreen);
+		this.setSpecMenuBar();
 		wf.stopThread();
 		revalidate();
 	}
@@ -103,6 +120,7 @@ public class MainFrame extends JFrame {
 	public void setJoinCompScreen() {
 		joincompscreen.populateScreen();
 		this.setContentPane(joincompscreen);
+		this.setPlayerMenuBar();
 		wf.stopThread();
 		revalidate();
 	}
@@ -110,24 +128,28 @@ public class MainFrame extends JFrame {
 	public void setJoinedCompScreen() {
 		joinedcompscreen.populateScreen();
 		this.setContentPane(joinedcompscreen);
+		this.setPlayerMenuBar();
 		wf.stopThread();
 		revalidate();
 	}
 	public void setAdminAccScreen() {
 		this.setContentPane(adminaccscreen);
 		adminaccscreen.fillPlayerList();
+		this.setAdminMenuBar();
 		wf.stopThread();
 		revalidate();
 	}
 
 	public void setAdminCompScreen() {
 		this.setContentPane(admincompscreen);
+		this.setAdminMenuBar();
 		wf.stopThread();
 		revalidate();
 	}
 
 	public void setModScreen() {
 		this.setContentPane(modscreen);
+		this.setModMenuBar();
 		modscreen.fillList();
 		wf.stopThread();
 		revalidate();
@@ -179,6 +201,8 @@ public class MainFrame extends JFrame {
 
 	public void fillRoleWindow() {
 		playerMenuBar.fillRoleWindow(wf.getCurrentUserPossibleRoles());
+		adminMenuBar.fillRoleWindow(wf.getCurrentUserPossibleRoles());
+		modMenuBar.fillRoleWindow(wf.getCurrentUserPossibleRoles());
 	}
 
 	public void setAccDataValues() {
@@ -276,36 +300,9 @@ public class MainFrame extends JFrame {
 		}
 	}
 
-	// Everything in this method will be updated every 20 seconds
-	// Use synchronized for the methods
-	// That allows a method to be uses by multiple threads
-	// Only the current contentPane will auto update
-	public synchronized void updateGUI() {
-		playerMenuBar.updateNotificationList();
-		if (this.getContentPane() instanceof PlayerScreen) {
-			updatePlayerGameList();
-		} else if (this.getContentPane() instanceof SpecScreen) {
-			specscreen.setGameList(wf.getActiveGames());
-		}
-	}
-
 	// Update the mainscreen games from the player
 	public void updatePlayerGameList() {
 		playerscreen.setGameList(wf.myActiveGames(), this.getName());
-	}
-
-	// A method to start the Thread
-	public void startThread() {
-		guiThread = new UpdateGUIThread(this);
-		guiThread.setRunning(true);
-		guiThread.start();
-	}
-
-	// Stops the Thread
-	public void stopThread() {
-		if (guiThread != null) {
-			guiThread.setRunning(false);
-		}
 	}
 
 	// Returns a list of pending Games
@@ -316,6 +313,11 @@ public class MainFrame extends JFrame {
 	// Method to accept/reject games
 	public void acceptRejectGame(String string, int competionID, int gameID) {
 		wf.acceptRejectGame(string, competionID, gameID);
+	}
+	
+	// Update notification list
+	public void updateNotificationList(){
+		playerMenuBar.updateNotificationList();
 	}
 
 	public void callCreateCompAction(String summaryString, String compEnd,
