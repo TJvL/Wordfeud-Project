@@ -388,7 +388,7 @@ public class Match implements Observer {
 			if (myTurn) {
 				handTiles = dbh.handContent(gameID, maxTurn - 2);
 			} else {
-				handTiles = dbh.handContent(gameID, maxTurn - 1);
+				handTiles = dbh.handContent(gameID, maxTurn);
 			}
 
 			for (int z = 0; z < handTiles.size(); z++) {

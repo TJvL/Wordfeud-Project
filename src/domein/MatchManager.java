@@ -73,7 +73,7 @@ public class MatchManager {
 	public void initializeThread() {
 		this.gameThread = new GameThread(framePanel.getGameScreen()
 				.getGameChatPanel(), framePanel.getGameScreen()
-				.getButtonPanel(), framePanel.getGameScreen().getScorePanel(), this);
+				.getButtonPanel(), framePanel.getGameScreen().getScorePanel(), this, framePanel);
 		gameThread.start();
 	}
 

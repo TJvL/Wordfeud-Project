@@ -1300,7 +1300,7 @@ public class DatabaseHandler
 	
 	public synchronized boolean inviteExists(String challenger, String opponent, int compID){
 		connection();
-		boolean exists = false;
+		boolean exists = true;
 		try
 		{
 			statement = con.prepareStatement("SELECT * FROM spel WHERE ((account_naam_tegenstander = '" + challenger + "' AND account_naam_uitdager = '" + opponent + "') OR (account_naam_tegenstander = '" + opponent + "' AND account_naam_uitdager = '" + challenger + "')) AND toestand_type <> 'Finished' AND competitie_id = '" + compID + "'");
@@ -1309,7 +1309,7 @@ public class DatabaseHandler
 
 			if (!result.next())
 			{
-				exists = true;
+				exists = false;
 			}
 			result.close();
 			statement.close();
@@ -1710,21 +1710,21 @@ public class DatabaseHandler
 		try
 		{
 			statement = con
-					.prepareStatement("SELECT spel.id, spel.account_naam_uitdager, spel.account_naam_tegenstander, competitie.omschrijving FROM spel LEFT JOIN competitie ON spel.competitie_id = competitie.id WHERE account_naam_tegenstander = '" + username + "' AND reaktie_type = 'Unknown'");
+					.prepareStatement("SELECT spel.id, spel.account_naam_uitdager, spel.account_naam_tegenstander, competitie.omschrijving FROM spel LEFT JOIN competitie ON spel.competitie_id = competitie.id WHERE (account_naam_tegenstander = '" + username + "' OR account_naam_uitdager = '" + username + "') AND reaktie_type = 'Unknown'");
 
 			result = statement.executeQuery();
 
 			while (result.next())
 			{
-				if (result.getString(2).equals(username))
+				if (result.getString(3).equals(username))
 				{
 					pendingGames.add(result.getInt(1) + "," + result.getString(2) + " VS " + result.getString(3) + " from competition: "
-							+  result.getString(4));
+							+  result.getString(4) + " waiting for you to accept");
 				}
 				else
 				{
 					pendingGames.add(result.getInt(1) + "," + result.getString(3) + " VS " + result.getString(2) + " from competition: "
-							+  result.getString(4));
+							+  result.getString(4) + " waiting for his reaction");
 				}
 			}
 			result.close();
