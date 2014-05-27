@@ -74,9 +74,11 @@ public class StandardMenuBar extends JMenuBar {
 
 		statisticsMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				statwindow.showStats();
+				statwindow.showStats(mainFrame.getName());
+
 			}
 		});
+
 		accountdataMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				accdatawindow.showAccData();
