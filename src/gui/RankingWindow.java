@@ -1,14 +1,15 @@
 package gui;
 
 import java.awt.Dimension;
+
 import javax.swing.DefaultListModel;
-import javax.swing.JFrame;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 
 @SuppressWarnings("serial")
-public class RankingWindow extends JFrame
+public class RankingWindow extends JDialog
 {
 
 	private DefaultListModel<String> myLM = new DefaultListModel<String>();
@@ -19,7 +20,7 @@ public class RankingWindow extends JFrame
 
 	public void showRanking()
 	{
-
+		this.setModal(true);
 		this.setLayout(null);
 		this.setPreferredSize(new Dimension(400, 550));
 
