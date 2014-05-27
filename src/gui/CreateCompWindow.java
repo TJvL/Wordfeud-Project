@@ -15,7 +15,6 @@ import java.util.GregorianCalendar;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -91,7 +90,6 @@ public class CreateCompWindow extends JDialog
 			public void actionPerformed(ActionEvent arg0)
 			{
 				confirmClicked();
-				dispose();
 			}});
 
 	}
@@ -115,7 +113,7 @@ public class CreateCompWindow extends JDialog
 
 	public void confirmClicked()
 	{
-
+		String errorMessage = "";
 		if (!maxPlayers.getText().equals("") && !summary.getText().equals("")
 				&& summary.getText().length() < 255)
 		{
@@ -153,38 +151,26 @@ public class CreateCompWindow extends JDialog
 
 //mainframe wordt hier aangeroepen omdat, als ik het in playerscreen doe je niet kan checken of confirmclicked al gedaan is 
 					playerScreen.callCreateComp(summary.getText(), finalReturnString, 1, Integer.parseInt(maxPlayers.getText()));
-					
-					JOptionPane.showMessageDialog(null, "Your competition has been made", "Confirm", JOptionPane.INFORMATION_MESSAGE);
-					// mainframe wordt hier aangeroepen omdat, als ik het in
-					// playerscreen doe je niet kan checken of confirmclicked al
-					// gedaan is
-					playerScreen.callCreateComp(summary.getText(),
-							finalReturnString, 1,
-							Integer.parseInt(maxPlayers.getText()));
-					gameCreatedLabel.setText("Competition has been created.");
-					buttonPanel.add(gameCreatedLabel);
-					this.revalidate();
 
+					buttonPanel.add(gameCreatedLabel);
+					JOptionPane.showMessageDialog(null, "Your competition has been made", "Confirm", JOptionPane.INFORMATION_MESSAGE);
+					dispose();
 				} 
 				else
 				{
 					JOptionPane.showMessageDialog(null, "Invalid Values, max or min Player nr. was exceeded", "ERROR", JOptionPane.ERROR_MESSAGE);
 					buttonPanel.add(gameCreatedLabel);
-					this.revalidate();
 				}
 			} catch (NumberFormatException nfe)	{
 				JOptionPane.showMessageDialog(null, "Invalid Values", "ERROR", JOptionPane.ERROR_MESSAGE);
 				buttonPanel.add(gameCreatedLabel);
-				this.revalidate();
 			}
 		} 
 		else
 		{
 			JOptionPane.showMessageDialog(null, "Missing or invalid values!", "ERROR", JOptionPane.ERROR_MESSAGE);
 			buttonPanel.add(gameCreatedLabel);
-			this.revalidate();
 		}
-
 	}
 
 	public String monthToInt(String month)

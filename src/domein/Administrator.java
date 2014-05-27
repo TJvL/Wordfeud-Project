@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import datalaag.DatabaseHandler;
 
-public class Administrator  extends Role
+public class Administrator extends Role
 {
 	private DatabaseHandler dbh = DatabaseHandler.getInstance();
 	
