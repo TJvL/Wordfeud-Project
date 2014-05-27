@@ -47,7 +47,6 @@ public class MatchManager {
 		if (activeMatches != null) {
 			activeMatches.clear();
 		}
-
 		ArrayList<String> games = dbh.spectateList();
 		for (String game : games) {
 			String[] split = game.split(",");
@@ -104,10 +103,10 @@ public class MatchManager {
 //		wf.addObservers(match, false);
 		// Sets the thread
 		match.startNewGame();
-		framePanel.getGameScreen().getGameChatPanel()
-				.setChatVariables(match.getOwnName(), match.getGameID());
+//		framePanel.getGameScreen().getGameChatPanel()
+//				.setChatVariables(match.getOwnName(), match.getGameID());
 //		matches.add(match);
-		gameThread.setRunning(match);
+//		gameThread.setRunning(match);
 	}
 
 	// Loads a match
@@ -164,7 +163,7 @@ public class MatchManager {
 		int reply1 = JOptionPane.showConfirmDialog(null, "Want to invite "
 				+ opponent + " for a game?", "Game invite",
 				JOptionPane.YES_NO_OPTION);
-		if (!dbh.inviteExists(username, opponent)) {
+		if (!dbh.inviteExists(username, opponent, competitionID)) {
 			if (reply1 == JOptionPane.YES_OPTION) {
 				int reply2 = JOptionPane.showConfirmDialog(null,
 						"Want a public game?", "Public game",
@@ -186,7 +185,7 @@ public class MatchManager {
 			}
 		} else {
 			JOptionPane.showMessageDialog(null,
-					"There is already a open invited for this game",
+					"There is already a open invite for this game",
 					"Game active", JOptionPane.INFORMATION_MESSAGE);
 		}
 	}

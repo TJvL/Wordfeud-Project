@@ -385,9 +385,9 @@ public class Match implements Observer {
 				|| !dbh.getGameStatusValue(gameID).equals("Resigned")) {
 			ArrayList<String> handTiles;
 			if (myTurn) {
-				handTiles = dbh.handContent(gameID, maxTurn - 1);
+				handTiles = dbh.handContent(gameID, maxTurn - 2);
 			} else {
-				handTiles = dbh.handContent(gameID, maxTurn);
+				handTiles = dbh.handContent(gameID, maxTurn - 1);
 			}
 
 			for (int z = 0; z < handTiles.size(); z++) {
@@ -567,7 +567,7 @@ public class Match implements Observer {
 				for (Tile tile : tilesInHand) {
 					tilesNumber.add(tile.getTileID());
 				}
-
+				
 				dbh.addTileToHand(gameID, tilesNumber, maxTurn);
 				// dbh.addTileToHand(gameID, tileID, maxTurn);
 				board.setScore();

@@ -56,7 +56,6 @@ public class LoginScreen extends JPanel {
 		loginButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (login()) {
-					mainFrame.startThread();
 				}
 			}
 		});

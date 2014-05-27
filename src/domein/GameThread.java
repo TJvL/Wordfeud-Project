@@ -71,6 +71,7 @@ public class GameThread extends Thread {
 				}
 
 				// Update chat
+				chatPanel.setChatVariables(match.getOwnName(), gameID);
 				chatPanel.checkForMessages();
 
 				// A method to disable swap when fewer then 7 tiles

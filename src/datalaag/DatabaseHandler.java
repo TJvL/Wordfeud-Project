@@ -1294,12 +1294,12 @@ public class DatabaseHandler
 	}
 	
 	
-	public synchronized boolean inviteExists(String challenger, String opponent){
+	public synchronized boolean inviteExists(String challenger, String opponent, int compID){
 		connection();
 		boolean exists = false;
 		try
 		{
-			statement = con.prepareStatement("SELECT * FROM spel WHERE ((account_naam_tegenstander = '" + challenger + "' AND account_naam_uitdager = '" + opponent + "') OR (account_naam_tegenstander = '" + opponent + "' AND account_naam_uitdager = '" + challenger + "')) AND toestand_type NOT LIKE 'Request'");
+			statement = con.prepareStatement("SELECT * FROM spel WHERE ((account_naam_tegenstander = '" + challenger + "' AND account_naam_uitdager = '" + opponent + "') OR (account_naam_tegenstander = '" + opponent + "' AND account_naam_uitdager = '" + challenger + "')) AND toestand_type <> 'Finished' AND competitie_id = '" + compID + "'");
 
 			result = statement.executeQuery();
 

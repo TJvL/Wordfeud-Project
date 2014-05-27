@@ -32,7 +32,6 @@ public class MainFrame extends JFrame {
 	private SpecMenuBar specMenuBar;
 	private AdminMenuBar adminMenuBar;
 	private ModMenuBar modMenuBar;
-	private UpdateGUIThread guiThread;
 	private WordFeud wf;
 
 	public MainFrame(WordFeud wf) {
@@ -266,36 +265,9 @@ public class MainFrame extends JFrame {
 		}
 	}
 
-	// Everything in this method will be updated every 20 seconds
-	// Use synchronized for the methods
-	// That allows a method to be uses by multiple threads
-	// Only the current contentPane will auto update
-	public synchronized void updateGUI() {
-		playerMenuBar.updateNotificationList();
-		if (this.getContentPane() instanceof PlayerScreen) {
-			updatePlayerGameList();
-		} else if (this.getContentPane() instanceof SpecScreen) {
-			specscreen.setGameList(wf.getActiveGames());
-		}
-	}
-
 	// Update the mainscreen games from the player
 	public void updatePlayerGameList() {
 		playerscreen.setGameList(wf.myActiveGames(), this.getName());
-	}
-
-	// A method to start the Thread
-	public void startThread() {
-		guiThread = new UpdateGUIThread(this);
-		guiThread.setRunning(true);
-		guiThread.start();
-	}
-
-	// Stops the Thread
-	public void stopThread() {
-		if (guiThread != null) {
-			guiThread.setRunning(false);
-		}
 	}
 
 	// Returns a list of pending Games
