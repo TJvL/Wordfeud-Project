@@ -2,19 +2,29 @@ package domein;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
+
 import datalaag.DatabaseHandler;
+
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map.Entry;
+
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+
 import datalaag.DatabaseHandler;
 
 public class Administrator extends Role {
+	
 	private DatabaseHandler dbh = DatabaseHandler.getInstance();
+	private HashMap<String, Competition> adminActiveCompetitions;
 
 	public Administrator(boolean hasPermissions) {
 		super(hasPermissions);
+		adminActiveCompetitions = new HashMap<String, Competition>();
+		
 	}
 
 	public String changeUsername(String username) {
@@ -179,10 +189,34 @@ public class Administrator extends Role {
 		return retValue + "---" + allFieldFilled;
 	}
 	
-	public HashMap<Integer, String> adminCompetitions()
+	public void adminCompetitions()
 	{
-		return dbh.activeCompetitions();
+		adminActiveCompetitions.clear();
+		System.out.println("Admin: loading all active competitions...");
+		ArrayList<String> activeComps = dbh.activeCompetitions();
+		if(!activeComps.isEmpty())
+		{
+			for(String comp : activeComps)
+			{
+				String[] compData = comp.split("---");
+				
+				adminActiveCompetitions.put(compData[0], 
+						new Competition(Integer.parseInt(compData[0]), 
+								compData[1], compData[2], compData[3], compData[4], 
+								Integer.parseInt(compData[5]), 
+								Integer.parseInt(compData[6])));
+			}
+			System.out.println("Succesfully loaded active competitions.");
+		}
+		System.out.println("No joined competitions to load.");
+//		return dbh.activeCompetitions();
 	}
+	
+	public Set<Entry<String, Competition>> getAllActiveCompEntries()
+	{
+		return adminActiveCompetitions.entrySet();
+	}
+
 	
 	public ArrayList<String> adminCompetitionParticipants(int compID)
 	{
