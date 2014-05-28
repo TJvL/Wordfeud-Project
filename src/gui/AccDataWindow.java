@@ -1,4 +1,5 @@
 package gui;
+
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -19,11 +20,7 @@ public class AccDataWindow extends JDialog {
 	private MainFrame mainFrame;
 
 	private ArrayList<String> currentRoles = new ArrayList<String>();
-	private JPanel buttonPanel = new JPanel();
 	private JPanel labelPanel = new JPanel();
-	private JButton changeName = new JButton();
-	private JButton changePassword = new JButton();
-	private JButton changeRoles = new JButton();
 
 	private JLabel userName = new JLabel();
 	private JLabel userNameValue = new JLabel();
@@ -36,14 +33,23 @@ public class AccDataWindow extends JDialog {
 		this.mainFrame = mainFrame;
 		this.setModal(true);
 		this.setResizable(false);
-		
+
 		rolesValue.setBackground(null);
 
 		createButtonPanel();
 		createLabelPanel();
 	}
-	
+
 	public void showAccData() {
+		JButton changeName = new JButton();
+		JButton changePassword = new JButton();
+		changeName.setText("Change name");
+		changePassword.setText("Change password");
+		JPanel buttonPanel = new JPanel();
+
+		buttonPanel.add(changeName);
+		buttonPanel.add(changePassword);
+
 		this.setTitle(userNameValue.getText() + "'s data");
 
 		changeName.addActionListener(new ActionListener() {
@@ -66,6 +72,16 @@ public class AccDataWindow extends JDialog {
 	}
 
 	public void showAdminAccData() {
+		JButton changeName = new JButton();
+		JButton changePassword = new JButton();
+		JButton changeRoles = new JButton();
+		changeName.setText("Change name");
+		changePassword.setText("Change password");
+		JPanel buttonPanel = new JPanel();
+		
+		buttonPanel.add(changeName);
+		buttonPanel.add(changePassword);
+
 		this.setTitle(userNameValue.getText() + "'s data");
 
 		roles.setText("Current roles");
@@ -89,7 +105,8 @@ public class AccDataWindow extends JDialog {
 		});
 		changeRoles.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				setRoles(mainFrame.getAdmin().changeRoles(userNameValue.getText(), 
+				setRoles(mainFrame.getAdmin().changeRoles(
+						userNameValue.getText(),
 						DatabaseHandler.getInstance().getRole(
 								userNameValue.getText())));
 			}
@@ -104,11 +121,6 @@ public class AccDataWindow extends JDialog {
 	}
 
 	public void createButtonPanel() {
-		changeName.setText("Change name");
-		changePassword.setText("Change password");
-
-		buttonPanel.add(changeName);
-		buttonPanel.add(changePassword);
 	}
 
 	public void createLabelPanel() {
