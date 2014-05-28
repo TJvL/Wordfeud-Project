@@ -41,12 +41,14 @@ public class AccDataWindow extends JDialog {
 	}
 
 	public void showAccData() {
+		JPanel buttonPanel = new JPanel();
 		JButton changeName = new JButton();
 		JButton changePassword = new JButton();
+
 		changeName.setText("Change name");
 		changePassword.setText("Change password");
-		JPanel buttonPanel = new JPanel();
 
+		buttonPanel.removeAll();
 		buttonPanel.add(changeName);
 		buttonPanel.add(changePassword);
 
@@ -72,13 +74,15 @@ public class AccDataWindow extends JDialog {
 	}
 
 	public void showAdminAccData() {
+		JPanel buttonPanel = new JPanel();
 		JButton changeName = new JButton();
 		JButton changePassword = new JButton();
 		JButton changeRoles = new JButton();
+
 		changeName.setText("Change name");
 		changePassword.setText("Change password");
-		JPanel buttonPanel = new JPanel();
 		
+		buttonPanel.removeAll();
 		buttonPanel.add(changeName);
 		buttonPanel.add(changePassword);
 
