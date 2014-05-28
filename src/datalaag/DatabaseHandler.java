@@ -117,7 +117,7 @@ public class DatabaseHandler
 	public synchronized String register(String username, String password)
 	{
 		connection();
-		String retValue = User.REGISTER_DEFAULT_ERROR;
+		String retValue = User.REGISTER_FAIL_DEFAULT;
 		try
 		{
 			statement = con.prepareStatement("SELECT * FROM account WHERE naam = '" + username + "'");
@@ -164,7 +164,7 @@ public class DatabaseHandler
 			}
 			else
 			{
-				retValue = User.REGISTER_FAIL_NAME_NOT_AVAILABLE;
+				retValue = User.FAIL_NAME_NOT_AVAILABLE;
 				statement.close();
 			}
 

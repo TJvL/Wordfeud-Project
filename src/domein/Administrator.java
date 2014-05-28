@@ -6,25 +6,18 @@ import java.util.Set;
 
 import datalaag.DatabaseHandler;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map.Entry;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
-import datalaag.DatabaseHandler;
-
 public class Administrator extends Role {
-	
-	private DatabaseHandler dbh = DatabaseHandler.getInstance();
 	private HashMap<String, Competition> adminActiveCompetitions;
 
 	public Administrator(boolean hasPermissions) {
 		super(hasPermissions);
 		adminActiveCompetitions = new HashMap<String, Competition>();
-		
 	}
 
 	public String changeUsername(String username) {
@@ -35,9 +28,9 @@ public class Administrator extends Role {
 			System.out.println(response);
 			if (response.length() > 2 && response.length() < 16) {
 				System.out.println("good size");
-				if (dbh.changeUsername(username, response).equals(
+				if (DatabaseHandler.getInstance().changeUsername(username, response).equals(
 						"Your username has been succesfully changed")) {
-					dbh.changeUsername(username, response);
+					DatabaseHandler.getInstance().changeUsername(username, response);
 				} else {
 					JOptionPane.showMessageDialog(null, DatabaseHandler
 							.getInstance().changeUsername(username, response),
@@ -64,15 +57,15 @@ public class Administrator extends Role {
 		if (!response.equals("")) {
 			System.out.println(response);
 			if (response.length() > 5) {
-				dbh.changePassword(username, response);
+				DatabaseHandler.getInstance().changePassword(username, response);
 			} else {
 				JOptionPane.showMessageDialog(null,
 						"Password must contain at least 6 characters.",
 						"ERROR", JOptionPane.WARNING_MESSAGE);
-				response = dbh.getPassword(username);
+				response = DatabaseHandler.getInstance().getPassword(username);
 			}
 		} else {
-			response = dbh.getPassword(username);
+			response = DatabaseHandler.getInstance().getPassword(username);
 		}
 		return response;
 	}
@@ -104,122 +97,108 @@ public class Administrator extends Role {
 
 		if (playerButton.isSelected()) {
 			if (!roles.contains(playerButton.getText())) {
-				dbh.setRole(username, playerButton.getText());
+				DatabaseHandler.getInstance().setRole(username, playerButton.getText());
 			}
 			newRoles.add(playerButton.getText());
 		} else {
 			if (roles.contains(playerButton.getText())) {
-				dbh.revokeRole(username, playerButton.getText());
+				DatabaseHandler.getInstance().revokeRole(username, playerButton.getText());
 			}
 		}
 		if (modButton.isSelected()) {
 			if (!roles.contains(modButton.getText())) {
-				dbh.setRole(username, modButton.getText());
+				DatabaseHandler.getInstance().setRole(username, modButton.getText());
 			}
 			newRoles.add(modButton.getText());
 		} else {
 			if (roles.contains(modButton.getText())) {
-				dbh.revokeRole(username, modButton.getText());
+				DatabaseHandler.getInstance().revokeRole(username, modButton.getText());
 			}
 		}
 		if (adminButton.isSelected()) {
 			if (!roles.contains(adminButton.getText())) {
-				dbh.setRole(username, adminButton.getText());
+				DatabaseHandler.getInstance().setRole(username, adminButton.getText());
 			}
 			newRoles.add(adminButton.getText());
 		} else {
 			if (roles.contains(adminButton.getText())) {
-				dbh.revokeRole(username, adminButton.getText());
+				DatabaseHandler.getInstance().revokeRole(username, adminButton.getText());
 			}
 		}
 
 		return newRoles;
 	}
-	
-	public String adminRegister(String usernameField, char[] passInputField, char[] confirmPassInputField, boolean admin, boolean mod, boolean player)
-	{	
+
+	public String adminRegister(String usernameField, char[] passInputField,
+			char[] confirmPassInputField, boolean admin, boolean mod,
+			boolean player) {
 		boolean adminSelected = admin;
 		boolean modSelected = mod;
 		boolean playerSelected = player;
 		boolean allFieldFilled = false;
-		
+
 		String username = usernameField;
 		char[] passInput = passInputField;
 		char[] confirmPassInput = confirmPassInputField;
-		
+
 		String retValue = "U need to fill in all the fields";
 
 		String password = "";
-		for (char c : passInput){
+		for (char c : passInput) {
 			password = password + c;
 		}
 		String passConfirm = "";
-		for (char c : confirmPassInput){
+		for (char c : confirmPassInput) {
 			passConfirm = passConfirm + c;
 		}
 
-		if((!username.isEmpty() && !password.isEmpty() && !passConfirm.isEmpty()))
-		{
-			if((adminSelected || modSelected || playerSelected))
-			{
-				if (username.length() < 3 || username.length() > 15) 
-				{
+		if ((!username.isEmpty() && !password.isEmpty() && !passConfirm
+				.isEmpty())) {
+			if ((adminSelected || modSelected || playerSelected)) {
+				if (username.length() < 3 || username.length() > 15) {
 					retValue = "Username must be between 3 and 15 characters.";
-				}
-				else if (password.length() < 6) 
-				{
+				} else if (password.length() < 6) {
 					retValue = "The password must contain at least 6 characters.";
-				}
-				else if (!password.equals(passConfirm)) 
-				{
+				} else if (!password.equals(passConfirm)) {
 					retValue = "The given passwords do not match.";
-				}
-				else
-				{	
+				} else {
 					allFieldFilled = true;
-					dbh.adminRegister(username, password, adminSelected, modSelected, playerSelected);
+					DatabaseHandler.getInstance().adminRegister(username, password, adminSelected,
+							modSelected, playerSelected);
 					retValue = "Register confirmed";
 				}
-			}
-			else
-			{
+			} else {
 				retValue = "U need to select at least 1 role";
 			}
 		}
 		return retValue + "---" + allFieldFilled;
 	}
-	
-	public void adminCompetitions()
-	{
+
+	public void adminCompetitions() {
 		adminActiveCompetitions.clear();
 		System.out.println("Admin: loading all active competitions...");
-		ArrayList<String> activeComps = dbh.activeCompetitions();
-		if(!activeComps.isEmpty())
-		{
-			for(String comp : activeComps)
-			{
+		ArrayList<String> activeComps = DatabaseHandler.getInstance().activeCompetitions();
+		if (!activeComps.isEmpty()) {
+			for (String comp : activeComps) {
 				String[] compData = comp.split("---");
-				
-				adminActiveCompetitions.put(compData[0], 
-						new Competition(Integer.parseInt(compData[0]), 
-								compData[1], compData[2], compData[3], compData[4], 
-								Integer.parseInt(compData[5]), 
+
+				adminActiveCompetitions.put(compData[0],
+						new Competition(Integer.parseInt(compData[0]),
+								compData[1], compData[2], compData[3],
+								compData[4], Integer.parseInt(compData[5]),
 								Integer.parseInt(compData[6])));
 			}
 			System.out.println("Succesfully loaded active competitions.");
 		}
 		System.out.println("No joined competitions to load.");
-//		return dbh.activeCompetitions();
+		// return dbh.activeCompetitions();
 	}
-	
-	public Set<Entry<String, Competition>> getAllActiveCompEntries()
-	{
+
+	public Set<Entry<String, Competition>> getAllActiveCompEntries() {
 		return adminActiveCompetitions.entrySet();
 	}
 
-	
-	public ArrayList<String> adminCompetitionParticipants(int compID)
-	{
-		return dbh.peopleInCompetition(compID);
+	public ArrayList<String> adminCompetitionParticipants(int compID) {
+		return DatabaseHandler.getInstance().peopleInCompetition(compID);
 	}
 }

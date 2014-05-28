@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -75,13 +76,13 @@ public class JoinedCompScreen extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				mainFrame.callLoadJoinedCompetitionsAction();
-				refreshCompetitionsList();
+				refreshButtonPressed();
 			}
 		});
 		challenge.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				challengeSelectedCompPlayer();
+				challengeButtonPressed();
 			}
 		});
 		back.addActionListener(new ActionListener() {
@@ -205,7 +206,7 @@ public class JoinedCompScreen extends JPanel {
 			partiTable.getColumnModel().getColumn(3).setPreferredWidth(70);
 			partiTable.getColumnModel().getColumn(4).setPreferredWidth(70);
 			partiTable.getColumnModel().getColumn(5).setPreferredWidth(70);
-			partiTable.getColumnModel().getColumn(5).setPreferredWidth(70);
+			partiTable.getColumnModel().getColumn(6).setPreferredWidth(72);
 
 			ForcedListSelectionModel selectModel = new ForcedListSelectionModel();
 			selectModel.addListSelectionListener(new ListSelectionListener() {
@@ -233,16 +234,35 @@ public class JoinedCompScreen extends JPanel {
 		System.out.println("Refreshed participant list!");
 	}
 
-	private void refreshCompetitionsList() {
+	private void refreshButtonPressed() {
 		this.initCompTable();
-		compPane.setBounds(0, 0, 650, 700);
+		partiPane.setBounds(665, 50, 525, 500);
 		this.add(compPane);
 		this.revalidate();
 		System.out.println("Refreshed competitions list!");
 	}
 
-	private void challengeSelectedCompPlayer() {
-		mainFrame.callChallengePlayerAction(compSelection, playerSelection);
+	private void challengeButtonPressed() {
+		if (playerSelection.equals(mainFrame.getCurrentUsername())) {
+			JOptionPane.showMessageDialog(mainFrame,
+					"You cannot challenge yourself.");
+		} else {
+			int retConfirm = JOptionPane.showConfirmDialog(mainFrame,
+					"Are you sure you want to challenge: " + playerSelection
+							+ "?", "Exit dialog", JOptionPane.YES_NO_OPTION);
+			if (retConfirm == JOptionPane.YES_OPTION) {
+				int retPublicPrivate = JOptionPane.showInternalOptionDialog(
+						this, "Do you want the game to be public or private?",
+						"Please choose", JOptionPane.DEFAULT_OPTION,
+						JOptionPane.QUESTION_MESSAGE, null, new String[] {
+								"Public", "Private" }, null);
+
+				String retValue = mainFrame.callChallengePlayerAction(
+						compSelection, playerSelection, retPublicPrivate);
+
+				JOptionPane.showMessageDialog(mainFrame, retValue);
+			}
+		}
 	}
 
 	private void backButtonPressed() {

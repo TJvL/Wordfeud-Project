@@ -11,12 +11,14 @@ public class User {
 	public static final String ROLE_MODERATOR = "Moderator";
 	public static final String ROLE_PLAYER = "Player";
 	public static final String ROLE_SPECTATOR = "Spectator";
-	public static final String REGISTER_FAIL_NAME_LENGTH = "Name must be between 3 and 15 characters.";
-	public static final String REGISTER_FAIL_PASS_LENGTH = "Password must have minimal length of 6 characters.";
-	public static final String REGISTER_FAIL_NAME_NOT_AVAILABLE = "Username is not available for registration.";
-	public static final String REGISTER_FAIL_NO_MATCHING_PASS = "Passwords do not match.";
+	public static final String FAIL_NAME_LENGTH = "Name must be between 3 and 15 characters.";
+	public static final String FAIL_PASS_LENGTH = "Password must have minimal length of 6 characters.";
+	public static final String FAIL_NAME_NOT_AVAILABLE = "Username is not available for registration.";
+	public static final String FAIL_NO_MATCHING_PASS = "Passwords do not match.";
+	public static final String REGISTER_FAIL_DEFAULT = "Registration error!";
+	public static final String NAMECHANGE_FAIL_DEFAULT = "Failed to change username.";
 	public static final String REGISTER_SUCCESS = "Succesfully registered account.";
-	public static final String REGISTER_DEFAULT_ERROR = "Registration error!";
+	public static final String NAMECHANGE_SUCCESS = "Succesfully changed username.";
 
 	private final String defaultUsername = "Spectator";
 	private final String defaultRole = ROLE_SPECTATOR;
@@ -126,17 +128,17 @@ public class User {
 
 		// controleer of de gebruikersnaam tussen de 3 en 15 tekens is
 		if (username.length() < 3 || username.length() > 15) {
-			retValue = User.REGISTER_FAIL_NAME_LENGTH;
+			retValue = User.FAIL_NAME_LENGTH;
 		}
 
 		// Controleer of wachtwoord minimaal 6 tekens bevat
 		else if (passInput.length() < 6) {
-			retValue = User.REGISTER_FAIL_PASS_LENGTH;
+			retValue = User.FAIL_PASS_LENGTH;
 		}
 
 		// Controleer of de opgegeven wachtwoorden overeen komen
 		else if (!passInput.equals(passConfirm)) {
-			retValue = User.REGISTER_FAIL_NO_MATCHING_PASS;
+			retValue = User.FAIL_NO_MATCHING_PASS;
 		}
 
 		// Voer de gebruiker in in de database
