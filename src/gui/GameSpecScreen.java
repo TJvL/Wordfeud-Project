@@ -55,7 +55,7 @@ public class GameSpecScreen extends JPanel {
 		scorePanelP2.setBounds(785, 455, 260, 150);
 		this.add(scorePanelP2);
 		forward.setBounds(785, 300, 260, 50);
-		
+
 		// Adds actionsListeners the observers
 		forward.addActionListener(new ActionListener() {
 			@Override
@@ -97,13 +97,29 @@ public class GameSpecScreen extends JPanel {
 	public void resestField(Match match) {
 		for (int y = 0; y < 15; y++) {
 			for (int x = 0; x < 15; x++) {
-				if (match.getSquare(x, y).getTile() != null) {
-					squaresPanels[x][y].addImage(match.getImage(x, y));
-				} else {
+				if (match.getSquare(x, y) != null) {
+					if (match.getSquare(x, y).getTile() != null) {
+						squaresPanels[x][y].addImage(match.getImage(x, y));
+					} else {
+						squaresPanels[x][y].removeImage();
+					}
+				}
+			}
+		}
+	}
+
+	// Removes the board
+	public void resetGame() {
+		for (int y = 0; y < 15; y++) {
+			for (int x = 0; x < 15; x++) {
+				if (squaresPanels[x][y] != null) {
 					squaresPanels[x][y].removeImage();
 				}
 			}
 		}
+		fieldPanel.clearField();
+		handPanelP1.removeAll();
+		handPanelP2.removeAll();
 	}
 
 	// Method to add image letters
@@ -138,6 +154,7 @@ public class GameSpecScreen extends JPanel {
 		handPanelP2.disposeTiles();
 		repaintBoard();
 	}
+
 	// end of the hand part
 
 	// Setting the score panel

@@ -26,6 +26,7 @@ public class Match implements Observer {
 	private ArrayList<String> tilesForJar;
 	private boolean myTurn;
 	private int maxTurn;
+	private boolean surrenderd;
 
 	// Constructor for starting a game where you are playing in
 	public Match(int gameID, Player player, GameFieldPanel gameField,
@@ -35,6 +36,7 @@ public class Match implements Observer {
 		board = new Board();
 		jar = new Jar();
 		this.player = player;
+		this.surrenderd = false;
 
 		// Dit is tijdelijk todat je mensen kunt uitdagen
 		if (myName.equals("Spectator")) {
@@ -158,8 +160,9 @@ public class Match implements Observer {
 	// Uses a separate panel
 	public void loadSpecateGame(GameSpecScreen gameSpecScreen) {
 		this.gameSpec = gameSpecScreen;
-
-		board.clearField();
+		gameSpec.resetGame();
+		gameSpec.resetHands();
+		//board.clearField();
 
 		// Filling the field
 		ArrayList<String> squares = dbh.squareCheck();
@@ -202,13 +205,17 @@ public class Match implements Observer {
 		String[] splits = dbh.checkTurn(playerNames[0], gameID).split("---");
 		maxTurn = Integer.parseInt(splits[1]);
 		if (splits[0].equals("true")) {
+			myTurn = true;
 			handTilesP1 = dbh.handContent(gameID, maxTurn - 1);
 			handTilesP2 = dbh.handContent(gameID, maxTurn);
-			myTurn = true;
+			gameSpec.setTurnScoreP1(dbh.turnScore(gameID, maxTurn + 1));
+			gameSpec.setTurnScoreP2(dbh.turnScore(gameID, maxTurn));
 			gameSpec.setTurn(true);
 		} else {
 			handTilesP1 = dbh.handContent(gameID, maxTurn);
-			handTilesP2 = dbh.handContent(gameID, maxTurn - 1);
+			handTilesP2 = dbh.handContent(gameID, maxTurn);
+			gameSpec.setTurnScoreP1(dbh.turnScore(gameID, maxTurn));
+			gameSpec.setTurnScoreP2(dbh.turnScore(gameID, maxTurn + 1));
 			myTurn = false;
 			gameSpec.setTurn(false);
 		}
@@ -247,7 +254,7 @@ public class Match implements Observer {
 		}
 		// Els it will decrease it by 1
 		else {
-			if (maxTurn - 1 > 2) {
+			if (maxTurn - 1 > 1) {
 				maxTurn -= 1;
 				myTurn = !myTurn;
 			}
@@ -383,7 +390,8 @@ public class Match implements Observer {
 		// Loads the player hand
 		if (!dbh.getGameStatusValue(gameID).equals("Finished")
 				|| !dbh.getGameStatusValue(gameID).equals("Resigned")) {
-			System.out.println("RAW DATA, laden van de match " + myTurn + " beurt: " + maxTurn);
+			System.out.println("RAW DATA, laden van de match " + myTurn
+					+ " beurt: " + maxTurn);
 			ArrayList<String> handTiles;
 			if (myTurn) {
 				handTiles = dbh.handContent(gameID, maxTurn - 2);
@@ -568,7 +576,7 @@ public class Match implements Observer {
 				for (Tile tile : tilesInHand) {
 					tilesNumber.add(tile.getTileID());
 				}
-				
+
 				dbh.addTileToHand(gameID, tilesNumber, maxTurn);
 				// dbh.addTileToHand(gameID, tileID, maxTurn);
 				board.setScore();
@@ -708,6 +716,12 @@ public class Match implements Observer {
 		}
 		System.out.println("JE HEBT GESURRENDERD!");
 		dbh.gameStatusUpdate(gameID, "Resigned");
+		winGame();
+		surrenderd = true;
+	}
+
+	public boolean getSurrender() {
+		return surrenderd;
 	}
 
 	// Method to pass
@@ -716,6 +730,12 @@ public class Match implements Observer {
 		if (dbh.triplePass(gameID, getOwnName())) {
 			winGame();
 		}
+		ArrayList<Integer> tiles = new ArrayList<Integer>();
+		ArrayList<Tile> tile = player.getHand();
+		for (Tile t : tile) {
+			tiles.add(t.getTileID());
+		}
+		dbh.addTileToHand(gameID, tiles, maxTurn);
 	}
 
 	public void winGame() {

@@ -27,7 +27,8 @@ public class GameThread extends Thread {
 	private boolean turnSwap = true;
 
 	public GameThread(GameChatPanel chatPanel, GameButtonPanel buttonPanel,
-			ScorePanel scorePanel, MatchManager matchManager, MainFrame framePanel) {
+			ScorePanel scorePanel, MatchManager matchManager,
+			MainFrame framePanel) {
 		super("thread");
 		this.chatPanel = chatPanel;
 		this.buttonPanel = buttonPanel;
@@ -51,7 +52,7 @@ public class GameThread extends Thread {
 				// Gets the gameID;
 				match.getMaxTurnID();
 				int gameID = match.getGameID();
-				//System.out.println("LOOK AT ME - THREAD " + gameID);
+				// System.out.println("LOOK AT ME - THREAD " + gameID);
 				// Setting the scores
 				scorePanel
 						.setEnemyScore(dbh.score(gameID, match.getEnemyName()));
@@ -74,7 +75,6 @@ public class GameThread extends Thread {
 				}
 
 				// Update chat
-				chatPanel.setChatVariables(match.getOwnName(), gameID);
 				chatPanel.checkForMessages();
 
 				// A method to disable swap when fewer then 7 tiles
@@ -111,6 +111,35 @@ public class GameThread extends Thread {
 							turnSwap = true;
 						}
 					} else {
+						if (dbh.getGameStatusValue(gameID).equals("Finished")) {
+
+							int enemyScore = dbh.score(gameID,
+									match.getEnemyName());
+							int ownScore = dbh
+									.score(gameID, match.getOwnName());
+							if (enemyScore > ownScore) {
+								JOptionPane.showMessageDialog(null,
+										"YOU LOST!", "Game over",
+										JOptionPane.INFORMATION_MESSAGE);
+							} else {
+								JOptionPane.showMessageDialog(null, "YOU WON!",
+										"Game over",
+										JOptionPane.INFORMATION_MESSAGE);
+							}
+						}
+						if (dbh.getGameStatusValue(gameID).equals("Resigned")) {
+							if (match.getSurrender()) {
+								JOptionPane.showMessageDialog(null,
+										"The game is over, you surrenderd!",
+										"Game over",
+										JOptionPane.INFORMATION_MESSAGE);
+							} else {
+								JOptionPane.showMessageDialog(null,
+										"The game is over, you won!",
+										"Game over",
+										JOptionPane.INFORMATION_MESSAGE);
+							}
+						}
 						buttonPanel.setTurn(false);
 						buttonPanel.disableSurrender();
 						running = false;
@@ -137,7 +166,7 @@ public class GameThread extends Thread {
 			}
 
 			framePanel.updateNotificationList();
-			
+
 			// } else {
 			// buttonPanel.setTurn(false);
 			// buttonPanel.disableSurrender();
