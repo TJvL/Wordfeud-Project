@@ -35,7 +35,7 @@ public class MainFrame extends JFrame {
 
 	public MainFrame(WordFeud wf) {
 		this.wf = wf;
-		startMenuBar = new StartMenuBar();
+		startMenuBar = new StartMenuBar(this);
 		loginscreen = new LoginScreen(this);
 		standardMenuBar = new StandardMenuBar(this);
 		this.setPreferredSize(new Dimension(1200, 700));
@@ -49,8 +49,8 @@ public class MainFrame extends JFrame {
 		this.pack();
 		this.setLocationRelativeTo(null);
 	}
-	
-	public void init(){
+
+	public void init() {
 		specMenuBar = new SpecMenuBar(this);
 		specscreen = new SpecScreen(this);
 		regscreen = new RegScreen(this);
@@ -66,17 +66,17 @@ public class MainFrame extends JFrame {
 		this.setVisible(true);
 	}
 
-	public void setLoadingScreen(){
+	public void setLoadingScreen() {
 		t = new Thread(loadingPanel);
 		loadingPanel.setRunning(true);
 		t.start();
 		this.setContentPane(loadingPanel);
 	}
-	
-	public void stopLoadingScreen(){
+
+	public void stopLoadingScreen() {
 		loadingPanel.setRunning(false);
 	}
-	
+
 	public void setRegScreen() {
 		this.setContentPane(regscreen);
 		wf.stopThread();
@@ -123,6 +123,7 @@ public class MainFrame extends JFrame {
 		wf.stopThread();
 		revalidate();
 	}
+
 	public void setAdminAccScreen() {
 		this.setContentPane(adminaccscreen);
 		adminaccscreen.fillPlayerList();
@@ -187,7 +188,7 @@ public class MainFrame extends JFrame {
 				wf.getCurrentPassword());
 	}
 
-	public String getName() {
+	public String getCurrentUsername() {
 		return wf.getCurrentUsername();
 	}
 
@@ -221,7 +222,7 @@ public class MainFrame extends JFrame {
 	}
 
 	public void startGame(int gameToLoad, boolean spectating) {
-		//DatabaseHandler dbh = DatabaseHandler.getInstance();
+		// DatabaseHandler dbh = DatabaseHandler.getInstance();
 		if (gameToLoad != 0 && !spectating) {
 			wf.startGame(gameToLoad, false, false);
 			System.out.println("GAMEID IS " + gameToLoad);
@@ -248,8 +249,9 @@ public class MainFrame extends JFrame {
 		 */
 	}
 
-	public void callChallengePlayerAction(String competitionID, String opponent) {
-		wf.doChallengePlayerAction(competitionID, opponent);
+	public String callChallengePlayerAction(String competitionID,
+			String opponent, int privacy) {
+		return wf.doChallengePlayerAction(competitionID, opponent, privacy);
 	}
 
 	// Returns the gameScreen
@@ -275,6 +277,7 @@ public class MainFrame extends JFrame {
 			this.setSpecScreen();
 		}
 	}
+
 	// Update the mainscreen games from the player
 	public void updatePlayerGameList() {
 		playerscreen.setGameList(wf.myActiveGames(), this.getName());
@@ -289,26 +292,25 @@ public class MainFrame extends JFrame {
 	public void acceptRejectGame(String string, int competionID, int gameID) {
 		wf.acceptRejectGame(string, competionID, gameID);
 	}
-	
+
 	// Update notification list
-	public void updateNotificationList(){
+	public void updateNotificationList() {
 		standardMenuBar.updateNotificationList();
 	}
 
-	public void callCreateCompAction(String summaryString, String compEnd,
-			int i, int maxPlayersInt) {
-		wf.doCreateCompAction(summaryString, compEnd, i, maxPlayersInt);
+	public String callCreateCompAction(String summary, String compEnd,
+			String minPlayers, String maxPlayers) {
+		return wf.doCreateCompAction(summary, compEnd, minPlayers, maxPlayers);
 	}
 
-	public  Set<Entry<String, Competition>> callGetAllCompetitionsAction() {
+	public Set<Entry<String, Competition>> callGetAllCompetitionsAction() {
 		return wf.doGetAllCompetitionsAction();
 	}
-	
-	public Set<Entry<String, Competition>> adminCallActiveCompetitionAction()
-	{
+
+	public Set<Entry<String, Competition>> adminCallActiveCompetitionAction() {
 		return wf.doGetActiveCompetitionsAction();
 	}
-	
+
 	public Set<Entry<String, Competition>> callGetJoinedCompetitionsAction() {
 		return wf.doGetJoinedCompetitionsAction();
 	}
@@ -316,12 +318,12 @@ public class MainFrame extends JFrame {
 	public Competition callGetOneCompetitionAction(String key) {
 		return wf.doGetOneCompetitionAction(key);
 	}
-	
-	public void callLoadAllCompetitionsAction(){
+
+	public void callLoadAllCompetitionsAction() {
 		wf.doLoadAllCompetitionsAction();
 	}
-	
-	public void callJoinCompetitionAction(String compID){
+
+	public void callJoinCompetitionAction(String compID) {
 		wf.doJoinCompAction(compID);
 	}
 

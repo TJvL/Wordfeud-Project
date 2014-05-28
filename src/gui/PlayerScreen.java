@@ -141,10 +141,6 @@ public class PlayerScreen extends JPanel {
 	}
 	
 	public void showCreateCompWindow(){
-		new CreateCompWindow(this);
-	}
-	
-	public void callCreateComp(String summary, String compEnd, int i, int maxPlayersInt){
-		mainFrame.callCreateCompAction(summary, compEnd, i, maxPlayersInt);
+		new CreateCompWindow(mainFrame);
 	}
 }

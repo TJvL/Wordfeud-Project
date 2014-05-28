@@ -56,7 +56,7 @@ public class StandardMenuBar extends JMenuBar {
 		});
 		exitMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.exit(0);
+				exitItemChosen();
 			}
 		});
 		changeroleMenuItem.addActionListener(new ActionListener() {
@@ -120,5 +120,12 @@ public class StandardMenuBar extends JMenuBar {
 		mainFrame.setLoginScreen();
 		mainFrame.setStartMenuBar();
 		mainFrame.callLogoutAction();
+	}
+	
+	private void exitItemChosen(){
+		int retValue = JOptionPane.showConfirmDialog(mainFrame, "Are you sure you want to exit?", "Exit dialog", JOptionPane.YES_NO_OPTION);
+		if (retValue == JOptionPane.YES_OPTION){
+			System.exit(0);
+		}
 	}
 }

@@ -5,11 +5,15 @@ import gui.MainFrame;
 
 import java.util.ArrayList;
 
-import javax.swing.JOptionPane;
-
 import datalaag.DatabaseHandler;
 
 public class MatchManager {
+	public static final int PUBLIC_GAME = 0;
+	public static final int PRIVATE_GAME = 1;
+	public static final String CHALLENGE_FAIL_EXISTS = "There is already an open invite for this game";
+	public static final String CHALLENGE_FAIL_NOT_ENOUGH = "There are not enough participants in this competition yet to issue challenges.";
+	public static final String CHALLENGE_SUCCES = "Succesfully challenged player and Invite has been sent!";
+
 	private Match match;
 	private DatabaseHandler dbh;
 	private ArrayList<Match> matches;
@@ -41,7 +45,7 @@ public class MatchManager {
 		for (String game : games) {
 			String[] split = game.split(",");
 			boolean ownGame = false;
-			if (split[1].equals("true")){
+			if (split[1].equals("true")) {
 				ownGame = true;
 			}
 			pendingMatchs.add(new PendingMatch(Integer.parseInt(split[0]),
@@ -155,38 +159,30 @@ public class MatchManager {
 	}
 
 	// Method to start a new game
-	public void challengePlayer(int competitionID, String username,
-			String opponent, String language) {
-		String privacy = "prive";
+	public String challengePlayer(String competitionID, String username,
+			String opponent, String language, int privacyInt) {
 
-		if (!opponent.equals(wf.getCurrentUsername())) {
-			int reply1 = JOptionPane.showConfirmDialog(null, "Want to invite "
-					+ opponent + " for a game?", "Game invite",
-					JOptionPane.YES_NO_OPTION);
-			if (!dbh.inviteExists(username, opponent, competitionID)) {
-				if (reply1 == JOptionPane.YES_OPTION) {
-					int reply2 = JOptionPane.showConfirmDialog(null,
-							"Want a public game?", "Public game",
-							JOptionPane.YES_NO_OPTION);
-					if (reply2 == JOptionPane.YES_OPTION) {
-						privacy = "openbaar";
-					}
-
-					int gameID = dbh.createGame(competitionID, username,
-							opponent, privacy, language);
-					System.out.println("MatchMananger - GameID " + gameID
-							+ " is aangemaakt!");
-					framePanel.updateNotificationList();
+		String retValue;
+		if (wf.doGetOneCompetitionAction(competitionID).canStartChallenging()) {
+			if (!dbh.inviteExists(username, opponent, Integer.parseInt(competitionID))) {
+				String privacy = "Public";
+				if (privacyInt == MatchManager.PRIVATE_GAME) {
+					privacy = "prive";
 				}
+				int gameID = dbh.createGame(Integer.parseInt(competitionID), username, opponent,
+						privacy, language);
+				System.out.println("MatchManager reports: GameID: " + gameID
+						+ " match has been logged and invite has been sent!");
+				framePanel.updateNotificationList();
+				retValue = MatchManager.CHALLENGE_SUCCES;
 			} else {
-				JOptionPane.showMessageDialog(null,
-						"There is already a open invite for this game",
-						"Game active", JOptionPane.INFORMATION_MESSAGE);
+				retValue = MatchManager.CHALLENGE_FAIL_EXISTS;
 			}
-		} else {
-			JOptionPane.showMessageDialog(null, "Can't challenge yourself",
-					"Game active", JOptionPane.INFORMATION_MESSAGE);
 		}
+		else{
+			retValue = MatchManager.CHALLENGE_FAIL_NOT_ENOUGH;
+		}
+		return retValue;
 	}
 
 	public synchronized String getName() {
