@@ -1719,12 +1719,12 @@ public class DatabaseHandler
 			{
 				if (result.getString(3).equals(username))
 				{
-					pendingGames.add(result.getInt(1) + "," + result.getString(2) + " VS " + result.getString(3) + " from competition: "
+					pendingGames.add(result.getInt(1) + ",false," + result.getString(2) + " VS " + result.getString(3) + " from competition: "
 							+  result.getString(4) + " waiting for you to accept");
 				}
 				else
 				{
-					pendingGames.add(result.getInt(1) + "," + result.getString(3) + " VS " + result.getString(2) + " from competition: "
+					pendingGames.add(result.getInt(1) + ",true," + result.getString(3) + " VS " + result.getString(2) + " from competition: "
 							+  result.getString(4) + " waiting for his reaction");
 				}
 			}

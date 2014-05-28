@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import javax.swing.JOptionPane;
+
 import datalaag.DatabaseHandler;
 
 public class CompetitionManager {
@@ -86,6 +88,8 @@ public class CompetitionManager {
 		}
 		else{
 			System.err.println("ERROR: Could not join selected competition");
+			JOptionPane.showMessageDialog(null, "Competion is full",
+					"Can't join", JOptionPane.INFORMATION_MESSAGE);
 		}
 		return actionSuccesfull;
 	}

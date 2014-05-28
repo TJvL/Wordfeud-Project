@@ -47,6 +47,7 @@ public class GameChatPanel extends JPanel implements ActionListener
 
 	public void setChatVariables(String ownName, int gameID)
 	{
+		chatMessages.clear();
 		this.user1 = ownName;
 		this.gameID = gameID;
 		//start();	

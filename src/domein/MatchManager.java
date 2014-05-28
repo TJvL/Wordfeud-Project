@@ -1,5 +1,6 @@
 package domein;
 
+import gui.GameChatPanel;
 import gui.MainFrame;
 
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ public class MatchManager {
 	private WordFeud wf;
 	private MainFrame framePanel;
 	private GameThread gameThread;
+	private GameChatPanel chatPanel;
 
 	public MatchManager(WordFeud wf, MainFrame framePanel) {
 		this.dbh = DatabaseHandler.getInstance();
@@ -27,6 +29,7 @@ public class MatchManager {
 		this.myActiveMatches = new ArrayList<ActiveMatch>();
 		this.wf = wf;
 		this.framePanel = framePanel;
+		this.chatPanel = framePanel.getGameScreen().getGameChatPanel();
 		initializeThread();
 	}
 
@@ -37,8 +40,12 @@ public class MatchManager {
 		ArrayList<String> games = dbh.pendingGames(wf.getCurrentUsername());
 		for (String game : games) {
 			String[] split = game.split(",");
+			boolean ownGame = false;
+			if (split[1].equals("true")){
+				ownGame = true;
+			}
 			pendingMatchs.add(new PendingMatch(Integer.parseInt(split[0]),
-					split[1]));
+					split[2], ownGame));
 		}
 		return pendingMatchs;
 	}
@@ -71,8 +78,7 @@ public class MatchManager {
 
 	// A method to initialize the Thread
 	public void initializeThread() {
-		this.gameThread = new GameThread(framePanel.getGameScreen()
-				.getGameChatPanel(), framePanel.getGameScreen()
+		this.gameThread = new GameThread(chatPanel, framePanel.getGameScreen()
 				.getButtonPanel(), framePanel.getGameScreen().getScorePanel(),
 				this, framePanel);
 		gameThread.start();
@@ -114,10 +120,8 @@ public class MatchManager {
 				exists = true;
 				// Adds the observers
 				wf.addObservers(match, false);
-				framePanel
-						.getGameScreen()
-						.getGameChatPanel()
-						.setChatVariables(match.getOwnName(), match.getGameID());
+				chatPanel.setChatVariables(match.getOwnName(),
+						match.getGameID());
 				match.loadGame();
 				gameThread.setRunning(match);
 			}
@@ -129,8 +133,7 @@ public class MatchManager {
 			// Adds the observers
 			wf.addObservers(match, false);
 			match.loadGame();
-			framePanel.getGameScreen().getGameChatPanel()
-					.setChatVariables(match.getOwnName(), match.getGameID());
+			chatPanel.setChatVariables(match.getOwnName(), match.getGameID());
 			matches.add(match);
 			gameThread.setRunning(match);
 		}
