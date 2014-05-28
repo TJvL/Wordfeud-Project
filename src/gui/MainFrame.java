@@ -55,8 +55,8 @@ public class MainFrame extends JFrame {
 		specscreen = new SpecScreen(this);
 		regscreen = new RegScreen(this);
 		playerscreen = new PlayerScreen(this);
-		gameScreen = new GameScreen();
-		specScreen = new GameSpecScreen();
+		gameScreen = new GameScreen(this);
+		specScreen = new GameSpecScreen(this);
 		joincompscreen = new JoinCompScreen(this);
 		joinedcompscreen = new JoinedCompScreen(this);
 		adminaccscreen = new AdminAccScreen(this);
@@ -203,7 +203,7 @@ public class MainFrame extends JFrame {
 	// Sets the right ContentPane
 	public void addObservers(Observer observer, boolean spectator) {
 		if (spectator) {
-			this.setJMenuBar(standardMenuBar);
+			this.setJMenuBar(specMenuBar);
 			this.setContentPane(specScreen);
 			this.pack();
 			System.out.println("MainFRAMEPANEL - set content specScreen");

@@ -1,8 +1,11 @@
 package gui;
 
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Observer;
 
+import javax.swing.JButton;
 import javax.swing.JPanel;
 
 @SuppressWarnings("serial")
@@ -11,10 +14,11 @@ public class GameScreen extends JPanel {
 	private GameButtonPanel buttonPanel;
 	private ScorePanel scorePanel;
 	private GameChatPanel chatPanel;
+	private JButton back;
 
-	public GameScreen() {
+	public GameScreen(final MainFrame mainFrame) {
 		// this.setLayout(new BorderLayout());
-		this.setBackground(Color.white);
+		this.setBackground(Color.DARK_GRAY);
 		this.setLayout(null);
 		boardPanel = new GameFieldPanel();
 		boardPanel.setBounds(15, 10, 500, 550);
@@ -28,6 +32,14 @@ public class GameScreen extends JPanel {
 		chatPanel = new GameChatPanel();
 		chatPanel.setBounds(530, 0, 500,500);
 		this.add(chatPanel);
+		back = new JButton("back to mainscreen");
+		back.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent arg0) {
+				mainFrame.setPlayerScreen();	
+			}});
+		back.setBounds(770, 600, 260, 20);
+		this.add(back);
+		
 	}
 	
 	// Adds the observers
