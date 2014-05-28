@@ -6,9 +6,12 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+
+import domein.User;
 
 @SuppressWarnings("serial")
 public class RegScreen extends JPanel {
@@ -31,7 +34,10 @@ public class RegScreen extends JPanel {
 
 		createButtonPanel();
 		createInputPanel();
-
+		
+		inputPanel.setBounds(400, 250, 400, 150);
+		buttonPanel.setBounds(400, 400, 400, 100);
+		
 		this.add(inputPanel);
 		this.add(buttonPanel);
 	}
@@ -84,15 +90,14 @@ public class RegScreen extends JPanel {
 		char[] password = passwordField.getPassword();
 		char[] repPassword = confirmPasswordField.getPassword();
 
-		String ret = mainFrame.callRegisterAction(username, password, repPassword);
+		String retValue = mainFrame.callRegisterAction(username, password, repPassword);
 
-		if(ret.equals("username is available, account is registered")){
-			try {
-				Thread.sleep(3000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+		if(retValue.equals(User.REGISTER_SUCCESS)){
+			JOptionPane.showMessageDialog(this, retValue);
 			mainFrame.setLoginScreen();
+		}
+		else{
+			JOptionPane.showMessageDialog(this, retValue);
 		}
 	}
 

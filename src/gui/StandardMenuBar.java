@@ -60,7 +60,6 @@ public class StandardMenuBar extends JMenuBar {
 		});
 		changeroleMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				mainFrame.fillRoleWindow();
 				String result = rolewindow.showChangeRole();
 				boolean isSuccesful = mainFrame.callChangeRoleAction(result);
 				if (isSuccesful) {

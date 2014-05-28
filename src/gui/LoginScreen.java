@@ -107,7 +107,7 @@ public class LoginScreen extends JPanel
 						if (succesfulLogin)
 							{
 								mainFrame.setPlayerScreen();
-								mainFrame.setPlayerMenuBar();
+								mainFrame.setStandardMenuBar();
 								mainFrame.fillRoleWindow();
 								mainFrame.setAccDataValues();
 								clearInput();

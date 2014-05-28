@@ -45,7 +45,7 @@ public class WordFeud {
 			char[] passConfirm) {
 		return currentUser.register(username, passInput, passConfirm);
 	}
-
+	
 	public boolean doLoginAction(String username, char[] password) {
 
 		Boolean succesfulLogin = currentUser.login(username, password);

@@ -9,6 +9,8 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import domein.User;
+
 //import javax.swing.plaf.basic.BasicInternalFrameTitlePane.RestoreAction; who added this
 
 public class DatabaseHandler
@@ -112,18 +114,10 @@ public class DatabaseHandler
 		return isLoggedIn;
 	}
 
-	public synchronized String register(String username, String password)// return
-																			// statement
-																			// for
-																			// register
-																			// in/correct
-																			// needs
-																			// to
-																			// be
-																			// applied
+	public synchronized String register(String username, String password)
 	{
 		connection();
-		String registered = "Can not register account";
+		String retValue = User.REGISTER_DEFAULT_ERROR;
 		try
 		{
 			statement = con.prepareStatement("SELECT * FROM account WHERE naam = '" + username + "'");
@@ -132,7 +126,7 @@ public class DatabaseHandler
 
 			if (!result.next())
 			{
-				registered = "username is available, account is registered";
+				retValue = User.REGISTER_SUCCESS;
 				result.close();
 				statement.close();
 
@@ -165,12 +159,12 @@ public class DatabaseHandler
 				} catch (SQLException e)
 				{
 					e.printStackTrace();
-					System.out.println("account register error");
+					System.err.println("query error!!!");
 				}
 			}
 			else
 			{
-				registered = "username is not available, cannot register your account";
+				retValue = User.REGISTER_FAIL_NAME_NOT_AVAILABLE;
 				statement.close();
 			}
 
@@ -182,7 +176,7 @@ public class DatabaseHandler
 		{
 			closeConnection();
 		}
-		return registered;
+		return retValue;
 	}
 
 	public synchronized void chatSend(String username, int gameID, String message)// it
