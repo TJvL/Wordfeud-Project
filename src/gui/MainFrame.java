@@ -27,10 +27,8 @@ public class MainFrame extends JFrame {
 	private JoinedCompScreen joinedcompscreen;
 	private ModScreen modscreen;
 	private StartMenuBar startMenuBar;
-	private PlayerMenuBar playerMenuBar;
+	private StandardMenuBar standardMenuBar;
 	private SpecMenuBar specMenuBar;
-	private AdminMenuBar adminMenuBar;
-	private ModMenuBar modMenuBar;
 	private LoadingPanel loadingPanel;
 	private Thread t;
 	private WordFeud wf;
@@ -39,6 +37,7 @@ public class MainFrame extends JFrame {
 		this.wf = wf;
 		startMenuBar = new StartMenuBar();
 		loginscreen = new LoginScreen(this);
+		standardMenuBar = new StandardMenuBar(this);
 		this.setPreferredSize(new Dimension(1200, 700));
 		this.setResizable(false);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -53,14 +52,11 @@ public class MainFrame extends JFrame {
 	
 	public void init(){
 		specMenuBar = new SpecMenuBar(this);
-		playerMenuBar = new PlayerMenuBar(this);
-		modMenuBar = new ModMenuBar(this);
-		adminMenuBar = new AdminMenuBar(this);
 		specscreen = new SpecScreen(this);
 		regscreen = new RegScreen(this);
 		playerscreen = new PlayerScreen(this);
-		gameScreen = new GameScreen();
-		specScreen = new GameSpecScreen();
+		gameScreen = new GameScreen(this);
+		specScreen = new GameSpecScreen(this);
 		joincompscreen = new JoinCompScreen(this);
 		joinedcompscreen = new JoinedCompScreen(this);
 		adminaccscreen = new AdminAccScreen(this);
@@ -96,7 +92,6 @@ public class MainFrame extends JFrame {
 	public void setPlayerScreen() {
 		this.setContentPane(playerscreen);
 		playerscreen.setGameList(wf.myActiveGames(), this.getName());
-		this.setPlayerMenuBar();
 		wf.stopThread();
 		stopLoadingScreen();
 		revalidate();
@@ -104,7 +99,6 @@ public class MainFrame extends JFrame {
 
 	public void setGameScreen() {
 		this.setContentPane(gameScreen);
-		this.setPlayerMenuBar();
 		wf.stopThread();
 		revalidate();
 	}
@@ -112,7 +106,6 @@ public class MainFrame extends JFrame {
 	public void setSpecScreen() {
 		specscreen.setGameList(wf.getActiveGames());
 		this.setContentPane(specscreen);
-		this.setSpecMenuBar();
 		wf.stopThread();
 		revalidate();
 	}
@@ -120,7 +113,6 @@ public class MainFrame extends JFrame {
 	public void setJoinCompScreen() {
 		joincompscreen.populateScreen();
 		this.setContentPane(joincompscreen);
-		this.setPlayerMenuBar();
 		wf.stopThread();
 		revalidate();
 	}
@@ -128,28 +120,24 @@ public class MainFrame extends JFrame {
 	public void setJoinedCompScreen() {
 		joinedcompscreen.populateScreen();
 		this.setContentPane(joinedcompscreen);
-		this.setPlayerMenuBar();
 		wf.stopThread();
 		revalidate();
 	}
 	public void setAdminAccScreen() {
 		this.setContentPane(adminaccscreen);
 		adminaccscreen.fillPlayerList();
-		this.setAdminMenuBar();
 		wf.stopThread();
 		revalidate();
 	}
 
 	public void setAdminCompScreen() {
 		this.setContentPane(admincompscreen);
-		this.setAdminMenuBar();
 		wf.stopThread();
 		revalidate();
 	}
 
 	public void setModScreen() {
 		this.setContentPane(modscreen);
-		this.setModMenuBar();
 		modscreen.fillList();
 		wf.stopThread();
 		revalidate();
@@ -165,18 +153,8 @@ public class MainFrame extends JFrame {
 		revalidate();
 	}
 
-	public void setPlayerMenuBar() {
-		this.setJMenuBar(playerMenuBar);
-		revalidate();
-	}
-
-	public void setModMenuBar() {
-		this.setJMenuBar(modMenuBar);
-		revalidate();
-	}
-
-	public void setAdminMenuBar() {
-		this.setJMenuBar(adminMenuBar);
+	public void setStandardMenuBar() {
+		this.setJMenuBar(standardMenuBar);
 		revalidate();
 	}
 
@@ -200,13 +178,11 @@ public class MainFrame extends JFrame {
 	}
 
 	public void fillRoleWindow() {
-		playerMenuBar.fillRoleWindow(wf.getCurrentUserPossibleRoles());
-		adminMenuBar.fillRoleWindow(wf.getCurrentUserPossibleRoles());
-		modMenuBar.fillRoleWindow(wf.getCurrentUserPossibleRoles());
+		standardMenuBar.fillRoleWindow(wf.getCurrentUserPossibleRoles());
 	}
 
 	public void setAccDataValues() {
-		playerMenuBar.fillAccDataValues(wf.getCurrentUsername(),
+		standardMenuBar.fillAccDataValues(wf.getCurrentUsername(),
 				wf.getCurrentPassword());
 	}
 
@@ -227,14 +203,14 @@ public class MainFrame extends JFrame {
 	// Sets the right ContentPane
 	public void addObservers(Observer observer, boolean spectator) {
 		if (spectator) {
-			this.setJMenuBar(playerMenuBar);
+			this.setJMenuBar(specMenuBar);
 			this.setContentPane(specScreen);
 			this.pack();
 			System.out.println("MainFRAMEPANEL - set content specScreen");
 			specScreen.addObserverToObserverButtons(observer);
 			revalidate();
 		} else {
-			this.setJMenuBar(playerMenuBar);
+			this.setJMenuBar(standardMenuBar);
 			this.setContentPane(gameScreen);
 			this.pack();
 			gameScreen.addObservers(observer);
@@ -296,10 +272,8 @@ public class MainFrame extends JFrame {
 			this.setPlayerScreen();
 		} else if (currentRole.equals("Spectator")) {
 			this.setSpecScreen();
-			
 		}
 	}
-
 	// Update the mainscreen games from the player
 	public void updatePlayerGameList() {
 		playerscreen.setGameList(wf.myActiveGames(), this.getName());
@@ -317,7 +291,7 @@ public class MainFrame extends JFrame {
 	
 	// Update notification list
 	public void updateNotificationList(){
-		playerMenuBar.updateNotificationList();
+		standardMenuBar.updateNotificationList();
 	}
 
 	public void callCreateCompAction(String summaryString, String compEnd,

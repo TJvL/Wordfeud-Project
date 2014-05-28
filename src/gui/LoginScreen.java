@@ -122,7 +122,7 @@ public class LoginScreen extends JPanel {
 
 		if (ret.equals("Username and Password are correct")) {
 			mainFrame.setPlayerScreen();
-			mainFrame.setPlayerMenuBar();
+			mainFrame.setStandardMenuBar();
 			clearInput();
 		} else {
 			loginSucces = false;
