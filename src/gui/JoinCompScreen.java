@@ -13,6 +13,7 @@ import java.util.Map.Entry;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
@@ -29,7 +30,8 @@ import domein.CompetitionPlayer;
  */
 @SuppressWarnings("serial")
 public class JoinCompScreen extends JPanel {
-
+	private final String defaultSelection = "default";
+	
 	private MainFrame mainFrame;
 	private JPanel buttonPanel;
 	private JTable compTable;
@@ -51,7 +53,7 @@ public class JoinCompScreen extends JPanel {
 		this.setLayout(null);
 		this.createButtons();
 		neverViewed =  true;
-		currentSelection = "";
+		currentSelection = defaultSelection;
 	}
 	/*
 	 * called when the this screen needs to be viewed
@@ -103,9 +105,14 @@ public class JoinCompScreen extends JPanel {
 		join.addActionListener(new ActionListener() {			
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				Competition compName = mainFrame.callGetOneCompetitionAction(currentSelection);
 				if (!currentSelection.equals("")){
+					int response = JOptionPane.showConfirmDialog(null, "Are u sure u want to join: \"" + compName.getSummary() + "\"?",
+			                   "", JOptionPane.OK_OPTION, JOptionPane.PLAIN_MESSAGE);
+					if(response == JOptionPane.OK_OPTION){
 					joinSelectedCompetition();
 					refreshCompetitionsList();
+					}
 				}
 			}
 		});
@@ -146,7 +153,7 @@ public class JoinCompScreen extends JPanel {
 			tableData[i][2] = Integer.toString(pair.getValue()
 					.getMaxParticipants());
 			tableData[i][3] = Integer.toString(pair.getValue()
-					.getMinParticipants());
+					.getAmountParticipants());
 			tableData[i][4] = pair.getValue()
 					.getCompOwner();
 			tableData[i][5] = pair.getValue().getEndDate();
@@ -182,7 +189,9 @@ public class JoinCompScreen extends JPanel {
 		});
 		compTable.setSelectionModel(selectModel);
 		compTable.changeSelection(0, 0, false, false);
+		if (compTable.getRowCount() > 0) {
 		currentSelection = compTable.getValueAt(compTable.getSelectedRow(), 0).toString();
+		}
 		compPane = new JScrollPane(compTable);
 	}
 	
@@ -193,6 +202,7 @@ public class JoinCompScreen extends JPanel {
 		partiTable = null;
 		partiPane = null;
 		
+		if (!currentSelection.equals(defaultSelection)) {
 		String[] columnNames = { "Username", "Total Score", "Avg Score", "Played", "Won", "Lost", "Bay Avg" };
 		ArrayList<CompetitionPlayer> participants = mainFrame.callGetOneCompetitionAction(currentSelection).getParticipants();
 		String[][] tableData = new String[participants.size()][7];
@@ -229,6 +239,7 @@ public class JoinCompScreen extends JPanel {
 		
 		ForcedListSelectionModel selectModel = new ForcedListSelectionModel();
 		partiTable.setSelectionModel(selectModel);
+		}
 		partiPane = new JScrollPane(partiTable);
 	}
 	/*

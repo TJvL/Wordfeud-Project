@@ -29,7 +29,8 @@ public class MainFrame extends JFrame {
 	private StartMenuBar startMenuBar;
 	private StandardMenuBar standardMenuBar;
 	private SpecMenuBar specMenuBar;
-	private UpdateGUIThread guiThread;
+	private LoadingPanel loadingPanel;
+	private Thread t;
 	private WordFeud wf;
 
 	public MainFrame(WordFeud wf) {
@@ -61,9 +62,21 @@ public class MainFrame extends JFrame {
 		adminaccscreen = new AdminAccScreen(this);
 		admincompscreen = new AdminCompScreen(this);
 		modscreen = new ModScreen();
+		loadingPanel = new LoadingPanel();
 		this.setVisible(true);
 	}
 
+	public void setLoadingScreen(){
+		t = new Thread(loadingPanel);
+		loadingPanel.setRunning(true);
+		t.start();
+		this.setContentPane(loadingPanel);
+	}
+	
+	public void stopLoadingScreen(){
+		loadingPanel.setRunning(false);
+	}
+	
 	public void setRegScreen() {
 		this.setContentPane(regscreen);
 		wf.stopThread();
@@ -80,6 +93,7 @@ public class MainFrame extends JFrame {
 		this.setContentPane(playerscreen);
 		playerscreen.setGameList(wf.myActiveGames(), this.getName());
 		wf.stopThread();
+		stopLoadingScreen();
 		revalidate();
 	}
 
@@ -258,40 +272,11 @@ public class MainFrame extends JFrame {
 			this.setPlayerScreen();
 		} else if (currentRole.equals("Spectator")) {
 			this.setSpecScreen();
-			
 		}
 	}
-
-	// Everything in this method will be updated every 20 seconds
-	// Use synchronized for the methods
-	// That allows a method to be uses by multiple threads
-	// Only the current contentPane will auto update
-	public synchronized void updateGUI() {
-		standardMenuBar.updateNotificationList();
-		if (this.getContentPane() instanceof PlayerScreen) {
-			updatePlayerGameList();
-		} else if (this.getContentPane() instanceof SpecScreen) {
-			specscreen.setGameList(wf.getActiveGames());
-		}
-	}
-
 	// Update the mainscreen games from the player
 	public void updatePlayerGameList() {
 		playerscreen.setGameList(wf.myActiveGames(), this.getName());
-	}
-
-	// A method to start the Thread
-	public void startThread() {
-		guiThread = new UpdateGUIThread(this);
-		guiThread.setRunning(true);
-		guiThread.start();
-	}
-
-	// Stops the Thread
-	public void stopThread() {
-		if (guiThread != null) {
-			guiThread.setRunning(false);
-		}
 	}
 
 	// Returns a list of pending Games
@@ -302,6 +287,11 @@ public class MainFrame extends JFrame {
 	// Method to accept/reject games
 	public void acceptRejectGame(String string, int competionID, int gameID) {
 		wf.acceptRejectGame(string, competionID, gameID);
+	}
+	
+	// Update notification list
+	public void updateNotificationList(){
+		standardMenuBar.updateNotificationList();
 	}
 
 	public void callCreateCompAction(String summaryString, String compEnd,

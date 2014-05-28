@@ -47,7 +47,6 @@ public class MatchManager {
 		if (activeMatches != null) {
 			activeMatches.clear();
 		}
-
 		ArrayList<String> games = dbh.spectateList();
 		for (String game : games) {
 			String[] split = game.split(",");
@@ -74,7 +73,8 @@ public class MatchManager {
 	public void initializeThread() {
 		this.gameThread = new GameThread(framePanel.getGameScreen()
 				.getGameChatPanel(), framePanel.getGameScreen()
-				.getButtonPanel(), framePanel.getGameScreen().getScorePanel(), this);
+				.getButtonPanel(), framePanel.getGameScreen().getScorePanel(),
+				this, framePanel);
 		gameThread.start();
 	}
 
@@ -85,7 +85,8 @@ public class MatchManager {
 
 	// Depends if someone is spectating - starting new game
 	// or want to load a game
-	public synchronized void startGame(int gameID, boolean spectate, boolean newGame) {
+	public synchronized void startGame(int gameID, boolean spectate,
+			boolean newGame) {
 		if (spectate) {
 			spectateMatch(gameID);
 		} else {
@@ -100,14 +101,8 @@ public class MatchManager {
 	// This starts a Match that is made by me
 	public void newMatchStartedByMe(int gameID) {
 		match = new Match(gameID, wf.getCurrentUsername());
-		// Adds the observers
-//		wf.addObservers(match, false);
-		// Sets the thread
 		match.startNewGame();
-		framePanel.getGameScreen().getGameChatPanel()
-				.setChatVariables(match.getOwnName(), match.getGameID());
-//		matches.add(match);
-	//	gameThread.setRunning(match);
+		framePanel.updatePlayerGameList();
 	}
 
 	// Loads a match
@@ -161,37 +156,37 @@ public class MatchManager {
 			String opponent, String language) {
 		String privacy = "prive";
 
-		int reply1 = JOptionPane.showConfirmDialog(null, "Want to invite "
-				+ opponent + " for a game?", "Game invite",
-				JOptionPane.YES_NO_OPTION);
-		if (!dbh.inviteExists(username, opponent)) {
-			if (reply1 == JOptionPane.YES_OPTION) {
-				int reply2 = JOptionPane.showConfirmDialog(null,
-						"Want a public game?", "Public game",
-						JOptionPane.YES_NO_OPTION);
-				if (reply2 == JOptionPane.YES_OPTION) {
-					privacy = "openbaar";
-				}
+		if (!opponent.equals(wf.getCurrentUsername())) {
+			int reply1 = JOptionPane.showConfirmDialog(null, "Want to invite "
+					+ opponent + " for a game?", "Game invite",
+					JOptionPane.YES_NO_OPTION);
+			if (!dbh.inviteExists(username, opponent, competitionID)) {
+				if (reply1 == JOptionPane.YES_OPTION) {
+					int reply2 = JOptionPane.showConfirmDialog(null,
+							"Want a public game?", "Public game",
+							JOptionPane.YES_NO_OPTION);
+					if (reply2 == JOptionPane.YES_OPTION) {
+						privacy = "openbaar";
+					}
 
-				int gameID = dbh.createGame(competitionID, username, opponent,
-						privacy, language);
-				System.out.println("MatchMananger - GameID " + gameID
-						+ " is aangemaakt!");
-				// int reply3 = JOptionPane.showConfirmDialog(null,
-				// "Want to load the game?", "Load game",
-				// JOptionPane.YES_NO_OPTION);
-				// if (reply3 == JOptionPane.YES_OPTION) {
-				// wf.startGame(gameID, false, true);
-				// }
+					int gameID = dbh.createGame(competitionID, username,
+							opponent, privacy, language);
+					System.out.println("MatchMananger - GameID " + gameID
+							+ " is aangemaakt!");
+					framePanel.updateNotificationList();
+				}
+			} else {
+				JOptionPane.showMessageDialog(null,
+						"There is already a open invite for this game",
+						"Game active", JOptionPane.INFORMATION_MESSAGE);
 			}
 		} else {
-			JOptionPane.showMessageDialog(null,
-					"There is already a open invited for this game",
+			JOptionPane.showMessageDialog(null, "Can't challenge yourself",
 					"Game active", JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
-	
-	public synchronized String getName(){
+
+	public synchronized String getName() {
 		return wf.getCurrentUsername();
 	}
 }

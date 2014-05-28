@@ -43,7 +43,7 @@ public class RankingWindow extends JDialog
 		mySP.setBounds(100, 50,200,435);
 		
 		
-
+		this.setLocationRelativeTo(null);
 		this.pack();
 		this.setVisible(true);
 		this.setResizable(false);

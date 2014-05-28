@@ -2,11 +2,12 @@ package domein;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
+import datalaag.DatabaseHandler;
+import java.util.ArrayList;
+import java.util.HashMap;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-
 import datalaag.DatabaseHandler;
 
 public class Administrator extends Role {
