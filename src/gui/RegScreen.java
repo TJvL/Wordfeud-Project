@@ -1,6 +1,5 @@
 package gui;
 
-import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,39 +12,40 @@ import javax.swing.JTextField;
 
 @SuppressWarnings("serial")
 public class RegScreen extends JPanel {
-	private JPanel buttons;
-	private JPanel dataField;
+	private JPanel buttonPanel;
+	private JPanel inputPanel;
 	private MainFrame mainFrame;
 
-	private JTextField usernameField = new JTextField(20);
-	private JPasswordField passwordField = new JPasswordField(20);
-	private JPasswordField confirmPasswordField = new JPasswordField(20);
-	private JLabel commentLabel = new JLabel();
+	private JTextField usernameField;
+	private JPasswordField passwordField;
+	private JPasswordField confirmPasswordField;
 
 
 	public RegScreen(MainFrame mainFrame) {
 		this.mainFrame = mainFrame;
+		usernameField = new JTextField(20);
+		passwordField = new JPasswordField(20);
+		confirmPasswordField = new JPasswordField(20);
 
-		this.setLayout(new BorderLayout());
+		this.setLayout(null);
 
-		createButtons();
-		createDataField();
+		createButtonPanel();
+		createInputPanel();
 
-		this.add(dataField, BorderLayout.NORTH);
-		this.add(buttons);
+		this.add(inputPanel);
+		this.add(buttonPanel);
 	}
 
-	private void createButtons() {
-		buttons = new JPanel();
+	private void createButtonPanel() {
+		buttonPanel = new JPanel();
 		JButton confirmButton = new JButton("Confirm");
 		JButton cancelButton = new JButton("Cancel");
 
-		buttons.add(cancelButton);
-		buttons.add(confirmButton);
-		buttons.add(commentLabel);
+		buttonPanel.add(cancelButton);
+		buttonPanel.add(confirmButton);
 
 		cancelButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(ActionEvent e) {
 				mainFrame.setLoginScreen();
 				clearInput();
 			}
@@ -53,13 +53,13 @@ public class RegScreen extends JPanel {
 
 		confirmButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				register();
+				registerPressed();
 			}
 		});
 	}
 
-	private void createDataField() {
-		dataField = new JPanel();
+	private void createInputPanel() {
+		inputPanel = new JPanel();
 		JPanel labels = new JPanel(new GridLayout(4, 1, 0, 20));
 		JPanel fields = new JPanel(new GridLayout(4, 1, 0, 20));
 
@@ -75,18 +75,16 @@ public class RegScreen extends JPanel {
 		fields.add(passwordField);
 		fields.add(confirmPasswordField);
 
-		dataField.add(labels);
-		dataField.add(fields);
+		inputPanel.add(labels);
+		inputPanel.add(fields);
 	}
 
-	private void register(){
-		String ret;
+	private void registerPressed(){
 		String username = usernameField.getText();
 		char[] password = passwordField.getPassword();
 		char[] repPassword = confirmPasswordField.getPassword();
 
-		ret = mainFrame.callRegisterAction(username, password, repPassword);
-		commentLabel.setText(ret);
+		String ret = mainFrame.callRegisterAction(username, password, repPassword);
 
 		if(ret.equals("username is available, account is registered")){
 			try {
@@ -102,6 +100,5 @@ public class RegScreen extends JPanel {
 		usernameField.setText(null);
 		passwordField.setText(null);
 		confirmPasswordField.setText(null);
-		commentLabel.setText(null);
 	}
 }

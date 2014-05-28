@@ -41,7 +41,7 @@ public class MainFrame extends JFrame {
 		loginscreen = new LoginScreen(this);
 		this.setPreferredSize(new Dimension(1200, 700));
 		this.setResizable(false);
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		this.setTitle("WordFeud");
 
 		this.setContentPane(loginscreen);
@@ -185,7 +185,7 @@ public class MainFrame extends JFrame {
 		return wf.doRegisterAction(username, passInput, passConfirm);
 	}
 
-	public String callLoginAction(String username, char[] password) {
+	public boolean callLoginAction(String username, char[] password) {
 		return wf.doLoginAction(username, password);
 	}
 

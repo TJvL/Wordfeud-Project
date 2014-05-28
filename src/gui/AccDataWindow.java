@@ -91,7 +91,7 @@ public class AccDataWindow extends JDialog {
 		changeRoles.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				setRoles(mainFrame.getAdmin().changeRoles(userNameValue.getText(), 
-						DatabaseHandler.getInstance().getRole(
+						DatabaseHandler.getInstance().getCurrentUserRole(
 								userNameValue.getText())));
 			}
 		});

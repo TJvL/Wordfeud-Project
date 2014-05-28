@@ -83,38 +83,23 @@ public class DatabaseHandler
 		}
 	}
 
-	public synchronized String login(String username, String password) // return
-																		// statement
-																		// for
-																		// login
-																		// in/correct
-																		// needs
-																		// to be
-																		// applied
+	public synchronized boolean checkLoginInfo(String username, String password)
 	{
 		connection();
-		String login = "Username or Password is incorrect";
+		boolean isLoggedIn = false;
 		try
 		{
 			statement = con.prepareStatement("SELECT * FROM account WHERE naam = '" + username + "' AND wachtwoord = '"
 					+ password + "'");
-
 			result = statement.executeQuery();
-
-			
+	
 			if (result.next())
 			{
 				if(result.getString(1).equals(username) && result.getString(2).equals(password)){
-				login = "Username and Password are correct";
-				
+					isLoggedIn = true;
 				}
-				// System.out.println("username + password correct");
 				result.close();
 			}
-			// else
-			// {
-			// System.out.println("username or password incorrect");
-			// }
 			statement.close();
 		} catch (SQLException e)
 		{
@@ -124,7 +109,7 @@ public class DatabaseHandler
 		{
 			closeConnection();
 		}
-		return login;
+		return isLoggedIn;
 	}
 
 	public synchronized String register(String username, String password)// return
@@ -1167,7 +1152,7 @@ public class DatabaseHandler
 		}
 	}
 	
-	public synchronized ArrayList<String> getRole(String username)
+	public synchronized ArrayList<String> getCurrentUserRole(String username)
 	{
 		connection();
 		ArrayList<String> userRoles = new ArrayList<String>();

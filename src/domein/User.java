@@ -7,6 +7,13 @@ import javax.swing.JOptionPane;
 import datalaag.DatabaseHandler;
 
 public class User {
+	public static final String ROLE_ADMINISTRATOR = "Administrator";
+	public static final String ROLE_MODERATOR = "Moderator";
+	public static final String ROLE_PLAYER = "Player";
+	public static final String ROLE_SPECTATOR = "Spectator";
+	private final String defaultUsername = "Spectator";
+	private final String defaultRole = ROLE_SPECTATOR;
+	
 	private Player player;
 	private Administrator admin;
 	private Spectator spec;
@@ -16,8 +23,6 @@ public class User {
 	private boolean isLoggedIn;
 
 	private String currentRole;
-	private final String defaultUsername = "Spectator";
-	private final String defaultRole = "Spectator";
 
 	public User() {
 		player = new Player(false);
@@ -82,26 +87,35 @@ public class User {
 		this.changeRole(defaultRole);
 	}
 
-	public String login(String username, char[] passInputArray) {
+	public boolean login(String username, char[] passInputArray) {
 
 		String passInput = "";
 		for (char c : passInputArray) {
 			passInput = passInput + c;
 		}
 
-		String retValue = datalaag.DatabaseHandler.getInstance().login(
+		boolean succesfulLogin = DatabaseHandler.getInstance().checkLoginInfo(
 				username, passInput);
 
-		if (retValue.equals("Username and Password are correct")) {
+		if (succesfulLogin) {
 			// set Username in User Class
 			this.username = username;
 			this.setLoggedIn(true);
 			this.checkRoles();
-			this.changeRole("Player");
+			if(player.HasPermissions()){
+				this.changeRole(User.ROLE_PLAYER);
+			}
+			else if(admin.HasPermissions()){
+				this.changeRole(User.ROLE_ADMINISTRATOR);
+			}
+			else if(mod.HasPermissions()){
+				this.changeRole(User.ROLE_MODERATOR);
+			}
+			else if(spec.HasPermissions()){
+				this.changeRole(User.ROLE_SPECTATOR);
+			}
 		}
-
-		System.out.println(retValue);
-		return retValue;
+		return succesfulLogin;
 	}
 
 	public String register(String username, char[] passInputArray,
@@ -152,18 +166,18 @@ public class User {
 	public boolean checkRoles() {
 		boolean actionSuccesful = false;
 		if (isLoggedIn) {
-			ArrayList<String> roles = DatabaseHandler.getInstance().getRole(
+			ArrayList<String> roles = DatabaseHandler.getInstance().getCurrentUserRole(
 					username);
 
 			if (!roles.isEmpty()) {
 				for (String role : roles) {
-					if (role.equals("Administrator")) {
+					if (role.equals(User.ROLE_ADMINISTRATOR)) {
 						admin.setHasPermissions(true);
 						actionSuccesful = true;
-					} else if (role.equals("Moderator")) {
+					} else if (role.equals(User.ROLE_MODERATOR)) {
 						mod.setHasPermissions(true);
 						actionSuccesful = true;
-					} else if (role.equals("Player")) {
+					} else if (role.equals(User.ROLE_PLAYER)) {
 						player.setHasPermissions(true);
 						actionSuccesful = true;
 					}
@@ -176,22 +190,22 @@ public class User {
 	public boolean changeRole(String role) {
 		boolean actionSuccesful = false;
 		if (role != null) {
-			if (role.equals("Administrator")) {
+			if (role.equals(User.ROLE_ADMINISTRATOR)) {
 				if (admin.HasPermissions()) {
 					this.setCurrentRole(role);
 					actionSuccesful = true;
 				}
-			} else if (role.equals("Moderator")) {
+			} else if (role.equals(User.ROLE_MODERATOR)) {
 				if (mod.HasPermissions()) {
 					this.setCurrentRole(role);
 					actionSuccesful = true;
 				}
-			} else if (role.equals("Player")) {
+			} else if (role.equals(User.ROLE_PLAYER)) {
 				if (player.HasPermissions()) {
 					this.setCurrentRole(role);
 					actionSuccesful = true;
 				}
-			} else if (role.equals("Spectator")) {
+			} else if (role.equals(User.ROLE_SPECTATOR)) {
 				if (spec.HasPermissions()) {
 					this.setCurrentRole(role);
 					actionSuccesful = true;
@@ -206,7 +220,7 @@ public class User {
 	}
 
 	public ArrayList<String> getRoles() {
-		ArrayList<String> roles = DatabaseHandler.getInstance().getRole(
+		ArrayList<String> roles = DatabaseHandler.getInstance().getCurrentUserRole(
 				username);
 		roles.add("Spectator");
 
