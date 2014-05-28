@@ -27,10 +27,11 @@ public class GameSpecScreen extends JPanel {
 	private TilePanel tilePanel;
 	private JButton forward;
 	private JButton backward;
+	private JButton back;
 	private ObserverButtons observerButtons;
 
 	// The constructor sets all the panels
-	public GameSpecScreen() {
+	public GameSpecScreen(final MainFrame mainFrame) {
 		observerButtons = new ObserverButtons();
 		squaresPanels = new SquarePanel[15][15];
 		tilesP1 = new ArrayList<TilePanel>();
@@ -42,6 +43,7 @@ public class GameSpecScreen extends JPanel {
 		fieldPanel = new FieldPanel();
 		forward = new JButton("Forward");
 		backward = new JButton("Backward");
+		back = new JButton("Back to games list");
 		this.setBackground(Color.white);
 		this.setLayout(null);
 		fieldPanel.setBounds(275, 55, 500, 500);
@@ -55,7 +57,7 @@ public class GameSpecScreen extends JPanel {
 		scorePanelP2.setBounds(785, 455, 260, 150);
 		this.add(scorePanelP2);
 		forward.setBounds(785, 300, 260, 50);
-		
+
 		// Adds actionsListeners the observers
 		forward.addActionListener(new ActionListener() {
 			@Override
@@ -76,6 +78,13 @@ public class GameSpecScreen extends JPanel {
 			}
 		});
 		this.add(backward);
+		back.setBounds(5, 500, 260, 50);
+		back.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				mainFrame.setSpecScreen();
+			}
+		});
+		this.add(back);
 	}
 
 	// Creating the field
@@ -97,13 +106,29 @@ public class GameSpecScreen extends JPanel {
 	public void resestField(Match match) {
 		for (int y = 0; y < 15; y++) {
 			for (int x = 0; x < 15; x++) {
-				if (match.getSquare(x, y).getTile() != null) {
-					squaresPanels[x][y].addImage(match.getImage(x, y));
-				} else {
+				if (match.getSquare(x, y) != null) {
+					if (match.getSquare(x, y).getTile() != null) {
+						squaresPanels[x][y].addImage(match.getImage(x, y));
+					} else {
+						squaresPanels[x][y].removeImage();
+					}
+				}
+			}
+		}
+	}
+
+	// Removes the board
+	public void resetGame() {
+		for (int y = 0; y < 15; y++) {
+			for (int x = 0; x < 15; x++) {
+				if (squaresPanels[x][y] != null) {
 					squaresPanels[x][y].removeImage();
 				}
 			}
 		}
+		fieldPanel.clearField();
+		handPanelP1.removeAll();
+		handPanelP2.removeAll();
 	}
 
 	// Method to add image letters
@@ -138,6 +163,7 @@ public class GameSpecScreen extends JPanel {
 		handPanelP2.disposeTiles();
 		repaintBoard();
 	}
+
 	// end of the hand part
 
 	// Setting the score panel

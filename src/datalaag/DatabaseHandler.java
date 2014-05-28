@@ -9,6 +9,8 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import domein.User;
+
 //import javax.swing.plaf.basic.BasicInternalFrameTitlePane.RestoreAction; who added this
 
 public class DatabaseHandler
@@ -83,38 +85,23 @@ public class DatabaseHandler
 		}
 	}
 
-	public synchronized String login(String username, String password) // return
-																		// statement
-																		// for
-																		// login
-																		// in/correct
-																		// needs
-																		// to be
-																		// applied
+	public synchronized boolean checkLoginInfo(String username, String password)
 	{
 		connection();
-		String login = "Username or Password is incorrect";
+		boolean isLoggedIn = false;
 		try
 		{
 			statement = con.prepareStatement("SELECT * FROM account WHERE naam = '" + username + "' AND wachtwoord = '"
 					+ password + "'");
-
 			result = statement.executeQuery();
-
-			
+	
 			if (result.next())
 			{
 				if(result.getString(1).equals(username) && result.getString(2).equals(password)){
-				login = "Username and Password are correct";
-				
+					isLoggedIn = true;
 				}
-				// System.out.println("username + password correct");
 				result.close();
 			}
-			// else
-			// {
-			// System.out.println("username or password incorrect");
-			// }
 			statement.close();
 		} catch (SQLException e)
 		{
@@ -124,21 +111,13 @@ public class DatabaseHandler
 		{
 			closeConnection();
 		}
-		return login;
+		return isLoggedIn;
 	}
 
-	public synchronized String register(String username, String password)// return
-																			// statement
-																			// for
-																			// register
-																			// in/correct
-																			// needs
-																			// to
-																			// be
-																			// applied
+	public synchronized String register(String username, String password)
 	{
 		connection();
-		String registered = "Can not register account";
+		String retValue = User.REGISTER_DEFAULT_ERROR;
 		try
 		{
 			statement = con.prepareStatement("SELECT * FROM account WHERE naam = '" + username + "'");
@@ -147,7 +126,7 @@ public class DatabaseHandler
 
 			if (!result.next())
 			{
-				registered = "username is available, account is registered";
+				retValue = User.REGISTER_SUCCESS;
 				result.close();
 				statement.close();
 
@@ -180,12 +159,12 @@ public class DatabaseHandler
 				} catch (SQLException e)
 				{
 					e.printStackTrace();
-					System.out.println("account register error");
+					System.err.println("query error!!!");
 				}
 			}
 			else
 			{
-				registered = "username is not available, cannot register your account";
+				retValue = User.REGISTER_FAIL_NAME_NOT_AVAILABLE;
 				statement.close();
 			}
 
@@ -197,7 +176,7 @@ public class DatabaseHandler
 		{
 			closeConnection();
 		}
-		return registered;
+		return retValue;
 	}
 
 	public synchronized void chatSend(String username, int gameID, String message)// it
@@ -1167,7 +1146,7 @@ public class DatabaseHandler
 		}
 	}
 	
-	public synchronized ArrayList<String> getRole(String username)
+	public synchronized ArrayList<String> getCurrentUserRole(String username)
 	{
 		connection();
 		ArrayList<String> userRoles = new ArrayList<String>();
@@ -1652,12 +1631,12 @@ public class DatabaseHandler
 			{
 				if (result.getString(3).equals(username))
 				{
-					pendingGames.add(result.getInt(1) + "," + result.getString(2) + " VS " + result.getString(3) + " from competition: "
+					pendingGames.add(result.getInt(1) + ",false," + result.getString(2) + " VS " + result.getString(3) + " from competition: "
 							+  result.getString(4) + " waiting for you to accept");
 				}
 				else
 				{
-					pendingGames.add(result.getInt(1) + "," + result.getString(3) + " VS " + result.getString(2) + " from competition: "
+					pendingGames.add(result.getInt(1) + ",true," + result.getString(3) + " VS " + result.getString(2) + " from competition: "
 							+  result.getString(4) + " waiting for his reaction");
 				}
 			}

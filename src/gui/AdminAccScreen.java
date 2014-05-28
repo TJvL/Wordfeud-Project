@@ -72,11 +72,12 @@ public class AdminAccScreen extends JPanel {
 
 		getDataButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				accdatawindow = new AccDataWindow(mainFrame);
 				accdatawindow.setValues(
 						playersList.getSelectedValue().toString(),
 						DatabaseHandler.getInstance().getPassword(
 								playersList.getSelectedValue().toString()));
-				accdatawindow.setRoles(DatabaseHandler.getInstance().getRole(
+				accdatawindow.setRoles(DatabaseHandler.getInstance().getCurrentUserRole(
 						playersList.getSelectedValue().toString()));
 				accdatawindow.showAdminAccData();
 			}

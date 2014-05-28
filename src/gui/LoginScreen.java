@@ -1,145 +1,127 @@
 package gui;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 @SuppressWarnings("serial")
-public class LoginScreen extends JPanel {
-	private JPanel buttons;
-	private JPanel dataField;
-	private MainFrame mainFrame;
-	private JTextField usernameField = new JTextField(20);
-	private JPasswordField passwordField = new JPasswordField(20);
-	private JLabel commentLabel = new JLabel();
+public class LoginScreen extends JPanel
+	{
+		private JPanel buttonPanel;
+		private JPanel inputPanel;
+		private MainFrame mainFrame;
+		private JTextField usernameField;
+		private JPasswordField passwordField;
 
-	public LoginScreen(MainFrame mainFrame) {
-		this.mainFrame = mainFrame;
+		public LoginScreen(MainFrame mainFrame)
+			{
+				this.mainFrame = mainFrame;
+				usernameField = new JTextField(20);
+				passwordField = new JPasswordField(20);
+				
+				this.setLayout(null);
 
-		this.setPreferredSize(getSize());
-		this.setLayout(new BorderLayout());
+				createButtonPanel();
+				createInputPanel();
+				
+				inputPanel.setBounds(400, 250, 400, 100);
+				buttonPanel.setBounds(400, 350, 400, 100);
 
-		createButtons();
-		createDataField();
-
-		this.add(dataField, BorderLayout.NORTH);
-		this.add(buttons);
-	}
-
-	private void createButtons() {
-		buttons = new JPanel();
-		JButton loginButton = new JButton("Login");
-		JButton spectateButton = new JButton("Spectate");
-		JButton registerButton = new JButton("Register");
-
-		registerButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				mainFrame.setRegScreen();
+				this.add(inputPanel);
+				this.add(buttonPanel);
 			}
-		});
 
-		spectateButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				mainFrame.setSpecScreen();
-				mainFrame.setSpecMenuBar();
+		private void createButtonPanel()
+			{
+				buttonPanel = new JPanel();
+				JButton loginButton = new JButton("Login");
+				JButton spectateButton = new JButton("Spectate");
+				JButton registerButton = new JButton("Register");
+
+				registerButton.addActionListener(new ActionListener()
+					{
+						public void actionPerformed(ActionEvent e)
+							{
+								mainFrame.setRegScreen();
+							}
+					});
+
+				spectateButton.addActionListener(new ActionListener()
+					{
+						public void actionPerformed(ActionEvent e)
+							{
+								mainFrame.setSpecScreen();
+								mainFrame.setSpecMenuBar();
+							}
+					});
+
+				loginButton.addActionListener(new ActionListener()
+					{
+						public void actionPerformed(ActionEvent e)
+							{
+								loginPressed();
+							}
+					});
+
+				buttonPanel.add(registerButton);
+				buttonPanel.add(spectateButton);
+				buttonPanel.add(loginButton);
 			}
-		});
 
-		loginButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if (login()) {
-					
-				}
+		private void createInputPanel()
+			{
+				inputPanel = new JPanel();
+				JPanel labels = new JPanel(new GridLayout(2, 2, 0, 20));
+				JPanel fields = new JPanel(new GridLayout(2, 1, 0, 20));
+
+				JLabel usernameLabel = new JLabel("Username: ");
+				JLabel passwordLabel = new JLabel("Password: ");
+
+				labels.add(usernameLabel);
+				labels.add(passwordLabel);
+
+				fields.add(usernameField);
+				fields.add(passwordField);
+
+				inputPanel.add(labels);
+				inputPanel.add(fields);
 			}
-		});
 
-		loginButton.setBackground(Color.CYAN);
-		registerButton.setBackground(Color.CYAN);
-		spectateButton.setBackground(Color.CYAN);
-		commentLabel.setForeground(Color.WHITE);
+		private void loginPressed()
+			{
+				String username = this.usernameField.getText();
+				char[] password = this.passwordField.getPassword();
 
-		buttons.setBackground(Color.DARK_GRAY);
+				if ((!username.equals("")) && (password.length > 0))
+					{
+						boolean succesfulLogin = mainFrame.callLoginAction(
+								username, password);
 
-		/**
-		JButton shortCut;
-		shortCut = new JButton("PRESS ME TO CHEAT");
-		shortCut.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				// These are inputs optionspanes to start the game
-				mainFrame.startGame(0, false);
+						if (succesfulLogin)
+							{
+								mainFrame.setCorrectRoleMainMenu();
+								mainFrame.setStandardMenuBar();
+								mainFrame.fillRoleWindow();
+								mainFrame.setAccDataValues();
+								clearInput();
+							} else
+							{
+								JOptionPane.showMessageDialog(this, "Username and/or password is incorrect!");
+								clearInput();
+							}
+					}
 			}
-		});
-		buttons.add(shortCut);
-		**/
-		
-		buttons.add(registerButton);
-		buttons.add(spectateButton);
-		buttons.add(loginButton);
-		buttons.add(commentLabel);
+
+		private void clearInput()
+			{
+				usernameField.setText(null);
+				passwordField.setText(null);
+			}
 	}
-
-	private void createDataField() {
-		dataField = new JPanel();
-		JPanel labels = new JPanel(new GridLayout(2, 2, 0, 20));
-		JPanel fields = new JPanel(new GridLayout(2, 1, 0, 20));
-
-		JLabel usernameLabel = new JLabel("Username: ");
-		JLabel passwordLabel = new JLabel("Password: ");
-
-		labels.add(usernameLabel);
-		labels.add(passwordLabel);
-
-		fields.add(usernameField);
-		fields.add(passwordField);
-
-		usernameLabel.setForeground(Color.WHITE);
-		passwordLabel.setForeground(Color.WHITE);
-
-		labels.setBackground(Color.DARK_GRAY);
-		fields.setBackground(Color.DARK_GRAY);
-		dataField.setBackground(Color.DARK_GRAY);
-
-		dataField.add(labels);
-		dataField.add(fields);
-	}
-
-	private boolean login() {
-		mainFrame.setLoadingScreen();
-		String ret;
-		boolean loginSucces = true;
-		String username = this.usernameField.getText();
-		char[] password = this.passwordField.getPassword();
-
-		ret = mainFrame.callLoginAction(username, password);
-
-		commentLabel.setText(ret);
-
-		if (ret.equals("Username and Password are correct")) {
-			mainFrame.setPlayerScreen();
-			mainFrame.setPlayerMenuBar();
-			clearInput();
-		} else {
-			loginSucces = false;
-		}
-		
-		
-		mainFrame.fillRoleWindow();
-		mainFrame.setAccDataValues();
-		
-		return loginSucces;
-	}
-
-	private void clearInput() {
-		usernameField.setText(null);
-		passwordField.setText(null);
-		commentLabel.setText(null);
-	}
-}
