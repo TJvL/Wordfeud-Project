@@ -131,6 +131,7 @@ public class MainFrame extends JFrame {
 	}
 
 	public void setAdminCompScreen() {
+		admincompscreen.populateScreen();
 		this.setContentPane(admincompscreen);
 		wf.stopThread();
 		revalidate();
@@ -301,6 +302,11 @@ public class MainFrame extends JFrame {
 
 	public  Set<Entry<String, Competition>> callGetAllCompetitionsAction() {
 		return wf.doGetAllCompetitionsAction();
+	}
+	
+	public Set<Entry<String, Competition>> adminCallActiveCompetitionAction()
+	{
+		return wf.doGetActiveCompetitionsAction();
 	}
 	
 	public Set<Entry<String, Competition>> callGetJoinedCompetitionsAction() {

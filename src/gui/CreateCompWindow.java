@@ -150,7 +150,7 @@ public class CreateCompWindow extends JDialog
 					// // FORMATTED
 
 //mainframe wordt hier aangeroepen omdat, als ik het in playerscreen doe je niet kan checken of confirmclicked al gedaan is 
-					playerScreen.callCreateComp(summary.getText(), finalReturnString, 1, Integer.parseInt(maxPlayers.getText()));
+					playerScreen.callCreateComp(summary.getText(), finalReturnString, 0, Integer.parseInt(maxPlayers.getText()));
 
 					buttonPanel.add(gameCreatedLabel);
 					JOptionPane.showMessageDialog(null, "Your competition has been made", "Confirm", JOptionPane.INFORMATION_MESSAGE);

@@ -186,7 +186,7 @@ public class DatabaseHandler
 		boolean canSend = false;
 		try
 		{
-			statement = con.prepareStatement("SELECT account_naam_uitdager, account_naam_tegenstander FROM spel WHERE spel_id = '" + gameID + "'");
+			statement = con.prepareStatement("SELECT account_naam_uitdager, account_naam_tegenstander FROM spel WHERE id = '" + gameID + "'");
 			
 			result = statement.executeQuery();
 			
@@ -1458,7 +1458,7 @@ public class DatabaseHandler
 
 		try
 		{
-			statement = con.prepareStatement("SELECT s.account_naam, rb.this_num_games, s.totaalscore, (s.totaalscore / rb.this_num_games), rw.wins, (rb.this_num_games - rw.wins), r.bayesian_rating FROM rank_bayesian AS rb LEFT JOIN rank_winnerscore AS rws ON rb.competitie_id = rws.competitie_id LEFT JOIN score AS s ON rws.spel_id = s.spel_id AND rb.account_naam = s.account_naam LEFT JOIN rank_winner AS rw ON rb.competitie_id = rw.competitie_id AND rws.competitie_id = rw.competitie_id AND rb.account_naam = rw.account_naam AND s.account_naam = rw.account_naam LEFT JOIN ranking AS r ON rb.competitie_id = r.competitie_id AND rw.competitie_id = r. competitie_id AND rws.competitie_id AND rb.account_naam = r.account_naam AND rw.account_naam = r.account_naam AND s.account_naam = r.account_naam WHERE rb.competitie_id = '" + compID + "'");
+			statement = con.prepareStatement("SELECT d.account_naam, rb.this_num_games, s.totaalscore, (s.totaalscore / rb.this_num_games), rw.wins, (rb.this_num_games - rw.wins) , r.bayesian_rating FROM rank_bayesian AS rb LEFT JOIN rank_winnerscore AS rws ON rb.competitie_id = rws.competitie_id LEFT JOIN score AS s ON rws.spel_id = s.spel_id AND rb.account_naam = s.account_naam LEFT JOIN rank_winner AS rw ON rb.competitie_id = rw.competitie_id AND rws.competitie_id = rw.competitie_id AND rb.account_naam = rw.account_naam AND s.account_naam = rw.account_naam LEFT JOIN ranking AS r ON rb.competitie_id = r.competitie_id AND rw.competitie_id = r. competitie_id AND rws.competitie_id AND rb.account_naam = r.account_naam AND rw.account_naam = r.account_naam AND s.account_naam = r.account_naam RIGHT JOIN deelnemer AS d ON d.competitie_id = rw.competitie_id AND d.competitie_id = rw.competitie_id AND d.competitie_id = rws.competitie_id  AND d.competitie_id = r.competitie_id AND d.account_naam = rb.account_naam AND d.account_naam = rw.account_naam AND d.account_naam = r.account_naam AND d.account_naam = s.account_naam WHERE d.competitie_id = '" + compID + "'");
 		
 			result = statement.executeQuery();
 			
@@ -1863,10 +1863,10 @@ public class DatabaseHandler
 		return password;
 	}
 	
-	public synchronized HashMap<Integer,String> activeCompetitions()
+	public synchronized ArrayList<String> activeCompetitions()
 	{
 		connection();
-		HashMap<Integer,String> activeComps = new HashMap<Integer,String>();
+		ArrayList<String> activeComps = new ArrayList<String>();
 		
 		try
 		{
@@ -1876,8 +1876,8 @@ public class DatabaseHandler
 			
 			while(result.next())
 			{
-//				activeComps.add(result.getInt(1) + "---" + result.getString(2) + "---" + result.getTimestamp(3) + "---" + result.getTimestamp(4) + "---" + result.getString(5) + "---" + result.getInt(6) + "---" + result.getString(7));
-				activeComps.put(result.getInt(1), result.getString(2) + "---" + result.getTimestamp(3) + "---" + result.getTimestamp(4) + "---" + result.getString(5) + "---" + result.getInt(6) + "---" + result.getString(7));
+				activeComps.add(result.getInt(1) + "---" + result.getString(2) + "---" + result.getTimestamp(3).toString() + "---" + result.getTimestamp(4).toString() + "---" + result.getString(5) + "---" + result.getInt(6) + "---" + result.getString(7));
+//				activeComps.put(result.getInt(1), result.getString(2) + "---" + result.getTimestamp(3) + "---" + result.getTimestamp(4) + "---" + result.getString(5) + "---" + result.getInt(6) + "---" + result.getString(7));
 			}
 			result.close();
 			statement.close();
