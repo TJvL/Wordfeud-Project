@@ -98,7 +98,7 @@ public class WordFeud {
 		return currentUser.getCurrentRole();
 	}
 
-	public ArrayList<String> getCurrentUserPossibleRoles() {
+	public ArrayList<String> getCurrentUserRoles() {
 		return currentUser.getRoles();
 	}
 

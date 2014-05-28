@@ -178,7 +178,7 @@ public class MainFrame extends JFrame {
 	}
 
 	public void fillRoleWindow() {
-		standardMenuBar.fillRoleWindow(wf.getCurrentUserPossibleRoles());
+		standardMenuBar.fillRoleWindow(wf.getCurrentUserRoles());
 	}
 
 	public void setAccDataValues() {
@@ -264,13 +264,13 @@ public class MainFrame extends JFrame {
 	public void setCorrectRoleMainMenu() {
 		String currentRole = wf.getCurrentUserRole();
 
-		if (currentRole.equals("Administrator")) {
+		if (currentRole.equals(User.ROLE_ADMINISTRATOR)) {
 			this.setAdminCompScreen();
-		} else if (currentRole.equals("Moderator")) {
+		} else if (currentRole.equals(User.ROLE_MODERATOR)) {
 			this.setModScreen();
-		} else if (currentRole.equals("Player")) {
+		} else if (currentRole.equals(User.ROLE_PLAYER)) {
 			this.setPlayerScreen();
-		} else if (currentRole.equals("Spectator")) {
+		} else if (currentRole.equals(User.ROLE_SPECTATOR)) {
 			this.setSpecScreen();
 		}
 	}

@@ -17,18 +17,16 @@ public class User {
 	public static final String REGISTER_FAIL_NO_MATCHING_PASS = "Passwords do not match.";
 	public static final String REGISTER_SUCCESS = "Succesfully registered account.";
 	public static final String REGISTER_DEFAULT_ERROR = "Registration error!";
-	
+
 	private final String defaultUsername = "Spectator";
 	private final String defaultRole = ROLE_SPECTATOR;
-	
+
 	private Player player;
 	private Administrator admin;
 	private Spectator spec;
 	private Moderator mod;
-
 	private String username;
 	private boolean isLoggedIn;
-
 	private String currentRole;
 
 	public User() {
@@ -109,18 +107,6 @@ public class User {
 			this.username = username;
 			this.setLoggedIn(true);
 			this.checkRoles();
-			if(player.HasPermissions()){
-				this.changeRole(User.ROLE_PLAYER);
-			}
-			else if(admin.HasPermissions()){
-				this.changeRole(User.ROLE_ADMINISTRATOR);
-			}
-			else if(mod.HasPermissions()){
-				this.changeRole(User.ROLE_MODERATOR);
-			}
-			else if(spec.HasPermissions()){
-				this.changeRole(User.ROLE_SPECTATOR);
-			}
 		}
 		return succesfulLogin;
 	}
@@ -128,7 +114,7 @@ public class User {
 	public String register(String username, char[] passInputArray,
 			char[] passConfirmArray) {
 		String retValue;
-		
+
 		String passInput = "";
 		for (char c : passInputArray) {
 			passInput = passInput + c;
@@ -137,17 +123,17 @@ public class User {
 		for (char c : passConfirmArray) {
 			passConfirm = passConfirm + c;
 		}
-		
+
 		// controleer of de gebruikersnaam tussen de 3 en 15 tekens is
 		if (username.length() < 3 || username.length() > 15) {
 			retValue = User.REGISTER_FAIL_NAME_LENGTH;
 		}
-		
+
 		// Controleer of wachtwoord minimaal 6 tekens bevat
 		else if (passInput.length() < 6) {
 			retValue = User.REGISTER_FAIL_PASS_LENGTH;
 		}
-		
+
 		// Controleer of de opgegeven wachtwoorden overeen komen
 		else if (!passInput.equals(passConfirm)) {
 			retValue = User.REGISTER_FAIL_NO_MATCHING_PASS;
@@ -163,28 +149,32 @@ public class User {
 		return retValue;
 	}
 
-	public boolean checkRoles() {
-		boolean actionSuccesful = false;
+	public void checkRoles() {
 		if (isLoggedIn) {
-			ArrayList<String> roles = DatabaseHandler.getInstance().getCurrentUserRole(
-					username);
+			ArrayList<String> roles = DatabaseHandler.getInstance()
+					.getCurrentUserRole(username);
 
 			if (!roles.isEmpty()) {
 				for (String role : roles) {
 					if (role.equals(User.ROLE_ADMINISTRATOR)) {
 						admin.setHasPermissions(true);
-						actionSuccesful = true;
 					} else if (role.equals(User.ROLE_MODERATOR)) {
 						mod.setHasPermissions(true);
-						actionSuccesful = true;
 					} else if (role.equals(User.ROLE_PLAYER)) {
 						player.setHasPermissions(true);
-						actionSuccesful = true;
 					}
 				}
 			}
 		}
-		return actionSuccesful;
+		if (player.HasPermissions()) {
+			this.changeRole(User.ROLE_PLAYER);
+		} else if (admin.HasPermissions()) {
+			this.changeRole(User.ROLE_ADMINISTRATOR);
+		} else if (mod.HasPermissions()) {
+			this.changeRole(User.ROLE_MODERATOR);
+		} else if (spec.HasPermissions()) {
+			this.changeRole(User.ROLE_SPECTATOR);
+		}
 	}
 
 	public boolean changeRole(String role) {
@@ -211,19 +201,24 @@ public class User {
 					actionSuccesful = true;
 				}
 			}
-		} else {
-			System.err
-					.println("ERROR: invalid value received or value was null");
-			System.out.println("No role change has occured.");
 		}
 		return actionSuccesful;
 	}
 
 	public ArrayList<String> getRoles() {
-		ArrayList<String> roles = DatabaseHandler.getInstance().getCurrentUserRole(
-				username);
-		roles.add("Spectator");
-
+		ArrayList<String> roles = new ArrayList<String>();
+		if (spec.HasPermissions()) {
+			roles.add(User.ROLE_SPECTATOR);
+		}
+		if (player.HasPermissions()) {
+			roles.add(User.ROLE_PLAYER);
+		}
+		if (admin.HasPermissions()) {
+			roles.add(User.ROLE_ADMINISTRATOR);
+		}
+		if (mod.HasPermissions()) {
+			roles.add(User.ROLE_MODERATOR);
+		}
 		return roles;
 	}
 
