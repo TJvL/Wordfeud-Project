@@ -59,6 +59,6 @@ public class SpecScorePanel extends JPanel{
 		g.setFont(font);
 		g.drawString(name, 10, 30);
 		g.drawString("Total score: " + maxScore, 10, 80);
-		g.drawString("Score this turn: " + turnScore, 10, 130);
+		g.drawString("Score last turn: " + turnScore, 10, 130);
 	}
 }

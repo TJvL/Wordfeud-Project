@@ -207,7 +207,7 @@ public class DatabaseHandler
 		boolean canSend = false;
 		try
 		{
-			statement = con.prepareStatement("SELECT account_naam_uitdager, account_naam_tegenstander FROM spel");
+			statement = con.prepareStatement("SELECT account_naam_uitdager, account_naam_tegenstander FROM spel WHERE spel_id = '" + gameID + "'");
 			
 			result = statement.executeQuery();
 			
@@ -1474,97 +1474,30 @@ public class DatabaseHandler
 	
 	public synchronized ArrayList<String> fetchCompetitionParticipants(int compID)
 	{
-		ArrayList<String> playerNames = peopleInCompetition(compID);
 		connection();
-		ArrayList<String> playerScore = new ArrayList<String>();	
-		ArrayList<Integer> storeGames = new ArrayList<Integer>();
-		ArrayList<String> storeScore = new ArrayList<String>();
-		int totalGamesPlayed = 0;
-		int totalGamesWon = 0;
-		int totalScoreAccumulated = 0;
-		
-		
+		ArrayList<String> compStatistics = new ArrayList<String>();
+
 		try
 		{
-			for (String name: playerNames){
-				int totalWins = 0;
-				int totalGames = 0;
-				int totalScore = 0;
-				storeGames.clear();
-				
-				statement = con
-						.prepareStatement("SELECT id FROM spel WHERE competitie_id = '"
-								+ compID + "' AND (account_naam_uitdager = '" + name + "' OR account_naam_tegenstander = '" + name + "')");
-
-				result = statement.executeQuery();
-
-				while (result.next())
-				{
-					totalGames++;
-					storeGames.add(result.getInt(1));
-				}
+			statement = con.prepareStatement("SELECT s.account_naam, rb.this_num_games, s.totaalscore, (s.totaalscore / rb.this_num_games), rw.wins, (rb.this_num_games - rw.wins), r.bayesian_rating FROM rank_bayesian AS rb LEFT JOIN rank_winnerscore AS rws ON rb.competitie_id = rws.competitie_id LEFT JOIN score AS s ON rws.spel_id = s.spel_id AND rb.account_naam = s.account_naam LEFT JOIN rank_winner AS rw ON rb.competitie_id = rw.competitie_id AND rws.competitie_id = rw.competitie_id AND rb.account_naam = rw.account_naam AND s.account_naam = rw.account_naam LEFT JOIN ranking AS r ON rb.competitie_id = r.competitie_id AND rw.competitie_id = r. competitie_id AND rws.competitie_id AND rb.account_naam = r.account_naam AND rw.account_naam = r.account_naam AND s.account_naam = r.account_naam WHERE rb.competitie_id = '" + compID + "'");
+		
+			result = statement.executeQuery();
 			
-				result.close();
-				statement.close();
-		
-				for (Integer game: storeGames){
-					int opponentScore = 0;
-					int ownScore = 0;
-					totalGamesPlayed++;
-					statement = con
-							.prepareStatement("SELECT account_naam, score FROM beurt WHERE spel_id = '"	+ game + "'");
-
-					result = statement.executeQuery();
-					while (result.next()){
-						if (result.getString(1).equals(name)){
-							ownScore += result.getInt(2);
-						} else {
-							opponentScore += result.getInt(2);
-						}
-					}
-					if (ownScore > opponentScore){
-						totalWins++;
-						totalGamesWon++;
-					}
-					totalScore += ownScore;
-					totalScoreAccumulated += totalScore;
-					result.close();
-					statement.close();
-				}
-				if (totalGames == 0){
-					storeScore.add(name + "---" + 0 + "---" + 0 + "---" + (0) + "---" + 0 + "---" + (0));		
-				} else {
-					storeScore.add(name + "---" + totalGames + "---" + totalScore + "---" + (totalScore/totalGames) + "---" + totalWins + "---" + (totalGames-totalWins));
-				}
-				}
-			
-			for (String match: storeScore){
-				// Here need to be added a bunch of checks to make sure a var is not ZERO
-				String[] split = match.split("---");
-				int totalGames = Integer.parseInt(split[1]);
-				int avgScore = Integer.parseInt(split[3]);
-				int totalWins = Integer.parseInt(split[4]);
-		
-				int bayesainRaiting = 0;
-				int bayesainWinRaiting = 0;
-		
-				if (totalGames != 0 && totalGamesPlayed != 0){				
-				// Realisticly totalGamesPlayed is two times the games that happened
-				// There is no way for a draw yet - not accounted for
-				bayesainRaiting = (((totalGamesPlayed/playerNames.size()) * (totalScoreAccumulated/totalGamesPlayed)) + (totalGames * avgScore)) / ((totalGamesPlayed/playerNames.size()) + (totalGames));
-				// Bayesain Raiting for win
-				bayesainWinRaiting = (((totalGamesPlayed/playerNames.size()) * (totalGamesWon/totalGamesPlayed)) + (totalWins)) / ((totalGamesPlayed/playerNames.size()) + (totalGames));
-				} 	
-				playerScore.add(match +"---" + bayesainRaiting);
+			while(result.next())
+			{
+				compStatistics.add(result.getString(1) + "---" + result.getInt(2) + "---" + result.getInt(3) + "---" + result.getInt(4) + "---" +  result.getInt(5) + "---" + result.getInt(6) + "---" + result.getDouble(7));
 			}
-			} 
-			catch (SQLException e)
+			result.close();
+			statement.close();
+		
+		} 
+		catch (SQLException e)
 		{
 			e.printStackTrace();
 		} 
 		
 		finally{closeConnection();}
-		return playerScore;			
+		return compStatistics;			
 	}
 
 	public synchronized boolean triplePass(int gameID, String username)
@@ -1719,12 +1652,12 @@ public class DatabaseHandler
 			{
 				if (result.getString(3).equals(username))
 				{
-					pendingGames.add(result.getInt(1) + "," + result.getString(2) + " VS " + result.getString(3) + " from competition: "
+					pendingGames.add(result.getInt(1) + ",false," + result.getString(2) + " VS " + result.getString(3) + " from competition: "
 							+  result.getString(4) + " waiting for you to accept");
 				}
 				else
 				{
-					pendingGames.add(result.getInt(1) + "," + result.getString(3) + " VS " + result.getString(2) + " from competition: "
+					pendingGames.add(result.getInt(1) + ",true," + result.getString(3) + " VS " + result.getString(2) + " from competition: "
 							+  result.getString(4) + " waiting for his reaction");
 				}
 			}

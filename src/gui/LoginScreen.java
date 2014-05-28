@@ -55,9 +55,7 @@ public class LoginScreen extends JPanel {
 
 		loginButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (login()) {
-					
-				}
+				login();
 			}
 		});
 
@@ -112,7 +110,7 @@ public class LoginScreen extends JPanel {
 	}
 
 	private boolean login() {
-		mainFrame.setLoadingScreen();
+	//	mainFrame.setLoadingScreen();
 		String ret;
 		boolean loginSucces = true;
 		String username = this.usernameField.getText();

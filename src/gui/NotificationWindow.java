@@ -34,7 +34,7 @@ public class NotificationWindow extends JDialog {
 
 		this.setModal(true);
 		// notificationList.setModel(listModel);
-		this.setPreferredSize(new Dimension(500,500));
+		this.setPreferredSize(new Dimension(500, 500));
 		fillNotificationList();
 		this.setLayout(new BorderLayout());
 
@@ -83,15 +83,20 @@ public class NotificationWindow extends JDialog {
 				// TODO Auto-generated method stub
 				PendingMatch input = notificationList.getSelectedValue();
 				if (input != null) {
-					int reply = JOptionPane.showConfirmDialog(null,
-							"Want to accept this game?", "Game accept",
-							JOptionPane.YES_NO_OPTION);
-					if (reply == JOptionPane.YES_OPTION) {
-						mainFrame.acceptRejectGame("Accepted", 2,
-								input.getGameID());
-					} else if (reply == JOptionPane.NO_OPTION){
-						mainFrame.acceptRejectGame("Rejected", 2,
-								input.getGameID());
+					if (input.getOwnGame()) {
+						JOptionPane.showMessageDialog(null, "Cant accept you own game!",
+								"Can't accept", JOptionPane.INFORMATION_MESSAGE);
+					} else {
+						int reply = JOptionPane.showConfirmDialog(null,
+								"Want to accept this game?", "Game accept",
+								JOptionPane.YES_NO_OPTION);
+						if (reply == JOptionPane.YES_OPTION) {
+							mainFrame.acceptRejectGame("Accepted", 2,
+									input.getGameID());
+						} else if (reply == JOptionPane.NO_OPTION) {
+							mainFrame.acceptRejectGame("Rejected", 2,
+									input.getGameID());
+						}
 					}
 				}
 			}
