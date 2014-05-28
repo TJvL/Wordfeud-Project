@@ -45,14 +45,14 @@ public class WordFeud {
 			char[] passConfirm) {
 		return currentUser.register(username, passInput, passConfirm);
 	}
+	
+	public boolean doLoginAction(String username, char[] password) {
 
-	public String doLoginAction(String username, char[] password) {
-
-		String result = currentUser.login(username, password);
-		if (result.equals("Username and Password are correct")) {
+		Boolean succesfulLogin = currentUser.login(username, password);
+		if (succesfulLogin) {
 			compMan.loadJoinedCompetitions(currentUser.getUsername());
 		}
-		return result;
+		return succesfulLogin;
 	}
 
 	public void doLogoutAction() {

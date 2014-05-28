@@ -4,7 +4,6 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -110,7 +109,7 @@ public class AccDataWindow extends JDialog {
 			public void actionPerformed(ActionEvent e) {
 				setRoles(mainFrame.getAdmin().changeRoles(
 						userNameValue.getText(),
-						DatabaseHandler.getInstance().getRole(
+						DatabaseHandler.getInstance().getCurrentUserRole(
 								userNameValue.getText())));
 			}
 		});
