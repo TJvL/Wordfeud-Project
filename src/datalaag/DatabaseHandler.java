@@ -1479,13 +1479,13 @@ public class DatabaseHandler
 
 		try
 		{
-			statement = con.prepareStatement("SELECT s.account_naam, rb.this_num_games, s.totaalscore, (s.totaalscore / rb.this_num_games), rw.wins, r.bayesian_rating FROM rank_bayesian AS rb LEFT JOIN rank_winnerscore AS rws ON rb.competitie_id = rws.competitie_id LEFT JOIN score AS s ON rws.spel_id = s.spel_id AND rb.account_naam = s.account_naam LEFT JOIN rank_winner AS rw ON rb.competitie_id = rw.competitie_id AND rws.competitie_id = rw.competitie_id AND rb.account_naam = rw.account_naam AND s.account_naam = rw.account_naam LEFT JOIN ranking AS r ON rb.competitie_id = r.competitie_id AND rw.competitie_id = r. competitie_id AND rws.competitie_id AND rb.account_naam = r.account_naam AND rw.account_naam = r.account_naam AND s.account_naam = r.account_naam WHERE rb.competitie_id = '" + compID + "'");
+			statement = con.prepareStatement("SELECT s.account_naam, rb.this_num_games, s.totaalscore, (s.totaalscore / rb.this_num_games), rw.wins, (rb.this_num_games - rw.wins), r.bayesian_rating FROM rank_bayesian AS rb LEFT JOIN rank_winnerscore AS rws ON rb.competitie_id = rws.competitie_id LEFT JOIN score AS s ON rws.spel_id = s.spel_id AND rb.account_naam = s.account_naam LEFT JOIN rank_winner AS rw ON rb.competitie_id = rw.competitie_id AND rws.competitie_id = rw.competitie_id AND rb.account_naam = rw.account_naam AND s.account_naam = rw.account_naam LEFT JOIN ranking AS r ON rb.competitie_id = r.competitie_id AND rw.competitie_id = r. competitie_id AND rws.competitie_id AND rb.account_naam = r.account_naam AND rw.account_naam = r.account_naam AND s.account_naam = r.account_naam WHERE rb.competitie_id = '" + compID + "'");
 		
 			result = statement.executeQuery();
 			
 			while(result.next())
 			{
-				compStatistics.add(result.getString(1) + "---" + result.getInt(2) + "---" + result.getInt(3) + "---" + result.getDouble(4) + "---" +  result.getInt(5) + "---" + result.getDouble(6));
+				compStatistics.add(result.getString(1) + "---" + result.getInt(2) + "---" + result.getInt(3) + "---" + result.getInt(4) + "---" +  result.getInt(5) + "---" + result.getInt(6) + "---" + result.getDouble(7));
 			}
 			result.close();
 			statement.close();
