@@ -7,9 +7,11 @@ import java.util.ArrayList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 
 @SuppressWarnings("serial")
 public class StandardMenuBar extends JMenuBar {
+	private MainFrame mainFrame;
 	protected JMenu optionsMenu;
 	protected JMenu playerdataMenu;
 	protected JMenu notificationsMenu;
@@ -19,7 +21,8 @@ public class StandardMenuBar extends JMenuBar {
 	private AccDataWindow accdatawindow;
 	private String notificationWindowName;
 
-	public StandardMenuBar(final MainFrame mainFrame) {
+	public StandardMenuBar(MainFrame mainFrame) {
+		this.mainFrame = mainFrame;
 		rolewindow = new RoleWindow();
 		notificationWindowName = "Notifications (0)";
 		rolewindow = new RoleWindow();
@@ -30,7 +33,7 @@ public class StandardMenuBar extends JMenuBar {
 		playerdataMenu = new JMenu("Playerdata");
 		notificationsMenu = new JMenu(notificationWindowName);
 		JMenuItem exitMenuItem = new JMenuItem("Exit");
-		JMenuItem logoffMenuItem = new JMenuItem("Log off");
+		JMenuItem logoutMenuItem = new JMenuItem("Logout");
 		JMenuItem changeroleMenuItem = new JMenuItem("Change role");
 		JMenuItem statisticsMenuItem = new JMenuItem("Statistics");
 		JMenuItem accountdataMenuItem = new JMenuItem("Account data");
@@ -38,7 +41,7 @@ public class StandardMenuBar extends JMenuBar {
 				"Open notifications");
 
 		optionsMenu.add(exitMenuItem);
-		optionsMenu.add(logoffMenuItem);
+		optionsMenu.add(logoutMenuItem);
 		optionsMenu.add(changeroleMenuItem);
 
 		playerdataMenu.add(statisticsMenuItem);
@@ -46,29 +49,19 @@ public class StandardMenuBar extends JMenuBar {
 
 		notificationsMenu.add(opennotificationsMenuItem);
 
-		logoffMenuItem.addActionListener(new ActionListener() {
+		logoutMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				mainFrame.setLoginScreen();
-				mainFrame.setStartMenuBar();
-				mainFrame.callLogoutAction();
+				logoutItemChosen();
 			}
 		});
 		exitMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.exit(0);
+				exitItemChosen();
 			}
 		});
 		changeroleMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				mainFrame.fillRoleWindow();
-				String result = rolewindow.showChangeRole();
-				boolean isSuccesful = mainFrame.callChangeRoleAction(result);
-				if (isSuccesful) {
-					System.out.println("Role changed succesfully.");
-					mainFrame.setCorrectRoleMainMenu();
-				} else {
-					System.err.println("ERROR: Role not changed!");
-				}
+				changeRoleItemChosen();
 			}
 		});
 
@@ -110,5 +103,29 @@ public class StandardMenuBar extends JMenuBar {
 		notificationsMenu.setText(notificationWindowName);
 		this.repaint();
 		this.revalidate();
+	}
+	
+	private void changeRoleItemChosen(){
+		String result = rolewindow.showChangeRole();
+		boolean isSuccesful = mainFrame.callChangeRoleAction(result);
+		if (isSuccesful) {
+			JOptionPane.showMessageDialog(mainFrame, "Role changed succesfully.");
+			mainFrame.setCorrectRoleMainMenu();
+		} else {
+			JOptionPane.showMessageDialog(mainFrame, "Something happened, no role change occured.");
+		}
+	}
+	
+	private void logoutItemChosen(){
+		mainFrame.setLoginScreen();
+		mainFrame.setStartMenuBar();
+		mainFrame.callLogoutAction();
+	}
+	
+	private void exitItemChosen(){
+		int retValue = JOptionPane.showConfirmDialog(mainFrame, "Are you sure you want to exit?", "Exit dialog", JOptionPane.YES_NO_OPTION);
+		if (retValue == JOptionPane.YES_OPTION){
+			System.exit(0);
+		}
 	}
 }

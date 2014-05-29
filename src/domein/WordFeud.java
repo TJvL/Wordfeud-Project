@@ -17,7 +17,7 @@ public class WordFeud {
 		currentUser = new User();
 		compMan = new CompetitionManager();
 	}
-	
+
 	public void init() {
 		framePanel = new MainFrame(this);
 		framePanel.init();
@@ -46,13 +46,13 @@ public class WordFeud {
 		return currentUser.register(username, passInput, passConfirm);
 	}
 
-	public String doLoginAction(String username, char[] password) {
+	public boolean doLoginAction(String username, char[] password) {
 
-		String result = currentUser.login(username, password);
-		if (result.equals("Username and Password are correct")) {
+		Boolean succesfulLogin = currentUser.login(username, password);
+		if (succesfulLogin) {
 			compMan.loadJoinedCompetitions(currentUser.getUsername());
 		}
-		return result;
+		return succesfulLogin;
 	}
 
 	public void doLogoutAction() {
@@ -71,11 +71,10 @@ public class WordFeud {
 	 * te starten !!MOET >2 zijn!! maxParticipants = maximaal aantal deelnemers
 	 * dat in de compo mag zitten. - Thomas
 	 */
-	public void doCreateCompAction(String summary, String endDate,
-			int minParticipants, int maxParticipants) {
-		compMan.createCompetition(currentUser.getUsername(), summary, endDate,
-				minParticipants, maxParticipants);
-
+	public String doCreateCompAction(String summary, String endDate,
+			String minParticipants, String maxParticipants) {
+		return compMan.createCompetition(currentUser.getUsername(), summary,
+				endDate, minParticipants, maxParticipants);
 	}
 
 	public boolean doJoinCompAction(String compID) {
@@ -85,12 +84,12 @@ public class WordFeud {
 	public void doLoadAllCompetitionsAction() {
 		compMan.loadAllCompetitions(currentUser.getUsername());
 	}
-	
+
 	public void doLoadJoinedCompetitionsAction() {
 		compMan.loadJoinedCompetitions(currentUser.getUsername());
 	}
-	
-	public ArrayList<Competition> getJoinedCompetitions(){
+
+	public ArrayList<Competition> getJoinedCompetitions() {
 		return compMan.getJoinedCompetitions();
 	}
 
@@ -98,7 +97,7 @@ public class WordFeud {
 		return currentUser.getCurrentRole();
 	}
 
-	public ArrayList<String> getCurrentUserPossibleRoles() {
+	public ArrayList<String> getCurrentUserRoles() {
 		return currentUser.getRoles();
 	}
 
@@ -143,20 +142,24 @@ public class WordFeud {
 	}
 
 	// Method to start a game
-	public void doChallengePlayerAction(String competitionID, String opponent) {
-		matchManager.challengePlayer(Integer.parseInt(competitionID), currentUser.getUsername(), opponent,
-				"EN");
+	public String doChallengePlayerAction(String competitionID,
+			String opponent, int privacy) {
+		return matchManager.challengePlayer(competitionID,
+				currentUser.getUsername(), opponent, "EN", privacy);
 	}
-	
-	public CompetitionManager getCompMan()
-	{
+
+	public CompetitionManager getCompMan() {
 		return compMan;
 	}
 
 	public Set<Entry<String, Competition>> doGetAllCompetitionsAction() {
 		return compMan.getAllCompEntries();
 	}
-	
+
+	public Set<Entry<String, Competition>> doGetActiveCompetitionsAction() {
+		return currentUser.getAdmin().getAllActiveCompEntries();
+	}
+
 	public Set<Entry<String, Competition>> doGetJoinedCompetitionsAction() {
 		return compMan.getJoinedCompEntries();
 	}

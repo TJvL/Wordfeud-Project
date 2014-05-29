@@ -4,7 +4,6 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -19,11 +18,7 @@ public class AccDataWindow extends JDialog {
 	private MainFrame mainFrame;
 
 	private ArrayList<String> currentRoles = new ArrayList<String>();
-	private JPanel buttonPanel = new JPanel();
 	private JPanel labelPanel = new JPanel();
-	private JButton changeName = new JButton();
-	private JButton changePassword = new JButton();
-	private JButton changeRoles = new JButton();
 
 	private JLabel userName = new JLabel();
 	private JLabel userNameValue = new JLabel();
@@ -36,15 +31,24 @@ public class AccDataWindow extends JDialog {
 		this.mainFrame = mainFrame;
 		this.setModal(true);
 		this.setResizable(false);
-		this.setLocationRelativeTo(null);
 
 		rolesValue.setBackground(null);
-
-		createButtonPanel();
+		
 		createLabelPanel();
 	}
-	
+
 	public void showAccData() {
+		JPanel buttonPanel = new JPanel();
+		JButton changeName = new JButton();
+		JButton changePassword = new JButton();
+
+		changeName.setText("Change name");
+		changePassword.setText("Change password");
+
+		buttonPanel.removeAll();
+		buttonPanel.add(changeName);
+		buttonPanel.add(changePassword);
+
 		this.setTitle(userNameValue.getText() + "'s data");
 
 		changeName.addActionListener(new ActionListener() {
@@ -67,6 +71,18 @@ public class AccDataWindow extends JDialog {
 	}
 
 	public void showAdminAccData() {
+		JPanel buttonPanel = new JPanel();
+		JButton changeName = new JButton();
+		JButton changePassword = new JButton();
+		JButton changeRoles = new JButton();
+
+		changeName.setText("Change name");
+		changePassword.setText("Change password");
+		
+		buttonPanel.removeAll();
+		buttonPanel.add(changeName);
+		buttonPanel.add(changePassword);
+
 		this.setTitle(userNameValue.getText() + "'s data");
 
 		roles.setText("Current roles");
@@ -90,8 +106,9 @@ public class AccDataWindow extends JDialog {
 		});
 		changeRoles.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				setRoles(mainFrame.getAdmin().changeRoles(userNameValue.getText(), 
-						DatabaseHandler.getInstance().getRole(
+				setRoles(mainFrame.getAdmin().changeRoles(
+						userNameValue.getText(),
+						DatabaseHandler.getInstance().getCurrentUserRole(
 								userNameValue.getText())));
 			}
 		});
@@ -102,14 +119,6 @@ public class AccDataWindow extends JDialog {
 		this.pack();
 		this.setLocationRelativeTo(null);
 		this.setVisible(true);
-	}
-
-	public void createButtonPanel() {
-		changeName.setText("Change name");
-		changePassword.setText("Change password");
-
-		buttonPanel.add(changeName);
-		buttonPanel.add(changePassword);
 	}
 
 	public void createLabelPanel() {

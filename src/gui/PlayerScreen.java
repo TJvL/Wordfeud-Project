@@ -9,6 +9,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -104,7 +105,8 @@ public class PlayerScreen extends JPanel {
 		JButton joinCompButton = new JButton("Join Competition");
 		JButton joinedCompButton = new JButton("Joined competitions");
 
-		composedButtons.setLayout(new GridLayout(4, 1, 0, 50));
+		composedButtons.setLayout(new GridLayout(8, 1, 0, 15));
+		composedButtons.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0));
 
 		buttonsPanel.setLayout(new BorderLayout());
 		buttonsPanel.setPreferredSize(new Dimension(300, 300));
@@ -139,10 +141,6 @@ public class PlayerScreen extends JPanel {
 	}
 	
 	public void showCreateCompWindow(){
-		new CreateCompWindow(this);
-	}
-	
-	public void callCreateComp(String summary, String compEnd, int i, int maxPlayersInt){
-		mainFrame.callCreateCompAction(summary, compEnd, i, maxPlayersInt);
+		new CreateCompWindow(mainFrame);
 	}
 }

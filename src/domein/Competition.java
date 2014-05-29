@@ -15,6 +15,7 @@ public class Competition {
 	private int maxParticipants;
 	private int amountParticipants;
 	private ArrayList<CompetitionPlayer> participants;
+	private boolean canStartChallenging;
 
 	public Competition(int databaseID, String compOwner, String startDate,
 			String endDate, String summary, int minParticipants,
@@ -65,6 +66,11 @@ public class Competition {
 	public ArrayList<CompetitionPlayer> getParticipants() {
 		return participants;
 	}
+	
+	public boolean canStartChallenging(){
+		updateParticipants();
+		return canStartChallenging;
+	}
 
 	public void updateParticipants() {
 		participants.clear();
@@ -80,17 +86,20 @@ public class Competition {
 					.parseDouble(data[6])));
 		}
 		amountParticipants = participants.size();
+		if(amountParticipants >= minParticipants){
+			canStartChallenging = true;
+		}
+		else{
+			canStartChallenging = false;
+		}
 	}
 
 	public boolean isRoomForMore() {
 		boolean roomForMore = false;
-
 		this.updateParticipants();
-
 		if (amountParticipants < maxParticipants) {
 			roomForMore = true;
 		}
-
 		return roomForMore;
 	}
 

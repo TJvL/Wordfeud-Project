@@ -27,10 +27,11 @@ public class GameSpecScreen extends JPanel {
 	private TilePanel tilePanel;
 	private JButton forward;
 	private JButton backward;
+	private JButton back;
 	private ObserverButtons observerButtons;
 
 	// The constructor sets all the panels
-	public GameSpecScreen() {
+	public GameSpecScreen(final MainFrame mainFrame) {
 		observerButtons = new ObserverButtons();
 		squaresPanels = new SquarePanel[15][15];
 		tilesP1 = new ArrayList<TilePanel>();
@@ -42,6 +43,7 @@ public class GameSpecScreen extends JPanel {
 		fieldPanel = new FieldPanel();
 		forward = new JButton("Forward");
 		backward = new JButton("Backward");
+		back = new JButton("Back to games list");
 		this.setBackground(Color.white);
 		this.setLayout(null);
 		fieldPanel.setBounds(275, 55, 500, 500);
@@ -76,6 +78,13 @@ public class GameSpecScreen extends JPanel {
 			}
 		});
 		this.add(backward);
+		back.setBounds(5, 500, 260, 50);
+		back.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				mainFrame.setSpecScreen();
+			}
+		});
+		this.add(back);
 	}
 
 	// Creating the field
