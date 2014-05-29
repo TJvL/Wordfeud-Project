@@ -6,6 +6,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 import datalaag.DatabaseHandler;
 import gui.GameFieldPanel;
@@ -416,6 +417,13 @@ public class Match implements Observer {
 		gameField.repaintBoard();
 	}
 
+	public final static void checkOnEventDispatchThread() {
+	    if (!SwingUtilities.isEventDispatchThread()) {
+	        throw new RuntimeException("This method can only be run on the EDT");
+	    }
+	}
+	
+	
 	// A method to update the playfield
 	public synchronized void updateField() {
 		// clears the board when turn is swapped
