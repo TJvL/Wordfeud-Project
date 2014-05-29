@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -32,37 +33,30 @@ public class JoinedCompScreen extends JPanel {
 	private JScrollPane partiPane;
 	private String compSelection;
 	private String playerSelection;
-	private Boolean neverViewed;
+	private JLabel listLabel;
 
 	public JoinedCompScreen(MainFrame mainFrame) {
 		this.mainFrame = mainFrame;
 		buttonPanel = new JPanel();
 		buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 50, 20));
+		listLabel = new JLabel("Participant List:");
 		this.setLayout(null);
 		this.createButtons();
 		compSelection = defaultSelection;
 		playerSelection = defaultSelection;
-		neverViewed = true;
 	}
 
 	public void populateScreen() {
-		if (neverViewed) {
-			this.initCompTable();
-			this.initPartiTable();
-		}
-
-		compPane.setBounds(0, 0, 650, 700);
-		partiPane.setBounds(665, 50, 525, 500);
+		this.refreshLists();
+		
+		listLabel.setBounds(670, 20, 100, 20);
 		buttonPanel.setBounds(650, 550, 550, 150);
 
-		this.add(compPane);
-		this.add(partiPane);
+		this.add(listLabel);
 		this.add(buttonPanel);
-		neverViewed = false;
 	}
 
 	public void clearLists() {
-		this.neverViewed = true;
 		this.removeAll();
 		this.revalidate();
 	}
@@ -76,7 +70,7 @@ public class JoinedCompScreen extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				mainFrame.callLoadJoinedCompetitionsAction();
-				refreshButtonPressed();
+				refreshLists();
 			}
 		});
 		challenge.addActionListener(new ActionListener() {
@@ -230,16 +224,19 @@ public class JoinedCompScreen extends JPanel {
 		this.initPartiTable();
 		partiPane.setBounds(665, 50, 520, 500);
 		this.add(partiPane);
-		this.revalidate();
-		System.out.println("Refreshed participant list!");
+	}
+	
+	private void refreshCompetitionsList(){
+		this.initCompTable();
+		compPane.setBounds(0, 0, 650, 700);
+		this.add(compPane);
 	}
 
-	private void refreshButtonPressed() {
-		this.initCompTable();
-		partiPane.setBounds(665, 50, 525, 500);
-		this.add(compPane);
+	private void refreshLists() {
+		mainFrame.callLoadJoinedCompetitionsAction();
+		this.refreshCompetitionsList();
+		this.refreshParticipantList();
 		this.revalidate();
-		System.out.println("Refreshed competitions list!");
 	}
 
 	private void challengeButtonPressed() {
