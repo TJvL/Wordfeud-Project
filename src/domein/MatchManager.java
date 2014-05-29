@@ -11,7 +11,7 @@ public class MatchManager {
 	public static final int PUBLIC_GAME = 0;
 	public static final int PRIVATE_GAME = 1;
 	public static final String CHALLENGE_FAIL_EXISTS = "There is already an open invite for this game";
-	public static final String CHALLENGE_FAIL_NOT_ENOUGH = "There are not enough participants in this competition yet to issue challenges.";
+	public static final String CHALLENGE_FAIL_CLOSED = "Competition is closed Are there enough participants yet? Also check the end date.";
 	public static final String CHALLENGE_SUCCES = "Succesfully challenged player and Invite has been sent!";
 
 	private Match match;
@@ -180,7 +180,7 @@ public class MatchManager {
 			}
 		}
 		else{
-			retValue = MatchManager.CHALLENGE_FAIL_NOT_ENOUGH;
+			retValue = MatchManager.CHALLENGE_FAIL_CLOSED;
 		}
 		return retValue;
 	}

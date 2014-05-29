@@ -40,7 +40,6 @@ public class JoinCompScreen extends JPanel {
 	private JScrollPane partiPane;
 	private JLabel listLabel;
 	private String currentSelection;
-	private boolean neverViewed;
 
 	/*
 	 * Initialises the object.
@@ -52,7 +51,6 @@ public class JoinCompScreen extends JPanel {
 		listLabel = new JLabel("Participant List:");
 		this.setLayout(null);
 		this.createButtons();
-		neverViewed = true;
 		currentSelection = defaultSelection;
 	}
 
@@ -63,26 +61,16 @@ public class JoinCompScreen extends JPanel {
 	 * made.
 	 */
 	public void populateScreen() {
-		if (neverViewed) {
-			mainFrame.callLoadAllCompetitionsAction();
-			this.initCompTable();
-			this.initPartiTable();
-		}
+		refreshLists();
 
 		listLabel.setBounds(670, 20, 100, 20);
-		compPane.setBounds(0, 0, 650, 700);
-		partiPane.setBounds(665, 50, 525, 500);
 		buttonPanel.setBounds(650, 550, 550, 150);
 
 		this.add(listLabel);
-		this.add(compPane);
-		this.add(partiPane);
 		this.add(buttonPanel);
-		neverViewed = false;
 	}
 
 	public void clearLists() {
-		this.neverViewed = true;
 		this.removeAll();
 		this.revalidate();
 	}
@@ -101,7 +89,7 @@ public class JoinCompScreen extends JPanel {
 		refresh.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				refreshButtonPressed();
+				refreshLists();
 			}
 		});
 		join.addActionListener(new ActionListener() {
@@ -250,34 +238,25 @@ public class JoinCompScreen extends JPanel {
 		this.initPartiTable();
 		partiPane.setBounds(665, 50, 525, 500);
 		this.add(partiPane);
-		this.revalidate();
-		System.out.println("Refreshed participant list!");
 	}
 
 	private void refreshCompetitionsList() {
 		this.initCompTable();
 		compPane.setBounds(0, 0, 650, 700);
 		this.add(compPane);
-		this.revalidate();
-		System.out.println("Refreshed competitions list!");
 	}
-
-	/*
-	 * Is called when the user presses the join button
-	 */
-	private void joinSelectedCompetition() {
-		mainFrame.callJoinCompetitionAction(currentSelection);
+	
+	private void refreshLists() {
+		mainFrame.callLoadAllCompetitionsAction();
+		refreshCompetitionsList();
+		refreshParticipantList();
+		this.revalidate();
 	}
 
 	private void backButtonPressed() {
 		mainFrame.setPlayerScreen();
 		this.removeAll();
 		this.revalidate();
-	}
-
-	private void refreshButtonPressed() {
-		mainFrame.callLoadAllCompetitionsAction();
-		refreshCompetitionsList();
 	}
 
 	private void joinButtonPressed() {
@@ -289,8 +268,8 @@ public class JoinCompScreen extends JPanel {
 							+ "\"?", "", JOptionPane.OK_OPTION,
 					JOptionPane.PLAIN_MESSAGE);
 			if (response == JOptionPane.OK_OPTION) {
-				joinSelectedCompetition();
-				refreshCompetitionsList();
+				mainFrame.callJoinCompetitionAction(currentSelection);
+				refreshLists();
 			}
 		}
 	}

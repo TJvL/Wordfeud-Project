@@ -106,9 +106,10 @@ public class CompetitionManager {
 
 	public String createCompetition(String currentUsername, String summary,
 			String endDate, String minParticipants, String maxParticipants) {
-
+		
 		String retValue = CompetitionManager.CREATE_COMP_FAIL_DEFAULT;
 		String formatedDateTime = convertDateTime(endDate);
+		
 		int maxParts = 0;
 		int minParts = 1;
 		try {
@@ -119,6 +120,7 @@ public class CompetitionManager {
 			retValue = CompetitionManager.CREATE_COMP_FAIL_INPUT;
 			return retValue;
 		}
+		
 		if ((maxParts >= minParts) && (minParts >= 2) && (maxParts <= 24)) {
 			DatabaseHandler.getInstance().createCompetition(currentUsername,
 					formatedDateTime, summary, minParts, maxParts);
