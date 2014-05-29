@@ -78,8 +78,10 @@ public class GameThread extends Thread {
 				chatPanel.checkForMessages();
 
 				// A method to disable swap when fewer then 7 tiles
-				if (match.getJarSize() < 7) {
-					buttonPanel.disableSwap();
+				if (!match.swapAllowed()) {
+					buttonPanel.setSwapAllowed(false);
+				} else {
+					buttonPanel.setSwapAllowed(true);				
 				}
 
 				/*
@@ -97,12 +99,14 @@ public class GameThread extends Thread {
 							&& !dbh.getGameStatusValue(gameID).equals(
 									"Resigned")) {
 						if (match.getMyTurn()) {
-							buttonPanel.setTurn(true);
 							if (turnSwap) {
 								match.updateField();
 								JOptionPane.showMessageDialog(null,
 										"YOUR TURN!", "Turn info",
 										JOptionPane.INFORMATION_MESSAGE);
+							}
+							if (!buttonPanel.getSwapPressed()) {
+								buttonPanel.setTurn(true);
 							}
 							turnSwap = false;
 						} else {
@@ -151,7 +155,7 @@ public class GameThread extends Thread {
 				}
 			}
 			try {
-				Thread.sleep(2000);
+				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -166,12 +170,6 @@ public class GameThread extends Thread {
 			}
 
 			framePanel.updateNotificationList();
-
-			// } else {
-			// buttonPanel.setTurn(false);
-			// buttonPanel.disableSurrender();
-			// running = false;
-			// }
 		}
 	}
 

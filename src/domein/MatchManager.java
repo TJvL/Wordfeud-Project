@@ -165,7 +165,7 @@ public class MatchManager {
 		String retValue;
 		if (wf.doGetOneCompetitionAction(competitionID).canStartChallenging()) {
 			if (!dbh.inviteExists(username, opponent, Integer.parseInt(competitionID))) {
-				String privacy = "Public";
+				String privacy = "openbaar";
 				if (privacyInt == MatchManager.PRIVATE_GAME) {
 					privacy = "prive";
 				}

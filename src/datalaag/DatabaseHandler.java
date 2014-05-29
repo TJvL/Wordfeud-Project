@@ -978,15 +978,18 @@ public class DatabaseHandler
 		}
 	}
 	
-	public synchronized ArrayList<String> playedWords(int gameID)// works
+	public synchronized ArrayList<String> playedWords(int gameID, int turnID, boolean forward)// works
 	{
 		connection();
 		ArrayList<String> playedWord = new ArrayList<String>();
 
 		try
 		{
-			statement = con.prepareStatement("SELECT g.*, l.lettertype_karakter FROM gelegdeletter AS g LEFT JOIN letter AS l ON g.letter_id = l.id WHERE g.spel_id = '" + gameID + "' GROUP BY g.beurt_id, g.tegel_x, g.tegel_y");
-
+			if (forward){
+				statement = con.prepareStatement("SELECT g.*, l.lettertype_karakter FROM gelegdeletter AS g LEFT JOIN letter AS l ON g.letter_id = l.id WHERE g.spel_id = '" + gameID + "' AND beurt_id > '" + turnID + "' GROUP BY g.beurt_id, g.tegel_x, g.tegel_y");
+			} else {
+				statement = con.prepareStatement("SELECT g.*, l.lettertype_karakter FROM gelegdeletter AS g LEFT JOIN letter AS l ON g.letter_id = l.id WHERE g.spel_id = '" + gameID + "' AND beurt_id < '" + turnID + "' GROUP BY g.beurt_id, g.tegel_x, g.tegel_y");	
+			}
 			result = statement.executeQuery();
 
 			while (result.next())
