@@ -84,21 +84,6 @@ public class GameThread extends Thread {
 				// Update chat
 				chatPanel.checkForMessages();
 
-				// A method to disable swap when fewer then 7 tiles
-				if (!storeMatch.swapAllowed()) {
-					buttonPanel.setSwapAllowed(false);
-				} else {
-					buttonPanel.setSwapAllowed(true);
-				}
-
-				/*
-				 * String gameBegin; if (match.getMyTurn()) { gameBegin =
-				 * dbh.turnValue(gameID, match.getMaxTurn(),
-				 * match.getOwnName()); } else { gameBegin =
-				 * dbh.turnValue(gameID, match.getMaxTurn(),
-				 * match.getOwnName()); }
-				 */
-
 				// if (gameBegin.equals("Begin")) {
 				// a loop to see if the turn is swapped
 				try {
@@ -113,8 +98,9 @@ public class GameThread extends Thread {
 										"YOUR TURN!", "Turn info",
 										JOptionPane.INFORMATION_MESSAGE);
 							}
-							if (!buttonPanel.getSwapPressed()) {
-								buttonPanel.setTurn(true);
+							buttonPanel.setTurn(true);					
+							if (!match.swapAllowed()) {
+								buttonPanel.disableSwap();
 							}
 							turnSwap = false;
 						} else {
@@ -194,7 +180,7 @@ public class GameThread extends Thread {
 
 		@Override
 		protected Integer doInBackground() throws Exception {		
-			storeMatch.updateField();
+			storeMatch.updateField();			
 			return 1;
 		}
 

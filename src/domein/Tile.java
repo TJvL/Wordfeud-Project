@@ -37,6 +37,10 @@ public class Tile {
 		this.image = image;
 	}
 			
+	public void setImage(BufferedImage image){
+		this.image = image;
+	}
+	
 	// Sets the letter
 	public void setLetter(String letter){
 		this.letter = letter;
