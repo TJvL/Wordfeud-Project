@@ -805,6 +805,7 @@ public class DatabaseHandler
 
 	public synchronized void surrender(int gameID, int turnID, String username, String opponent)// used to surrender the game
 	{
+		int score = this.score(gameID, username);
 		connection();
 		try
 		{
@@ -814,7 +815,7 @@ public class DatabaseHandler
 			statement.setInt(1, turnID);
 			statement.setInt(2, gameID);
 			statement.setString(3, username);
-			statement.setInt(4, 0);
+			statement.setInt(4, -score);
 			statement.setString(5, "Resign");
 
 			statement.executeUpdate();
@@ -1005,14 +1006,14 @@ public class DatabaseHandler
 
 		try
 		{
-			statement = con.prepareStatement("SELECT * FROM gelegd WHERE spel_id = '" + gameID + "'");
+			statement = con.prepareStatement("SELECT g.*, l.lettertype_karakter FROM gelegdeletter AS g LEFT JOIN letter AS l ON g.letter_id = l.id WHERE g.spel_id = '" + gameID + "' GROUP BY g.beurt_id, g.tegel_x, g.tegel_y");
 
 			result = statement.executeQuery();
 
 			while (result.next())
 			{
 				playedWord.add(result.getString(3) + "---" + result.getString(4) + "---" + result.getString(5) + "---"
-						+ result.getString(2));
+						+ result.getString(1) + "---" + result.getString(7) + "---" + result.getString(8));
 			}
 			result.close();
 			statement.close();
