@@ -333,6 +333,7 @@ public class Match implements Observer {
 			newJar.addNewTile(t);
 		}
 
+		swapAllowed = true;
 		// Fills the player hands
 		fillHand(newJar);
 
@@ -348,6 +349,8 @@ public class Match implements Observer {
 		tilesForJar = dbh.jarContent(gameID);
 		getMaxTurnID();
 
+		swapAllowed = true;
+		
 		// Creating the board
 		ArrayList<String> squares = dbh.squareCheck();
 		for (int i = 0; i < squares.size(); i++) {
@@ -464,6 +467,7 @@ public class Match implements Observer {
 			jar.addNewTile(t);
 		}
 		
+		swapAllowed = true;
 		if (jar.getJarSize() < 7){
 			swapAllowed = false;
 		}
@@ -534,8 +538,10 @@ public class Match implements Observer {
 		Tile t = board.getSquare(x, y).getTile();
 		t.setJustPlayed(false);
 		if (t.getValue() == 0) {
-			t.setBlancoLetterValue("?");
+			t.setBlancoLetterValue(null);
 			t.setLetter("?");
+			jar.getImage("?");
+			t.setImage(jar.getImage("?"));
 		}
 		player.addTileToHand(t);
 		board.removeTileFromSquare(x, y);
