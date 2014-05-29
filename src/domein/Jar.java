@@ -32,7 +32,11 @@ public class Jar {
 	
 	// Returns a image
 	public BufferedImage getImage(String letter){
-		return images.get(letter);
+		BufferedImage image = images.get(letter);
+		if (letter.length() > 1){
+			image = fh.readImage("Plaatjes/" + ("" + letter.charAt(1)) + "J.png");
+		}
+		return image;
 	}
 	
 	// Resets the jar
@@ -50,10 +54,14 @@ public class Jar {
 		tile = new Tile(id, letter, value, images.get(letter));
 		return tile;
 	}
-	
+
 	// Creating a new Tile
 	public Tile createTile(String letter, int value) {
 		tile = new Tile(letter, value, images.get(letter));
+		if (letter.length() > 1){
+			char blanco = letter.charAt(1);
+			tile.setBlancoLetterValue("" + blanco);
+		}
 		return tile;
 	}
 	

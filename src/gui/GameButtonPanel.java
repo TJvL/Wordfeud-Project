@@ -15,6 +15,7 @@ public class GameButtonPanel extends JPanel
 {
 	private GameFieldPanel boardP;
 	private boolean swapPressed;
+	private boolean disableSwap;
 	private JButton swap;
 	private JButton play;
 	private JButton pass;
@@ -40,6 +41,14 @@ public class GameButtonPanel extends JPanel
 		observerButtons.addObserver(observer);
 	}
 
+	public boolean getSwapPressed(){
+		return swapPressed;
+	}
+	
+	public void setSwapAllowed(boolean disableSwap){
+		this.disableSwap = disableSwap;
+	}
+	
 	// A method to disable the surrender button
 	public synchronized void disableSurrender() 
 	{
@@ -56,7 +65,11 @@ public class GameButtonPanel extends JPanel
 	{
 		if (turn)
 		{
-			swap.setEnabled(true);
+			if (disableSwap){
+				swap.setEnabled(false);
+			} else {
+				swap.setEnabled(true);			
+			}
 			play.setEnabled(true);
 			pass.setEnabled(true);
 			surr.setEnabled(true);
