@@ -10,8 +10,8 @@ public class Tile {
 	private boolean justPlayed;
 	private String blancoLetterValue;
 	private FileHandler fh = FileHandler.getInstance();
-	private int x = 1111;
-	private int y = 1111;
+	private int x;
+	private int y;
 	private BufferedImage image;
 	private int tileID;
 
@@ -32,6 +32,11 @@ public class Tile {
 		this.image = image;
 	}
 
+	public Tile(int x, int y){
+		this.x = x;
+		this.y = y;
+	}
+	
 	// Constructor for spectating
 	public Tile(BufferedImage image){
 		this.image = image;

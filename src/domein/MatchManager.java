@@ -1,9 +1,16 @@
 package domein;
 
+import gui.GameButtonPanel;
 import gui.GameChatPanel;
+import gui.GameFieldPanel;
+import gui.GameScreen;
+import gui.GameSpecScreen;
 import gui.MainFrame;
+import gui.ScorePanel;
 
 import java.util.ArrayList;
+
+import javax.swing.SwingUtilities;
 
 import datalaag.DatabaseHandler;
 
@@ -14,7 +21,7 @@ public class MatchManager {
 	public static final String CHALLENGE_FAIL_CLOSED = "Competition is closed Are there enough participants yet? Also check the end date.";
 	public static final String CHALLENGE_SUCCES = "Succesfully challenged player and Invite has been sent!";
 
-	private Match match;
+	private Match match1;
 	private DatabaseHandler dbh;
 	private ArrayList<Match> matches;
 	private ArrayList<PendingMatch> pendingMatchs;
@@ -24,8 +31,13 @@ public class MatchManager {
 	private MainFrame framePanel;
 	private GameThread gameThread;
 	private GameChatPanel chatPanel;
+	private GameButtonPanel buttonPanel;
+	private GameFieldPanel gameField;
+	private ScorePanel scorePanel;
+	private GameScreen gameScreen;
+	private GameSpecScreen specScreen;
 
-	public MatchManager(WordFeud wf, MainFrame framePanel) {
+	public MatchManager(WordFeud wf, final MainFrame framePanel) {
 		this.dbh = DatabaseHandler.getInstance();
 		this.matches = new ArrayList<Match>();
 		this.pendingMatchs = new ArrayList<PendingMatch>();
@@ -33,8 +45,19 @@ public class MatchManager {
 		this.myActiveMatches = new ArrayList<ActiveMatch>();
 		this.wf = wf;
 		this.framePanel = framePanel;
-		this.chatPanel = framePanel.getGameScreen().getGameChatPanel();
-		initializeThread();
+
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				gameScreen = framePanel.getGameScreen();
+				gameField = gameScreen.getGameFieldPanel();
+				chatPanel = gameScreen.getGameChatPanel();
+				buttonPanel = gameScreen.getButtonPanel();
+				scorePanel = gameScreen.getScorePanel();
+				specScreen = framePanel.getSpecScreen();
+				initializeThread();
+			}
+		});
 	}
 
 	public ArrayList<PendingMatch> getPendingMatchs() {
@@ -82,8 +105,7 @@ public class MatchManager {
 
 	// A method to initialize the Thread
 	public void initializeThread() {
-		this.gameThread = new GameThread(chatPanel, framePanel.getGameScreen()
-				.getButtonPanel(), framePanel.getGameScreen().getScorePanel(),
+		this.gameThread = new GameThread(chatPanel, buttonPanel, scorePanel,
 				this, framePanel);
 		gameThread.start();
 	}
@@ -110,8 +132,8 @@ public class MatchManager {
 
 	// This starts a Match that is made by me
 	public void newMatchStartedByMe(int gameID) {
-		match = new Match(gameID, wf.getCurrentUsername());
-		match.startNewGame();
+		match1 = new Match(gameID, wf.getCurrentUsername());
+		match1.startNewGame();
 		framePanel.updatePlayerGameList();
 	}
 
@@ -126,20 +148,32 @@ public class MatchManager {
 				wf.addObservers(match, false);
 				chatPanel.setChatVariables(match.getOwnName(),
 						match.getGameID());
+				this.match1 = match;
+//				SwingUtilities.invokeLater(new Runnable() {
+//					@Override
+//					public void run() {
+//						match1.loadGame();
+//					}
+//				});
 				match.loadGame();
 				gameThread.setRunning(match);
 			}
 		}
 		if (!exists) {
-			match = new Match(gameID, wf.getUserPlayer(), framePanel
-					.getGameScreen().getGameFieldPanel(),
+			match1 = new Match(gameID, wf.getUserPlayer(), gameField,
 					wf.getCurrentUsername());
 			// Adds the observers
-			wf.addObservers(match, false);
-			match.loadGame();
-			chatPanel.setChatVariables(match.getOwnName(), match.getGameID());
-			matches.add(match);
-			gameThread.setRunning(match);
+			wf.addObservers(match1, false);
+//			SwingUtilities.invokeLater(new Runnable() {
+//				@Override
+//				public void run() {
+//					match1.loadGame();
+//				}
+//			});
+			match1.loadGame();
+			chatPanel.setChatVariables(match1.getOwnName(), match1.getGameID());
+			matches.add(match1);
+			gameThread.setRunning(match1);
 		}
 
 	}
@@ -147,9 +181,9 @@ public class MatchManager {
 	// A method start spectating
 	public void spectateMatch(int gameID) {
 		System.out.println("GAMEID " + gameID);
-		match = new Match(gameID);
-		match.loadSpecateGame(framePanel.getSpecScreen());
-		wf.addObservers(match, true);
+		match1 = new Match(gameID);
+		match1.loadSpecateGame(specScreen);
+		wf.addObservers(match1, true);
 	}
 
 	// Method to accept/reject game in the database
@@ -164,13 +198,14 @@ public class MatchManager {
 
 		String retValue;
 		if (wf.doGetOneCompetitionAction(competitionID).canStartChallenging()) {
-			if (!dbh.inviteExists(username, opponent, Integer.parseInt(competitionID))) {
+			if (!dbh.inviteExists(username, opponent,
+					Integer.parseInt(competitionID))) {
 				String privacy = "openbaar";
 				if (privacyInt == MatchManager.PRIVATE_GAME) {
 					privacy = "prive";
 				}
-				int gameID = dbh.createGame(Integer.parseInt(competitionID), username, opponent,
-						privacy, language);
+				int gameID = dbh.createGame(Integer.parseInt(competitionID),
+						username, opponent, privacy, language);
 				System.out.println("MatchManager reports: GameID: " + gameID
 						+ " match has been logged and invite has been sent!");
 				framePanel.updateNotificationList();
@@ -178,8 +213,7 @@ public class MatchManager {
 			} else {
 				retValue = MatchManager.CHALLENGE_FAIL_EXISTS;
 			}
-		}
-		else{
+		} else {
 			retValue = MatchManager.CHALLENGE_FAIL_CLOSED;
 		}
 		return retValue;

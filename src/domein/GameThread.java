@@ -58,7 +58,7 @@ public class GameThread extends Thread {
 				// Gets the gameID;
 				storeMatch.getMaxTurnID();
 				int gameID = storeMatch.getGameID();
-				// System.out.println("LOOK AT ME - THREAD " + gameID);
+			//	System.out.println("LOOK AT ME - THREAD " + gameID);
 				// Setting the scores
 				scorePanel.setEnemyScore(dbh.score(gameID,
 						storeMatch.getEnemyName()));

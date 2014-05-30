@@ -45,6 +45,7 @@ public class GameScreen extends JPanel {
 	// Adds the observers
 	public void addObservers(Observer observer){
 		buttonPanel.addObserverToObserverButtons(observer);
+		boardPanel.addObserverToObserverButtons(observer);
 	}
 
 	// Returns the gameField

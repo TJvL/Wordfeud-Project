@@ -7,21 +7,30 @@ import java.util.Map.Entry;
 import java.util.Observer;
 import java.util.Set;
 
+import javax.swing.SwingUtilities;
+
 public class WordFeud {
 	private User currentUser;
 	private CompetitionManager compMan;
 	private MainFrame framePanel;
 	private MatchManager matchManager;
+	private WordFeud wf;
 
 	public WordFeud() {
 		currentUser = new User();
 		compMan = new CompetitionManager();
+		wf = this;
 	}
 
 	public void init() {
-		framePanel = new MainFrame(this);
-		framePanel.init();
-		matchManager = new MatchManager(this, framePanel);
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				framePanel = new MainFrame(wf);
+				framePanel.init();
+				matchManager = new MatchManager(wf, framePanel);
+			}
+		});		
 	}
 
 	// Stops the Thread

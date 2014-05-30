@@ -14,7 +14,7 @@ import gui.GameSpecScreen;
 import gui.TilePanel;
 
 public class Match implements Observer {
-	private Tile selectedTile;
+	private Tile tempTile;
 	private Jar jar;
 	private Board board;
 	private GameFieldPanel gameField;
@@ -29,6 +29,8 @@ public class Match implements Observer {
 	private int maxTurn;
 	private boolean surrenderd;
 	private boolean swapAllowed;
+	private ArrayList<TilePanel> tilesToSwap;
+	private ArrayList<Tile> hand;
 
 	// Constructor for starting a game where you are playing in
 	public Match(int gameID, Player player, GameFieldPanel gameField,
@@ -40,7 +42,6 @@ public class Match implements Observer {
 		this.player = player;
 		this.surrenderd = false;
 		swapAllowed = true;
-
 		// Dit is tijdelijk todat je mensen kunt uitdagen
 		if (myName.equals("Spectator")) {
 			myName = "testSubject";
@@ -141,21 +142,25 @@ public class Match implements Observer {
 	// This method calls the right method to handle the event
 	@Override
 	public void update(Observable o, Object arg) {
-		String requestedAction = (String) arg;
-		if (requestedAction.equals("play")) {
-			this.playWord();
-		} else if (requestedAction.equals("pass")) {
-			this.skipTurn();
-		} else if (requestedAction.equals("clear")) {
-			this.clearTilesFromBoard();
-		} else if (requestedAction.equals("surrender")) {
-			this.surrenderGame();
-		} else if (requestedAction.equals("swap")) {
-			this.swapTiles(gameField.getTilesToSwap());
-		} else if (requestedAction.equals("forward")) {
-			updateSpecTurn(true);
-		} else if (requestedAction.equals("backward")) {
-			updateSpecTurn(false);
+		if (arg instanceof Tile) {
+			moveTile((Tile) arg);
+		} else {
+			String requestedAction = (String) arg;
+			if (requestedAction.equals("play")) {
+				this.playWord();
+			} else if (requestedAction.equals("pass")) {
+				this.skipTurn();
+			} else if (requestedAction.equals("clear")) {
+				this.clearTilesFromBoard();
+			} else if (requestedAction.equals("surrender")) {
+				this.surrenderGame();
+			} else if (requestedAction.equals("swap")) {
+				this.swapTiles(gameField.getTilesToSwap());
+			} else if (requestedAction.equals("forward")) {
+				updateSpecTurn(true);
+			} else if (requestedAction.equals("backward")) {
+				updateSpecTurn(false);
+			}
 		}
 	}
 
@@ -342,7 +347,7 @@ public class Match implements Observer {
 
 	// Loads a game from the database
 	public void loadGame() {
-		gameField.clearField();
+		// gameField.clearField();
 		if (board != null) {
 			board.clearField();
 		}
@@ -350,7 +355,7 @@ public class Match implements Observer {
 		getMaxTurnID();
 
 		swapAllowed = true;
-		
+
 		// Creating the board
 		ArrayList<String> squares = dbh.squareCheck();
 		for (int i = 0; i < squares.size(); i++) {
@@ -367,8 +372,14 @@ public class Match implements Observer {
 			jar.addNewTile(t);
 		}
 
+		// SwingUtilities.invokeLater(new Runnable() {
+		// @Override
+		// public void run() {
+		// gameField.addSquares(this);
+		// }
+		// });
 		// Calls the method to make the field and gives it this Match as param
-		gameField.addSquares(this);
+		// gameField.addSquares(this);
 
 		// Checks if the game being loaded has not started and the player was
 		// invited
@@ -387,8 +398,8 @@ public class Match implements Observer {
 			Tile t = jar.createTile(letters, value);
 			board.addTileToSquare(t, Integer.parseInt(xPos) - 1,
 					Integer.parseInt(yPos) - 1);
-			gameField.addSquarePanel(Integer.parseInt(xPos) - 1,
-					Integer.parseInt(yPos) - 1, t.getImage());
+			// gameField.addSquarePanel(Integer.parseInt(xPos) - 1,
+			// Integer.parseInt(yPos) - 1, t.getImage());
 		}
 
 		// Loads the player hand
@@ -412,28 +423,41 @@ public class Match implements Observer {
 		} else {
 			System.out.println(gameID + " De game is al over");
 		}
-		
-		if (jar.getJarSize() < 7){
+
+		if (jar.getJarSize() < 7) {
 			swapAllowed = false;
 		}
-		
-		gameField.repaintBoard();
+
+		// gameField.repaintBoard();
+		hand = player.getHand();
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				gameField.clearField();
+				for (int y = 0; y < 15; y++) {
+					for (int x = 0; x < 15; x++) {
+						gameField.addSquares(board.getSquare(x, y));
+					}
+				}
+				ArrayList<Tile> tiles = player.getHand();
+				System.err.println(tiles.size() + " DE GROTE");
+				for (Tile t : tiles) {
+					gameField.addTileToHand(t);
+				}
+				gameField.repaintBoard();
+				gameField.revalidate();
+			}
+		});
 	}
 
-	public final static void checkOnEventDispatchThread() {
-	    if (!SwingUtilities.isEventDispatchThread()) {
-	        throw new RuntimeException("This method can only be run on the EDT");
-	    }
-	}
-	
-	
 	// A method to update the playfield
 	public synchronized void updateField() {
 		// clears the board when turn is swapped
 		clearTilesFromBoard();
 
 		// Updating the field
-		ArrayList<String> playedWords = dbh.playedWords(gameID, maxTurn - 2, true);
+		ArrayList<String> playedWords = dbh.playedWords(gameID, maxTurn - 2,
+				true);
 		for (String played : playedWords) {
 			String[] splits = played.split("---");
 			String letters = splits[5];
@@ -466,44 +490,51 @@ public class Match implements Observer {
 					Integer.parseInt(splits[2]));
 			jar.addNewTile(t);
 		}
-		
+
 		swapAllowed = true;
-		if (jar.getJarSize() < 7){
+		if (jar.getJarSize() < 7) {
 			swapAllowed = false;
+		}
+	}
+
+	public void moveTile(Tile t) {
+		int x = t.getXValue();
+		int y = t.getYValue();
+		if (board.getSquare(x, y).getTile() == null) {
+			moveTileFromHandToBoard(t, x, y);
+		} else if (board.getSquare(x, y).getTile().getJustPlayed()) {
+			moveTileFromBoardToHand(x, y);
 		}
 	}
 
 	// Method for loading games to add tiles to hand
 	public void addTileToHand(Tile t) {
 		player.addTileToHand(t);
-		gameField.addTileToHand(t, this);
-		gameField.repaintBoard();
+		// gameField.addTileToHand(t, this);
+		// gameField.repaintBoard();
 	}
 
 	// Takes a random tile from the jar
 	// Add it to the player and and to the gui
 	public int getTileFromJar() {
-		Tile t = jar.getNewTile();
+		tempTile = jar.getNewTile();
 		// addTileToHand(t);
-		player.addTileToHand(t);
-		gameField.addTileToHand(t, this);
-		gameField.repaintBoard();
-		return t.getTileID();
-	}
-
-	// Add a tile to the jar
-	// remove it from the hand en field
-	public void addTileToJar(Tile t) {
-		player.removeTileFromHand(t);
-		gameField.removeTileFromHand(t);
-		jar.addNewTile(t);
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				gameField.addTileToHand(tempTile);
+				gameField.repaintBoard();
+			}
+		});
+		player.addTileToHand(tempTile);
+		return tempTile.getTileID();
 	}
 
 	// Takes the tile selected and move it to the board
 	// Sets the tile on just played
 	// Add the tile to the board
-	public void moveTileFromHandToBoard(int x, int y) {
-		if (selectedTile.getValue() == 0) {
+	public void moveTileFromHandToBoard(Tile t, int x, int y) {
+		if (t.getValue() == 0) {
 
 			// This allows you to pick your Joker value
 			String[] choices = { "A", "B", "C", "D", "E", "F", "G", "H", "I",
@@ -514,21 +545,29 @@ public class Match implements Observer {
 					JOptionPane.QUESTION_MESSAGE, null, choices, choices[0]);
 			System.out.println(input);
 			if (!input.equals("")) {
-				selectedTile.setBlancoLetterValue(input);
-				selectedTile.setLetter(input);
-				selectedTile.setJustPlayed(true);
-				player.removeTileFromHand(selectedTile);
-				board.addTileToSquare(selectedTile, x, y);
+				t.setBlancoLetterValue(input);
+				t.setLetter(input);
+				t.setJustPlayed(true);
+				player.removeTileFromHand(t);
+				board.addTileToSquare(t, x, y);
 				board.startCalculating();
-				gameField.repaintBoard();
+				// gameField.repaintBoard();
 			}
 		} else {
-			selectedTile.setJustPlayed(true);
-			player.removeTileFromHand(selectedTile);
-			board.addTileToSquare(selectedTile, x, y);
+			t.setJustPlayed(true);
+			player.removeTileFromHand(t);
+			board.addTileToSquare(t, x, y);
+			System.out.println("IETS VAN DE TILE " + t.getLetter() + t.getXValue() + t.getYValue());
 			board.startCalculating();
-			gameField.repaintBoard();
+			// gameField.repaintBoard();
 		}
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				gameField.repaintBoard();
+
+			}
+		});
 	}
 
 	// Takes a tile from the board and puts it back in the hand
@@ -536,6 +575,7 @@ public class Match implements Observer {
 	// Needed to get the tile back
 	public void moveTileFromBoardToHand(int x, int y) {
 		Tile t = board.getSquare(x, y).getTile();
+		tempTile = t;
 		t.setJustPlayed(false);
 		if (t.getValue() == 0) {
 			t.setBlancoLetterValue(null);
@@ -545,26 +585,38 @@ public class Match implements Observer {
 		}
 		player.addTileToHand(t);
 		board.removeTileFromSquare(x, y);
-		gameField.addTileToHand(t, this);
 		board.startCalculating();
-		gameField.repaintBoard();
+
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				gameField.addTileToHand(tempTile);
+				gameField.repaintBoard();
+			}
+		});
 	}
 
 	// Clears all the tiles from the board
 	public void clearTilesFromBoard() {
-		for (int y = 0; y < 15; y++) {
-			for (int x = 0; x < 15; x++) {
-				if (gameField.getOccupied(x, y)
-						&& board.getSquare(x, y).getTile().getJustPlayed()) {
-					board.getSquare(x, y).getTile().setJustPlayed(false);
-					gameField.removeImageSquare(x, y);
-					moveTileFromBoardToHand(x, y);
-					gameField.repaintBoard();
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				for (int y = 0; y < 15; y++) {
+					for (int x = 0; x < 15; x++) {
+						if (gameField.getOccupied(x, y)
+								&& board.getSquare(x, y).getTile()
+										.getJustPlayed()) {
+							board.getSquare(x, y).getTile()
+									.setJustPlayed(false);
+							gameField.removeImageSquare(x, y);
+							moveTileFromBoardToHand(x, y);
+							gameField.repaintBoard();
+						}
+					}
 				}
 			}
-		}
+		});
 		board.startCalculating();
-		gameField.repaintBoard();
 	}
 
 	// Fills the hand back to 7
@@ -599,7 +651,6 @@ public class Match implements Observer {
 						System.out
 								.println("ER IS IETS FOUT GEGAAN BY FILLHAND");
 					}
-					gameField.repaintBoard();
 				}
 
 				ArrayList<Tile> tilesInHand = player.getHand();
@@ -613,13 +664,22 @@ public class Match implements Observer {
 				board.setScore();
 			}
 		}
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				gameField.repaintBoard();
+			}
+		});
 	}
 
 	// Swapping tiles from the hand back to the jar
 	public void swapTiles(ArrayList<TilePanel> tilesToSwap) {
+		this.tilesToSwap = tilesToSwap;
 		for (TilePanel tile : tilesToSwap) {
-			addTileToJar(tile.getTile());
+			player.removeTileFromHand(tile.getTile());
+			jar.addNewTile(tile.getTile());
 		}
+		addTileToJar();
 		if (tilesToSwap.size() == 0) {
 			JOptionPane.showMessageDialog(null, "No tiles selected to swap",
 					"Notice", JOptionPane.OK_OPTION);
@@ -634,10 +694,23 @@ public class Match implements Observer {
 		// "Pass");
 	}
 
-	public synchronized boolean swapAllowed(){
+	// remove it from the hand en field
+	public void addTileToJar() {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				for (TilePanel tile : tilesToSwap) {
+					gameField.removeTileFromHand(tile.getTile());
+				}
+				gameField.repaintBoard();
+			}
+		});
+	}
+
+	public synchronized boolean swapAllowed() {
 		return swapAllowed;
 	}
-	
+
 	// Gets a square from the board on x,y
 	public Square getSquare(int x, int y) {
 		return board.getSquare(x, y);
@@ -648,18 +721,8 @@ public class Match implements Observer {
 		return board.getImage(x, y);
 	}
 
-	// Stores the selected tile
-	public void selectedTile(Tile t) {
-		this.selectedTile = t;
-	}
-
-	// Gets the selected tile back
-	public Tile getSelectedTile() {
-		return selectedTile;
-	}
-
 	// Get the score of the just placed tiles
-	public int getScore() {
+	public synchronized int getScore() {
 		return board.getScore();
 	}
 
