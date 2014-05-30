@@ -9,8 +9,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import domein.User;
-
 //import javax.swing.plaf.basic.BasicInternalFrameTitlePane.RestoreAction; who added this
 
 public class DatabaseHandler
@@ -117,7 +115,7 @@ public class DatabaseHandler
 	public synchronized String register(String username, String password)
 	{
 		connection();
-		String retValue = User.REGISTER_FAIL_DEFAULT;
+		String retValue = WordFeudConstants.REGISTER_FAIL_DEFAULT;
 		try
 		{
 			statement = con.prepareStatement("SELECT * FROM account WHERE naam = '" + username + "'");
@@ -126,7 +124,7 @@ public class DatabaseHandler
 
 			if (!result.next())
 			{
-				retValue = User.REGISTER_SUCCESS;
+				retValue = WordFeudConstants.REGISTER_SUCCESS;
 				result.close();
 				statement.close();
 
@@ -164,7 +162,7 @@ public class DatabaseHandler
 			}
 			else
 			{
-				retValue = User.FAIL_NAME_NOT_AVAILABLE;
+				retValue = WordFeudConstants.FAIL_NAME_NOT_AVAILABLE;
 				statement.close();
 			}
 

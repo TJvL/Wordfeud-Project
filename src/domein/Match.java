@@ -30,7 +30,6 @@ public class Match implements Observer {
 	private boolean surrenderd;
 	private boolean swapAllowed;
 	private ArrayList<TilePanel> tilesToSwap;
-	private ArrayList<Tile> hand;
 
 	// Constructor for starting a game where you are playing in
 	public Match(int gameID, Player player, GameFieldPanel gameField,
@@ -41,7 +40,7 @@ public class Match implements Observer {
 		jar = new Jar();
 		this.player = player;
 		this.surrenderd = false;
-		swapAllowed = true;
+		this.swapAllowed = true;
 		// Dit is tijdelijk todat je mensen kunt uitdagen
 		if (myName.equals("Spectator")) {
 			myName = "testSubject";
@@ -413,7 +412,7 @@ public class Match implements Observer {
 			} else {
 				handTiles = dbh.handContent(gameID, maxTurn);
 			}
-
+			player.clearHand();
 			for (int z = 0; z < handTiles.size(); z++) {
 				String[] tiles = handTiles.get(z).split("---");
 				Tile t = jar.createTile(Integer.parseInt(tiles[0]), tiles[1],
@@ -428,8 +427,6 @@ public class Match implements Observer {
 			swapAllowed = false;
 		}
 
-		// gameField.repaintBoard();
-		hand = player.getHand();
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
@@ -557,7 +554,8 @@ public class Match implements Observer {
 			t.setJustPlayed(true);
 			player.removeTileFromHand(t);
 			board.addTileToSquare(t, x, y);
-			System.out.println("IETS VAN DE TILE " + t.getLetter() + t.getXValue() + t.getYValue());
+			System.out.println("IETS VAN DE TILE " + t.getLetter()
+					+ t.getXValue() + t.getYValue());
 			board.startCalculating();
 			// gameField.repaintBoard();
 		}
@@ -603,20 +601,27 @@ public class Match implements Observer {
 			public void run() {
 				for (int y = 0; y < 15; y++) {
 					for (int x = 0; x < 15; x++) {
-						if (gameField.getOccupied(x, y)
-								&& board.getSquare(x, y).getTile()
-										.getJustPlayed()) {
-							board.getSquare(x, y).getTile()
-									.setJustPlayed(false);
-							gameField.removeImageSquare(x, y);
-							moveTileFromBoardToHand(x, y);
-							gameField.repaintBoard();
+						if (gameField.getOccupied(x, y)) {
+							if (removeTile(x, y)) {
+								gameField.removeImageSquare(x, y);
+								gameField.repaintBoard();
+							}
 						}
 					}
 				}
 			}
 		});
 		board.startCalculating();
+	}
+
+	public boolean removeTile(int x, int y) {
+		boolean possible = false;
+		if (board.getSquare(x, y).getTile().getJustPlayed()) {
+			board.getSquare(x, y).getTile().setJustPlayed(false);
+			moveTileFromBoardToHand(x, y);
+			possible = true;
+		}
+		return possible;
 	}
 
 	// Fills the hand back to 7

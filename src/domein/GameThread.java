@@ -24,22 +24,19 @@ public class GameThread extends Thread {
 	private ScorePanel scorePanel;
 	private GameChatPanel chatPanel;
 	private MatchManager matchManager;
-	private MainFrame framePanel;
 	private int storeScore;
 	private updateTheGame updateTheGame;
 	private boolean running = true;
 	private boolean turnSwap = true;
 
 	public GameThread(GameChatPanel chatPanel, GameButtonPanel buttonPanel,
-			ScorePanel scorePanel, MatchManager matchManager,
-			MainFrame framePanel) {
+			ScorePanel scorePanel, MatchManager matchManager) {
 		super("thread");
 		this.chatPanel = chatPanel;
 		this.buttonPanel = buttonPanel;
 		this.scorePanel = scorePanel;
 		this.dbh = DatabaseHandler.getInstance();
 		this.matchManager = matchManager;
-		this.framePanel = framePanel;
 		updateTheGame = new domein.GameThread.updateTheGame();
 	}
 
@@ -154,7 +151,7 @@ public class GameThread extends Thread {
 				e.printStackTrace();
 			}
 
-			// Method to start games afther both players accepted
+			// Method to start games after both players accepted
 			ArrayList<Integer> gamesToLoad = dbh.gameToLoad(matchManager
 					.getName());
 			if (gamesToLoad != null) {
@@ -162,8 +159,6 @@ public class GameThread extends Thread {
 					matchManager.startGame(game, false, true);
 				}
 			}
-
-			framePanel.updateNotificationList();
 		}
 	}
 

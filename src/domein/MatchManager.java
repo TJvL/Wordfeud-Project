@@ -7,12 +7,13 @@ import gui.GameScreen;
 import gui.GameSpecScreen;
 import gui.MainFrame;
 import gui.ScorePanel;
-
 import java.util.ArrayList;
-
 import javax.swing.SwingUtilities;
-
+import java.util.HashMap;
+import java.util.Set;
+import java.util.Map.Entry;
 import datalaag.DatabaseHandler;
+import datalaag.WordFeudConstants;
 
 public class MatchManager {
 	public static final int PUBLIC_GAME = 0;
@@ -21,14 +22,14 @@ public class MatchManager {
 	public static final String CHALLENGE_FAIL_CLOSED = "Competition is closed Are there enough participants yet? Also check the end date.";
 	public static final String CHALLENGE_SUCCES = "Succesfully challenged player and Invite has been sent!";
 
-	private Match match1;
 	private DatabaseHandler dbh;
+	private Match match;
 	private ArrayList<Match> matches;
-	private ArrayList<PendingMatch> pendingMatchs;
+	private HashMap<String, PendingMatch> pendingMatches;
 	private ArrayList<ActiveMatch> activeMatches;
 	private ArrayList<ActiveMatch> myActiveMatches;
-	private WordFeud wf;
-	private MainFrame framePanel;
+	private WordFeud wordFeud;
+
 	private GameThread gameThread;
 	private GameChatPanel chatPanel;
 	private GameButtonPanel buttonPanel;
@@ -37,52 +38,57 @@ public class MatchManager {
 	private GameScreen gameScreen;
 	private GameSpecScreen specScreen;
 
-	public MatchManager(WordFeud wf, final MainFrame framePanel) {
+	public MatchManager(final WordFeud wordFeud) {
 		this.dbh = DatabaseHandler.getInstance();
+		this.wordFeud = wordFeud;
+
 		this.matches = new ArrayList<Match>();
-		this.pendingMatchs = new ArrayList<PendingMatch>();
+		this.pendingMatches = new HashMap<String, PendingMatch>();
 		this.activeMatches = new ArrayList<ActiveMatch>();
 		this.myActiveMatches = new ArrayList<ActiveMatch>();
-		this.wf = wf;
-		this.framePanel = framePanel;
 
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				gameScreen = framePanel.getGameScreen();
+				gameScreen = wordFeud.getGameScreen();
 				gameField = gameScreen.getGameFieldPanel();
 				chatPanel = gameScreen.getGameChatPanel();
 				buttonPanel = gameScreen.getButtonPanel();
 				scorePanel = gameScreen.getScorePanel();
-				specScreen = framePanel.getSpecScreen();
+				specScreen = wordFeud.getSpecScreen();
 				initializeThread();
 			}
 		});
-		
 	}
 
-	public ArrayList<PendingMatch> getPendingMatchs() {
-		if (pendingMatchs != null) {
-			pendingMatchs.clear();
+	public Set<Entry<String, PendingMatch>> getPendingMatches() {
+		return pendingMatches.entrySet();
+	}
+
+	public void loadPendingMatches(String currentUsername) {
+		if (pendingMatches != null) {
+			pendingMatches.clear();
 		}
-		ArrayList<String> games = dbh.pendingGames(wf.getCurrentUsername());
+		ArrayList<String> games = DatabaseHandler.getInstance().pendingGames(
+				currentUsername);
 		for (String game : games) {
 			String[] split = game.split(",");
 			boolean ownGame = false;
 			if (split[1].equals("true")) {
 				ownGame = true;
 			}
-			pendingMatchs.add(new PendingMatch(Integer.parseInt(split[0]),
-					split[2], ownGame));
+			System.out.println(split[0] + " - " + split[1] + " - " + split[2]);
+			pendingMatches.put(split[0],
+					new PendingMatch(Integer.parseInt(split[0]), split[2],
+							ownGame));
 		}
-		return pendingMatchs;
 	}
 
 	public ArrayList<ActiveMatch> getActiveMatches() {
 		if (activeMatches != null) {
 			activeMatches.clear();
 		}
-		ArrayList<String> games = dbh.spectateList();
+		ArrayList<String> games = DatabaseHandler.getInstance().spectateList();
 		for (String game : games) {
 			String[] split = game.split(",");
 			activeMatches.add(new ActiveMatch(Integer.parseInt(split[0]),
@@ -95,7 +101,8 @@ public class MatchManager {
 		if (myActiveMatches != null) {
 			myActiveMatches.clear();
 		}
-		ArrayList<String> games = dbh.activeGames(wf.getCurrentUsername());
+		ArrayList<String> games = DatabaseHandler.getInstance().activeGames(
+				wordFeud.getCurrentUsername());
 		for (String game : games) {
 			String[] split = game.split(",");
 			myActiveMatches.add(new ActiveMatch(Integer.parseInt(split[0]),
@@ -107,7 +114,7 @@ public class MatchManager {
 	// A method to initialize the Thread
 	public void initializeThread() {
 		this.gameThread = new GameThread(chatPanel, buttonPanel, scorePanel,
-				this, framePanel);
+				this);
 		gameThread.start();
 	}
 
@@ -133,48 +140,49 @@ public class MatchManager {
 
 	// This starts a Match that is made by me
 	public void newMatchStartedByMe(int gameID) {
-		match1 = new Match(gameID, wf.getCurrentUsername());
-		match1.startNewGame();
-		framePanel.updatePlayerGameList();
+		match = new Match(gameID, wordFeud.getCurrentUsername());
+		match.startNewGame();
+		wordFeud.updatePlayerGameList();
 	}
 
 	// Loads a match
 	public void loadMatch(int gameID) {
 		boolean exists = false;
 		// Checks if the refrences already exist
-		for (Match match : matches) {
+		for (Match match1 : matches) {
 			if (match.getGameID() == gameID) {
 				exists = true;
 				// Adds the observers
-				wf.addObservers(match, false);
+				wordFeud.addObservers(match, false);
 				chatPanel.setChatVariables(match.getOwnName(),
 						match.getGameID());
-				this.match1 = match;
-//				SwingUtilities.invokeLater(new Runnable() {
-//					@Override
-//					public void run() {
-//						match1.loadGame();
-//					}
-//				});
+				this.match = match1;
+				// SwingUtilities.invokeLater(new Runnable() {
+				// @Override
+				// public void run() {
+				// match1.loadGame();
+				// }
+				// });
 				match.loadGame();
 				gameThread.setRunning(match);
 			}
 		}
 		if (!exists) {
-			match1 = new Match(gameID, wf.getUserPlayer(), gameField,
-					wf.getCurrentUsername());
-			// Adds the observers
-			wf.addObservers(match1, false);
-//			SwingUtilities.invokeLater(new Runnable() {
-//				@Override
-//				public void run() {
-//					match1.loadGame();
-//				}
-//			});
-			match1.loadGame();
-			chatPanel.setChatVariables(match1.getOwnName(), match1.getGameID());
-			matches.add(match1);
-			gameThread.setRunning(match1);
+			match = new Match(gameID, wordFeud.getUserPlayer(), gameField,
+					wordFeud.getCurrentUsername());
+
+			wordFeud.addObservers(match, false);
+			// SwingUtilities.invokeLater(new Runnable() {
+			// @Override
+			// public void run() {
+			// match1.loadGame();
+			// }
+			// });
+
+			match.loadGame();
+			chatPanel.setChatVariables(match.getOwnName(), match.getGameID());
+			matches.add(match);
+			gameThread.setRunning(match);
 		}
 
 	}
@@ -182,15 +190,17 @@ public class MatchManager {
 	// A method start spectating
 	public void spectateMatch(int gameID) {
 		System.out.println("GAMEID " + gameID);
-		match1 = new Match(gameID);
-		match1.loadSpecateGame(specScreen);
-		wf.addObservers(match1, true);
+		match = new Match(gameID);
+		match.loadSpecateGame(specScreen);
+		wordFeud.addObservers(match, true);
+
 	}
 
 	// Method to accept/reject game in the database
 	public void acceptRejectGame(int competitionID, int gameID, String name,
 			String string) {
-		dbh.acceptRejectGame(competitionID, gameID, name, string);
+		DatabaseHandler.getInstance().acceptRejectGame(competitionID, gameID,
+				name, string);
 	}
 
 	// Method to start a new game
@@ -198,29 +208,34 @@ public class MatchManager {
 			String opponent, String language, int privacyInt) {
 
 		String retValue;
-		if (wf.doGetOneCompetitionAction(competitionID).canStartChallenging()) {
-			if (!dbh.inviteExists(username, opponent,
+		if (wordFeud.doGetOneCompetitionAction(competitionID)
+				.canStartChallenging()) {
+			if (!DatabaseHandler.getInstance().inviteExists(username, opponent,
 					Integer.parseInt(competitionID))) {
 				String privacy = "openbaar";
-				if (privacyInt == MatchManager.PRIVATE_GAME) {
+				if (privacyInt == WordFeudConstants.PRIVATE_GAME) {
 					privacy = "prive";
 				}
-				int gameID = dbh.createGame(Integer.parseInt(competitionID),
-						username, opponent, privacy, language);
+				int gameID = DatabaseHandler.getInstance().createGame(
+						Integer.parseInt(competitionID), username, opponent,
+						privacy, language);
 				System.out.println("MatchManager reports: GameID: " + gameID
 						+ " match has been logged and invite has been sent!");
-				framePanel.updateNotificationList();
-				retValue = MatchManager.CHALLENGE_SUCCES;
+				retValue = WordFeudConstants.CHALLENGE_SUCCES;
 			} else {
-				retValue = MatchManager.CHALLENGE_FAIL_EXISTS;
+				retValue = WordFeudConstants.CHALLENGE_FAIL_EXISTS;
 			}
 		} else {
-			retValue = MatchManager.CHALLENGE_FAIL_CLOSED;
+			retValue = WordFeudConstants.CHALLENGE_FAIL_CLOSED;
 		}
 		return retValue;
 	}
 
 	public synchronized String getName() {
-		return wf.getCurrentUsername();
+		return wordFeud.getCurrentUsername();
+	}
+
+	public boolean askMatchOwnership(String matchID) {
+		return pendingMatches.get(matchID).isOwnGame();
 	}
 }

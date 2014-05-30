@@ -5,23 +5,11 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 import datalaag.DatabaseHandler;
+import datalaag.WordFeudConstants;
 
 public class User {
-	public static final String ROLE_ADMINISTRATOR = "Administrator";
-	public static final String ROLE_MODERATOR = "Moderator";
-	public static final String ROLE_PLAYER = "Player";
-	public static final String ROLE_SPECTATOR = "Spectator";
-	public static final String FAIL_NAME_LENGTH = "Name must be between 3 and 15 characters.";
-	public static final String FAIL_PASS_LENGTH = "Password must have minimal length of 6 characters.";
-	public static final String FAIL_NAME_NOT_AVAILABLE = "Username is not available for registration.";
-	public static final String FAIL_NO_MATCHING_PASS = "Passwords do not match.";
-	public static final String REGISTER_FAIL_DEFAULT = "Registration error!";
-	public static final String NAMECHANGE_FAIL_DEFAULT = "Failed to change username.";
-	public static final String REGISTER_SUCCESS = "Succesfully registered account.";
-	public static final String NAMECHANGE_SUCCESS = "Succesfully changed username.";
-
 	private final String defaultUsername = "Spectator";
-	private final String defaultRole = ROLE_SPECTATOR;
+	private final String defaultRole = WordFeudConstants.ROLE_SPECTATOR;
 
 	private Player player;
 	private Administrator admin;
@@ -128,17 +116,17 @@ public class User {
 
 		// controleer of de gebruikersnaam tussen de 3 en 15 tekens is
 		if (username.length() < 3 || username.length() > 15) {
-			retValue = User.FAIL_NAME_LENGTH;
+			retValue = WordFeudConstants.FAIL_NAME_LENGTH;
 		}
 
 		// Controleer of wachtwoord minimaal 6 tekens bevat
 		else if (passInput.length() < 6) {
-			retValue = User.FAIL_PASS_LENGTH;
+			retValue = WordFeudConstants.FAIL_PASS_LENGTH;
 		}
 
 		// Controleer of de opgegeven wachtwoorden overeen komen
 		else if (!passInput.equals(passConfirm)) {
-			retValue = User.FAIL_NO_MATCHING_PASS;
+			retValue = WordFeudConstants.FAIL_NO_MATCHING_PASS;
 		}
 
 		// Voer de gebruiker in in de database
@@ -158,46 +146,46 @@ public class User {
 
 			if (!roles.isEmpty()) {
 				for (String role : roles) {
-					if (role.equals(User.ROLE_ADMINISTRATOR)) {
+					if (role.equals(WordFeudConstants.ROLE_ADMINISTRATOR)) {
 						admin.setHasPermissions(true);
-					} else if (role.equals(User.ROLE_MODERATOR)) {
+					} else if (role.equals(WordFeudConstants.ROLE_MODERATOR)) {
 						mod.setHasPermissions(true);
-					} else if (role.equals(User.ROLE_PLAYER)) {
+					} else if (role.equals(WordFeudConstants.ROLE_PLAYER)) {
 						player.setHasPermissions(true);
 					}
 				}
 			}
 		}
 		if (player.HasPermissions()) {
-			this.changeRole(User.ROLE_PLAYER);
+			this.changeRole(WordFeudConstants.ROLE_PLAYER);
 		} else if (admin.HasPermissions()) {
-			this.changeRole(User.ROLE_ADMINISTRATOR);
+			this.changeRole(WordFeudConstants.ROLE_ADMINISTRATOR);
 		} else if (mod.HasPermissions()) {
-			this.changeRole(User.ROLE_MODERATOR);
+			this.changeRole(WordFeudConstants.ROLE_MODERATOR);
 		} else if (spec.HasPermissions()) {
-			this.changeRole(User.ROLE_SPECTATOR);
+			this.changeRole(WordFeudConstants.ROLE_SPECTATOR);
 		}
 	}
 
 	public boolean changeRole(String role) {
 		boolean actionSuccesful = false;
 		if (role != null) {
-			if (role.equals(User.ROLE_ADMINISTRATOR)) {
+			if (role.equals(WordFeudConstants.ROLE_ADMINISTRATOR)) {
 				if (admin.HasPermissions()) {
 					this.setCurrentRole(role);
 					actionSuccesful = true;
 				}
-			} else if (role.equals(User.ROLE_MODERATOR)) {
+			} else if (role.equals(WordFeudConstants.ROLE_MODERATOR)) {
 				if (mod.HasPermissions()) {
 					this.setCurrentRole(role);
 					actionSuccesful = true;
 				}
-			} else if (role.equals(User.ROLE_PLAYER)) {
+			} else if (role.equals(WordFeudConstants.ROLE_PLAYER)) {
 				if (player.HasPermissions()) {
 					this.setCurrentRole(role);
 					actionSuccesful = true;
 				}
-			} else if (role.equals(User.ROLE_SPECTATOR)) {
+			} else if (role.equals(WordFeudConstants.ROLE_SPECTATOR)) {
 				if (spec.HasPermissions()) {
 					this.setCurrentRole(role);
 					actionSuccesful = true;
@@ -210,16 +198,16 @@ public class User {
 	public ArrayList<String> getRoles() {
 		ArrayList<String> roles = new ArrayList<String>();
 		if (spec.HasPermissions()) {
-			roles.add(User.ROLE_SPECTATOR);
+			roles.add(WordFeudConstants.ROLE_SPECTATOR);
 		}
 		if (player.HasPermissions()) {
-			roles.add(User.ROLE_PLAYER);
+			roles.add(WordFeudConstants.ROLE_PLAYER);
 		}
 		if (admin.HasPermissions()) {
-			roles.add(User.ROLE_ADMINISTRATOR);
+			roles.add(WordFeudConstants.ROLE_ADMINISTRATOR);
 		}
 		if (mod.HasPermissions()) {
-			roles.add(User.ROLE_MODERATOR);
+			roles.add(WordFeudConstants.ROLE_MODERATOR);
 		}
 		return roles;
 	}

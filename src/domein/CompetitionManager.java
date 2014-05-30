@@ -8,13 +8,9 @@ import java.util.Set;
 import javax.swing.JOptionPane;
 
 import datalaag.DatabaseHandler;
+import datalaag.WordFeudConstants;
 
 public class CompetitionManager {
-	public static final String CREATE_COMP_FAIL_DEFAULT = "Something went wrong. Competition not created.";
-	public static final String CREATE_COMP_FAIL_INPUT = "Incorrect input. Please input the correct numbers.";
-	public static final String CREATE_COMP_FAIL_NUMBERS = "Incorrect maximum/minimum amount of participants. Check your input.";
-	public static final String CREATE_COMP_SUCCES = "Competition has been created succesfully.";
-
 	private HashMap<String, Competition> joinedCompetitions;
 	private HashMap<String, Competition> competitions;
 
@@ -107,7 +103,7 @@ public class CompetitionManager {
 	public String createCompetition(String currentUsername, String summary,
 			String endDate, String minParticipants, String maxParticipants) {
 		
-		String retValue = CompetitionManager.CREATE_COMP_FAIL_DEFAULT;
+		String retValue = WordFeudConstants.CREATE_COMP_FAIL_DEFAULT;
 		String formatedDateTime = convertDateTime(endDate);
 		
 		int maxParts = 0;
@@ -117,7 +113,7 @@ public class CompetitionManager {
 			minParts = Integer.parseInt(minParticipants);
 		} catch (NumberFormatException nfe) {
 			System.err.println(nfe.getMessage());
-			retValue = CompetitionManager.CREATE_COMP_FAIL_INPUT;
+			retValue = WordFeudConstants.CREATE_COMP_FAIL_INPUT;
 			return retValue;
 		}
 		
@@ -126,9 +122,9 @@ public class CompetitionManager {
 					formatedDateTime, summary, minParts, maxParts);
 			this.loadJoinedCompetitions(currentUsername);
 			this.loadAllCompetitions(currentUsername);
-			retValue = CompetitionManager.CREATE_COMP_SUCCES;
+			retValue = WordFeudConstants.CREATE_COMP_SUCCES;
 		} else {
-			retValue = CompetitionManager.CREATE_COMP_FAIL_NUMBERS;
+			retValue = WordFeudConstants.CREATE_COMP_FAIL_NUMBERS;
 		}
 		return retValue;
 	}
@@ -158,14 +154,6 @@ public class CompetitionManager {
 	public void logout() {
 		joinedCompetitions.clear();
 		competitions.clear();
-	}
-
-	public ArrayList<Competition> getJoinedCompetitions() {
-		ArrayList<Competition> arrayCompetitions = new ArrayList<Competition>();
-		for (Competition value : joinedCompetitions.values()) {
-			arrayCompetitions.add(value);
-		}
-		return arrayCompetitions;
 	}
 
 	private String convertDateTime(String endDate) {

@@ -20,7 +20,7 @@ import javax.swing.border.Border;
 
 import com.lavantech.gui.comp.DateTimePicker;
 
-import domein.CompetitionManager;
+import datalaag.WordFeudConstants;
 
 @SuppressWarnings("serial")
 public class CreateCompWindow extends JDialog {
@@ -63,21 +63,17 @@ public class CreateCompWindow extends JDialog {
 		this.pack();
 		this.setLocationRelativeTo(null);
 		this.setVisible(true);
-		this.setResizable(false);
 	}
 
 	private void createButtonPanel() {
-		confirmButton = new JButton();
+		confirmButton = new JButton("Confirm");
 		buttonPanel.add(confirmButton);
-		confirmButton.setText("Confirm ");
-
 		confirmButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				confirmButtonPressed();
 			}
 		});
-
 	}
 
 	private void createInputPanel() {
@@ -112,7 +108,7 @@ public class CreateCompWindow extends JDialog {
 		
 		JOptionPane.showMessageDialog(mainFrame, retValue, "Ok",
 				JOptionPane.INFORMATION_MESSAGE);
-		if (retValue.equals(CompetitionManager.CREATE_COMP_SUCCES)) {
+		if (retValue.equals(WordFeudConstants.CREATE_COMP_SUCCES)) {
 			this.dispose();
 		}
 	}
