@@ -45,8 +45,6 @@ public class ScorePanel extends JPanel {
 		// Current word value
 		g.drawString("Current word value:", 15, 30);
 		g.drawString("" + wordValue, 15, 70);
-		updatePanel();
-
 	}
 
 	// Sets the wordValue
@@ -72,11 +70,5 @@ public class ScorePanel extends JPanel {
 	// Sets the enemyName
 	public synchronized void setEnemyName(String name) {
 		this.enemyName = name;
-	}
-	
-	// Updates the panel
-	public synchronized void updatePanel() {
-		this.revalidate();
-		this.repaint();
 	}
 }

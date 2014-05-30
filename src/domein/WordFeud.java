@@ -1,34 +1,51 @@
 package domein;
 
+import gui.GameButtonPanel;
+import gui.GameChatPanel;
 import gui.GameScreen;
 import gui.GameSpecScreen;
 import gui.MainFrame;
+import gui.ScorePanel;
 
 import java.util.ArrayList;
 import java.util.Map.Entry;
 import java.util.Observer;
 import java.util.Set;
 
+import javax.swing.SwingUtilities;
+
 public class WordFeud {
 	private User currentUser;
 	private CompetitionManager compMan;
 	private MainFrame mainFrame;
 	private MatchManager matchMan;
+	private WordFeud wordFeud;
+	private GameThread gameThread;
+	private Thread gameLoopThread;
 
 	public WordFeud() {
+		wordFeud = this;
 		currentUser = new User();
 		compMan = new CompetitionManager();
 	}
 
 	public void init() {
-		mainFrame = new MainFrame(this);
-		mainFrame.init();
-		matchMan = new MatchManager(this);
+		matchMan = new MatchManager(wordFeud);
+		SwingUtilities.invokeLater(new Runnable() {			
+			@Override
+			public void run() {
+				mainFrame = new MainFrame(wordFeud);
+				mainFrame.init();
+			}
+		});
+		this.gameThread = new GameThread();
+		gameLoopThread = new Thread(gameThread);
+		gameLoopThread.run();
 	}
 
 	// Stops the Thread
 	public void stopThread() {
-		matchMan.stopThread();
+		gameThread.stopRunning();
 	}
 
 	/*
@@ -183,5 +200,10 @@ public class WordFeud {
 
 	public void doLoadPendingMatches() {
 		matchMan.loadPendingMatches(this.getCurrentUsername());
+	}
+
+	public void setPanelsReferences(GameChatPanel chatPanel, GameButtonPanel buttonPanel,
+			ScorePanel scorePanel) {
+		gameThread.setPanels(chatPanel, buttonPanel, scorePanel, matchMan);
 	}
 }

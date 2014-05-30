@@ -27,7 +27,7 @@ public class Match implements Observer {
 	private ArrayList<String> tilesForJar;
 	private boolean myTurn;
 	private int maxTurn;
-	private boolean surrenderd;
+	private boolean didISurrender;
 	private boolean swapAllowed;
 
 	// Constructor for starting a game where you are playing in
@@ -38,7 +38,7 @@ public class Match implements Observer {
 		board = new Board();
 		jar = new Jar();
 		this.player = player;
-		this.surrenderd = false;
+		this.didISurrender = false;
 		swapAllowed = true;
 
 		// Dit is tijdelijk todat je mensen kunt uitdagen
@@ -753,12 +753,12 @@ public class Match implements Observer {
 			dbh.surrender(gameID, maxTurn + 1, getOwnName(), getEnemyName());
 		}
 		System.out.println("JE HEBT GESURRENDERD!");
-		surrenderd = true;
+		didISurrender = true;
 		dbh.gameStatusUpdate(gameID, "Resigned");
 	}
 
-	public boolean getSurrender() {
-		return surrenderd;
+	public boolean didISurrender() {
+		return didISurrender;
 	}
 
 	// Method to pass

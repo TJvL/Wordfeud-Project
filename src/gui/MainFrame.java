@@ -10,6 +10,7 @@ import javax.swing.JFrame;
 import datalaag.WordFeudConstants;
 import domein.Administrator;
 import domein.Competition;
+import domein.MatchManager;
 import domein.PendingMatch;
 import domein.User;
 import domein.WordFeud;
@@ -66,6 +67,7 @@ public class MainFrame extends JFrame {
 		standardMenuBar = new StandardMenuBar(this);
 		modScreen = new ModScreen();
 		loadingPanel = new LoadingPanel();
+		wordFeud.setPanelsReferences(gameScreen.getGameChatPanel(), gameScreen.getButtonPanel(), gameScreen.getScorePanel());
 	}
 
 	public void setLoadingScreen() {

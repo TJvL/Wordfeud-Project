@@ -4,6 +4,11 @@ public final class WordFeudConstants {
 	public static final int PUBLIC_GAME = 0;
 	public static final int PRIVATE_GAME = 1;
 	
+	public static final String GAME_STATUS_FINISHED = "Finished";
+	public static final String GAME_STATUS_RESIGNED = "Resigned";
+	public static final String GAME_STATUS_PLAYING = "Playing";
+	public static final String GAME_STATUS_REQUEST = "Request";
+	
 	public static final String ROLE_ADMINISTRATOR = "Administrator";
 	public static final String ROLE_MODERATOR = "Moderator";
 	public static final String ROLE_PLAYER = "Player";
