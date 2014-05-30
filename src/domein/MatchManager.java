@@ -11,21 +11,28 @@ import datalaag.WordFeudConstants;
 public class MatchManager {
 	private HashMap<String, Match> matches;
 	private HashMap<String, PendingMatch> pendingMatches;
-	private ArrayList<ActiveMatch> activeMatches;
-	private ArrayList<ActiveMatch> myActiveMatches;
+	private HashMap<String, ActiveMatch> activeMatches;
+	private HashMap<String, ActiveMatch> myActiveMatches;
 	private WordFeud wordFeud;
 
 	public MatchManager(WordFeud wordFeud) {
 		this.wordFeud = wordFeud;
-
 		this.matches = new HashMap<String, Match>();
 		this.pendingMatches = new HashMap<String, PendingMatch>();
-		this.activeMatches = new ArrayList<ActiveMatch>();
-		this.myActiveMatches = new ArrayList<ActiveMatch>();
+		this.activeMatches = new HashMap<String, ActiveMatch>();
+		this.myActiveMatches = new HashMap<String, ActiveMatch>();
 	}
 
 	public Set<Entry<String, PendingMatch>> getPendingMatches() {
 		return pendingMatches.entrySet();
+	}
+	
+	public Set<Entry<String, ActiveMatch>> getActiveMatches() {
+		return activeMatches.entrySet();
+	}
+	
+	public Set<Entry<String, ActiveMatch>> getMyActiveMatches() {
+		return myActiveMatches.entrySet();
 	}
 
 	public void loadPendingMatches(String currentUsername) {
@@ -46,21 +53,20 @@ public class MatchManager {
 							ownGame));
 		}
 	}
-
-	public ArrayList<ActiveMatch> getActiveMatches() {
+	
+	public void loadAllActiveMatches(){
 		if (activeMatches != null) {
 			activeMatches.clear();
 		}
 		ArrayList<String> games = DatabaseHandler.getInstance().spectateList();
 		for (String game : games) {
 			String[] split = game.split(",");
-			activeMatches.add(new ActiveMatch(Integer.parseInt(split[0]),
+			activeMatches.put(split[0], new ActiveMatch(Integer.parseInt(split[0]),
 					split[1]));
 		}
-		return activeMatches;
 	}
-
-	public ArrayList<ActiveMatch> getMyActiveMatches() {
+	
+	public void loadMyActiveMatches(){
 		if (myActiveMatches != null) {
 			myActiveMatches.clear();
 		}
@@ -68,16 +74,14 @@ public class MatchManager {
 				wordFeud.getCurrentUsername());
 		for (String game : games) {
 			String[] split = game.split(",");
-			myActiveMatches.add(new ActiveMatch(Integer.parseInt(split[0]),
+			myActiveMatches.put(split[0], new ActiveMatch(Integer.parseInt(split[0]),
 					split[1]));
 		}
-		return myActiveMatches;
 	}
 
 	// Depends if someone is spectating - starting new game
 	// or want to load a game
-	public synchronized Match startGame(int gameID, boolean spectate,
-			boolean newGame) {
+	public synchronized Match startGame(int gameID, boolean spectate, boolean newGame) {
 		if (spectate) {
 			spectateMatch(gameID);
 			return null;
@@ -96,7 +100,6 @@ public class MatchManager {
 	public void newMatchStartedByMe(int gameID) {
 		Match match = new Match(gameID, wordFeud.getCurrentUsername());
 		match.startNewGame();
-		wordFeud.updatePlayerGameList();
 	}
 
 	// Loads a match

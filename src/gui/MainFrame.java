@@ -8,6 +8,7 @@ import java.util.Set;
 import javax.swing.JFrame;
 
 import datalaag.WordFeudConstants;
+import domein.ActiveMatch;
 import domein.Administrator;
 import domein.Competition;
 import domein.MatchManager;
@@ -335,5 +336,9 @@ public class MainFrame extends JFrame {
 
 	public void callLoadPendingMatchesAction() {
 		wordFeud.doLoadPendingMatches();
+	}
+
+	public Set<Entry<String, ActiveMatch>> callGetAllActiveMatchesAction() {
+		return wordFeud.doGetAllActiveMatchesAction();
 	}
 }

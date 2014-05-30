@@ -182,10 +182,6 @@ public class WordFeud {
 		return mainFrame.getGameScreen();
 	}
 
-	public void updatePlayerGameList() {
-		mainFrame.updatePlayerGameList();
-	}
-
 	public GameSpecScreen getSpecScreen() {
 		return mainFrame.getSpecScreen();
 	}
@@ -205,5 +201,9 @@ public class WordFeud {
 	public void setPanelsReferences(GameChatPanel chatPanel, GameButtonPanel buttonPanel,
 			ScorePanel scorePanel) {
 		gameThread.setPanels(chatPanel, buttonPanel, scorePanel, matchMan);
+	}
+
+	public Set<Entry<String, ActiveMatch>> doGetAllActiveMatchesAction() {
+		return matchMan.getActiveMatches();
 	}
 }

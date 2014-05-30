@@ -45,10 +45,10 @@ public class GameThread implements Runnable {
 				// Method to start games after both players accepted
 				ArrayList<Integer> gamesToLoad = DatabaseHandler.getInstance().gameToLoad(currentUsername);
 				if (gamesToLoad != null) {
-					for (Integer game : gamesToLoad) {
-						Match match = matchManager.startGame(game, false, true);
-						chatPanel.setChatVariables(match.getOwnName(), match.getGameID());
-						this.setRunning(match);
+					for (Integer loadID : gamesToLoad) {
+						Match match = matchManager.startGame(loadID, false, true);
+//						chatPanel.setChatVariables(match.getOwnName(), match.getGameID());
+//						this.setRunning(match);
 					}
 				}
 				
