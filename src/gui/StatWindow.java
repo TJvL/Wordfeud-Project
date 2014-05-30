@@ -1,5 +1,6 @@
 package gui;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -7,25 +8,35 @@ import java.awt.GridLayout;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 
+import datalaag.DatabaseHandler;
+
 @SuppressWarnings("serial")
-public class StatWindow extends JDialog {
+public class StatWindow extends JDialog
+{
 
 	private JLabel playedGames = new JLabel();
 	private JLabel gamesWon = new JLabel();
 	private JLabel highScore = new JLabel();
-	private JLabel mostValuableWord = new JLabel();
 	private JLabel compsWon = new JLabel();
-
 	private JLabel playedGamesValue = new JLabel();
 	private JLabel gamesWonValue = new JLabel();
 	private JLabel highScoreValue = new JLabel();
-	private JLabel mostValuableWordValue = new JLabel();
 	private JLabel compsWonValue = new JLabel();
+	private DatabaseHandler dbh;
+	private String username;
+	private String gamesWonString;
+	private String playedGamesString;
+	private String compsWonString;
+	private String highScoreString;
+	
 
-	public void showStats() {
+	public void showStats(String username)
+	{
+		this.username = username;
+		dbh = DatabaseHandler.getInstance();
 		this.setModal(true);
-		this.setLayout(new GridLayout(6, 2, 10, 10));
-		this.setPreferredSize(new Dimension(500, 500));
+		this.setLayout(new GridLayout(4, 2, 10, 10));
+		this.setPreferredSize(new Dimension(600, 500));
 		this.setResizable(false);
 		this.setTitle(" PlayerName's Statistics");
 		createLabels();
@@ -36,7 +47,9 @@ public class StatWindow extends JDialog {
 
 	}
 
-	public void createLabels() {
+	public void createLabels()
+	{
+		retrieveData(dbh.playerStatistics(username));
 
 		playedGames.setText("Played games:");
 		playedGames.setFont(new Font("Serif", Font.BOLD, 17));
@@ -50,47 +63,60 @@ public class StatWindow extends JDialog {
 		highScore.setText("Highest gameScore:");
 		highScore.setFont(new Font("Serif", Font.BOLD, 17));
 
-		mostValuableWord.setText("Most valuable word played:");
-		mostValuableWord.setFont(new Font("Serif", Font.BOLD, 17));
 
-		// these are the actual values that will have to be retrieved from the
-		// database somehow
-		playedGamesValue.setText("value");
+		playedGamesValue.setText(playedGamesString);
 		playedGamesValue.setFont(new Font("Serif", Font.PLAIN, 17));
 
-		gamesWonValue.setText("value");
-
+		gamesWonValue.setText(gamesWonString);
 		gamesWonValue.setFont(new Font("Serif", Font.PLAIN, 17));
-		compsWonValue.setText("value");
+		
+		compsWonValue.setText(compsWonString);
 		compsWonValue.setFont(new Font("Serif", Font.PLAIN, 17));
-		highScoreValue.setText("value");
+		
+		highScoreValue.setText(highScoreString);
 		highScoreValue.setFont(new Font("Serif", Font.PLAIN, 17));
-		mostValuableWordValue.setText("value");
-		mostValuableWordValue.setFont(new Font("Serif", Font.PLAIN, 17));
-
-		// playedGames.setForeground(Color.GRAY);
-		// playedGamesValue.setForeground(Color.GRAY);
-		// gamesWon.setForeground(Color.GRAY);
-		// gamesWonValue.setForeground(Color.GRAY);
-		// compsWon.setForeground(Color.GRAY);
-		// compsWonValue.setForeground(Color.GRAY);
-		// highScore.setForeground(Color.GRAY);
-		// highScoreValue.setForeground(Color.GRAY);
-		// mostValuableWord.setForeground(Color.GRAY);
-		// mostValuableWordValue.setForeground(Color.GRAY);
+		
 
 		this.add(playedGames);
-
 		this.add(playedGamesValue);
 
 		this.add(gamesWon);
 		this.add(gamesWonValue);
+		
+		
 		this.add(compsWon);
 		this.add(compsWonValue);
+		
 		this.add(highScore);
 		this.add(highScoreValue);
-		this.add(mostValuableWord);
-		this.add(mostValuableWordValue);
+		
+		this.getContentPane().setBackground(Color.DARK_GRAY);
+		playedGames.setForeground(Color.WHITE);
+		gamesWon.setForeground(Color.WHITE);
+		highScore.setForeground(Color.WHITE);
+		compsWon.setForeground(Color.WHITE);
+		playedGamesValue.setForeground(Color.WHITE);
+		gamesWonValue.setForeground(Color.WHITE);
+		highScoreValue.setForeground(Color.WHITE);
+		compsWonValue.setForeground(Color.WHITE);
+		
+	}
+
+	public void retrieveData(String dataInput)
+	{
+		String dataBefore = dataInput;
+		
+		String[] dataAfter = dataBefore.split("-");
+
+		compsWonString = dataAfter[0];
+		gamesWonString = dataAfter[3];
+		playedGamesString = dataAfter[12];
+		highScoreString = dataAfter[15];
+		
+
+		
+		
 
 	}
+
 }
