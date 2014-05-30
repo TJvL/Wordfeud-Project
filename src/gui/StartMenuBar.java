@@ -21,7 +21,6 @@ public class StartMenuBar extends JMenuBar {
 			public void actionPerformed(ActionEvent e) {
 				exitItemChosen();
 			}
-
 		});
 
 		optionsMenu.add(exitMenuItem);

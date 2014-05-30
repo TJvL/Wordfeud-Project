@@ -11,6 +11,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+import datalaag.WordFeudConstants;
 import domein.User;
 
 @SuppressWarnings("serial")
@@ -92,7 +93,7 @@ public class RegScreen extends JPanel {
 
 		String retValue = mainFrame.callRegisterAction(username, password, repPassword);
 
-		if(retValue.equals(User.REGISTER_SUCCESS)){
+		if(retValue.equals(WordFeudConstants.REGISTER_SUCCESS)){
 			JOptionPane.showMessageDialog(this, retValue);
 			mainFrame.setLoginScreen();
 		}
