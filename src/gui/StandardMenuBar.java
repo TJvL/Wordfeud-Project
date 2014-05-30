@@ -9,6 +9,8 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
+import domein.Statistics;
+
 @SuppressWarnings("serial")
 public class StandardMenuBar extends JMenuBar {
 	private MainFrame mainFrame;
@@ -18,9 +20,11 @@ public class StandardMenuBar extends JMenuBar {
 	private RoleWindow rolewindow;
 	private StatWindow statwindow;
 	private AccDataWindow accdatawindow;
+	private Statistics statistics;
 
 	public StandardMenuBar(MainFrame mainFrame) {
 		this.mainFrame = mainFrame;
+		statistics = new Statistics();
 		rolewindow = new RoleWindow();
 		statwindow = new StatWindow();
 		accdatawindow = new AccDataWindow(mainFrame);
@@ -79,7 +83,9 @@ public class StandardMenuBar extends JMenuBar {
 
 		statisticsMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				statwindow.showStats(mainFrame.getCurrentUsername());
+				statistics.retrieveData(mainFrame.getCurrentUsername());
+				statwindow.showStats(statistics.getPlayedGamesString(), statistics.getGamesWonString(), statistics.getCompsWonString(), statistics.getHighScoreString());
+				
 			}
 		});
 		accountdataMenuItem.addActionListener(new ActionListener() {
