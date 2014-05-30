@@ -13,7 +13,6 @@ public class PendingMatch {
 
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
 		return discription;
 	}
 	
@@ -25,7 +24,7 @@ public class PendingMatch {
 		return discription;
 	}
 	
-	public boolean getOwnGame(){
+	public boolean isOwnGame(){
 		return ownGame;
 	}
 }
