@@ -58,6 +58,7 @@ public class MatchManager {
 				initializeThread();
 			}
 		});
+		
 	}
 
 	public ArrayList<PendingMatch> getPendingMatchs() {
