@@ -132,17 +132,6 @@ public class WordFeud {
 		matchMan.startGame(gameID, spectate, newGame);
 	}
 
-	// // Adds the observers
-	// public void addObservers(final Observer observer, final boolean
-	// spectator) {
-	// SwingUtilities.invokeLater(new Runnable() {
-	// @Override
-	// public void run() {
-	// mainFrame.addObservers(observer, spectator);
-	// }
-	// });
-	// }
-
 	// Adds the observers
 	public void addObservers(Observer observer, boolean spectator) {
 		mainFrame.addObservers(observer, spectator);

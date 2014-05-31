@@ -11,7 +11,6 @@ import java.util.Observer;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
-import domein.Match;
 import domein.Square;
 import domein.Tile;
 
@@ -63,8 +62,6 @@ public class GameSpecScreen extends JPanel {
 		forward.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				// TODO Auto-generated method stub
-				// new ObserverButtons("forward");
 				observerButtons.changeActionRequest("forward");
 			}
 		});
@@ -73,8 +70,6 @@ public class GameSpecScreen extends JPanel {
 		backward.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				// TODO Auto-generated method stub
-				// new ObserverButtons("backwards");
 				observerButtons.changeActionRequest("backward");
 			}
 		});
@@ -101,20 +96,20 @@ public class GameSpecScreen extends JPanel {
 		fieldPanel.addSquare(squarePanel);
 	}
 
-//	// Restting the board
-//	public void resestField(Match match) {
-//		for (int y = 0; y < 15; y++) {
-//			for (int x = 0; x < 15; x++) {
-//				if (match.getSquare(x, y) != null) {
-//					if (match.getSquare(x, y).getTile() != null) {
-//						squaresPanels[x][y].addImage(match.getImage(x, y));
-//					} else {
-//						squaresPanels[x][y].removeImage();
-//					}
-//				}
-//			}
-//		}
-//	}
+	// // Restting the board
+	// public void resestField(Match match) {
+	// for (int y = 0; y < 15; y++) {
+	// for (int x = 0; x < 15; x++) {
+	// if (match.getSquare(x, y) != null) {
+	// if (match.getSquare(x, y).getTile() != null) {
+	// squaresPanels[x][y].addImage(match.getImage(x, y));
+	// } else {
+	// squaresPanels[x][y].removeImage();
+	// }
+	// }
+	// }
+	// }
+	// }
 
 	// Removes the board
 	public void resetGame() {
@@ -125,7 +120,7 @@ public class GameSpecScreen extends JPanel {
 			}
 		}
 	}
-	
+
 	// Rest the hands
 	public void resetHands() {
 		tilesP1.clear();
@@ -157,6 +152,7 @@ public class GameSpecScreen extends JPanel {
 			handPanelP2.addTile(tp);
 		}
 	}
+
 	// end of the hand part
 
 	// Setting the score panel
@@ -207,15 +203,16 @@ public class GameSpecScreen extends JPanel {
 
 	// Adds observers
 	public void addObservers(Observer observer) {
+		observerButtons.deleteObservers();
 		observerButtons.addObserver(observer);
 	}
-}
 
-// A innerclass to be able to extend obserable
-class ObserverButtons extends Observable {
-	public void changeActionRequest(String actionRequest) {
-		System.out.println("action requested: " + actionRequest);
-		this.setChanged();
-		this.notifyObservers(actionRequest);
+	// A innerclass to be able to extend obserable
+	class ObserverButtons extends Observable {
+		public void changeActionRequest(String actionRequest) {
+			System.out.println("action requested: " + actionRequest);
+			this.setChanged();
+			this.notifyObservers(actionRequest);
+		}
 	}
 }

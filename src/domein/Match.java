@@ -183,10 +183,9 @@ public class Match implements Observer {
 	// Uses a separate panel
 	public void loadSpecateGame(GameSpecScreen gameSpecScreen) {
 		this.gameSpec = gameSpecScreen;
-//		gameSpec.resetGame();
-//		gameSpec.resetHands();
+		// gameSpec.resetGame();
+		// gameSpec.resetHands();
 		board.clearField();
-		
 
 		// Filling the field
 		ArrayList<String> squares = dbh.squareCheck();
@@ -196,7 +195,7 @@ public class Match implements Observer {
 					Integer.parseInt(splits[1]) - 1, splits[2]);
 		}
 		// Spectator needs the Match to function
-//		gameSpec.createField(this);
+		// gameSpec.createField(this);
 
 		// Loading the played tiles
 		ArrayList<String> playedWords = dbh.playedWords(gameID, 0, true);
@@ -211,20 +210,18 @@ public class Match implements Observer {
 			board.addTileToSquare(
 					new Tile(jar.getImage(letters), Integer.parseInt(split[0])),
 					Integer.parseInt(xPos) - 1, Integer.parseInt(yPos) - 1);
-	//		gameSpec.addImageToBoard(jar.getImage(letters),
-	//				Integer.parseInt(xPos) - 1, Integer.parseInt(yPos) - 1);
+			// gameSpec.addImageToBoard(jar.getImage(letters),
+			// Integer.parseInt(xPos) - 1, Integer.parseInt(yPos) - 1);
 		}
 
 		// Creating the score panels and setting the values
 		String names = dbh.opponentName(gameID);
 		String[] playerNames = names.split("---");
 		scoreP1 = dbh.score(gameID, playerNames[0]);
-		opponentName = playerNames[0];
-		myName = playerNames[1];
-	//	gameSpec.setNameP1(playerNames[0]);
+		myName = playerNames[0];
+		opponentName = playerNames[1];
 		scoreP2 = dbh.score(gameID, playerNames[1]);
-	//	gameSpec.setNameP2(playerNames[1]);
-		
+
 		// Adding the tiles to the hands
 		ArrayList<String> handTilesP1;
 		ArrayList<String> handTilesP2;
@@ -252,42 +249,40 @@ public class Match implements Observer {
 			Tile t = jar.createTile(Integer.parseInt(tiles[0]), tiles[1],
 					Integer.parseInt(tiles[2]));
 			player.addTileToHand(t);
-			//gameSpec.addTilesP1(t);
+			// gameSpec.addTilesP1(t);
 		}
 		for (int z = 0; z < handTilesP2.size(); z++) {
 			String[] tiles = handTilesP2.get(z).split("---");
 			Tile t = jar.createTile(Integer.parseInt(tiles[0]), tiles[1],
 					Integer.parseInt(tiles[2]));
 			player2.addTileToHand(t);
-			//gameSpec.addTilesP2(t);
+			// gameSpec.addTilesP2(t);
 		}
 
 		field = board.getField();
-		
+
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				
+
 				gameSpec.resetGame();
 				gameSpec.resetHands();
-				
-			//	gameField.clearField();
+
+				// gameField.clearField();
 				for (int y = 0; y < 15; y++) {
 					for (int x = 0; x < 15; x++) {
-				//		if (board.getSquare(x, y).getTile() != null){
-							gameSpec.createField(field[x][y]);
-				//		}
+						// if (board.getSquare(x, y).getTile() != null){
+						gameSpec.createField(field[x][y]);
+						// }
 					}
 				}
 				/*
-				for (int y = 0; y < 15; y++) {
-					for (int x = 0; x < 15; x++) {
-						if (field[x][y].getTile() != null){
-							gameSpec.addImageToBoard(field[x][y].getTile().getImage(), x, y);
-						}
-					}
-				}*/
-				
+				 * for (int y = 0; y < 15; y++) { for (int x = 0; x < 15; x++) {
+				 * if (field[x][y].getTile() != null){
+				 * gameSpec.addImageToBoard(field[x][y].getTile().getImage(), x,
+				 * y); } } }
+				 */
+
 				gameSpec.setNameP1(myName);
 				gameSpec.setScoreP1(scoreP1);
 				gameSpec.setNameP2(opponentName);
@@ -295,17 +290,17 @@ public class Match implements Observer {
 				gameSpec.setTurnScoreP1(tScoreP1);
 				gameSpec.setTurnScoreP2(tScoreP2);
 				gameSpec.setTurn(setTurn);
-				
+
 				ArrayList<Tile> playerHand = player.getHand();
-				for (Tile pl: playerHand){
+				for (Tile pl : playerHand) {
 					gameSpec.addTilesP1(pl);
 				}
-				
+
 				ArrayList<Tile> player2Hand = player2.getHand();
-				for (Tile pl: player2Hand){
+				for (Tile pl : player2Hand) {
 					gameSpec.addTilesP2(pl);
 				}
-				
+
 				gameSpec.repaintBoard();
 				gameSpec.revalidate();
 			}
@@ -317,11 +312,15 @@ public class Match implements Observer {
 	public void updateSpecTurn(boolean forward) {
 		// Checks what turn it is
 		board.clearField();
-		
+
 		String names = dbh.opponentName(gameID);
 		String[] playerNames = names.split("---");
 		String[] splits = dbh.checkTurn(playerNames[0], gameID).split("---");
-
+		scoreP1 = dbh.score(gameID, playerNames[0]);
+		myName = playerNames[0];
+		opponentName = playerNames[1];
+		scoreP2 = dbh.score(gameID, playerNames[1]);
+		
 		// If forward it will increase maxTurn
 		if (forward) {
 			if (maxTurn < Integer.parseInt(splits[1])) {
@@ -336,6 +335,7 @@ public class Match implements Observer {
 				myTurn = !myTurn;
 			}
 		}
+
 
 		// Adding the tiles to the hands
 		ArrayList<String> handTilesP1;
@@ -356,24 +356,24 @@ public class Match implements Observer {
 
 		player.clearHand();
 		player2.clearHand();
-		
+
 		// Adds the tiles to the hands
 		for (int z = 0; z < handTilesP1.size(); z++) {
 			String[] tiles = handTilesP1.get(z).split("---");
 			Tile t = jar.createTile(Integer.parseInt(tiles[0]), tiles[1],
 					Integer.parseInt(tiles[2]));
 			player.addTileToHand(t);
-		//	gameSpec.addTilesP1(t);
+			// gameSpec.addTilesP1(t);
 		}
 		for (int z = 0; z < handTilesP2.size(); z++) {
 			String[] tiles = handTilesP2.get(z).split("---");
 			Tile t = jar.createTile(Integer.parseInt(tiles[0]), tiles[1],
 					Integer.parseInt(tiles[2]));
 			player2.addTileToHand(t);
-		//	gameSpec.addTilesP2(t);
+			// gameSpec.addTilesP2(t);
 		}
 
-	//	gameSpec.resestField(this);
+		// gameSpec.resestField(this);
 
 		// Loads the played words from the database
 		// Only if they were played before maxTurn
@@ -390,38 +390,36 @@ public class Match implements Observer {
 			if (turn <= maxTurn) {
 				board.addTileToSquare(new Tile(jar.getImage(letters), turn),
 						Integer.parseInt(xPos) - 1, Integer.parseInt(yPos) - 1);
-		//		gameSpec.addImageToBoard(jar.getImage(letters),
-		//				Integer.parseInt(xPos) - 1, Integer.parseInt(yPos) - 1);
+				// gameSpec.addImageToBoard(jar.getImage(letters),
+				// Integer.parseInt(xPos) - 1, Integer.parseInt(yPos) - 1);
 			}
-		}
+		}	
 
 		field = board.getField();
-		
+
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				
+
 				gameSpec.resetGame();
 				gameSpec.resetHands();
-				
-			//	gameField.clearField();
+
+				// gameField.clearField();
 				for (int y = 0; y < 15; y++) {
 					for (int x = 0; x < 15; x++) {
-				//		if (board.getSquare(x, y).getTile() != null){
-							gameSpec.createField(field[x][y]);
-				//		}
+						// if (board.getSquare(x, y).getTile() != null){
+						gameSpec.createField(field[x][y]);
+						// }
 					}
 				}
-				
+
 				/*
-				for (int y = 0; y < 15; y++) {
-					for (int x = 0; x < 15; x++) {
-						if (field[x][y].getTile() != null){
-							gameSpec.addImageToBoard(field[x][y].getTile().getImage(), x, y);
-						}
-					}
-				}*/
-				
+				 * for (int y = 0; y < 15; y++) { for (int x = 0; x < 15; x++) {
+				 * if (field[x][y].getTile() != null){
+				 * gameSpec.addImageToBoard(field[x][y].getTile().getImage(), x,
+				 * y); } } }
+				 */
+
 				gameSpec.setNameP1(myName);
 				gameSpec.setScoreP1(scoreP1);
 				gameSpec.setNameP2(opponentName);
@@ -429,17 +427,17 @@ public class Match implements Observer {
 				gameSpec.setTurnScoreP1(tScoreP1);
 				gameSpec.setTurnScoreP2(tScoreP2);
 				gameSpec.setTurn(setTurn);
-				
+
 				ArrayList<Tile> playerHand = player.getHand();
-				for (Tile pl: playerHand){
+				for (Tile pl : playerHand) {
 					gameSpec.addTilesP1(pl);
 				}
-				
+
 				ArrayList<Tile> player2Hand = player2.getHand();
-				for (Tile pl: player2Hand){
+				for (Tile pl : player2Hand) {
 					gameSpec.addTilesP2(pl);
 				}
-				
+
 				gameSpec.repaintBoard();
 				gameSpec.revalidate();
 			}
@@ -515,7 +513,7 @@ public class Match implements Observer {
 			if (splits[5].equals("?")) {
 				letters += splits[4];
 			}
-			//int value = dbh.letterValue("EN", letters);
+			// int value = dbh.letterValue("EN", letters);
 			Tile t = jar.createTile(letters, Integer.parseInt(splits[6]));
 			board.addTileToSquare(t, Integer.parseInt(xPos) - 1,
 					Integer.parseInt(yPos) - 1);
@@ -558,8 +556,8 @@ public class Match implements Observer {
 						gameField.addSquares(board.getSquare(x, y));
 					}
 				}
-			//	System.err.println(tiles.size() + " DE GROTE");
-					gameField.addTileToHand(player.getHand());			
+				// System.err.println(tiles.size() + " DE GROTE");
+				gameField.addTileToHand(player.getHand());
 				gameField.repaintBoard();
 				gameField.revalidate();
 			}
@@ -568,7 +566,7 @@ public class Match implements Observer {
 
 	// A method to update the playfield
 	public synchronized void updateField() {
-
+		clearTilesFromBoard();
 		// Updating the field
 		ArrayList<String> playedWords = dbh.playedWords(gameID, maxTurn - 2,
 				true);
@@ -580,7 +578,7 @@ public class Match implements Observer {
 			if (splits[5].equals("?")) {
 				letters += splits[4];
 			}
-		//	int value = dbh.letterValue("EN", letters);
+			// int value = dbh.letterValue("EN", letters);
 			Tile t = jar.createTile(letters, Integer.parseInt(splits[6]));
 			board.addTileToSquare(t, Integer.parseInt(xPos) - 1,
 					Integer.parseInt(yPos) - 1);
@@ -621,7 +619,7 @@ public class Match implements Observer {
 						gameField.addSquares(board.getSquare(x, y));
 					}
 				}
-				gameField.addTileToHand(player.getHand());			
+				gameField.addTileToHand(player.getHand());
 				gameField.repaintBoard();
 				gameField.revalidate();
 			}
@@ -659,7 +657,7 @@ public class Match implements Observer {
 					tilesToSwap.clear();
 				}
 				gameField.addTileToHand(player.getHand());
-				gameField.repaintBoard();			
+				gameField.repaintBoard();
 				gameField.repaintBoard();
 			}
 		});
@@ -753,7 +751,7 @@ public class Match implements Observer {
 			@Override
 			public void run() {
 				for (Tile t : tilesToMove) {
-					gameField.removeImageSquare(t.getXValue(), t.getYValue());				
+					gameField.removeImageSquare(t.getXValue(), t.getYValue());
 				}
 				gameField.addTileToHand(player.getHand());
 				gameField.repaintBoard();
@@ -805,7 +803,7 @@ public class Match implements Observer {
 				dbh.addTileToHand(gameID, tilesNumber, maxTurn);
 				// dbh.addTileToHand(gameID, tileID, maxTurn);
 				board.setScore();
-				
+
 				SwingUtilities.invokeLater(new Runnable() {
 					@Override
 					public void run() {
@@ -813,7 +811,7 @@ public class Match implements Observer {
 					}
 				});
 			}
-		}	
+		}
 	}
 
 	// Swapping tiles from the hand back to the jar
@@ -829,7 +827,6 @@ public class Match implements Observer {
 					"Notice", JOptionPane.OK_OPTION);
 		} else {
 			dbh.updateTurn(maxTurn, gameID, getOwnName(), 0, "Swap");
-			tilesToSwap.clear();
 			fillHand(null);
 		}
 		// ***** dbh.updateTurn(maxTurn + 1, gameID, getEnemyName(), 25,

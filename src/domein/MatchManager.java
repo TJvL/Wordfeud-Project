@@ -7,11 +7,15 @@ import gui.GameScreen;
 import gui.GameSpecScreen;
 import gui.MainFrame;
 import gui.ScorePanel;
+
 import java.util.ArrayList;
+
 import javax.swing.SwingUtilities;
+
 import java.util.HashMap;
 import java.util.Set;
 import java.util.Map.Entry;
+
 import datalaag.DatabaseHandler;
 import datalaag.WordFeudConstants;
 
@@ -154,17 +158,18 @@ public class MatchManager {
 				exists = true;
 				// Adds the observers
 				wordFeud.addObservers(match, false);
-				chatPanel.setChatVariables(match.getOwnName(),
-						match.getGameID());
+			//	chatPanel.setChatVariables(match.getOwnName(),
+			//			match.getGameID());
 				this.match = match1;
-				// SwingUtilities.invokeLater(new Runnable() {
-				// @Override
-				// public void run() {
-				// match1.loadGame();
-				// }
-				// });
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						chatPanel.setChatVariables(match.getOwnName(), match.getGameID());		
+						gameThread.setRunning(match);
+					}
+				});	
 				match.loadGame();
-				gameThread.setRunning(match);
+			//	gameThread.setRunning(match);
 			}
 		}
 		if (!exists) {
@@ -180,9 +185,15 @@ public class MatchManager {
 			// });
 
 			match.loadGame();
-			chatPanel.setChatVariables(match.getOwnName(), match.getGameID());
 			matches.add(match);
-			gameThread.setRunning(match);
+			
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					chatPanel.setChatVariables(match.getOwnName(), match.getGameID());		
+					gameThread.setRunning(match);
+				}
+			});		
 		}
 
 	}
@@ -191,7 +202,6 @@ public class MatchManager {
 	public void spectateMatch(int gameID) {
 		System.out.println("GAMEID " + gameID);	
 		match = new Match(gameID);
-		matches.add(match);
 		wordFeud.addObservers(match, true);
 		match.loadSpecateGame(specScreen);
 	}

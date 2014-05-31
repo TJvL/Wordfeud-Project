@@ -42,6 +42,7 @@ public class GameFieldPanel extends JPanel {
 
 	// Adds the observers
 	public void addObserverToObserverButtons(Observer observer) {
+		observerButtons.deleteObservers();
 		observerButtons.addObserver(observer);
 	}
 
