@@ -291,7 +291,7 @@ public class Match implements Observer {
 				gameSpec.setNameP1(myName);
 				gameSpec.setScoreP1(scoreP1);
 				gameSpec.setNameP2(opponentName);
-				gameSpec.setScoreP1(scoreP2);
+				gameSpec.setScoreP2(scoreP2);
 				gameSpec.setTurnScoreP1(tScoreP1);
 				gameSpec.setTurnScoreP2(tScoreP2);
 				gameSpec.setTurn(setTurn);
@@ -425,7 +425,7 @@ public class Match implements Observer {
 				gameSpec.setNameP1(myName);
 				gameSpec.setScoreP1(scoreP1);
 				gameSpec.setNameP2(opponentName);
-				gameSpec.setScoreP1(scoreP2);
+				gameSpec.setScoreP2(scoreP2);
 				gameSpec.setTurnScoreP1(tScoreP1);
 				gameSpec.setTurnScoreP2(tScoreP2);
 				gameSpec.setTurn(setTurn);
@@ -515,8 +515,8 @@ public class Match implements Observer {
 			if (splits[5].equals("?")) {
 				letters += splits[4];
 			}
-			int value = dbh.letterValue("EN", letters);
-			Tile t = jar.createTile(letters, value);
+			//int value = dbh.letterValue("EN", letters);
+			Tile t = jar.createTile(letters, Integer.parseInt(splits[6]));
 			board.addTileToSquare(t, Integer.parseInt(xPos) - 1,
 					Integer.parseInt(yPos) - 1);
 			// gameField.addSquarePanel(Integer.parseInt(xPos) - 1,
@@ -580,8 +580,8 @@ public class Match implements Observer {
 			if (splits[5].equals("?")) {
 				letters += splits[4];
 			}
-			int value = dbh.letterValue("EN", letters);
-			Tile t = jar.createTile(letters, value);
+		//	int value = dbh.letterValue("EN", letters);
+			Tile t = jar.createTile(letters, Integer.parseInt(splits[6]));
 			board.addTileToSquare(t, Integer.parseInt(xPos) - 1,
 					Integer.parseInt(yPos) - 1);
 			System.out.println("tile " + t.getLetter() + " placed at x "

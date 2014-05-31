@@ -984,16 +984,16 @@ public class DatabaseHandler
 		try
 		{
 			if (forward){
-				statement = con.prepareStatement("SELECT g.*, l.lettertype_karakter FROM gelegdeletter AS g LEFT JOIN letter AS l ON g.letter_id = l.id WHERE g.spel_id = '" + gameID + "' AND beurt_id > '" + turnID + "' GROUP BY g.beurt_id, g.tegel_x, g.tegel_y");
+				statement = con.prepareStatement("SELECT g.*, l.lettertype_karakter, lt.waarde FROM gelegdeletter AS g LEFT JOIN letter AS l ON g.letter_id = l.id LEFT JOIN lettertype AS lt ON l.lettertype_karakter = lt.karakter WHERE g.spel_id = '" + gameID + "' AND beurt_id > '" + turnID + "' GROUP BY g.beurt_id, g.tegel_x, g.tegel_y");
 			} else {
-				statement = con.prepareStatement("SELECT g.*, l.lettertype_karakter FROM gelegdeletter AS g LEFT JOIN letter AS l ON g.letter_id = l.id WHERE g.spel_id = '" + gameID + "' AND beurt_id < '" + turnID + "' GROUP BY g.beurt_id, g.tegel_x, g.tegel_y");	
+				statement = con.prepareStatement("SELECT g.*, l.lettertype_karakter, lt.waarde FROM gelegdeletter AS g LEFT JOIN letter AS l ON g.letter_id = l.id LEFT JOIN lettertype AS lt ON l.lettertype_karakter = lt.karakter WHERE g.spel_id = '" + gameID + "' AND beurt_id < '" + turnID + "' GROUP BY g.beurt_id, g.tegel_x, g.tegel_y");
 			}
 			result = statement.executeQuery();
 
 			while (result.next())
 			{
 				playedWord.add(result.getString(3) + "---" + result.getString(4) + "---" + result.getString(5) + "---"
-						+ result.getString(1) + "---" + result.getString(7) + "---" + result.getString(8));
+						+ result.getString(1) + "---" + result.getString(7) + "---" + result.getString(8) + "---" + result.getInt(9));
 			}
 			result.close();
 			statement.close();
