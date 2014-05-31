@@ -646,7 +646,7 @@ public class Match implements Observer {
 
 	// Takes a random tile from the jar
 	// Add it to the player and and to the gui
-	public int getTileFromJar() {
+	public void getTileFromJar() {
 		tempTile = jar.getNewTile();
 		// addTileToHand(t);
 		SwingUtilities.invokeLater(new Runnable() {
@@ -658,11 +658,9 @@ public class Match implements Observer {
 				}
 				gameField.addTileToHand(player.getHand());
 				gameField.repaintBoard();
-				gameField.repaintBoard();
 			}
 		});
 		player.addTileToHand(tempTile);
-		return tempTile.getTileID();
 	}
 
 	// Takes the tile selected and move it to the board
@@ -785,13 +783,7 @@ public class Match implements Observer {
 			} else {
 				// ArrayList<Integer> tileID = new ArrayList<Integer>();
 				while (player.getHandSize() < 7 && jar.getJarSize() > 0) {
-					int id = getTileFromJar();
-					if (id != -1) {
-						// tileID.add(id);
-					} else {
-						System.out
-								.println("ER IS IETS FOUT GEGAAN BY FILLHAND");
-					}
+					getTileFromJar();
 				}
 
 				ArrayList<Tile> tilesInHand = player.getHand();

@@ -7,7 +7,7 @@ public class Word {
 
 	// Sets standerd values
 	public Word(){
-		this.bonus = 0;
+		this.bonus = 1;
 		this.word = "";
 	}
 	
