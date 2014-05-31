@@ -56,7 +56,7 @@ public class GameFieldPanel extends JPanel {
 		squarePanel = new SquarePanel(square);
 		if (square.getTile() != null) {
 			squarePanel.addImage(square.getTile().getImage());
-		} 
+		}
 		squaresPanels[x][y] = squarePanel;
 
 		// Adds a mouseAdparter to the square
@@ -85,7 +85,7 @@ public class GameFieldPanel extends JPanel {
 						Tile t = new Tile(sq.getXValue(), sq.getYValue());
 						observerButtons.moveTile(t);
 						sq.removeImage();
-					} 
+					}
 				}
 			}
 		});
@@ -96,7 +96,7 @@ public class GameFieldPanel extends JPanel {
 	// A method to make the tilePanels and uses a Match as parameter
 	// And uses a Tile
 	private TilePanel makeTilePanel(Tile tile) {
-	
+
 		// Makes a tilePanel and adds a listener
 		TilePanel tilePanel = new TilePanel(tile);
 		tilePanel.addMouseListener(new MouseAdapter() {
@@ -178,16 +178,17 @@ public class GameFieldPanel extends JPanel {
 
 	// You give it a tile to be add to the hand
 	// The param is the tile to be add
-	public void addTileToHand(Tile t) {
-		@SuppressWarnings("unused")
-		TilePanel tile;
-		tiles.add(tile = makeTilePanel(t));
-		swapTiles();
-		handPanel.disposeTiles();
-		for (TilePanel tp : tiles) {
-			handPanel.addTile(tp);
-			this.repaint();
-			this.revalidate();
+	public void addTileToHand(ArrayList<Tile> tile) {
+		tiles.clear();
+		for (Tile t : tile) {
+			@SuppressWarnings("unused")
+			TilePanel tilePanel;	
+			tiles.add(tilePanel = makeTilePanel(t));
+			swapTiles();			
+			handPanel.disposeTiles();
+			for (TilePanel tp : tiles) {
+				handPanel.addTile(tp);
+			}
 		}
 	}
 
@@ -270,6 +271,11 @@ public class GameFieldPanel extends JPanel {
 			}
 		}
 		repaintBoard();
+	}
+
+	// Clear the hand
+	public void clearHand() {
+		handPanel.disposeTiles();
 	}
 
 	// A class to be able to extend obserable for the buttons

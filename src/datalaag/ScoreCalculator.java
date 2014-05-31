@@ -121,8 +121,8 @@ public class ScoreCalculator {
 			else if (justFilledSquares.size() == 1) {
 				score = calculateScoreOneTile();
 			}
-			
-			if (justFilledSquares.size() == 7){
+
+			if (justFilledSquares.size() == 7) {
 				score += 40;
 			}
 		}

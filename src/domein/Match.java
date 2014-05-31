@@ -558,11 +558,8 @@ public class Match implements Observer {
 						gameField.addSquares(board.getSquare(x, y));
 					}
 				}
-				ArrayList<Tile> tiles = player.getHand();
-				System.err.println(tiles.size() + " DE GROTE");
-				for (Tile t : tiles) {
-					gameField.addTileToHand(t);
-				}
+			//	System.err.println(tiles.size() + " DE GROTE");
+					gameField.addTileToHand(player.getHand());			
 				gameField.repaintBoard();
 				gameField.revalidate();
 			}
@@ -624,11 +621,7 @@ public class Match implements Observer {
 						gameField.addSquares(board.getSquare(x, y));
 					}
 				}
-				ArrayList<Tile> tiles = player.getHand();
-				System.err.println(tiles.size() + " DE GROTE");
-				for (Tile t : tiles) {
-					gameField.addTileToHand(t);
-				}
+				gameField.addTileToHand(player.getHand());			
 				gameField.repaintBoard();
 				gameField.revalidate();
 			}
@@ -661,15 +654,13 @@ public class Match implements Observer {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				gameField.addTileToHand(tempTile);
-				gameField.repaintBoard();
-
 				if (tilesToSwap != null) {
-					for (TilePanel tile : tilesToSwap) {
-						gameField.removeTileFromHand(tile.getTile());
-					}
+					gameField.clearHand();
 					tilesToSwap.clear();
 				}
+				gameField.addTileToHand(player.getHand());
+				gameField.repaintBoard();			
+				gameField.repaintBoard();
 			}
 		});
 		player.addTileToHand(tempTile);
@@ -736,7 +727,7 @@ public class Match implements Observer {
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
-					gameField.addTileToHand(tempTile);
+					gameField.addTileToHand(player.getHand());
 					gameField.repaintBoard();
 				}
 			});
@@ -761,11 +752,10 @@ public class Match implements Observer {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-
 				for (Tile t : tilesToMove) {
-					gameField.removeImageSquare(t.getXValue(), t.getYValue());
-					gameField.addTileToHand(t);
+					gameField.removeImageSquare(t.getXValue(), t.getYValue());				
 				}
+				gameField.addTileToHand(player.getHand());
 				gameField.repaintBoard();
 			}
 		});
