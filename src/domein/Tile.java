@@ -14,6 +14,7 @@ public class Tile {
 	private int y;
 	private BufferedImage image;
 	private int tileID;
+	private int turn;
 
 	// Constructor one
 	public Tile(int tileID, String letter, int value, BufferedImage image) {
@@ -38,7 +39,7 @@ public class Tile {
 	}
 	
 	// Constructor for spectating
-	public Tile(BufferedImage image){
+	public Tile(BufferedImage image, int turn){
 		this.image = image;
 	}
 			
@@ -113,5 +114,10 @@ public class Tile {
 	// Returns the tileID
 	public int getTileID(){
 		return tileID;
+	}
+	
+	// Returns the turn played on
+	public int getTurn(){
+		return turn;
 	}
 }

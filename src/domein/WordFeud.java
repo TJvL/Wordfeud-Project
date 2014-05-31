@@ -18,7 +18,6 @@ public class WordFeud {
 	private WordFeud wf;
 	private MatchManager matchMan;
 
-
 	public WordFeud() {
 		currentUser = new User();
 		compMan = new CompetitionManager();
@@ -30,9 +29,9 @@ public class WordFeud {
 			@Override
 			public void run() {
 				mainFrame = new MainFrame(wf);
-				mainFrame.init();			
+				mainFrame.init();
 			}
-		});	
+		});
 		matchMan = new MatchManager(wf);
 	}
 
@@ -132,6 +131,17 @@ public class WordFeud {
 	public void startGame(int gameID, boolean spectate, boolean newGame) {
 		matchMan.startGame(gameID, spectate, newGame);
 	}
+
+	// // Adds the observers
+	// public void addObservers(final Observer observer, final boolean
+	// spectator) {
+	// SwingUtilities.invokeLater(new Runnable() {
+	// @Override
+	// public void run() {
+	// mainFrame.addObservers(observer, spectator);
+	// }
+	// });
+	// }
 
 	// Adds the observers
 	public void addObservers(Observer observer, boolean spectator) {

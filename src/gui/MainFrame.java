@@ -211,7 +211,7 @@ public class MainFrame extends JFrame {
 			this.setContentPane(gameSpecScreen);
 			this.pack();
 			System.out.println("MainFRAMEPANEL - set content specScreen");
-			gameSpecScreen.addObserverToObserverButtons(observer);
+			gameSpecScreen.addObservers(observer);
 			revalidate();
 		} else {
 			this.setJMenuBar(standardMenuBar);

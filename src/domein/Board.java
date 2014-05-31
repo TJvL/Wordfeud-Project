@@ -95,6 +95,10 @@ public class Board {
 		return possible;
 	}
 
+	public Square[][] getField(){
+		return field;
+	}
+	
 	// Gets the score for the score panel
 	public int getScore() {
 		return score;

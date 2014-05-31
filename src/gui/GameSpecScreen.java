@@ -12,6 +12,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import domein.Match;
+import domein.Square;
 import domein.Tile;
 
 @SuppressWarnings("serial")
@@ -88,47 +89,49 @@ public class GameSpecScreen extends JPanel {
 	}
 
 	// Creating the field
-	public void createField(Match match) {
-		for (int y = 0; y < 15; y++) {
-			for (int x = 0; x < 15; x++) {
-				SquarePanel squarePanel;
-				squarePanel = new SquarePanel(match.getSquare(x, y));
-				if (match.getSquare(x, y).getTile() != null) {
-					squarePanel.addImage(match.getImage(x, y));
-				}
-				squaresPanels[x][y] = squarePanel;
-				fieldPanel.addSquare(squarePanel);
-			}
+	public void createField(Square sq) {
+		SquarePanel squarePanel;
+		squarePanel = new SquarePanel(sq);
+		if (sq.getTile() != null) {
+			squarePanel.addImage(sq.getTile().getImage());
+		} else {
+			sq.getImage();
 		}
+		squaresPanels[sq.getXPos()][sq.getYPos()] = squarePanel;
+		fieldPanel.addSquare(squarePanel);
 	}
 
-	// Restting the board
-	public void resestField(Match match) {
-		for (int y = 0; y < 15; y++) {
-			for (int x = 0; x < 15; x++) {
-				if (match.getSquare(x, y) != null) {
-					if (match.getSquare(x, y).getTile() != null) {
-						squaresPanels[x][y].addImage(match.getImage(x, y));
-					} else {
-						squaresPanels[x][y].removeImage();
-					}
-				}
-			}
-		}
-	}
+//	// Restting the board
+//	public void resestField(Match match) {
+//		for (int y = 0; y < 15; y++) {
+//			for (int x = 0; x < 15; x++) {
+//				if (match.getSquare(x, y) != null) {
+//					if (match.getSquare(x, y).getTile() != null) {
+//						squaresPanels[x][y].addImage(match.getImage(x, y));
+//					} else {
+//						squaresPanels[x][y].removeImage();
+//					}
+//				}
+//			}
+//		}
+//	}
 
 	// Removes the board
 	public void resetGame() {
+		fieldPanel.clearField();
 		for (int y = 0; y < 15; y++) {
 			for (int x = 0; x < 15; x++) {
-				if (squaresPanels[x][y] != null) {
-					squaresPanels[x][y].removeImage();
-				}
+				squaresPanels[x][y] = null;
 			}
 		}
-		fieldPanel.clearField();
-		handPanelP1.removeAll();
-		handPanelP2.removeAll();
+	}
+	
+	// Rest the hands
+	public void resetHands() {
+		tilesP1.clear();
+		tilesP2.clear();
+		handPanelP1.disposeTiles();
+		handPanelP2.disposeTiles();
 	}
 
 	// Method to add image letters
@@ -154,16 +157,6 @@ public class GameSpecScreen extends JPanel {
 			handPanelP2.addTile(tp);
 		}
 	}
-
-	// Rest the hands
-	public void resetHands() {
-		tilesP1.clear();
-		tilesP2.clear();
-		handPanelP1.disposeTiles();
-		handPanelP2.disposeTiles();
-		repaintBoard();
-	}
-
 	// end of the hand part
 
 	// Setting the score panel
@@ -213,7 +206,7 @@ public class GameSpecScreen extends JPanel {
 	}
 
 	// Adds observers
-	public void addObserverToObserverButtons(Observer observer) {
+	public void addObservers(Observer observer) {
 		observerButtons.addObserver(observer);
 	}
 }

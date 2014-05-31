@@ -189,11 +189,11 @@ public class MatchManager {
 
 	// A method start spectating
 	public void spectateMatch(int gameID) {
-		System.out.println("GAMEID " + gameID);
+		System.out.println("GAMEID " + gameID);	
 		match = new Match(gameID);
-		match.loadSpecateGame(specScreen);
+		matches.add(match);
 		wordFeud.addObservers(match, true);
-
+		match.loadSpecateGame(specScreen);
 	}
 
 	// Method to accept/reject game in the database

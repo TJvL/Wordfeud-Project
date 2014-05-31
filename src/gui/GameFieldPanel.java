@@ -182,7 +182,7 @@ public class GameFieldPanel extends JPanel {
 		@SuppressWarnings("unused")
 		TilePanel tile;
 		tiles.add(tile = makeTilePanel(t));
-
+		swapTiles();
 		handPanel.disposeTiles();
 		for (TilePanel tp : tiles) {
 			handPanel.addTile(tp);
@@ -235,7 +235,6 @@ public class GameFieldPanel extends JPanel {
 		for (TilePanel t : tiles) {
 			t.setSelected(false);
 		}
-		repaintBoard();
 	}
 
 	// Gets the tiles that have to be swaped
