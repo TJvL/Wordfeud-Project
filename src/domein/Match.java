@@ -77,7 +77,7 @@ public class Match implements Observer {
 		if (myName.equals("Spectator")) {
 			myName = "testSubject";
 		}
-		
+
 		this.myName = myName;
 		dbh = DatabaseHandler.getInstance();
 		String inputName = dbh.opponentName(gameID);
@@ -177,6 +177,8 @@ public class Match implements Observer {
 				updateSpecTurn(true);
 			} else if (requestedAction.equals("backward")) {
 				updateSpecTurn(false);
+			} else if (requestedAction.equals("refresh")) {
+				updateField();
 			}
 		}
 	}
@@ -279,7 +281,7 @@ public class Match implements Observer {
 						// }
 					}
 				}
-				
+
 				gameSpec.setNameP1(myName);
 				gameSpec.setScoreP1(scoreP1);
 				gameSpec.setNameP2(opponentName);
@@ -317,7 +319,7 @@ public class Match implements Observer {
 		myName = playerNames[0];
 		opponentName = playerNames[1];
 		scoreP2 = dbh.score(gameID, playerNames[1]);
-		
+
 		// If forward it will increase maxTurn
 		if (forward) {
 			if (maxTurn < Integer.parseInt(splits[1])) {
@@ -332,7 +334,6 @@ public class Match implements Observer {
 				myTurn = !myTurn;
 			}
 		}
-
 
 		// Adding the tiles to the hands
 		ArrayList<String> handTilesP1;
@@ -390,7 +391,7 @@ public class Match implements Observer {
 				// gameSpec.addImageToBoard(jar.getImage(letters),
 				// Integer.parseInt(xPos) - 1, Integer.parseInt(yPos) - 1);
 			}
-		}	
+		}
 
 		field = board.getField();
 
@@ -472,13 +473,11 @@ public class Match implements Observer {
 		swapAllowed = true;
 
 		this.gameStatus = dbh.getGameStatusValue(gameID);
-		
+
 		// Setting the scores
-		scoreP2 = dbh.score(gameID,
-				getEnemyName());
-		scoreP1 = dbh.score(gameID,
-				getOwnName());
-		
+		scoreP2 = dbh.score(gameID, getEnemyName());
+		scoreP1 = dbh.score(gameID, getOwnName());
+
 		// Creating the board
 		ArrayList<String> squares = dbh.squareCheck();
 		for (int i = 0; i < squares.size(); i++) {
@@ -556,9 +555,16 @@ public class Match implements Observer {
 	// A method to update the playfield
 	public synchronized void updateField() {
 		clearTilesFromBoard();
-		
+
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		this.gameStatus = dbh.getGameStatusValue(gameID);
-		
+
 		// Updating the field
 		ArrayList<String> playedWords = dbh.playedWords(gameID, maxTurn - 2,
 				true);
@@ -582,10 +588,7 @@ public class Match implements Observer {
 		}
 
 		// Repainting and reseting jar
-		//gameField.repaintBoard();
-		
-
-	
+		// gameField.repaintBoard();
 
 		swapAllowed = true;
 		if (jar.getJarSize() < 7) {
@@ -612,7 +615,7 @@ public class Match implements Observer {
 	}
 
 	// Method to fill the jar when needed
-	public void fillJar(){
+	public void fillJar() {
 		jar.resetJar();
 		// Making and filling the update jar
 		tilesForJar = dbh.jarContent(gameID);
@@ -624,7 +627,7 @@ public class Match implements Observer {
 			jar.addNewTile(t);
 		}
 	}
-	
+
 	// Method to move a the tiles
 	public void moveTile(Tile t) {
 		int x = t.getXValue();
@@ -863,9 +866,9 @@ public class Match implements Observer {
 
 				dbh.updateTurn(maxTurn, gameID, getOwnName(), getScore(),
 						"Word");
-				
+
 				fillHand(null);
-				
+
 				board.setScore();
 				ArrayList<Tile> justPlayedTiles = board.addtilesToDatabase();
 				for (Tile tiles : justPlayedTiles) {
@@ -874,7 +877,7 @@ public class Match implements Observer {
 							tiles.getXValue() + 1, tiles.getYValue() + 1);
 				}
 
-				board.setTilesPlayed();			
+				board.setTilesPlayed();
 
 				// Tijdelijke reactie van de tegenstander
 				// *****
@@ -991,20 +994,18 @@ public class Match implements Observer {
 			return 10;
 		}
 	}
-	
+
 	// Method to get the score
-	public synchronized int getScoreP1(){
-		return scoreP1 = dbh.score(gameID,
-				getOwnName());
+	public synchronized int getScoreP1() {
+		return scoreP1 = dbh.score(gameID, getOwnName());
 	}
-	
-	public synchronized int getScoreP2(){
-		return scoreP2 = dbh.score(gameID,
-				getEnemyName());
+
+	public synchronized int getScoreP2() {
+		return scoreP2 = dbh.score(gameID, getEnemyName());
 	}
-	
+
 	// Returns the gameStatus
-	public synchronized String getGameStatus(){
+	public synchronized String getGameStatus() {
 		return gameStatus;
 	}
 }

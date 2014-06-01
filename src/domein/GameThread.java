@@ -25,7 +25,7 @@ public class GameThread extends Thread {
 	private GameChatPanel chatPanel;
 	private MatchManager matchManager;
 	private int storeScore;
-	private updateTheGame updateTheGame;
+//	private updateTheGame updateTheGame;
 	private boolean running = true;
 	private boolean turnSwap = true;
 
@@ -37,7 +37,7 @@ public class GameThread extends Thread {
 		this.scorePanel = scorePanel;
 		this.dbh = DatabaseHandler.getInstance();
 		this.matchManager = matchManager;
-		updateTheGame = new domein.GameThread.updateTheGame();
+	//	updateTheGame = new domein.GameThread.updateTheGame();
 	}
 
 	// The method that will be running
@@ -92,9 +92,15 @@ public class GameThread extends Thread {
 									"Resigned")) {
 						if (storeMatch.getMyTurn()) {
 							if (turnSwap) {
+								try {
+									Thread.sleep(3000);
+								} catch (InterruptedException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
 								scorePanel.setOwnName(storeMatch.getOwnName() + "**");
 								scorePanel.setEnemyName(storeMatch.getEnemyName());
-								updateTheGame.execute();
+	//							updateTheGame.execute();
 								storeMatch.updateField();
 								JOptionPane.showMessageDialog(null,
 										"YOUR TURN!", "Turn info",
@@ -105,7 +111,6 @@ public class GameThread extends Thread {
 							buttonPanel.setTurn(true);					
 							if (!match.swapAllowed()) {
 								buttonPanel.disableSwap();
-
 							}
 							turnSwap = false;
 						} else {
@@ -183,19 +188,19 @@ public class GameThread extends Thread {
 		this.match = null;
 	}
 
-	public class updateTheGame extends SwingWorker<Integer, String> {
-	
-		@Override
-		protected Integer doInBackground() throws Exception {
-			Thread.sleep(500);
-			storeMatch.updateField();			
-			return 1;
-		}
-
-		protected void process(List chunks) {
-			// Messages received from the doInBackground() (when invoking the
-			// publish() method)
-		}
-	}
+//	public class updateTheGame extends SwingWorker<Integer, String> {
+//	
+//		@Override
+//		protected Integer doInBackground() throws Exception {
+//			Thread.sleep(500);
+//			storeMatch.updateField();			
+//			return 1;
+//		}
+//
+//		protected void process(List chunks) {
+//			// Messages received from the doInBackground() (when invoking the
+//			// publish() method)
+//		}
+//	}
 
 }

@@ -1,8 +1,12 @@
 package gui;
 
+import gui.GameButtonPanel.ObserverButtons;
+
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Observable;
 import java.util.Observer;
 
 import javax.swing.JButton;
@@ -15,6 +19,8 @@ public class GameScreen extends JPanel {
 	private ScorePanel scorePanel;
 	private GameChatPanel chatPanel;
 	private JButton back;
+	private JButton refresh;
+	private ObserverButtons observerButtons;
 
 	public GameScreen(final MainFrame mainFrame) {
 		// this.setLayout(new BorderLayout());
@@ -32,13 +38,22 @@ public class GameScreen extends JPanel {
 		chatPanel = new GameChatPanel();
 		chatPanel.setBounds(530, 0, 500,500);
 		this.add(chatPanel);
-		back = new JButton("back to mainscreen");
+		back = new JButton("Back to mainscreen");
 		back.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent arg0) {
 				mainFrame.setPlayerScreen();	
 			}});
-		back.setBounds(770, 600, 260, 20);
+		back.setBounds(780, 600, 250, 20);
 		this.add(back);
+		
+		observerButtons = new ObserverButtons();
+		refresh = new JButton("Refresh field");
+		refresh.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent arg0) {
+				observerButtons.changeActionRequest("refresh");
+			}});
+		refresh.setBounds(530, 600, 250, 20);
+		this.add(refresh);
 		
 	}
 	
@@ -46,6 +61,8 @@ public class GameScreen extends JPanel {
 	public void addObservers(Observer observer){
 		buttonPanel.addObserverToObserverButtons(observer);
 		boardPanel.addObserverToObserverButtons(observer);
+		observerButtons.deleteObservers();
+		observerButtons.addObserver(observer);
 	}
 
 	// Returns the gameField
@@ -70,5 +87,15 @@ public class GameScreen extends JPanel {
 	
 	public GameChatPanel getGameChatPanel(){
 		return chatPanel;
+	}
+	
+
+	// A class to be able to extend obserable for the buttons
+	class ObserverButtons extends Observable {
+		public void changeActionRequest(String actionRequest) {
+			System.out.println("action requested: " + actionRequest);
+			this.setChanged();
+			this.notifyObservers(actionRequest);
+		}
 	}
 }
