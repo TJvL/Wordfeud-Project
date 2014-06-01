@@ -1467,6 +1467,7 @@ public class DatabaseHandler
 			while(result.next())
 			{
 				compStatistics.add(result.getString(1) + "---" + result.getInt(2) + "---" + result.getInt(3) + "---" + result.getInt(4) + "---" +  result.getInt(5) + "---" + result.getInt(6) + "---" + result.getDouble(7));
+			System.out.println(compStatistics + "Test");
 			}
 			result.close();
 			statement.close();
