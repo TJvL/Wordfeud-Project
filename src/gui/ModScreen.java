@@ -1,12 +1,14 @@
 package gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
@@ -36,6 +38,7 @@ public class ModScreen extends JPanel {
 
 	private JButton approveWord = new JButton();
 	private JButton declineWord = new JButton();
+	private JButton refreshList = new JButton();
 	private JButton addWord = new JButton();
 	private JButton removeWord = new JButton();
 	private JTextField insertWord = new JTextField(20);
@@ -90,10 +93,9 @@ public class ModScreen extends JPanel {
 		modScreenListPanel.add(listScrollPane, BorderLayout.CENTER);
 	}
 
-	public void createRequestsButtonPanel()
-
-	{
-
+	public void createRequestsButtonPanel() {
+		refreshList.setText("Refresh request list");
+		modScreenButtonPanel.add(refreshList);
 		approveWord.setText("Approve selected word");
 		modScreenButtonPanel.add(approveWord);
 		declineWord.setText("Decline selected word");
@@ -103,6 +105,11 @@ public class ModScreen extends JPanel {
 		modScreenButtonPanel.add(selectedWord);
 		modScreenButtonPanel.add(selectedWordValue);
 
+		refreshList.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent arg0) {
+				fillList();
+			}});
+		
 		approveWord.addActionListener(new ActionListener() {
 
 			@Override
@@ -163,7 +170,6 @@ public class ModScreen extends JPanel {
 		listArray = requests.toArray(listArray);
 		int counter = 0;
 		while (counter < listArray.length) {
-
 			myListModel.add(counter, listArray[counter]);
 			counter++;
 
@@ -229,6 +235,7 @@ public class ModScreen extends JPanel {
 
 		wordInput
 				.setText("Insert a word in the box above to add it to , or remove it from the dictionary.");
+		dictionaryOptions.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		dictionaryOptions.add(wordInput);
 	}
 
