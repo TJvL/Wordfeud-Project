@@ -67,6 +67,8 @@ public class MatchManager {
 	}
 	
 	public void loadMyActiveMatches(){
+		this.createNewMatches();
+		
 		if (myActiveMatches != null) {
 			myActiveMatches.clear();
 		}
@@ -95,11 +97,21 @@ public class MatchManager {
 			}
 		}
 	}
+	
+	private void createNewMatches(){
+		// Method to start games after both players accepted
+		ArrayList<Integer> gamesToLoad = DatabaseHandler.getInstance().gameToLoad(wordFeud.getCurrentUsername());
+		if (gamesToLoad != null) {
+			for (Integer loadID : gamesToLoad) {
+//				Match match = matchManager.startGame(loadID, false, true);
+				this.newMatchStartedByMe(loadID);
+			}
+		}
+	}
 
 	// This starts a Match that is made by me
 	public void newMatchStartedByMe(int gameID) {
-		Match match = new Match(gameID, wordFeud.getCurrentUsername());
-		match.startNewGame();
+		Match.startNewGame(gameID);
 	}
 
 	// Loads a match
@@ -109,9 +121,9 @@ public class MatchManager {
 			// Adds the observers
 			Match match = matches.get(gameID);
 			wordFeud.addObservers(match, false);
-			// chatPanel.setChatVariables(match.getOwnName(), gameID);
+//			chatPanel.setChatVariables(match.getOwnName(), gameID);
 			match.loadGame();
-			// gameThread.setRunning(match);
+//			gameThread.setRunning(match);
 			return match;
 		} else {
 			Match match = new Match(gameID, wordFeud.getUserPlayer(), wordFeud
@@ -120,10 +132,10 @@ public class MatchManager {
 			// Adds the observers
 			wordFeud.addObservers(match, false);
 			match.loadGame();
-			// chatPanel.setChatVariables(match.getOwnName(), gameID);
+//			chatPanel.setChatVariables(match.getOwnName(), gameID);
 			matches.put(Integer.toString(gameID), match);
+//			gameThread.setRunning(match);
 			return match;
-			// gameThread.setRunning(match);
 		}
 
 	}
@@ -177,5 +189,12 @@ public class MatchManager {
 
 	public boolean askMatchOwnership(String matchID) {
 		return pendingMatches.get(matchID).isOwnGame();
+	}
+
+	public void logout() {
+		matches.clear();
+		pendingMatches.clear();
+		activeMatches.clear();
+		myActiveMatches.clear();
 	}
 }

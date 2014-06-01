@@ -96,7 +96,7 @@ public class AdminCompScreen extends JPanel {
 	
 	public void populateScreen(){
 		if(neverViewed){
-			mainFrame.callLoadAllCompetitionsAction();
+			mainFrame.startAllCompWorker();
 			this.initCompTable();
 //			this.initPartiTable();
 		}

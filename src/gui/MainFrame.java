@@ -4,14 +4,15 @@ import java.awt.Dimension;
 import java.util.Map.Entry;
 import java.util.Observer;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.JFrame;
+import javax.swing.SwingWorker;
 
 import datalaag.WordFeudConstants;
 import domein.ActiveMatch;
 import domein.Administrator;
 import domein.Competition;
-import domein.MatchManager;
 import domein.PendingMatch;
 import domein.User;
 import domein.WordFeud;
@@ -32,20 +33,22 @@ public class MainFrame extends JFrame {
 	private StartMenuBar startMenuBar;
 	private StandardMenuBar standardMenuBar;
 	private SpecMenuBar specMenuBar;
-	private LoadingPanel loadingPanel;
-	private Thread t;
 	private WordFeud wordFeud;
+	private DisabledGlassPane loadScreen;
 
 	public MainFrame(WordFeud wordFeud) {
 		this.wordFeud = wordFeud;
 		startMenuBar = new StartMenuBar(this);
 		loginScreen = new LoginScreen(this);
+		loadScreen = new DisabledGlassPane();
 
 		this.setPreferredSize(new Dimension(1200, 700));
 		this.setResizable(false);
 		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		this.setTitle("WordFeud");
-
+		this.setGlassPane(loadScreen);
+		
+		loginScreen.populateScreen();
 		this.setContentPane(loginScreen);
 		this.setJMenuBar(startMenuBar);
 
@@ -67,39 +70,25 @@ public class MainFrame extends JFrame {
 		adminCompScreen = new AdminCompScreen(this);
 		standardMenuBar = new StandardMenuBar(this);
 		modScreen = new ModScreen();
-		loadingPanel = new LoadingPanel();
-		wordFeud.setPanelsReferences(gameScreen.getGameChatPanel(), gameScreen.getButtonPanel(), gameScreen.getScorePanel());
-	}
-
-	public void setLoadingScreen() {
-		t = new Thread(loadingPanel);
-		loadingPanel.setRunning(true);
-		t.start();
-		this.setContentPane(loadingPanel);
-	}
-
-	public void stopLoadingScreen() {
-		loadingPanel.setRunning(false);
+		wordFeud.setPanelsReferences(gameScreen.getGameChatPanel(),
+				gameScreen.getButtonPanel(), gameScreen.getScorePanel());
 	}
 
 	public void setRegScreen() {
+		regScreen.populateScreen();
 		this.setContentPane(regScreen);
 		wordFeud.stopThread();
-		revalidate();
+		this.revalidate();
 	}
 
 	public void setLoginScreen() {
-		this.setContentPane(loginScreen);
+		startLogoutWorker();
 		wordFeud.stopThread();
-		revalidate();
 	}
 
 	public void setPlayerScreen() {
-		this.setContentPane(playerScreen);
-		playerScreen.setGameList(wordFeud.myActiveGames(), this.getName());
+		startMyActiveMatchesWorker();
 		wordFeud.stopThread();
-		stopLoadingScreen();
-		revalidate();
 	}
 
 	public void setGameScreen() {
@@ -109,24 +98,20 @@ public class MainFrame extends JFrame {
 	}
 
 	public void setSpecScreen() {
-		specScreen.setGameList(wordFeud.getActiveGames());
+		// specScreen.setGameList(wordFeud.getActiveGames());
 		this.setContentPane(specScreen);
 		wordFeud.stopThread();
 		revalidate();
 	}
 
 	public void setJoinCompScreen() {
-		joinCompScreen.populateScreen();
-		this.setContentPane(joinCompScreen);
+		this.startAllCompWorker();
 		wordFeud.stopThread();
-		revalidate();
 	}
 
 	public void setJoinedCompScreen() {
-		joinedCompScreen.populateScreen();
-		this.setContentPane(joinedCompScreen);
+		this.startJoinedCompWorker();
 		wordFeud.stopThread();
-		revalidate();
 	}
 
 	public void setAdminAccScreen() {
@@ -165,23 +150,100 @@ public class MainFrame extends JFrame {
 		revalidate();
 	}
 
-	public String callRegisterAction(String username, char[] passInput,
-			char[] passConfirm) {
-		return wordFeud.doRegisterAction(username, passInput, passConfirm);
+	public String startRegisterWorker(final String username, final char[] passInput,
+			final char[] passConfirm) {
+		loadScreen.activate("Please Wait...");
+		
+		SwingWorker<String, Integer> registerWorker = new SwingWorker<String, Integer>() {
+			@Override
+			protected String doInBackground() throws Exception {
+				String result = wordFeud.doRegisterAction(username, passInput, passConfirm);
+				return result;
+			}
+		};
+		
+		registerWorker.execute();
+		String result = WordFeudConstants.REGISTER_FAIL_DEFAULT;
+		try {
+			result = registerWorker.get();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+		}
+		return result;
 	}
 
-	public boolean callLoginAction(String username, char[] password) {
-		return wordFeud.doLoginAction(username, password);
+	public int startLoginWorker(final String username, final char[] password) {
+		loadScreen.activate("Please Wait...");
+		
+		SwingWorker<Integer, Integer> loginWorker = new SwingWorker<Integer, Integer>() {
+			@Override
+			protected Integer doInBackground() throws Exception {
+				int result = wordFeud.doLoginAction(username, password);
+				this.notifyAll();
+				return result;
+			}
+		};
+		
+		loginWorker.execute();
+		int result = WordFeudConstants.LOGIN_FAIL;
+		try {
+			this.wait();
+			result = loginWorker.get();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+		}
+		return result;
 	}
 
-	public boolean callChangeRoleAction(String result) {
-		return wordFeud.doChangeRoleAction(result);
+	public int startChangeRoleWorker(final String role) {
+		loadScreen.activate("Please Wait...");
+		
+		SwingWorker<Integer, Integer> loginWorker = new SwingWorker<Integer, Integer>() {
+			@Override
+			protected Integer doInBackground() throws Exception {
+				int result = wordFeud.doChangeRoleAction(role);
+				return result;
+			}
+		};
+		
+		loginWorker.execute();
+		int result = WordFeudConstants.ROLE_CHANGE_FAIL;
+		try {
+			result = loginWorker.get();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+		}
+		loadScreen.deactivate();
+		return result;
 	}
 
-	public void callLogoutAction() {
-		wordFeud.doLogoutAction();
-		joinCompScreen.clearLists();
-		joinedCompScreen.clearLists();
+	public void startLogoutWorker() {
+		SwingWorker<Integer, Integer> logoutWorker = new SwingWorker<Integer, Integer>() {
+			@Override
+			protected Integer doInBackground() throws Exception {
+				wordFeud.doLogoutAction();
+				return 1;
+			}
+
+			@Override
+			protected void done() {
+				try {
+					setStartMenuBar();
+					loginScreen.populateScreen();
+					setContentPane(loginScreen);
+					loadScreen.deactivate();
+				} catch (Exception ignore) {
+				}
+			}
+		};
+		loadScreen.activate("Please Wait...");
+		logoutWorker.execute();
 	}
 
 	public void fillRoleWindow() {
@@ -256,7 +318,8 @@ public class MainFrame extends JFrame {
 
 	public String callChallengePlayerAction(String competitionID,
 			String opponent, int privacy) {
-		return wordFeud.doChallengePlayerAction(competitionID, opponent, privacy);
+		return wordFeud.doChallengePlayerAction(competitionID, opponent,
+				privacy);
 	}
 
 	// Returns the gameScreen
@@ -283,11 +346,6 @@ public class MainFrame extends JFrame {
 		}
 	}
 
-	// Update the mainscreen games from the player
-	public void updatePlayerGameList() {
-		playerScreen.setGameList(wordFeud.myActiveGames(), this.getName());
-	}
-
 	// Method to accept/reject games
 	public void acceptRejectGame(String string, int competionID, int gameID) {
 		wordFeud.acceptRejectGame(string, competionID, gameID);
@@ -295,7 +353,8 @@ public class MainFrame extends JFrame {
 
 	public String callCreateCompAction(String summary, String compEnd,
 			String minPlayers, String maxPlayers) {
-		return wordFeud.doCreateCompAction(summary, compEnd, minPlayers, maxPlayers);
+		return wordFeud.doCreateCompAction(summary, compEnd,
+				minPlayers, maxPlayers);
 	}
 
 	public Set<Entry<String, Competition>> callGetAllCompetitionsAction() {
@@ -314,16 +373,54 @@ public class MainFrame extends JFrame {
 		return wordFeud.doGetOneCompetitionAction(key);
 	}
 
-	public void callLoadAllCompetitionsAction() {
-		wordFeud.doLoadAllCompetitionsAction();
+	public void startAllCompWorker() {
+		loadScreen.activate("Please Wait...");
+		
+		SwingWorker<Integer, Integer> allCompWorker = new SwingWorker<Integer, Integer>() {
+			@Override
+			protected Integer doInBackground() throws Exception {
+				wordFeud.doLoadAllCompetitionsAction();
+				return 1;
+			}
+
+			@Override
+			protected void done() {
+				try {
+					joinCompScreen.populateScreen();
+					setContentPane(joinCompScreen);
+						loadScreen.deactivate();
+				} catch (Exception ignore) {
+				}
+			}
+		};
+
+		allCompWorker.execute();
 	}
 
 	public void callJoinCompetitionAction(String compID) {
 		wordFeud.doJoinCompAction(compID);
 	}
 
-	public void callLoadJoinedCompetitionsAction() {
-		wordFeud.doLoadJoinedCompetitionsAction();
+	public void startJoinedCompWorker() {
+		SwingWorker<Integer, Integer> joinedCompWorker = new SwingWorker<Integer, Integer>() {
+			@Override
+			protected Integer doInBackground() throws Exception {
+				wordFeud.doLoadJoinedCompetitionsAction();
+				return 1;
+			}
+
+			@Override
+			protected void done() {
+				try {
+					joinedCompScreen.populateScreen();
+					setContentPane(joinedCompScreen);
+					loadScreen.deactivate();
+				} catch (Exception ignore) {
+				}
+			}
+		};
+		loadScreen.activate("Please Wait...");
+		joinedCompWorker.execute();
 	}
 
 	public boolean callAskMatchOwnershipAction(String matchID) {
@@ -340,5 +437,35 @@ public class MainFrame extends JFrame {
 
 	public Set<Entry<String, ActiveMatch>> callGetAllActiveMatchesAction() {
 		return wordFeud.doGetAllActiveMatchesAction();
+	}
+
+	public void callLoadAllActiveMatchesAction() {
+		wordFeud.doLoadActiveMatchesAction();
+	}
+
+	public Set<Entry<String, ActiveMatch>> callGetMyActiveMatchesAction() {
+		return wordFeud.doGetMyActiveMatchesAction();
+	}
+
+	public void startMyActiveMatchesWorker() {
+		SwingWorker<Integer, Integer> myMatchesWorker = new SwingWorker<Integer, Integer>() {
+			@Override
+			protected Integer doInBackground() throws Exception {
+				wordFeud.doLoadMyActiveMatchesAction();
+				return 1;
+			}
+
+			@Override
+			protected void done() {
+				try {
+					playerScreen.populateScreen();
+					setContentPane(playerScreen);
+					loadScreen.deactivate();
+				} catch (Exception ignore) {
+				}
+			}
+		};
+		loadScreen.activate("Please Wait...");
+		myMatchesWorker.execute();
 	}
 }

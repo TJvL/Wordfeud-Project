@@ -1,38 +1,28 @@
 package gui;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import domein.ActiveMatch;
-import domein.Competition;
 
 @SuppressWarnings("serial")
 public class PlayerScreen extends JPanel {
 	private final String defaultSelection = "default";
 	
 	private MainFrame mainFrame;
-	private ArrayList<ActiveMatch> activeGames;
-	private JList<ActiveMatch> gameList;
-	private JPanel listPanel;
 	private JPanel buttonsPanel;
 	private JTable matchTable;
 	private JScrollPane matchPane;
@@ -42,9 +32,6 @@ public class PlayerScreen extends JPanel {
 	private JButton enterGameButton;
 	private JButton joinCompButton;
 	private JButton joinedCompButton;
-
-	private int storeLastClickGameID;
-	private int clickCount = 0;
 	
 	public PlayerScreen(MainFrame mainFrame) {
 		this.mainFrame = mainFrame;
@@ -57,84 +44,26 @@ public class PlayerScreen extends JPanel {
 	}
 	
 	public void populateScreen(){
+		this.removeAll();
+		
 		refreshList();
 		
-		buttonsPanel.setBounds(900, 0, 300, 700);
+		buttonsPanel.setBounds(610, 15, 300, 680);
 
 		this.add(buttonsPanel);
-	}
-
-	// Filling the list with games from then Database
-	public synchronized void setGameList(ArrayList<ActiveMatch> matches, String userName) {
-		this.activeGames = matches;
-		ActiveMatch[] games = new ActiveMatch[activeGames.size()];
-		for (int i = 0; i < activeGames.size(); i++) {
-			games[i] = activeGames.get(i);
-		}
-		
-		if (gameList != null) {
-			this.remove(gameList);
-			this.remove(listPanel);
-		}
-		createGamesList(games);
-		this.add(listPanel, BorderLayout.WEST);
-	}
-
-	// Creating the gui to show the list
-	// Adding a actionlistener
-	// When a game is pressed it will trigger the mainFrame
-	private synchronized void createGamesList(ActiveMatch[] games) {
-		listPanel = new JPanel();
-		gameList = new JList<ActiveMatch>(games);
-		listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
-		
-		gameList.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mousePressed(MouseEvent e) {
-				ActiveMatch input = gameList.getSelectedValue();
-				if (input != null) {
-					int gameID = input.getGameID();
-					if (gameID != storeLastClickGameID) {
-						clickCount = 0;
-						storeLastClickGameID = gameID;
-					} else {
-						storeLastClickGameID = gameID;
-					}
-					clickCount++;
-					if (clickCount == 2) {
-						mainFrame.startGame(gameID, false);
-						clickCount = 0;
-					}
-				}
-			}
-		});
-		JScrollPane scrollPane = new JScrollPane(gameList);
-		JLabel label = new JLabel("Active games:");
-
-		scrollPane.setPreferredSize(new Dimension(800, 300));
-
-		scrollPane
-				.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-
-		listPanel.add(label);
-		listPanel.add(scrollPane);
-		this.repaint();
-		this.revalidate();
+		mainFrame.revalidate();
 	}
 
 	private void createButtons() {
-
 		createCompButton = new JButton("Create competition");
 		refreshList = new JButton("Refresh list");
 		enterGameButton = new JButton("Enter game");
 		joinCompButton = new JButton("Join Competition");
 		joinedCompButton = new JButton("Joined competitions");
-		
-		buttonsPanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0));
 
 		refreshList.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				refreshList();
+				refreshButtonPressed();
 			}
 		});
 		joinedCompButton.addActionListener(new ActionListener() {
@@ -154,7 +83,7 @@ public class PlayerScreen extends JPanel {
 		});
 		enterGameButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+				enterGameButtonPressed();
 			}
 		});
 
@@ -166,16 +95,12 @@ public class PlayerScreen extends JPanel {
 	}
 	
 	private void initMatchTable(){
-		if (matchPane != null) {
-			this.remove(matchPane);
-		}
 		matchTable = null;
 		matchPane = null;
 		
-		String[] columnNames = { "ID", "Summary", "Max Parts", "Current Parts",
-				"Owner", "End Date/Time" };
+		String[] columnNames = { "ID", "Description" };
 		Set<Entry<String, ActiveMatch>> activeMatches = mainFrame
-				.callGetAllActiveMatchesAction();
+				.callGetMyActiveMatchesAction();
 		String[][] tableData = new String[activeMatches.size()][6];
 
 		Iterator<Entry<String, ActiveMatch>> it = activeMatches.iterator();
@@ -183,21 +108,47 @@ public class PlayerScreen extends JPanel {
 		while (it.hasNext()) {
 			Map.Entry<String, ActiveMatch> pair = (Map.Entry<String, ActiveMatch>) it
 					.next();
-			tableData[i][0] = 
-			tableData[i][1] = 
-			tableData[i][2] = 
-			tableData[i][3] = 
-			tableData[i][4] = 
-			tableData[i][5] = 
+			tableData[i][0] = Integer.toString(pair.getValue().getGameID());
+			tableData[i][1] = pair.getValue().getDiscription();
 			i++;
 		}
+		
+		matchTable = new JTable(tableData, columnNames) {
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
+		matchTable.getTableHeader().setResizingAllowed(false);
+		matchTable.getTableHeader().setReorderingAllowed(false);
+		matchTable.setColumnSelectionAllowed(false);
+		matchTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		matchTable.getColumnModel().getColumn(0).setPreferredWidth(30);
+		matchTable.getColumnModel().getColumn(1).setPreferredWidth(370);
+
+		ForcedListSelectionModel selectModel = new ForcedListSelectionModel();
+		selectModel.addListSelectionListener(new ListSelectionListener() {
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				if (e.getValueIsAdjusting()) {
+					currentSelection = matchTable.getValueAt(
+							matchTable.getSelectedRow(), 0).toString();
+				}
+			}
+		});
+		matchTable.setSelectionModel(selectModel);
+		matchTable.changeSelection(0, 0, false, false);
+		if (matchTable.getRowCount() > 0) {
+			currentSelection = matchTable.getValueAt(matchTable.getSelectedRow(),
+					0).toString();
+		}
+		matchPane = new JScrollPane(matchTable);
 	}
 	
 	private void refreshList(){
 		this.initMatchTable();
-		matchPane.setBounds(10, 10, 980, 680);
+		matchPane.setBounds(190, 20, 400, 600);
 		this.add(matchPane);
-		this.revalidate();
 	}
 	
 	private void createCompButtonPressed(){
@@ -210,5 +161,20 @@ public class PlayerScreen extends JPanel {
 	
 	private void joinedCompButtonPressed(){
 		mainFrame.setJoinedCompScreen();
+	}
+	
+	private void enterGameButtonPressed(){
+		if (!currentSelection.equals("")) {
+			int response = JOptionPane.showConfirmDialog(null,
+					"Are you sure you want to enter the selected game?", "", JOptionPane.OK_OPTION,
+					JOptionPane.PLAIN_MESSAGE);
+			if (response == JOptionPane.OK_OPTION) {
+				mainFrame.startGame(Integer.parseInt(currentSelection), false);
+			}
+		}
+	}
+	
+	private void refreshButtonPressed(){
+		mainFrame.startMyActiveMatchesWorker();
 	}
 }

@@ -120,8 +120,6 @@ public class CompetitionManager {
 		if ((maxParts >= minParts) && (minParts >= 2) && (maxParts <= 24)) {
 			DatabaseHandler.getInstance().createCompetition(currentUsername,
 					formatedDateTime, summary, minParts, maxParts);
-			this.loadJoinedCompetitions(currentUsername);
-			this.loadAllCompetitions(currentUsername);
 			retValue = WordFeudConstants.CREATE_COMP_SUCCES;
 		} else {
 			retValue = WordFeudConstants.CREATE_COMP_FAIL_NUMBERS;

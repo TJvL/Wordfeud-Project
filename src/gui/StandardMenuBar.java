@@ -9,6 +9,8 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
+import datalaag.WordFeudConstants;
+
 @SuppressWarnings("serial")
 public class StandardMenuBar extends JMenuBar {
 	private MainFrame mainFrame;
@@ -96,20 +98,18 @@ public class StandardMenuBar extends JMenuBar {
 	}
 	
 	private void changeRoleItemChosen(){
-		String result = rolewindow.showChangeRole();
-		boolean isSuccesful = mainFrame.callChangeRoleAction(result);
-		if (isSuccesful) {
+		String role = rolewindow.showChangeRole();
+		int result = mainFrame.startChangeRoleWorker(role);
+		if (result == WordFeudConstants.ROLE_CHANGE_SUCCES) {
 			JOptionPane.showMessageDialog(mainFrame, "Role changed succesfully.");
 			mainFrame.setCorrectRoleMainMenu();
-		} else {
+		} else if (result == WordFeudConstants.ROLE_CHANGE_FAIL) {
 			JOptionPane.showMessageDialog(mainFrame, "Something happened, no role change occured.");
 		}
 	}
 	
 	private void logoutItemChosen(){
 		mainFrame.setLoginScreen();
-		mainFrame.setStartMenuBar();
-		mainFrame.callLogoutAction();
 	}
 	
 	private void exitItemChosen(){

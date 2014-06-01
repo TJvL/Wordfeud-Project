@@ -47,18 +47,18 @@ public class JoinedCompScreen extends JPanel {
 	}
 
 	public void populateScreen() {
-		this.refreshLists();
+		this.remove(listLabel);
+		this.remove(buttonPanel);
+		
+		this.refreshCompetitionsList();
+		this.refreshParticipantList();
 		
 		listLabel.setBounds(670, 20, 100, 20);
 		buttonPanel.setBounds(650, 550, 550, 150);
 
 		this.add(listLabel);
 		this.add(buttonPanel);
-	}
-
-	public void clearLists() {
-		this.removeAll();
-		this.revalidate();
+		mainFrame.revalidate();
 	}
 
 	private void createButtons() {
@@ -69,8 +69,7 @@ public class JoinedCompScreen extends JPanel {
 		refresh.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				mainFrame.callLoadJoinedCompetitionsAction();
-				refreshLists();
+				refreshButtonPressed();
 			}
 		});
 		challenge.addActionListener(new ActionListener() {
@@ -92,9 +91,6 @@ public class JoinedCompScreen extends JPanel {
 	}
 
 	private void initCompTable() {
-		if (compPane != null) {
-			this.remove(compPane);
-		}
 		compTable = null;
 		compPane = null;
 
@@ -158,9 +154,6 @@ public class JoinedCompScreen extends JPanel {
 	}
 
 	private void initPartiTable() {
-		if (partiPane != null) {
-			this.remove(partiPane);
-		}
 		partiTable = null;
 		partiPane = null;
 
@@ -221,22 +214,23 @@ public class JoinedCompScreen extends JPanel {
 	}
 
 	private void refreshParticipantList() {
+		if (partiPane != null){
+			this.remove(partiPane);
+		}
+		
 		this.initPartiTable();
 		partiPane.setBounds(665, 50, 520, 500);
 		this.add(partiPane);
 	}
 	
 	private void refreshCompetitionsList(){
+		if (compPane != null){
+			this.remove(compPane);
+		}
+		
 		this.initCompTable();
 		compPane.setBounds(0, 0, 650, 700);
 		this.add(compPane);
-	}
-
-	private void refreshLists() {
-		mainFrame.callLoadJoinedCompetitionsAction();
-		this.refreshCompetitionsList();
-		this.refreshParticipantList();
-		this.revalidate();
 	}
 
 	private void challengeButtonPressed() {
@@ -261,10 +255,12 @@ public class JoinedCompScreen extends JPanel {
 			}
 		}
 	}
+	
+	private void refreshButtonPressed(){
+		mainFrame.startJoinedCompWorker();
+	}
 
 	private void backButtonPressed() {
 		mainFrame.setPlayerScreen();
-		this.removeAll();
-		this.revalidate();
 	}
 }

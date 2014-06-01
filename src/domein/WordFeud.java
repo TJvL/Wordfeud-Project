@@ -65,22 +65,19 @@ public class WordFeud {
 		return currentUser.register(username, passInput, passConfirm);
 	}
 
-	public boolean doLoginAction(String username, char[] password) {
-
-		Boolean succesfulLogin = currentUser.login(username, password);
-		if (succesfulLogin) {
-			compMan.loadJoinedCompetitions(currentUser.getUsername());
-		}
-		return succesfulLogin;
+	public int doLoginAction(String username, char[] password) {
+		int result = currentUser.login(username, password);
+		return result;
 	}
 
 	public void doLogoutAction() {
 		currentUser.logout();
 		compMan.logout();
+		matchMan.logout();
 	}
 
-	public boolean doChangeRoleAction(String result) {
-		return currentUser.changeRole(result);
+	public int doChangeRoleAction(String role) {
+		return currentUser.changeRole(role);
 	}
 
 	/*
@@ -125,12 +122,12 @@ public class WordFeud {
 	}
 
 	// Returns active games
-	public ArrayList<ActiveMatch> getActiveGames() {
+	public Set<Entry<String, ActiveMatch>> getActiveGames() {
 		return matchMan.getActiveMatches();
 	}
 
 	// Returns my active games
-	public ArrayList<ActiveMatch> myActiveGames() {
+	public Set<Entry<String, ActiveMatch>> myActiveGames() {
 		return matchMan.getMyActiveMatches();
 	}
 
@@ -200,10 +197,22 @@ public class WordFeud {
 
 	public void setPanelsReferences(GameChatPanel chatPanel, GameButtonPanel buttonPanel,
 			ScorePanel scorePanel) {
-		gameThread.setPanels(chatPanel, buttonPanel, scorePanel, matchMan);
+		gameThread.setPanels(chatPanel, buttonPanel, scorePanel);
 	}
 
 	public Set<Entry<String, ActiveMatch>> doGetAllActiveMatchesAction() {
 		return matchMan.getActiveMatches();
+	}
+
+	public void doLoadActiveMatchesAction() {
+		matchMan.loadAllActiveMatches();
+	}
+
+	public Set<Entry<String, ActiveMatch>> doGetMyActiveMatchesAction() {
+		return matchMan.getMyActiveMatches();
+	}
+
+	public void doLoadMyActiveMatchesAction() {
+		matchMan.loadMyActiveMatches();
 	}
 }

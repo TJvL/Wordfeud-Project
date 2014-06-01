@@ -82,7 +82,7 @@ public class User {
 		this.changeRole(defaultRole);
 	}
 
-	public boolean login(String username, char[] passInputArray) {
+	public int login(String username, char[] passInputArray) {
 
 		String passInput = "";
 		for (char c : passInputArray) {
@@ -97,8 +97,11 @@ public class User {
 			this.username = username;
 			this.setLoggedIn(true);
 			this.checkRoles();
+			return WordFeudConstants.LOGIN_SUCCES;
 		}
-		return succesfulLogin;
+		else {
+			return WordFeudConstants.LOGIN_FAIL;
+		}
 	}
 
 	public String register(String username, char[] passInputArray,
@@ -133,7 +136,6 @@ public class User {
 		else {
 			retValue = DatabaseHandler.getInstance().register(username,
 					passInput);
-			DatabaseHandler.getInstance().register(username, passInput);
 
 		}
 		return retValue;
@@ -167,32 +169,32 @@ public class User {
 		}
 	}
 
-	public boolean changeRole(String role) {
-		boolean actionSuccesful = false;
+	public int changeRole(String role) {
+		int result = WordFeudConstants.ROLE_CHANGE_FAIL;
 		if (role != null) {
 			if (role.equals(WordFeudConstants.ROLE_ADMINISTRATOR)) {
 				if (admin.HasPermissions()) {
 					this.setCurrentRole(role);
-					actionSuccesful = true;
+					result = WordFeudConstants.ROLE_CHANGE_SUCCES;
 				}
 			} else if (role.equals(WordFeudConstants.ROLE_MODERATOR)) {
 				if (mod.HasPermissions()) {
 					this.setCurrentRole(role);
-					actionSuccesful = true;
+					result = WordFeudConstants.ROLE_CHANGE_SUCCES;
 				}
 			} else if (role.equals(WordFeudConstants.ROLE_PLAYER)) {
 				if (player.HasPermissions()) {
 					this.setCurrentRole(role);
-					actionSuccesful = true;
+					result = WordFeudConstants.ROLE_CHANGE_SUCCES;
 				}
 			} else if (role.equals(WordFeudConstants.ROLE_SPECTATOR)) {
 				if (spec.HasPermissions()) {
 					this.setCurrentRole(role);
-					actionSuccesful = true;
+					result = WordFeudConstants.ROLE_CHANGE_SUCCES;
 				}
 			}
 		}
-		return actionSuccesful;
+		return result;
 	}
 
 	public ArrayList<String> getRoles() {
