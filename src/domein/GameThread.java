@@ -115,7 +115,7 @@ public class GameThread extends Thread {
 								scorePanel.setOwnName(storeMatch.getOwnName());
 								scorePanel.setEnemyName(storeMatch.getEnemyName() + "**");
 								scorePanel.setEnemyScore(storeMatch.getScoreP2());
-								scorePanel.setOwnScore(storeMatch.getScoreP1Update());
+								scorePanel.setOwnScore(storeMatch.getScoreP1());
 							}
 							turnSwap = true;
 						}

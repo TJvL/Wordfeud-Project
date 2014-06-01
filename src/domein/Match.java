@@ -582,7 +582,7 @@ public class Match implements Observer {
 		}
 
 		// Repainting and reseting jar
-		gameField.repaintBoard();
+		//gameField.repaintBoard();
 		
 
 	
@@ -994,20 +994,17 @@ public class Match implements Observer {
 	
 	// Method to get the score
 	public synchronized int getScoreP1(){
-		return scoreP1;
+		return scoreP1 = dbh.score(gameID,
+				getOwnName());
 	}
 	
 	public synchronized int getScoreP2(){
-		return scoreP2;
+		return scoreP2 = dbh.score(gameID,
+				getEnemyName());
 	}
 	
 	// Returns the gameStatus
 	public synchronized String getGameStatus(){
 		return gameStatus;
-	}
-	
-	public synchronized int getScoreP1Update(){
-		return 	scoreP1 = dbh.score(gameID,
-				getOwnName());
 	}
 }
