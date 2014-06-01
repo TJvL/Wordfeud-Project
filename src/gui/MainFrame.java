@@ -224,6 +224,8 @@ public class MainFrame extends JFrame {
 	}
 
 	public void startLogoutWorker() {
+		loadScreen.activate("Please Wait...");
+		
 		SwingWorker<Integer, Integer> logoutWorker = new SwingWorker<Integer, Integer>() {
 			@Override
 			protected Integer doInBackground() throws Exception {
@@ -233,6 +235,7 @@ public class MainFrame extends JFrame {
 
 			@Override
 			protected void done() {
+				super.done();
 				try {
 					setStartMenuBar();
 					loginScreen.populateScreen();
@@ -242,8 +245,57 @@ public class MainFrame extends JFrame {
 				}
 			}
 		};
-		loadScreen.activate("Please Wait...");
 		logoutWorker.execute();
+	}
+	
+	public void startAllCompWorker() {
+		loadScreen.activate("Please Wait...");
+		
+		SwingWorker<Integer, Integer> allCompWorker = new SwingWorker<Integer, Integer>() {
+			@Override
+			protected Integer doInBackground() throws Exception {
+				wordFeud.doLoadAllCompetitionsAction();
+				return 1;
+			}
+
+			@Override
+			protected void done() {
+				super.done();
+				try {
+					joinCompScreen.populateScreen();
+					setContentPane(joinCompScreen);
+						loadScreen.deactivate();
+				} catch (Exception ignore) {
+				}
+			}
+		};
+
+		allCompWorker.execute();
+	}
+
+	public void startJoinedCompWorker() {
+		loadScreen.activate("Please Wait...");
+		
+		SwingWorker<Integer, Integer> joinedCompWorker = new SwingWorker<Integer, Integer>() {
+			@Override
+			protected Integer doInBackground() throws Exception {
+				wordFeud.doLoadJoinedCompetitionsAction();
+				return 1;
+			}
+
+			@Override
+			protected void done() {
+				super.done();
+				try {
+					joinedCompScreen.populateScreen();
+					setContentPane(joinedCompScreen);
+					loadScreen.deactivate();
+				} catch (Exception ignore) {
+				}
+			}
+		};
+		
+		joinedCompWorker.execute();
 	}
 
 	public void fillRoleWindow() {
@@ -372,55 +424,9 @@ public class MainFrame extends JFrame {
 	public Competition callGetOneCompetitionAction(String key) {
 		return wordFeud.doGetOneCompetitionAction(key);
 	}
-
-	public void startAllCompWorker() {
-		loadScreen.activate("Please Wait...");
-		
-		SwingWorker<Integer, Integer> allCompWorker = new SwingWorker<Integer, Integer>() {
-			@Override
-			protected Integer doInBackground() throws Exception {
-				wordFeud.doLoadAllCompetitionsAction();
-				return 1;
-			}
-
-			@Override
-			protected void done() {
-				try {
-					joinCompScreen.populateScreen();
-					setContentPane(joinCompScreen);
-						loadScreen.deactivate();
-				} catch (Exception ignore) {
-				}
-			}
-		};
-
-		allCompWorker.execute();
-	}
-
+	
 	public void callJoinCompetitionAction(String compID) {
 		wordFeud.doJoinCompAction(compID);
-	}
-
-	public void startJoinedCompWorker() {
-		SwingWorker<Integer, Integer> joinedCompWorker = new SwingWorker<Integer, Integer>() {
-			@Override
-			protected Integer doInBackground() throws Exception {
-				wordFeud.doLoadJoinedCompetitionsAction();
-				return 1;
-			}
-
-			@Override
-			protected void done() {
-				try {
-					joinedCompScreen.populateScreen();
-					setContentPane(joinedCompScreen);
-					loadScreen.deactivate();
-				} catch (Exception ignore) {
-				}
-			}
-		};
-		loadScreen.activate("Please Wait...");
-		joinedCompWorker.execute();
 	}
 
 	public boolean callAskMatchOwnershipAction(String matchID) {
@@ -448,6 +454,8 @@ public class MainFrame extends JFrame {
 	}
 
 	public void startMyActiveMatchesWorker() {
+		loadScreen.activate("Please Wait...");
+		
 		SwingWorker<Integer, Integer> myMatchesWorker = new SwingWorker<Integer, Integer>() {
 			@Override
 			protected Integer doInBackground() throws Exception {
@@ -458,6 +466,7 @@ public class MainFrame extends JFrame {
 			@Override
 			protected void done() {
 				try {
+					super.done();
 					playerScreen.populateScreen();
 					setContentPane(playerScreen);
 					loadScreen.deactivate();
@@ -465,7 +474,7 @@ public class MainFrame extends JFrame {
 				}
 			}
 		};
-		loadScreen.activate("Please Wait...");
+		
 		myMatchesWorker.execute();
 	}
 }
