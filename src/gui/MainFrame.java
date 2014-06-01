@@ -181,7 +181,6 @@ public class MainFrame extends JFrame {
 			@Override
 			protected Integer doInBackground() throws Exception {
 				int result = wordFeud.doLoginAction(username, password);
-				this.notifyAll();
 				return result;
 			}
 		};
@@ -189,7 +188,6 @@ public class MainFrame extends JFrame {
 		loginWorker.execute();
 		int result = WordFeudConstants.LOGIN_FAIL;
 		try {
-			this.wait();
 			result = loginWorker.get();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
