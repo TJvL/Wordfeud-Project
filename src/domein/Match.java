@@ -867,7 +867,7 @@ public class Match implements Observer {
 				dbh.updateTurn(maxTurn, gameID, getOwnName(), getScore(),
 						"Word");
 
-				fillHand(null);
+				
 
 				board.setScore();
 				ArrayList<Tile> justPlayedTiles = board.addtilesToDatabase();
@@ -877,6 +877,8 @@ public class Match implements Observer {
 							tiles.getXValue() + 1, tiles.getYValue() + 1);
 				}
 
+				fillHand(null);
+				
 				board.setTilesPlayed();
 
 				// Tijdelijke reactie van de tegenstander
@@ -964,7 +966,9 @@ public class Match implements Observer {
 	// Method to sets the end turns when you won
 	public void winGame() {
 		int handTileFromTurn = 0;
-		if (dbh.score(gameID, getOwnName()) > dbh.score(gameID, getEnemyName())) {
+		int myScore = dbh.score(gameID, getOwnName());
+		int hisScore = dbh.score(gameID, getEnemyName());
+		if (myScore > hisScore) {
 			handTileFromTurn = maxTurn - 1;
 			JOptionPane.showMessageDialog(null, "YOU WON THE GAME!",
 					"Game ended", JOptionPane.INFORMATION_MESSAGE);
@@ -981,8 +985,9 @@ public class Match implements Observer {
 			String[] split = content.split("---");
 			handScore += Integer.parseInt(split[2]);
 		}
-		dbh.updateTurn(maxTurn + 1, gameID, getOwnName(), handScore, "End");
-		dbh.updateTurn(maxTurn + 2, gameID, getEnemyName(), -handScore, "End");
+		dbh.updateTurn(maxTurn + 1, gameID, getEnemyName(), -handScore, "End");
+		dbh.updateTurn(maxTurn + 2, gameID, getOwnName(), handScore, "End");
+	
 		dbh.gameStatusUpdate(gameID, "Finished");
 	}
 
