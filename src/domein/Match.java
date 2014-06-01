@@ -37,6 +37,7 @@ public class Match implements Observer {
 	private int scoreP2;
 	private int tScoreP1;
 	private int tScoreP2;
+	private String gameStatus;
 	private Square[][] field;
 
 	// Constructor for starting a game where you are playing in
@@ -54,6 +55,7 @@ public class Match implements Observer {
 			myName = "testSubject";
 		}
 
+		this.gameStatus = "Playing";
 		this.myName = myName;
 		dbh = DatabaseHandler.getInstance();
 		String inputName = dbh.opponentName(gameID);
@@ -68,13 +70,14 @@ public class Match implements Observer {
 	}
 
 	// Constructor for starting a game where you are playing in
+	// and was already loaded
 	public Match(int gameID, String myName) {
 		this.gameID = gameID;
 		// Dit is tijdelijk todat je mensen kunt uitdagen
 		if (myName.equals("Spectator")) {
 			myName = "testSubject";
 		}
-
+		
 		this.myName = myName;
 		dbh = DatabaseHandler.getInstance();
 		String inputName = dbh.opponentName(gameID);
@@ -276,13 +279,7 @@ public class Match implements Observer {
 						// }
 					}
 				}
-				/*
-				 * for (int y = 0; y < 15; y++) { for (int x = 0; x < 15; x++) {
-				 * if (field[x][y].getTile() != null){
-				 * gameSpec.addImageToBoard(field[x][y].getTile().getImage(), x,
-				 * y); } } }
-				 */
-
+				
 				gameSpec.setNameP1(myName);
 				gameSpec.setScoreP1(scoreP1);
 				gameSpec.setNameP2(opponentName);
@@ -470,11 +467,18 @@ public class Match implements Observer {
 		if (board != null) {
 			board.clearField();
 		}
-		tilesForJar = dbh.jarContent(gameID);
-		getMaxTurnID();
 
+		getMaxTurnID();
 		swapAllowed = true;
 
+		this.gameStatus = dbh.getGameStatusValue(gameID);
+		
+		// Setting the scores
+		scoreP2 = dbh.score(gameID,
+				getEnemyName());
+		scoreP1 = dbh.score(gameID,
+				getOwnName());
+		
 		// Creating the board
 		ArrayList<String> squares = dbh.squareCheck();
 		for (int i = 0; i < squares.size(); i++) {
@@ -483,22 +487,7 @@ public class Match implements Observer {
 					Integer.parseInt(splits[1]) - 1, splits[2]);
 		}
 
-		// Creating the jar - This loads the jar from the database
-		for (String tiles : tilesForJar) {
-			String[] splits = tiles.split("---");
-			Tile t = jar.createTile(Integer.parseInt(splits[0]), splits[1],
-					Integer.parseInt(splits[2]));
-			jar.addNewTile(t);
-		}
-
-		// SwingUtilities.invokeLater(new Runnable() {
-		// @Override
-		// public void run() {
-		// gameField.addSquares(this);
-		// }
-		// });
-		// Calls the method to make the field and gives it this Match as param
-		// gameField.addSquares(this);
+		fillJar();
 
 		// Checks if the game being loaded has not started and the player was
 		// invited
@@ -567,6 +556,9 @@ public class Match implements Observer {
 	// A method to update the playfield
 	public synchronized void updateField() {
 		clearTilesFromBoard();
+		
+		this.gameStatus = dbh.getGameStatusValue(gameID);
+		
 		// Updating the field
 		ArrayList<String> playedWords = dbh.playedWords(gameID, maxTurn - 2,
 				true);
@@ -591,17 +583,9 @@ public class Match implements Observer {
 
 		// Repainting and reseting jar
 		gameField.repaintBoard();
-		jar.resetJar();
+		
 
-		// Making and filling the update jar
-		tilesForJar = dbh.jarContent(gameID);
-		// Creating the jar - This loads the jar from the database
-		for (String tiles : tilesForJar) {
-			String[] splits = tiles.split("---");
-			Tile t = jar.createTile(Integer.parseInt(splits[0]), splits[1],
-					Integer.parseInt(splits[2]));
-			jar.addNewTile(t);
-		}
+	
 
 		swapAllowed = true;
 		if (jar.getJarSize() < 7) {
@@ -627,6 +611,21 @@ public class Match implements Observer {
 
 	}
 
+	// Method to fill the jar when needed
+	public void fillJar(){
+		jar.resetJar();
+		// Making and filling the update jar
+		tilesForJar = dbh.jarContent(gameID);
+		// Creating the jar - This loads the jar from the database
+		for (String tiles : tilesForJar) {
+			String[] splits = tiles.split("---");
+			Tile t = jar.createTile(Integer.parseInt(splits[0]), splits[1],
+					Integer.parseInt(splits[2]));
+			jar.addNewTile(t);
+		}
+	}
+	
+	// Method to move a the tiles
 	public void moveTile(Tile t) {
 		int x = t.getXValue();
 		int y = t.getYValue();
@@ -640,8 +639,6 @@ public class Match implements Observer {
 	// Method for loading games to add tiles to hand
 	public void addTileToHand(Tile t) {
 		player.addTileToHand(t);
-		// gameField.addTileToHand(t, this);
-		// gameField.repaintBoard();
 	}
 
 	// Takes a random tile from the jar
@@ -764,6 +761,7 @@ public class Match implements Observer {
 
 		// Method to fill the hands for a new game
 		if (newJar != null) {
+			// Player1
 			ArrayList<Integer> ownHand = new ArrayList<Integer>();
 			for (int i = 0; i < 7; i++) {
 				int id = (newJar.getNewTile()).getTileID();
@@ -771,6 +769,7 @@ public class Match implements Observer {
 			}
 			dbh.addTileToHand(gameID, ownHand, 1);
 
+			// Player2
 			ArrayList<Integer> enemyHand = new ArrayList<Integer>();
 			for (int i = 0; i < 7; i++) {
 				int id = (newJar.getNewTile()).getTileID();
@@ -778,6 +777,8 @@ public class Match implements Observer {
 			}
 			dbh.addTileToHand(gameID, enemyHand, 2);
 		} else {
+			// This fills the jar when needed
+			fillJar();
 			if (player.getHandSize() == 0 && jar.getJarSize() == 0) {
 				this.winGame();
 			} else {
@@ -825,19 +826,6 @@ public class Match implements Observer {
 		// "Pass");
 	}
 
-	// // remove it from the hand en field
-	// public void addTileToJar() {
-	// SwingUtilities.invokeLater(new Runnable() {
-	// @Override
-	// public void run() {
-	// for (TilePanel tile : tilesToSwap) {
-	// gameField.removeTileFromHand(tile.getTile());
-	// }
-	// gameField.repaintBoard();
-	// }
-	// });
-	// }
-
 	public synchronized boolean swapAllowed() {
 		return swapAllowed;
 	}
@@ -875,6 +863,9 @@ public class Match implements Observer {
 
 				dbh.updateTurn(maxTurn, gameID, getOwnName(), getScore(),
 						"Word");
+				
+				fillHand(null);
+				
 				board.setScore();
 				ArrayList<Tile> justPlayedTiles = board.addtilesToDatabase();
 				for (Tile tiles : justPlayedTiles) {
@@ -883,9 +874,7 @@ public class Match implements Observer {
 							tiles.getXValue() + 1, tiles.getYValue() + 1);
 				}
 
-				board.setTilesPlayed();
-
-				fillHand(null);
+				board.setTilesPlayed();			
 
 				// Tijdelijke reactie van de tegenstander
 				// *****
@@ -969,6 +958,7 @@ public class Match implements Observer {
 		dbh.addTileToHand(gameID, tiles, maxTurn);
 	}
 
+	// Method to sets the end turns when you won
 	public void winGame() {
 		int handTileFromTurn = 0;
 		if (dbh.score(gameID, getOwnName()) > dbh.score(gameID, getEnemyName())) {
@@ -993,11 +983,31 @@ public class Match implements Observer {
 		dbh.gameStatusUpdate(gameID, "Finished");
 	}
 
+	// Method to get the jar size
 	public synchronized int getJarSize() {
 		if (jar != null) {
 			return jar.getJarSize();
 		} else {
 			return 10;
 		}
+	}
+	
+	// Method to get the score
+	public synchronized int getScoreP1(){
+		return scoreP1;
+	}
+	
+	public synchronized int getScoreP2(){
+		return scoreP2;
+	}
+	
+	// Returns the gameStatus
+	public synchronized String getGameStatus(){
+		return gameStatus;
+	}
+	
+	public synchronized int getScoreP1Update(){
+		return 	scoreP1 = dbh.score(gameID,
+				getOwnName());
 	}
 }

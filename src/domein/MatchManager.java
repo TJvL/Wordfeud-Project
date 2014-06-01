@@ -26,7 +26,6 @@ public class MatchManager {
 	public static final String CHALLENGE_FAIL_CLOSED = "Competition is closed Are there enough participants yet? Also check the end date.";
 	public static final String CHALLENGE_SUCCES = "Succesfully challenged player and Invite has been sent!";
 
-	private DatabaseHandler dbh;
 	private Match match;
 	private ArrayList<Match> matches;
 	private HashMap<String, PendingMatch> pendingMatches;
@@ -43,7 +42,6 @@ public class MatchManager {
 	private GameSpecScreen specScreen;
 
 	public MatchManager(final WordFeud wordFeud) {
-		this.dbh = DatabaseHandler.getInstance();
 		this.wordFeud = wordFeud;
 
 		this.matches = new ArrayList<Match>();
@@ -247,5 +245,14 @@ public class MatchManager {
 
 	public boolean askMatchOwnership(String matchID) {
 		return pendingMatches.get(matchID).isOwnGame();
+	}
+
+	// Method to remove all active matches
+	public void logout() {
+		// TODO Auto-generated method stub
+		matches.clear();
+		activeMatches.clear();
+		pendingMatches.clear();
+		myActiveMatches.clear();
 	}
 }

@@ -69,6 +69,7 @@ public class WordFeud {
 	public void doLogoutAction() {
 		currentUser.logout();
 		compMan.logout();
+		matchMan.logout();
 	}
 
 	public boolean doChangeRoleAction(String result) {

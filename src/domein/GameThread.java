@@ -42,35 +42,38 @@ public class GameThread extends Thread {
 
 	// The method that will be running
 	public void run() {
-		try {
-			Thread.sleep(500);
-		} catch (InterruptedException e1) {
-			e1.printStackTrace();
-		}
+//		try {
+//			Thread.sleep(500);
+//		} catch (InterruptedException e1) {
+//			e1.printStackTrace();
+//		}
 		// While running it will run
 		while (running) {
 			if (match != null) {
+				if (storeMatch != match){
+					if (!match.getMyTurn()){
+						turnSwap = false;
+					}
+				}
 				storeMatch = match;
+				storeMatch.getMaxTurnID();
 				running = true;
 				// Gets the gameID;
-				storeMatch.getMaxTurnID();
-				int gameID = storeMatch.getGameID();
+		//		storeMatch.getMaxTurnID();
 			//	System.out.println("LOOK AT ME - THREAD " + gameID);
-				// Setting the scores
-				scorePanel.setEnemyScore(dbh.score(gameID,
-						storeMatch.getEnemyName()));
-				scorePanel.setOwnScore(dbh.score(gameID,
-						storeMatch.getOwnName()));
-				if (storeMatch.getMyTurn()) {
-					scorePanel.setOwnName(storeMatch.getOwnName() + "**");
-					scorePanel.setEnemyName(storeMatch.getEnemyName());
-				} else {
-					scorePanel.setOwnName(storeMatch.getOwnName());
-					scorePanel.setEnemyName(storeMatch.getEnemyName() + "**");
-				}
 
-				// HERE HAS TO BE A METHOD TO CHECK SUBMITTED WORDS
-
+//				scorePanel.setEnemyScore(match.getScoreP2());
+//				scorePanel.setOwnScore(match.getScoreP1());
+//				if (match.getMyTurn()) {
+//					scorePanel.setOwnName(match.getOwnName() + "**");
+//					scorePanel.setEnemyName(match.getEnemyName());
+//				} else {
+//					scorePanel.setOwnName(match.getOwnName());
+//					scorePanel.setEnemyName(match.getEnemyName() + "**");
+//					buttonPanel.disableSwap();
+//					turnSwap = false;
+//				}
+				
 				// Prints the current wordValue
 				int currentScore = storeMatch.getScore();
 				if (storeScore > currentScore || storeScore < currentScore) {
@@ -84,34 +87,43 @@ public class GameThread extends Thread {
 				// if (gameBegin.equals("Begin")) {
 				// a loop to see if the turn is swapped
 				try {
-					if (!dbh.getGameStatusValue(gameID).equals("Finished")
-							&& !dbh.getGameStatusValue(gameID).equals(
+					if (!storeMatch.getGameStatus().equals("Finished")
+							&& !storeMatch.getGameStatus().equals(
 									"Resigned")) {
 						if (storeMatch.getMyTurn()) {
 							if (turnSwap) {
+								scorePanel.setOwnName(storeMatch.getOwnName() + "**");
+								scorePanel.setEnemyName(storeMatch.getEnemyName());
 								updateTheGame.execute();
 								storeMatch.updateField();
 								JOptionPane.showMessageDialog(null,
 										"YOUR TURN!", "Turn info",
 										JOptionPane.INFORMATION_MESSAGE);
+								scorePanel.setEnemyScore(storeMatch.getScoreP2());
+								scorePanel.setOwnScore(storeMatch.getScoreP1());
 							}
 							buttonPanel.setTurn(true);					
 							if (!match.swapAllowed()) {
 								buttonPanel.disableSwap();
+
 							}
 							turnSwap = false;
 						} else {
 							// System.out.println("NIET MIJN BEURT");
-							buttonPanel.setTurn(false);
+							if (!turnSwap){
+								buttonPanel.setTurn(false);
+								scorePanel.setOwnName(storeMatch.getOwnName());
+								scorePanel.setEnemyName(storeMatch.getEnemyName() + "**");
+								scorePanel.setEnemyScore(storeMatch.getScoreP2());
+								scorePanel.setOwnScore(storeMatch.getScoreP1Update());
+							}
 							turnSwap = true;
 						}
 					} else {
-						if (dbh.getGameStatusValue(gameID).equals("Finished")) {
+						if (storeMatch.getGameStatus().equals("Finished")) {
 
-							int enemyScore = dbh.score(gameID,
-									storeMatch.getEnemyName());
-							int ownScore = dbh.score(gameID,
-									storeMatch.getOwnName());
+							int enemyScore = storeMatch.getScoreP2();
+							int ownScore = storeMatch.getScoreP1();
 							if (enemyScore > ownScore) {
 								JOptionPane.showMessageDialog(null,
 										"YOU LOST!", "Game over",
@@ -122,7 +134,7 @@ public class GameThread extends Thread {
 										JOptionPane.INFORMATION_MESSAGE);
 							}
 						}
-						if (dbh.getGameStatusValue(gameID).equals("Resigned")) {
+						if (storeMatch.getGameStatus().equals("Resigned")) {
 							if (storeMatch.getSurrender()) {
 								JOptionPane.showMessageDialog(null,
 										"The game is over, you surrenderd!",
@@ -172,9 +184,10 @@ public class GameThread extends Thread {
 	}
 
 	public class updateTheGame extends SwingWorker<Integer, String> {
-
+	
 		@Override
-		protected Integer doInBackground() throws Exception {		
+		protected Integer doInBackground() throws Exception {
+			Thread.sleep(500);
 			storeMatch.updateField();			
 			return 1;
 		}
