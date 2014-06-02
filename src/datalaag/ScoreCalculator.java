@@ -113,6 +113,9 @@ public class ScoreCalculator {
 						if (playedTilesConnected()) {
 							// All tiles connected
 							score = calculateScore();
+							if (justFilledSquares.size() == 7) {
+								score += 40;
+							}
 						}
 					}
 				}
@@ -120,11 +123,7 @@ public class ScoreCalculator {
 			// If the played word is 1 long
 			else if (justFilledSquares.size() == 1) {
 				score = calculateScoreOneTile();
-			}
-			
-			if (justFilledSquares.size() == 7){
-				score += 40;
-			}
+			}		
 		}
 
 		// Adds all the formed words to a list and prints it

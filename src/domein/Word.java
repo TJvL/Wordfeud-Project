@@ -7,7 +7,7 @@ public class Word {
 
 	// Sets standerd values
 	public Word(){
-		this.bonus = 0;
+		this.bonus = 1;
 		this.word = "";
 	}
 	
@@ -27,7 +27,7 @@ public class Word {
 	
 	// Adds a wordBonus
 	public void addWordBonus(int bonus){
-		this.bonus = this.bonus + bonus;
+		this.bonus = this.bonus * bonus;
 	}
 	
 	// Gets the length of a word

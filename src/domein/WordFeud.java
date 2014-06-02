@@ -9,21 +9,30 @@ import java.util.Map.Entry;
 import java.util.Observer;
 import java.util.Set;
 
+import javax.swing.SwingUtilities;
+
 public class WordFeud {
 	private User currentUser;
 	private CompetitionManager compMan;
 	private MainFrame mainFrame;
+	private WordFeud wf;
 	private MatchManager matchMan;
 
 	public WordFeud() {
 		currentUser = new User();
 		compMan = new CompetitionManager();
+		wf = this;
 	}
 
 	public void init() {
-		mainFrame = new MainFrame(this);
-		mainFrame.init();
-		matchMan = new MatchManager(this);
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				mainFrame = new MainFrame(wf);
+				mainFrame.init();
+			}
+		});
+		matchMan = new MatchManager(wf);
 	}
 
 	// Stops the Thread
@@ -60,6 +69,7 @@ public class WordFeud {
 	public void doLogoutAction() {
 		currentUser.logout();
 		compMan.logout();
+		matchMan.logout();
 	}
 
 	public boolean doChangeRoleAction(String result) {

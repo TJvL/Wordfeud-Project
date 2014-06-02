@@ -10,10 +10,11 @@ public class Tile {
 	private boolean justPlayed;
 	private String blancoLetterValue;
 	private FileHandler fh = FileHandler.getInstance();
-	private int x = 1111;
-	private int y = 1111;
+	private int x;
+	private int y;
 	private BufferedImage image;
 	private int tileID;
+	private int turn;
 
 	// Constructor one
 	public Tile(int tileID, String letter, int value, BufferedImage image) {
@@ -23,7 +24,7 @@ public class Tile {
 		this.image = image;
 		this.tileID = tileID;
 	}
-	
+
 	// Constructor two
 	public Tile(String letter, int value, BufferedImage image) {
 		this.letter = letter;
@@ -32,23 +33,32 @@ public class Tile {
 		this.image = image;
 	}
 
+	public Tile(int x, int y) {
+		this.x = x;
+		this.y = y;
+	}
+
 	// Constructor for spectating
-	public Tile(BufferedImage image){
+	public Tile(BufferedImage image, int turn) {
 		this.image = image;
 	}
-			
-	public void setImage(BufferedImage image){
+
+	public void setImage(BufferedImage image) {
 		this.image = image;
 	}
-	
+
 	// Sets the letter
-	public void setLetter(String letter){
+	public void setLetter(String letter) {
 		this.letter = letter;
 	}
-	
+
 	// Returns the letter
 	public String getLetter() {
-		return letter;
+		if (blancoLetterValue != null) {
+			return blancoLetterValue;
+		} else {
+			return letter;
+		}
 	}
 
 	// Returns the value
@@ -100,13 +110,18 @@ public class Tile {
 		return x;
 	}
 
-	// Returns the  value
+	// Returns the value
 	public int getYValue() {
 		return y;
 	}
-	
+
 	// Returns the tileID
-	public int getTileID(){
+	public int getTileID() {
 		return tileID;
+	}
+
+	// Returns the turn played on
+	public int getTurn() {
+		return turn;
 	}
 }

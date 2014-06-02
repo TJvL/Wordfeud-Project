@@ -256,8 +256,8 @@ public class DatabaseHandler
 			while (result.next())
 			{
 				chat.add(result.getString(1) + "---" + result.getTimestamp(2).toString() + "---" + result.getString(3));
-				// System.out.println("sender: " + sender + " Time: " + chatTime
-				// + " message: " + message);
+	//			System.out.println("sender: " + result.getString(1) + " Time: " + result.getTimestamp(2).toString() 
+	//			 + " message: " + result.getString(3) + " gameID: " + gameID);
 			}
 			result.close();
 			statement.close();
@@ -980,23 +980,57 @@ public class DatabaseHandler
 	{
 		connection();
 		ArrayList<String> playedWord = new ArrayList<String>();
-
+		int tileSize = -1;
+		boolean counted = false;
+		boolean oneLetter = false;
+		
 		try
-		{
+		{		
 			if (forward){
-				statement = con.prepareStatement("SELECT g.*, l.lettertype_karakter FROM gelegdeletter AS g LEFT JOIN letter AS l ON g.letter_id = l.id WHERE g.spel_id = '" + gameID + "' AND beurt_id > '" + turnID + "' GROUP BY g.beurt_id, g.tegel_x, g.tegel_y");
+				statement = con.prepareStatement("SELECT woorddeel FROM gelegd WHERE spel_id = '" + gameID + "' AND beurt_id > '" + turnID + "'");
 			} else {
-				statement = con.prepareStatement("SELECT g.*, l.lettertype_karakter FROM gelegdeletter AS g LEFT JOIN letter AS l ON g.letter_id = l.id WHERE g.spel_id = '" + gameID + "' AND beurt_id < '" + turnID + "' GROUP BY g.beurt_id, g.tegel_x, g.tegel_y");	
-			}
+				statement = con.prepareStatement("SELECT woorddeel FROM gelegd WHERE spel_id = '" + gameID + "' AND beurt_id < '" + turnID + "'");
+			}	
 			result = statement.executeQuery();
-
-			while (result.next())
-			{
-				playedWord.add(result.getString(3) + "---" + result.getString(4) + "---" + result.getString(5) + "---"
-						+ result.getString(1) + "---" + result.getString(7) + "---" + result.getString(8));
+			while (result.next()){
+				String[] tempString = result.getString(1).split(",");
+				tileSize += tempString.length;
+			}	
+			if (tileSize == 0){
+				oneLetter = true;
+				tileSize =+2;
 			}
 			result.close();
 			statement.close();
+			
+			System.out.println("DE LENGTE VAN DE ARRAY: " + playedWord.size() + " LENGTE VAN DE TILESIZE: " + tileSize + " DBH - playedWords");
+			
+			while (playedWord.size() < tileSize){
+				if (!counted){
+					tileSize += 1;
+					counted = true;
+					if (oneLetter){
+						tileSize =- 2;
+					}
+				}
+				playedWord.clear();
+				if (forward){
+					statement = con.prepareStatement("SELECT g.*, l.lettertype_karakter, lt.waarde FROM gelegdeletter AS g LEFT JOIN letter AS l ON g.letter_id = l.id LEFT JOIN lettertype AS lt ON l.lettertype_karakter = lt.karakter WHERE g.spel_id = '" + gameID + "' AND beurt_id > '" + turnID + "' GROUP BY g.beurt_id, g.tegel_x, g.tegel_y");
+				} else {
+					statement = con.prepareStatement("SELECT g.*, l.lettertype_karakter, lt.waarde FROM gelegdeletter AS g LEFT JOIN letter AS l ON g.letter_id = l.id LEFT JOIN lettertype AS lt ON l.lettertype_karakter = lt.karakter WHERE g.spel_id = '" + gameID + "' AND beurt_id < '" + turnID + "' GROUP BY g.beurt_id, g.tegel_x, g.tegel_y");
+				}
+				result = statement.executeQuery();
+
+				while (result.next())
+				{
+					playedWord.add(result.getString(3) + "---" + result.getString(4) + "---" + result.getString(5) + "---"
+							+ result.getString(1) + "---" + result.getString(7) + "---" + result.getString(8) + "---" + result.getInt(9));
+				}
+				result.close();
+				statement.close();	
+			
+				System.out.println("DE LENGTE VAN DE ARRAY: " + playedWord.size() + " LENGTE VAN DE TILESIZE: " + tileSize + " DBH - playedWords");
+			}
 		} catch (SQLException e)
 		{
 			e.printStackTrace();
