@@ -61,6 +61,8 @@ public class JoinCompScreen extends JPanel {
 	 * made.
 	 */
 	public void populateScreen() {
+		this.remove(listLabel);
+		this.remove(buttonPanel);
 		refreshLists();
 
 		listLabel.setBounds(670, 20, 100, 20);
@@ -121,11 +123,11 @@ public class JoinCompScreen extends JPanel {
 		compTable = null;
 		compPane = null;
 
-		String[] columnNames = { "ID", "Summary", "Max Parts", "Current Parts",
-				"Owner", "End Date/Time" };
+		String[] columnNames = { "ID", "Summary", "Min Parts", "Max Parts",
+				"Current Parts", "Owner", "End Date/Time" };
 		Set<Entry<String, Competition>> competitions = mainFrame
 				.callGetAllCompetitionsAction();
-		String[][] tableData = new String[competitions.size()][6];
+		String[][] tableData = new String[competitions.size()][7];
 
 		Iterator<Entry<String, Competition>> it = competitions.iterator();
 		int i = 0;
@@ -135,11 +137,13 @@ public class JoinCompScreen extends JPanel {
 			tableData[i][0] = Integer.toString(pair.getValue().getCompID());
 			tableData[i][1] = pair.getValue().getSummary();
 			tableData[i][2] = Integer.toString(pair.getValue()
-					.getMaxParticipants());
+					.getMinParticipants());
 			tableData[i][3] = Integer.toString(pair.getValue()
+					.getMaxParticipants());
+			tableData[i][4] = Integer.toString(pair.getValue()
 					.getAmountParticipants());
-			tableData[i][4] = pair.getValue().getCompOwner();
-			tableData[i][5] = pair.getValue().getEndDate();
+			tableData[i][5] = pair.getValue().getCompOwner();
+			tableData[i][6] = pair.getValue().getEndDate();
 			i++;
 		}
 
@@ -155,10 +159,11 @@ public class JoinCompScreen extends JPanel {
 		compTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		compTable.getColumnModel().getColumn(0).setPreferredWidth(30);
 		compTable.getColumnModel().getColumn(1).setPreferredWidth(230);
-		compTable.getColumnModel().getColumn(2).setPreferredWidth(80);
-		compTable.getColumnModel().getColumn(3).setPreferredWidth(80);
-		compTable.getColumnModel().getColumn(4).setPreferredWidth(80);
-		compTable.getColumnModel().getColumn(5).setPreferredWidth(150);
+		compTable.getColumnModel().getColumn(2).setPreferredWidth(60);
+		compTable.getColumnModel().getColumn(3).setPreferredWidth(60);
+		compTable.getColumnModel().getColumn(4).setPreferredWidth(60);
+		compTable.getColumnModel().getColumn(5).setPreferredWidth(60);
+		compTable.getColumnModel().getColumn(6).setPreferredWidth(150);
 
 		ForcedListSelectionModel selectModel = new ForcedListSelectionModel();
 		selectModel.addListSelectionListener(new ListSelectionListener() {
@@ -242,10 +247,10 @@ public class JoinCompScreen extends JPanel {
 
 	private void refreshCompetitionsList() {
 		this.initCompTable();
-		compPane.setBounds(0, 0, 650, 700);
+		compPane.setBounds(0, 0, 650, 640);
 		this.add(compPane);
 	}
-	
+
 	private void refreshLists() {
 		mainFrame.callLoadAllCompetitionsAction();
 		refreshCompetitionsList();
@@ -255,8 +260,6 @@ public class JoinCompScreen extends JPanel {
 
 	private void backButtonPressed() {
 		mainFrame.setPlayerScreen();
-		this.removeAll();
-		this.revalidate();
 	}
 
 	private void joinButtonPressed() {

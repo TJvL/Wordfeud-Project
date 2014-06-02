@@ -85,9 +85,14 @@ public class Competition {
 
 		for (String s : parts) {
 			String[] data = s.split("---");
-		
-		
-		participants.add(new CompetitionPlayer(Integer.toString(this
+			
+			// --------TEST CODE---------
+			System.out.println("RAW DATA PRINT COMP ID: " + this.getCompID()
+					+ " Participant Data: " + data[0] + data[1] + data[2]
+					+ data[3] + data[4] + data[5] + data[6]);
+			// --------TEST CODE---------
+			
+			participants.add(new CompetitionPlayer(Integer.toString(this
 					.getCompID()), data[0], Integer.parseInt(data[1]), Integer
 					.parseInt(data[2]), Integer.parseInt(data[3]), Integer
 					.parseInt(data[4]), Integer.parseInt(data[5]), Double
@@ -103,18 +108,10 @@ public class Competition {
 
 	private void checkIfEndDateReached() {
 		DateTimeFormatterBuilder fmtb = new DateTimeFormatterBuilder()
-				.appendYear(4, 4)
-				.appendLiteral('-')
-				.appendMonthOfYear(2)
-				.appendLiteral('-')
-				.appendDayOfMonth(2)
-				.appendLiteral(' ')
-				.appendHourOfDay(2)
-				.appendLiteral(':')
-				.appendMinuteOfHour(2)
-				.appendLiteral(':')
-				.appendSecondOfMinute(2)
-				.appendLiteral('.')
+				.appendYear(4, 4).appendLiteral('-').appendMonthOfYear(2)
+				.appendLiteral('-').appendDayOfMonth(2).appendLiteral(' ')
+				.appendHourOfDay(2).appendLiteral(':').appendMinuteOfHour(2)
+				.appendLiteral(':').appendSecondOfMinute(2).appendLiteral('.')
 				.appendLiteral('0');
 		DateTimeFormatter fmt = fmtb.toFormatter();
 		DateTime endDateTime = fmt.parseDateTime(endDate);
