@@ -208,14 +208,12 @@ public class MainFrame extends JFrame {
 	// Sets the right ContentPane
 	public void addObservers(Observer observer, boolean spectator) {
 		if (spectator) {
-			this.setJMenuBar(specMenuBar);
 			this.setContentPane(gameSpecScreen);
 			this.pack();
 			System.out.println("MainFRAMEPANEL - set content specScreen");
 			gameSpecScreen.addObservers(observer);
 			revalidate();
 		} else {
-			this.setJMenuBar(standardMenuBar);
 			this.setContentPane(gameScreen);
 			this.pack();
 			gameScreen.addObservers(observer);
