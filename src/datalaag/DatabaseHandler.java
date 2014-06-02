@@ -1820,7 +1820,7 @@ public class DatabaseHandler
 			result.close();
 			statement.close();
 			
-			statement = con.prepareStatement("SELECT max(totaalscore) FROM score WHERE account_naam = 'jager684'");
+			statement = con.prepareStatement("SELECT max(totaalscore) FROM score WHERE account_naam = '"+ username+"'");
 			
 			result = statement.executeQuery();
 			
