@@ -18,6 +18,7 @@ public class Administrator extends Role {
 	public Administrator(boolean hasPermissions) {
 		super(hasPermissions);
 		adminActiveCompetitions = new HashMap<String, Competition>();
+//		adminCompetitions();
 	}
 
 	public String changeUsername(String username) {
@@ -188,10 +189,10 @@ public class Administrator extends Role {
 								compData[4], Integer.parseInt(compData[5]),
 								Integer.parseInt(compData[6])));
 			}
-			System.out.println("Succesfully loaded active competitions.");
+			System.out.println("Admin: Succesfully loaded active competitions.");
 		}
-		System.out.println("No joined competitions to load.");
-		// return dbh.activeCompetitions();
+		System.out.println("Admin: No active competitions to load.");
+//		return dbh.activeCompetitions();
 	}
 
 	public Set<Entry<String, Competition>> getAllActiveCompEntries() {

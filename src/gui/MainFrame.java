@@ -314,6 +314,11 @@ public class MainFrame extends JFrame {
 	public void callLoadAllCompetitionsAction() {
 		wordFeud.doLoadAllCompetitionsAction();
 	}
+	
+	public void adminCallLoadActiveCompetitionAction()
+	{
+		wordFeud.doAdminLoadActiveCompetitionsAction();
+	}
 
 	public void callJoinCompetitionAction(String compID) {
 		wordFeud.doJoinCompAction(compID);
