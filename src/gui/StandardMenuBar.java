@@ -79,7 +79,7 @@ public class StandardMenuBar extends JMenuBar {
 
 		statisticsMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				statwindow.showStats();
+				statwindow.showStats(mainFrame);
 			}
 		});
 		accountdataMenuItem.addActionListener(new ActionListener() {
@@ -96,7 +96,7 @@ public class StandardMenuBar extends JMenuBar {
 	}
 	
 	private void changeRoleItemChosen(){
-		String result = rolewindow.showChangeRole();
+		String result = rolewindow.showChangeRole(mainFrame);
 		boolean isSuccesful = mainFrame.callChangeRoleAction(result);
 		if (isSuccesful) {
 			JOptionPane.showMessageDialog(mainFrame, "Role changed succesfully.");

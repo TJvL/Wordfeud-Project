@@ -22,7 +22,7 @@ public class StatWindow extends JDialog {
 	private JLabel mostValuableWordValue = new JLabel();
 	private JLabel compsWonValue = new JLabel();
 
-	public void showStats() {
+	public void showStats(MainFrame mainFrame) {
 		this.setModal(true);
 		this.setLayout(new GridLayout(6, 2, 10, 10));
 		this.setPreferredSize(new Dimension(500, 500));
@@ -31,7 +31,7 @@ public class StatWindow extends JDialog {
 		createLabels();
 
 		this.pack();
-		this.setLocationRelativeTo(null);
+		this.setLocationRelativeTo(mainFrame);
 		this.setVisible(true);
 
 	}

@@ -11,9 +11,9 @@ public class RoleWindow extends JDialog {
 
 	// ///this method returns a string with the chosen value, if th eplayer
 	// chooses cancel, nothing is returned
-	public String showChangeRole() {
+	public String showChangeRole(MainFrame mainFrame) {
 		Object[] possibilities = roles.toArray();
-		String s = (String) JOptionPane.showInputDialog(this,
+		String s = (String) JOptionPane.showInputDialog(mainFrame,
 				"What role would you like to choose?", null,
 				JOptionPane.PLAIN_MESSAGE, null, possibilities, "Player");
 
