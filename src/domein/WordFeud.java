@@ -93,7 +93,7 @@ public class WordFeud {
 				endDate, minParticipants, maxParticipants);
 	}
 
-	public boolean doJoinCompAction(String compID) {
+	public String doJoinCompAction(String compID) {
 		return compMan.joinCompetition(compID, this.getCurrentUsername());
 	}
 
@@ -103,6 +103,10 @@ public class WordFeud {
 
 	public void doLoadJoinedCompetitionsAction() {
 		compMan.loadJoinedCompetitions(this.getCurrentUsername());
+	}
+	
+	public void doLoadAdminCompetitionsAction(){
+		currentUser.loadAdminCompetitionsAction();
 	}
 
 	public String getCurrentUserRole() {
@@ -143,8 +147,8 @@ public class WordFeud {
 	}
 
 	// Method to accept/reject game in the database
-	public void acceptRejectGame(String string, int competionID, int gameID) {
-		matchMan.acceptRejectGame(competionID, gameID,
+	public void doRespondChallengeAction(String string, int competionID, int gameID) {
+		matchMan.respondToChallenge(competionID, gameID,
 				this.getCurrentUsername(), string);
 	}
 
@@ -164,7 +168,7 @@ public class WordFeud {
 	}
 
 	public Set<Entry<String, Competition>> doGetActiveCompetitionsAction() {
-		return currentUser.getAdmin().getAllActiveCompEntries();
+		return currentUser.getAdminCompEntriesAction();
 	}
 
 	public Set<Entry<String, Competition>> doGetJoinedCompetitionsAction() {

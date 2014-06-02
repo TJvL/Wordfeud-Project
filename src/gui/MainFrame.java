@@ -48,8 +48,7 @@ public class MainFrame extends JFrame {
 		this.setTitle("WordFeud");
 		this.setGlassPane(loadScreen);
 		
-		loginScreen.populateScreen();
-		this.setContentPane(loginScreen);
+		this.setLoginScreen();
 		this.setJMenuBar(startMenuBar);
 
 		this.pack();
@@ -72,6 +71,22 @@ public class MainFrame extends JFrame {
 		modScreen = new ModScreen();
 		wordFeud.setPanelsReferences(gameScreen.getGameChatPanel(),
 				gameScreen.getButtonPanel(), gameScreen.getScorePanel());
+	}
+	
+	public void setCorrectRoleMainMenu() {
+		String currentRole = wordFeud.getCurrentUserRole();
+
+		if (currentRole.equals(WordFeudConstants.ROLE_ADMINISTRATOR)) {
+			this.setAdminCompScreen();
+		} else if (currentRole.equals(WordFeudConstants.ROLE_MODERATOR)) {
+			this.setModScreen();
+		} else if (currentRole.equals(WordFeudConstants.ROLE_PLAYER)) {
+			this.setPlayerScreen();
+		} else if (currentRole.equals(WordFeudConstants.ROLE_SPECTATOR)) {
+			this.setSpecScreen();
+		}
+		this.fillRoleWindow();
+		this.setAccDataValues();
 	}
 
 	public void setRegScreen() {
@@ -98,10 +113,8 @@ public class MainFrame extends JFrame {
 	}
 
 	public void setSpecScreen() {
-		// specScreen.setGameList(wordFeud.getActiveGames());
-		this.setContentPane(specScreen);
+		this.startAllActiveMatchesWorker();
 		wordFeud.stopThread();
-		revalidate();
 	}
 
 	public void setJoinCompScreen() {
@@ -122,10 +135,8 @@ public class MainFrame extends JFrame {
 	}
 
 	public void setAdminCompScreen() {
-		adminCompScreen.populateScreen();
-		this.setContentPane(adminCompScreen);
+		this.startAdminCompWorker();
 		wordFeud.stopThread();
-		revalidate();
 	}
 
 	public void setModScreen() {
@@ -173,6 +184,79 @@ public class MainFrame extends JFrame {
 		}
 		return result;
 	}
+	
+	public String startCreateCompWorker(final String summary, final String compEnd,
+			final String minPlayers, final String maxPlayers) {
+		loadScreen.activate("Please Wait...");
+		
+		SwingWorker<String, Integer> createCompWorker = new SwingWorker<String, Integer>() {
+			@Override
+			protected String doInBackground() throws Exception {
+				String result = wordFeud.doCreateCompAction(summary, compEnd, minPlayers, maxPlayers);
+				return result;
+			}
+		};
+		
+		createCompWorker.execute();
+		String result = WordFeudConstants.REGISTER_FAIL_DEFAULT;
+		try {
+			result = createCompWorker.get();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+		}
+		loadScreen.deactivate();
+		return result;
+	}
+	
+	public String startCompJoinWorker(final String compID) {
+		loadScreen.activate("Please Wait...");
+		
+		SwingWorker<String, Integer> compJoinWorker = new SwingWorker<String, Integer>() {
+			@Override
+			protected String doInBackground() throws Exception {
+				String result = wordFeud.doJoinCompAction(compID);
+				return result;
+			}
+		};
+		
+		compJoinWorker.execute();
+		String result = WordFeudConstants.JOIN_COMP_FAIL;
+		try {
+			result = compJoinWorker.get();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
+	public String startChallengeWorker(final String competitionID,
+			final String opponent, final int privacy) {
+		loadScreen.activate("Please Wait...");
+		
+		SwingWorker<String, Integer> challengeWorker = new SwingWorker<String, Integer>() {
+			@Override
+			protected String doInBackground() throws Exception {
+				String result = wordFeud.doChallengePlayerAction(competitionID, opponent, privacy);
+				return result;
+			}
+		};
+		
+		challengeWorker.execute();
+		String result = WordFeudConstants.CHALLENGE_FAIL_DEFAULT;
+		try {
+			result = challengeWorker.get();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+		}
+		loadScreen.deactivate();
+		return result;
+	}
 
 	public int startLoginWorker(final String username, final char[] password) {
 		loadScreen.activate("Please Wait...");
@@ -217,7 +301,9 @@ public class MainFrame extends JFrame {
 		} catch (ExecutionException e) {
 			e.printStackTrace();
 		}
-		loadScreen.deactivate();
+		if(result == WordFeudConstants.ROLE_CHANGE_FAIL){
+			loadScreen.deactivate();
+		}
 		return result;
 	}
 
@@ -295,6 +381,128 @@ public class MainFrame extends JFrame {
 		
 		joinedCompWorker.execute();
 	}
+	
+	public void startAdminCompWorker() {
+		loadScreen.activate("Please Wait...");
+		
+		SwingWorker<Integer, Integer> adminCompWorker = new SwingWorker<Integer, Integer>() {
+			@Override
+			protected Integer doInBackground() throws Exception {
+				wordFeud.doLoadAdminCompetitionsAction();
+				return null;
+			}
+
+			@Override
+			protected void done() {
+				super.done();
+				try {
+					adminCompScreen.populateScreen();
+					setContentPane(adminCompScreen);
+					loadScreen.deactivate();
+				} catch (Exception ignore) {
+				}
+			}
+		};
+		
+		adminCompWorker.execute();
+	}
+	
+	public void startMyActiveMatchesWorker() {
+		loadScreen.activate("Please Wait...");
+		
+		SwingWorker<Integer, Integer> myMatchesWorker = new SwingWorker<Integer, Integer>() {
+			@Override
+			protected Integer doInBackground() throws Exception {
+				wordFeud.doLoadMyActiveMatchesAction();
+				return 1;
+			}
+
+			@Override
+			protected void done() {
+				try {
+					super.done();
+					playerScreen.populateScreen();
+					setContentPane(playerScreen);
+					loadScreen.deactivate();
+				} catch (Exception ignore) {
+				}
+			}
+		};
+		
+		myMatchesWorker.execute();
+	}
+	
+	public void startPendingMatchWorker() {
+		loadScreen.activate("Please Wait...");
+		
+		SwingWorker<Integer, Integer> pendingMatchesWorker = new SwingWorker<Integer, Integer>() {
+			@Override
+			protected Integer doInBackground() throws Exception {
+				wordFeud.doLoadPendingMatches();
+				return 1;
+			}
+
+			@Override
+			protected void done() {
+				try {
+					super.done();
+					loadScreen.deactivate();
+					standardMenuBar.showNotificationWindow();
+				} catch (Exception ignore) {
+				}
+			}
+		};
+		
+		pendingMatchesWorker.execute();
+	}
+	
+	// Method to accept/reject games
+	public void startResponseWorker(final String string, final int competionID, final int gameID) {
+		loadScreen.activate("Please Wait...");
+		
+		SwingWorker<Integer, Integer> responseWorker = new SwingWorker<Integer, Integer>() {
+			@Override
+			protected Integer doInBackground() throws Exception {
+				wordFeud.doRespondChallengeAction(string, competionID, gameID);
+				return null;
+			}
+		};
+		
+		responseWorker.execute();
+		try {
+			responseWorker.get();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+		}
+		loadScreen.deactivate();
+	}
+
+	public void startAllActiveMatchesWorker() {
+		loadScreen.activate("Please Wait...");
+		
+		SwingWorker<Integer, Integer> myMatchesWorker = new SwingWorker<Integer, Integer>() {
+			@Override
+			protected Integer doInBackground() throws Exception {
+				wordFeud.doLoadActiveMatchesAction();
+				return 1;
+			}
+
+			@Override
+			protected void done() {
+				try {
+					super.done();
+					specScreen.populateScreen();
+					setContentPane(specScreen);
+					loadScreen.deactivate();
+				} catch (Exception ignore) {
+				}
+			}
+		};
+		
+		myMatchesWorker.execute();
+	}
 
 	public void fillRoleWindow() {
 		standardMenuBar.fillRoleWindow(wordFeud.getCurrentUserRoles());
@@ -304,38 +512,13 @@ public class MainFrame extends JFrame {
 		standardMenuBar.fillAccDataValues(wordFeud.getCurrentUsername(),
 				wordFeud.getCurrentPassword());
 	}
-
-	public String getCurrentUsername() {
-		return wordFeud.getCurrentUsername();
+	
+	public boolean callAskMatchOwnershipAction(String matchID) {
+		return wordFeud.doAskMatchOwnershipAction(matchID);
 	}
-
-	public User getuser() {
-		return wordFeud.getCurrentUser();
-	}
-
-	public Administrator getAdmin() {
-		return wordFeud.getCurrentUser().getAdmin();
-	}
-
-	// PlayGame/Spectator part
-	// Adds the observers to all the panels
-	// Sets the right ContentPane
-	public void addObservers(Observer observer, boolean spectator) {
-		if (spectator) {
-			this.setJMenuBar(specMenuBar);
-			this.setContentPane(gameSpecScreen);
-			this.pack();
-			System.out.println("MainFRAMEPANEL - set content specScreen");
-			gameSpecScreen.addObserverToObserverButtons(observer);
-			revalidate();
-		} else {
-			this.setJMenuBar(standardMenuBar);
-			this.setContentPane(gameScreen);
-			this.pack();
-			gameScreen.addObservers(observer);
-			System.out.println("MainFRAMEPANEL - set content gameScreen");
-			revalidate();
-		}
+	
+	public Competition callGetOneCompetitionAction(String key) {
+		return wordFeud.doGetOneCompetitionAction(key);
 	}
 
 	public void startGame(int gameToLoad, boolean spectating) {
@@ -365,11 +548,38 @@ public class MainFrame extends JFrame {
 		 * }
 		 */
 	}
+	
+	// PlayGame/Spectator part
+	// Adds the observers to all the panels
+	// Sets the right ContentPane
+	public void addObservers(Observer observer, boolean spectator) {
+		if (spectator) {
+			this.setJMenuBar(specMenuBar);
+			this.setContentPane(gameSpecScreen);
+			this.pack();
+			System.out.println("MainFRAMEPANEL - set content specScreen");
+			gameSpecScreen.addObserverToObserverButtons(observer);
+			revalidate();
+		} else {
+			this.setJMenuBar(standardMenuBar);
+			this.setContentPane(gameScreen);
+			this.pack();
+			gameScreen.addObservers(observer);
+			System.out.println("MainFRAMEPANEL - set content gameScreen");
+			revalidate();
+		}
+	}
+	
+	public String getCurrentUsername() {
+		return wordFeud.getCurrentUsername();
+	}
 
-	public String callChallengePlayerAction(String competitionID,
-			String opponent, int privacy) {
-		return wordFeud.doChallengePlayerAction(competitionID, opponent,
-				privacy);
+	public User getUser() {
+		return wordFeud.getCurrentUser();
+	}
+
+	public Administrator getAdmin() {
+		return wordFeud.getCurrentUser().getAdmin();
 	}
 
 	// Returns the gameScreen
@@ -382,36 +592,11 @@ public class MainFrame extends JFrame {
 		return gameSpecScreen;
 	}
 
-	public void setCorrectRoleMainMenu() {
-		String currentRole = wordFeud.getCurrentUserRole();
-
-		if (currentRole.equals(WordFeudConstants.ROLE_ADMINISTRATOR)) {
-			this.setAdminCompScreen();
-		} else if (currentRole.equals(WordFeudConstants.ROLE_MODERATOR)) {
-			this.setModScreen();
-		} else if (currentRole.equals(WordFeudConstants.ROLE_PLAYER)) {
-			this.setPlayerScreen();
-		} else if (currentRole.equals(WordFeudConstants.ROLE_SPECTATOR)) {
-			this.setSpecScreen();
-		}
-	}
-
-	// Method to accept/reject games
-	public void acceptRejectGame(String string, int competionID, int gameID) {
-		wordFeud.acceptRejectGame(string, competionID, gameID);
-	}
-
-	public String callCreateCompAction(String summary, String compEnd,
-			String minPlayers, String maxPlayers) {
-		return wordFeud.doCreateCompAction(summary, compEnd,
-				minPlayers, maxPlayers);
-	}
-
 	public Set<Entry<String, Competition>> callGetAllCompetitionsAction() {
 		return wordFeud.doGetAllCompetitionsAction();
 	}
 
-	public Set<Entry<String, Competition>> adminCallActiveCompetitionAction() {
+	public Set<Entry<String, Competition>> callGetAdminCompetitionsAction() {
 		return wordFeud.doGetActiveCompetitionsAction();
 	}
 
@@ -419,60 +604,15 @@ public class MainFrame extends JFrame {
 		return wordFeud.doGetJoinedCompetitionsAction();
 	}
 
-	public Competition callGetOneCompetitionAction(String key) {
-		return wordFeud.doGetOneCompetitionAction(key);
-	}
-	
-	public void callJoinCompetitionAction(String compID) {
-		wordFeud.doJoinCompAction(compID);
-	}
-
-	public boolean callAskMatchOwnershipAction(String matchID) {
-		return wordFeud.doAskMatchOwnershipAction(matchID);
-	}
-
 	public Set<Entry<String, PendingMatch>> callGetPendingGamesAction() {
 		return wordFeud.doGetPendingGamesAction();
-	}
-
-	public void callLoadPendingMatchesAction() {
-		wordFeud.doLoadPendingMatches();
 	}
 
 	public Set<Entry<String, ActiveMatch>> callGetAllActiveMatchesAction() {
 		return wordFeud.doGetAllActiveMatchesAction();
 	}
 
-	public void callLoadAllActiveMatchesAction() {
-		wordFeud.doLoadActiveMatchesAction();
-	}
-
 	public Set<Entry<String, ActiveMatch>> callGetMyActiveMatchesAction() {
 		return wordFeud.doGetMyActiveMatchesAction();
-	}
-
-	public void startMyActiveMatchesWorker() {
-		loadScreen.activate("Please Wait...");
-		
-		SwingWorker<Integer, Integer> myMatchesWorker = new SwingWorker<Integer, Integer>() {
-			@Override
-			protected Integer doInBackground() throws Exception {
-				wordFeud.doLoadMyActiveMatchesAction();
-				return 1;
-			}
-
-			@Override
-			protected void done() {
-				try {
-					super.done();
-					playerScreen.populateScreen();
-					setContentPane(playerScreen);
-					loadScreen.deactivate();
-				} catch (Exception ignore) {
-				}
-			}
-		};
-		
-		myMatchesWorker.execute();
 	}
 }

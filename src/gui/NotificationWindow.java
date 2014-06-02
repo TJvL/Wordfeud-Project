@@ -80,16 +80,12 @@ public class NotificationWindow extends JDialog {
 		refreshButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				refreshList();
-				setTitle("You have: " + numberOfNotes + " notifications");
+				refreshButtonPressed();
 			}
 		});
 	}
 
 	private void initNotifTable() {
-		if (notifPane != null) {
-			this.remove(notifPane);
-		}
 		notifTable = null;
 		notifPane = null;
 
@@ -139,11 +135,18 @@ public class NotificationWindow extends JDialog {
 	}
 
 	private void refreshList() {
-		mainFrame.callLoadPendingMatchesAction();
+		if (notifPane != null) {
+			this.remove(notifPane);
+		}
 		initNotifTable();
 		numberOfNotes = notifTable.getRowCount();
 		notifPane.setBounds(10, 10, 575, 300);
 		this.add(notifPane);
+	}
+	
+	private void refreshButtonPressed(){
+		mainFrame.startPendingMatchWorker();
+		this.dispose();
 	}
 
 	private void checkButtonPressed() {
@@ -156,11 +159,11 @@ public class NotificationWindow extends JDialog {
 					"Do you want to accept this challenge?",
 					"Accept challenge?", JOptionPane.YES_NO_OPTION);
 			if (reply == JOptionPane.YES_OPTION) {
-				mainFrame.acceptRejectGame(
+				mainFrame.startResponseWorker(
 						WordFeudConstants.CHALLENGE_ACCEPTED, 2,
 						Integer.parseInt(currentSelection));
 			} else if (reply == JOptionPane.NO_OPTION) {
-				mainFrame.acceptRejectGame(
+				mainFrame.startResponseWorker(
 						WordFeudConstants.CHALLENGE_REJECTED, 2,
 						Integer.parseInt(currentSelection));
 			}

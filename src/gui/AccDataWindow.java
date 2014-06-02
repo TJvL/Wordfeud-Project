@@ -28,6 +28,7 @@ public class AccDataWindow extends JDialog {
 	private JList rolesValue = new JList();
 
 	public AccDataWindow(MainFrame mainFrame) {
+		super(mainFrame);
 		this.mainFrame = mainFrame;
 		this.setModal(true);
 		this.setResizable(false);
@@ -53,12 +54,12 @@ public class AccDataWindow extends JDialog {
 
 		changeName.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				userNameValue.setText(mainFrame.getuser().changeUsername());
+				userNameValue.setText(mainFrame.getUser().changeUsername());
 			}
 		});
 		changePassword.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				passwordValue.setText(mainFrame.getuser().changePassword());
+				passwordValue.setText(mainFrame.getUser().changePassword());
 			}
 		});
 

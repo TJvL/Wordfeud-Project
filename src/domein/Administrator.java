@@ -13,11 +13,11 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
 public class Administrator extends Role {
-	private HashMap<String, Competition> adminActiveCompetitions;
+	private HashMap<String, Competition> adminCompetitions;
 
 	public Administrator(boolean hasPermissions) {
 		super(hasPermissions);
-		adminActiveCompetitions = new HashMap<String, Competition>();
+		adminCompetitions = new HashMap<String, Competition>();
 	}
 
 	public String changeUsername(String username) {
@@ -174,15 +174,22 @@ public class Administrator extends Role {
 		return retValue + "---" + allFieldFilled;
 	}
 
-	public void adminCompetitions() {
-		adminActiveCompetitions.clear();
+	public void loadAdminCompetitions() {
+		adminCompetitions.clear();
 		System.out.println("Admin: loading all active competitions...");
-		ArrayList<String> activeComps = DatabaseHandler.getInstance().activeCompetitions();
+		ArrayList<String> activeComps = DatabaseHandler.getInstance().fetchAdminCompetitions();
 		if (!activeComps.isEmpty()) {
 			for (String comp : activeComps) {
 				String[] compData = comp.split("---");
-
-				adminActiveCompetitions.put(compData[0],
+				
+				// --------TEST CODE---------
+				System.out.println("RAW DATA PRINT COMP: " + compData[0] + " "
+						+ compData[1] + " " + compData[2] + " " + compData[3]
+						+ " " + compData[4] + " " + compData[5] + " "
+						+ compData[6]);
+				// --------TEST CODE---------
+				
+				adminCompetitions.put(compData[0],
 						new Competition(Integer.parseInt(compData[0]),
 								compData[1], compData[2], compData[3],
 								compData[4], Integer.parseInt(compData[5]),
@@ -190,12 +197,10 @@ public class Administrator extends Role {
 			}
 			System.out.println("Succesfully loaded active competitions.");
 		}
-		System.out.println("No joined competitions to load.");
-		// return dbh.activeCompetitions();
 	}
 
-	public Set<Entry<String, Competition>> getAllActiveCompEntries() {
-		return adminActiveCompetitions.entrySet();
+	public Set<Entry<String, Competition>> getAdminCompEntries() {
+		return adminCompetitions.entrySet();
 	}
 
 	public ArrayList<String> adminCompetitionParticipants(int compID) {

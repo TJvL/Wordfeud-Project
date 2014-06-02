@@ -248,7 +248,7 @@ public class JoinedCompScreen extends JPanel {
 						JOptionPane.QUESTION_MESSAGE, null, new String[] {
 								"Public", "Private" }, null);
 
-				String retValue = mainFrame.callChallengePlayerAction(
+				String retValue = mainFrame.startChallengeWorker(
 						compSelection, playerSelection, retPublicPrivate);
 
 				JOptionPane.showMessageDialog(mainFrame, retValue);

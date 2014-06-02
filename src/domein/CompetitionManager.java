@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import javax.swing.JOptionPane;
-
 import datalaag.DatabaseHandler;
 import datalaag.WordFeudConstants;
 
@@ -80,24 +78,14 @@ public class CompetitionManager {
 		}
 	}
 
-	public boolean joinCompetition(String compID, String username) {
-		boolean actionSuccesfull = false;
+	public String joinCompetition(String compID, String username) {
+		String result = WordFeudConstants.JOIN_COMP_FAIL;
 		if (competitions.get(compID).isRoomForMore()) {
 			DatabaseHandler.getInstance().joinCompetition(
 					Integer.parseInt(compID), username);
-			Competition comp = competitions.get(compID);
-			joinedCompetitions.put(compID, comp);
-			competitions.remove(compID);
-			actionSuccesfull = true;
-			System.out
-					.println("Joined competition succesfully! CompObject ID: "
-							+ comp.getCompID());
-		} else {
-			System.err.println("ERROR: Could not join selected competition");
-			JOptionPane.showMessageDialog(null, "Competion is full",
-					"Can't join", JOptionPane.INFORMATION_MESSAGE);
+			result = WordFeudConstants.JOIN_COMP_SUCCES;
 		}
-		return actionSuccesfull;
+		return result;
 	}
 
 	public String createCompetition(String currentUsername, String summary,

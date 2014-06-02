@@ -28,7 +28,7 @@ public class PlayerScreen extends JPanel {
 	private JScrollPane matchPane;
 	private String currentSelection;
 	private JButton createCompButton;
-	private JButton refreshList;
+	private JButton refreshListButton;
 	private JButton enterGameButton;
 	private JButton joinCompButton;
 	private JButton joinedCompButton;
@@ -38,7 +38,7 @@ public class PlayerScreen extends JPanel {
 		buttonsPanel = new JPanel();
 		this.setLayout(null);
 		buttonsPanel.setLayout(new GridLayout(8, 1, 0, 15));
-		createButtons();
+		createButtonsPanel();
 		
 		currentSelection = defaultSelection;
 	}
@@ -46,22 +46,24 @@ public class PlayerScreen extends JPanel {
 	public void populateScreen(){
 		this.removeAll();
 		
-		refreshList();
+		this.initMatchTable();
 		
+		matchPane.setBounds(190, 20, 400, 600);
 		buttonsPanel.setBounds(610, 15, 300, 680);
 
 		this.add(buttonsPanel);
+		this.add(matchPane);
 		mainFrame.revalidate();
 	}
 
-	private void createButtons() {
+	private void createButtonsPanel() {
 		createCompButton = new JButton("Create competition");
-		refreshList = new JButton("Refresh list");
+		refreshListButton = new JButton("Refresh list");
 		enterGameButton = new JButton("Enter game");
 		joinCompButton = new JButton("Join Competition");
 		joinedCompButton = new JButton("Joined competitions");
 
-		refreshList.addActionListener(new ActionListener() {
+		refreshListButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				refreshButtonPressed();
 			}
@@ -88,7 +90,7 @@ public class PlayerScreen extends JPanel {
 		});
 
 		buttonsPanel.add(createCompButton);
-		buttonsPanel.add(refreshList);
+		buttonsPanel.add(refreshListButton);
 		buttonsPanel.add(enterGameButton);
 		buttonsPanel.add(joinedCompButton);
 		buttonsPanel.add(joinCompButton);
@@ -145,11 +147,6 @@ public class PlayerScreen extends JPanel {
 		matchPane = new JScrollPane(matchTable);
 	}
 	
-	private void refreshList(){
-		this.initMatchTable();
-		matchPane.setBounds(190, 20, 400, 600);
-		this.add(matchPane);
-	}
 	
 	private void createCompButtonPressed(){
 		new CreateCompWindow(mainFrame);

@@ -61,8 +61,7 @@ public class MatchManager {
 		ArrayList<String> games = DatabaseHandler.getInstance().spectateList();
 		for (String game : games) {
 			String[] split = game.split(",");
-			activeMatches.put(split[0], new ActiveMatch(Integer.parseInt(split[0]),
-					split[1]));
+			activeMatches.put(split[0], new ActiveMatch(Integer.parseInt(split[0]), split[1]));
 		}
 	}
 	
@@ -149,7 +148,7 @@ public class MatchManager {
 	}
 
 	// Method to accept/reject game in the database
-	public void acceptRejectGame(int competitionID, int gameID, String name,
+	public void respondToChallenge(int competitionID, int gameID, String name,
 			String string) {
 		DatabaseHandler.getInstance().acceptRejectGame(competitionID, gameID,
 				name, string);
@@ -159,7 +158,7 @@ public class MatchManager {
 	public String challengePlayer(String competitionID, String username,
 			String opponent, String language, int privacyInt) {
 
-		String retValue;
+		String retValue = WordFeudConstants.CHALLENGE_FAIL_DEFAULT;
 		if (wordFeud.doGetOneCompetitionAction(competitionID)
 				.canStartChallenging()) {
 			if (!DatabaseHandler.getInstance().inviteExists(username, opponent,

@@ -1,6 +1,8 @@
 package domein;
 
 import java.util.ArrayList;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.swing.JOptionPane;
 
@@ -266,5 +268,13 @@ public class User {
 			response = getPassword();
 		}
 		return response;
+	}
+
+	public void loadAdminCompetitionsAction() {
+		admin.loadAdminCompetitions();
+	}
+	
+	public Set<Entry<String, Competition>>  getAdminCompEntriesAction(){
+		return admin.getAdminCompEntries();
 	}
 }

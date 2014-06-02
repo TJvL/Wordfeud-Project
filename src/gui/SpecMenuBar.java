@@ -34,9 +34,9 @@ public class SpecMenuBar extends JMenuBar {
 			}			
 		});
 		
-		optionsMenu.add(exitMenuItem);
 		optionsMenu.add(regMenuItem);
 		optionsMenu.add(loginMenuItem);
+		optionsMenu.add(exitMenuItem);
 		
 		this.add(optionsMenu);
 	}

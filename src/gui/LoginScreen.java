@@ -111,8 +111,6 @@ public class LoginScreen extends JPanel {
 			if (result == WordFeudConstants.LOGIN_SUCCES) {
 				mainFrame.setCorrectRoleMainMenu();
 				mainFrame.setStandardMenuBar();
-				mainFrame.fillRoleWindow();
-				mainFrame.setAccDataValues();
 				clearInput();
 			} else if (result == WordFeudConstants.LOGIN_FAIL) {
 				JOptionPane.showMessageDialog(this,

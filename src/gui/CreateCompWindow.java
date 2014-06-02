@@ -102,7 +102,7 @@ public class CreateCompWindow extends JDialog {
 	}
 
 	private void confirmButtonPressed() {
-		String retValue = mainFrame.callCreateCompAction(summary.getText(),
+		String retValue = mainFrame.startCreateCompWorker(summary.getText(),
 				dateTimeChooser.getDate().toString(), minPlayers.getText(),
 				maxPlayers.getText());
 		

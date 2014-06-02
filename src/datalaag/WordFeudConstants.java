@@ -20,6 +20,9 @@ public final class WordFeudConstants {
 	public static final String ROLE_PLAYER = "Player";
 	public static final String ROLE_SPECTATOR = "Spectator";
 	
+	public static final String JOIN_COMP_FAIL = "Failed to join the competition.";
+	public static final String JOIN_COMP_SUCCES = "Succesfully joined the competition.";
+	
 	public static final String CREATE_COMP_FAIL_DEFAULT = "Something went wrong. Competition not created.";
 	public static final String CREATE_COMP_FAIL_INPUT = "Incorrect input. Please input the correct numbers.";
 	public static final String CREATE_COMP_FAIL_NUMBERS = "Incorrect maximum/minimum amount of participants. Check your input.";
@@ -27,6 +30,8 @@ public final class WordFeudConstants {
 	
 	public static final String CHALLENGE_ACCEPTED = "Accepted";
 	public static final String CHALLENGE_REJECTED = "Rejected";
+	
+	public static final String CHALLENGE_FAIL_DEFAULT = "Failed to challenge player.";
 	public static final String CHALLENGE_FAIL_EXISTS = "There is already an open invite for this game";
 	public static final String CHALLENGE_FAIL_CLOSED = "Competition is closed Are there enough participants yet? Also check the end date.";
 	public static final String CHALLENGE_SUCCES = "Succesfully challenged player and Invite has been sent!";

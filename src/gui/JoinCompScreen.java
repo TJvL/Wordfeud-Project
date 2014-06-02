@@ -19,6 +19,7 @@ import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import datalaag.WordFeudConstants;
 import domein.Competition;
 import domein.CompetitionPlayer;
 
@@ -256,16 +257,26 @@ public class JoinCompScreen extends JPanel {
 	}
 
 	private void joinButtonPressed() {
-		Competition compName = mainFrame
-				.callGetOneCompetitionAction(currentSelection);
-		if (!currentSelection.equals("")) {
-			int response = JOptionPane.showConfirmDialog(null,
-					"Are u sure u want to join: \"" + compName.getSummary()
+		if (!currentSelection.equals(defaultSelection)) {
+			Competition compName = mainFrame
+					.callGetOneCompetitionAction(currentSelection);
+			int response = JOptionPane.showConfirmDialog(mainFrame,
+					"Are you sure you want to join: \"" + compName.getSummary()
 							+ "\"?", "", JOptionPane.OK_OPTION,
 					JOptionPane.PLAIN_MESSAGE);
 			if (response == JOptionPane.OK_OPTION) {
-				mainFrame.callJoinCompetitionAction(currentSelection);
+				String result = mainFrame.startCompJoinWorker(currentSelection);
+				if (result.equals(WordFeudConstants.JOIN_COMP_SUCCES)){
+					JOptionPane.showMessageDialog(mainFrame, result);
+					mainFrame.startAllCompWorker();
+				}
+				else {
+					JOptionPane.showMessageDialog(mainFrame, result);
+				}
 			}
+		}
+		else {
+			JOptionPane.showMessageDialog(mainFrame, "Please select something first.");
 		}
 	}
 }

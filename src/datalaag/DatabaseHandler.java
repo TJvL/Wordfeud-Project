@@ -1865,7 +1865,7 @@ public class DatabaseHandler
 		return password;
 	}
 	
-	public synchronized ArrayList<String> activeCompetitions()
+	public synchronized ArrayList<String> fetchAdminCompetitions()
 	{
 		connection();
 		ArrayList<String> activeComps = new ArrayList<String>();
