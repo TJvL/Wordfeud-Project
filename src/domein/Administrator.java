@@ -216,4 +216,27 @@ public class Administrator extends Role {
 	public ArrayList<String> adminCompetitionParticipants(int compID) {
 		return DatabaseHandler.getInstance().peopleInCompetition(compID);
 	}
+	
+	public Competition getOneActiveCompetition(String key)
+	{
+		if(adminActiveCompetitions.containsKey(key))
+		{
+			return adminActiveCompetitions.get(key);
+		}else{
+		return null;
+		}
+	}
+	
+	
+	
+//	
+//	public Competition getOneCompetition(String key) {
+//		if (competitions.containsKey(key)) {
+//			return competitions.get(key);
+//		} else if (joinedCompetitions.containsKey(key)) {
+//			return joinedCompetitions.get(key);
+//		} else {
+//			return null;
+//		}
+//	}
 }
