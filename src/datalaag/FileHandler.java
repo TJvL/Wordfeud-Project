@@ -36,8 +36,7 @@ public class FileHandler {
 					System.out.println(aFileName + " not loaded");
 					return null;
 				}
-		}
-	
+		}	
 }
 
 
