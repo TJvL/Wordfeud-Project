@@ -55,7 +55,7 @@ public class NotificationWindow extends JDialog {
 		this.setPreferredSize(new Dimension(600, 400));
 		this.setResizable(false);
 		this.pack();
-		this.setLocationRelativeTo(null);
+		this.setLocationRelativeTo(mainFrame);
 		this.setVisible(true);
 	}
 

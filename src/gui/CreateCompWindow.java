@@ -61,7 +61,7 @@ public class CreateCompWindow extends JDialog {
 		this.setPreferredSize(new Dimension(450, 350));
 		this.setResizable(false);
 		this.pack();
-		this.setLocationRelativeTo(null);
+		this.setLocationRelativeTo(mainFrame);
 		this.setVisible(true);
 	}
 
