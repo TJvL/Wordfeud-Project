@@ -86,6 +86,11 @@ public class WordFeud {
 	public void doLoadAllCompetitionsAction() {
 		compMan.loadAllCompetitions(this.getCurrentUsername());
 	}
+	
+	public void doAdminLoadActiveCompetitionsAction()
+	{
+		currentUser.getAdmin().adminCompetitions();
+	}
 
 	public void doLoadJoinedCompetitionsAction() {
 		compMan.loadJoinedCompetitions(this.getCurrentUsername());

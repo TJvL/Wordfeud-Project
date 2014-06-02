@@ -1873,7 +1873,7 @@ public class DatabaseHandler
 		
 		try
 		{
-			statement = con.prepareStatement("SELECT * FROM competitie WHERE einde > '" + getCurrentTimeStamp() + "'");
+			statement = con.prepareStatement("SELECT * FROM competitie WHERE einde > '" + getCurrentTimeStamp() + "' ORDER BY id DESC");
 			
 			result = statement.executeQuery();
 			
