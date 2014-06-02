@@ -26,6 +26,7 @@ public class FileHandler {
 			try
 				{
 					image = ImageIO.read(getClass().getResourceAsStream(aFileName));
+					
 					return image;
 				}
 			catch (IOException error)
