@@ -321,6 +321,11 @@ public class MainFrame extends JFrame {
 		wf.doLoadAllCompetitionsAction();
 	}
 	
+	public void adminCallLoadActiveCompetitionAction()
+	{
+		wf.doAdminLoadActiveCompetitionsAction();
+	}
+	
 	public void callJoinCompetitionAction(String compID){
 		wf.doJoinCompAction(compID);
 	}

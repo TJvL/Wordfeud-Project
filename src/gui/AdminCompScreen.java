@@ -17,18 +17,13 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import domein.Administrator;
 import domein.Competition;
-import domein.CompetitionPlayer;
 
 @SuppressWarnings("serial")
 public class AdminCompScreen extends JPanel {
@@ -45,7 +40,6 @@ public class AdminCompScreen extends JPanel {
 //	private JPanel listPanel;
 	
 	////////////////////////////////////////////////////////
-	private Administrator admin = new Administrator(true);//
 	////////////////////////////////////////////////////////
 	private int compID;//
 	/////////////////////
@@ -96,7 +90,7 @@ public class AdminCompScreen extends JPanel {
 	
 	public void populateScreen(){
 		if(neverViewed){
-			mainFrame.callLoadAllCompetitionsAction();
+			mainFrame.adminCallLoadActiveCompetitionAction();
 			this.initCompTable();
 //			this.initPartiTable();
 		}
@@ -145,7 +139,7 @@ public class AdminCompScreen extends JPanel {
 		refresh.addActionListener(new ActionListener() {			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-//				mainFrame.callLoadAllCompetitionsAction();
+				mainFrame.adminCallLoadActiveCompetitionAction();
 				refreshCompetitionsList();
 			}
 		});
@@ -162,8 +156,8 @@ public class AdminCompScreen extends JPanel {
 		compTable = null;
 		compPane = null;
 		
-		String[] columnNames = { "ID", "Owner", "Start Date", "End Date", "Summary", "Min part", "Max part", "Current" };
-		Set<Entry<String, Competition>> competitions = mainFrame.callGetAllCompetitionsAction();
+		String[] columnNames = { "ID", "Owner", "Start Date", "End Date", "Summary", "Min part", "Max part", "Currently" };
+		Set<Entry<String, Competition>> competitions = mainFrame.adminCallActiveCompetitionAction();
 		String[][] tableData = new String[competitions.size()][8];
 
 		Iterator<Entry<String, Competition>> it = competitions.iterator();
@@ -195,10 +189,10 @@ public class AdminCompScreen extends JPanel {
 		compTable.getColumnModel().getColumn(1).setPreferredWidth(60);
 		compTable.getColumnModel().getColumn(2).setPreferredWidth(130);
 		compTable.getColumnModel().getColumn(3).setPreferredWidth(130);
-		compTable.getColumnModel().getColumn(4).setPreferredWidth(235);
+		compTable.getColumnModel().getColumn(4).setPreferredWidth(230);
 		compTable.getColumnModel().getColumn(5).setPreferredWidth(55);
 		compTable.getColumnModel().getColumn(6).setPreferredWidth(55);
-		compTable.getColumnModel().getColumn(7).setPreferredWidth(53);
+		compTable.getColumnModel().getColumn(7).setPreferredWidth(58);
 
 		ForcedListSelectionModel selectModel = new ForcedListSelectionModel();
 		selectModel.addListSelectionListener(new ListSelectionListener() {
