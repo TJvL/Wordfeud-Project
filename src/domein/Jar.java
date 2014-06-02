@@ -22,10 +22,10 @@ public class Jar {
 				"W", "X", "Y", "Z", "?" };
 		for (String letters : alphabet) {
 			if (letters.equals("?")) {
-				images.put(letters, fh.readImage("Plaatjes/Joker.png"));
+				images.put(letters, fh.readImage("/Joker.png"));
 			} else {
 				images.put(letters,
-						fh.readImage("Plaatjes/" + letters + ".png"));
+						fh.readImage("/" + letters + ".png"));
 			}
 		}
 	}
@@ -34,7 +34,7 @@ public class Jar {
 	public BufferedImage getImage(String letter){
 		BufferedImage image = images.get(letter);
 		if (letter.length() > 1){
-			image = fh.readImage("Plaatjes/" + ("" + letter.charAt(1)) + "J.png");
+			image = fh.readImage("/" + ("" + letter.charAt(1)) + "J.png");
 		}
 		return image;
 	}

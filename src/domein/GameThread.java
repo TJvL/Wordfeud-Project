@@ -130,6 +130,14 @@ public class GameThread extends Thread {
 							turnSwap = true;
 						}
 					} else {
+						buttonPanel.setTurn(false);
+						buttonPanel.disableSurrender();
+						try {
+							Thread.sleep(1000);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 						if (storeMatch.getGameStatus().equals("Finished")) {
 
 							int enemyScore = storeMatch.getScoreP2();
@@ -144,7 +152,7 @@ public class GameThread extends Thread {
 										JOptionPane.INFORMATION_MESSAGE);
 							}
 						}
-						if (storeMatch.getGameStatus().equals("Resigned")) {
+						else if (storeMatch.getGameStatus().equals("Resigned")) {
 							if (storeMatch.getSurrender()) {
 								JOptionPane.showMessageDialog(null,
 										"The game is over, you surrenderd!",
@@ -157,14 +165,10 @@ public class GameThread extends Thread {
 										JOptionPane.INFORMATION_MESSAGE);
 							}
 						}
-						buttonPanel.setTurn(false);
-						buttonPanel.disableSurrender();
-						running = false;
+						match = null;
 					}
-
 					scorePanel.updatePanel();
 				} catch (NullPointerException e) {
-
 				}
 			}
 			try {
