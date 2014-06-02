@@ -1467,6 +1467,7 @@ public class DatabaseHandler
 			while(result.next())
 			{
 				compStatistics.add(result.getString(1) + "---" + result.getInt(2) + "---" + result.getInt(3) + "---" + result.getInt(4) + "---" +  result.getInt(5) + "---" + result.getInt(6) + "---" + result.getDouble(7));
+			
 			}
 			result.close();
 			statement.close();
@@ -1819,7 +1820,7 @@ public class DatabaseHandler
 			result.close();
 			statement.close();
 			
-			statement = con.prepareStatement("SELECT max(totaalscore) FROM score WHERE account_naam = 'jager684'");
+			statement = con.prepareStatement("SELECT max(totaalscore) FROM score WHERE account_naam = '"+ username+"'");
 			
 			result = statement.executeQuery();
 			

@@ -734,7 +734,7 @@ public class Match implements Observer {
 		}
 		System.out.println("joptionpane");
 		String input = (String) JOptionPane.showInputDialog(null,
-				"Select your letter below...", "Choose you word",
+				"Select your word below...", "Choose your word",
 				JOptionPane.QUESTION_MESSAGE, null, choices, choices[0]);
 		System.out.println("given word request: " + input);
 

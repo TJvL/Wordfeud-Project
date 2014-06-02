@@ -85,7 +85,9 @@ public class Competition {
 
 		for (String s : parts) {
 			String[] data = s.split("---");
-			participants.add(new CompetitionPlayer(Integer.toString(this
+		
+		
+		participants.add(new CompetitionPlayer(Integer.toString(this
 					.getCompID()), data[0], Integer.parseInt(data[1]), Integer
 					.parseInt(data[2]), Integer.parseInt(data[3]), Integer
 					.parseInt(data[4]), Integer.parseInt(data[5]), Double
