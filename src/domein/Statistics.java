@@ -28,8 +28,9 @@ public class Statistics {
 
 		compsWonString = dataAfter[0];
 		gamesWonString = dataAfter[3];
-		playedGamesString = dataAfter[12];
-		highScoreString = dataAfter[15];
+		playedGamesString = dataAfter[9];
+		
+		highScoreString = dataAfter[12];
 		
 	}
 
