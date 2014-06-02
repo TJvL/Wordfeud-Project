@@ -25,7 +25,8 @@ public class Administrator extends Role {
 		String response = JOptionPane.showInputDialog(null,
 				"What is your desired name?", "Enter your desired name",
 				JOptionPane.QUESTION_MESSAGE);
-		if ((response != null) && (!response.equals(""))) {
+		if(response != null){
+		if ((!response.equals(""))) {
 			System.out.println(response);
 			if (response.length() > 2 && response.length() < 16) {
 				System.out.println("good size");
@@ -50,6 +51,7 @@ public class Administrator extends Role {
 		} else {
 			response = username;
 		}
+	}
 		return response;
 	}
 
