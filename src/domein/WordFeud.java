@@ -174,6 +174,11 @@ public class WordFeud {
 	public Competition doGetOneCompetitionAction(String key) {
 		return compMan.getOneCompetition(key);
 	}
+	
+	public Competition doGetOneActiveCompetitionAction(String key)
+	{
+		return currentUser.getAdmin().getOneActiveCompetition(key);
+	}
 
 	public GameScreen getGameScreen() {
 		return mainFrame.getGameScreen();

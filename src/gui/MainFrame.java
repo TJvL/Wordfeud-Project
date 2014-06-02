@@ -322,6 +322,11 @@ public class MainFrame extends JFrame {
 	public Competition callGetOneCompetitionAction(String key) {
 		return wordFeud.doGetOneCompetitionAction(key);
 	}
+	
+	public Competition callGetOneActiveCompetitionAction(String key)
+	{
+		return wordFeud.doGetOneActiveCompetitionAction(key);
+	}
 
 	public void callLoadAllCompetitionsAction() {
 		wordFeud.doLoadAllCompetitionsAction();

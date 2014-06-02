@@ -13,9 +13,9 @@ import java.util.HashMap;
 
 public class DatabaseHandler
 {
-	final private static String URL = "jdbc:mysql://databases.aii.avans.nl:3306/manschou_db2"; // location of the database
-	final private static String USER = "manschou"; // is the database user
-	final private static String USERPASS = "Mschouten92"; // the password of the user
+	final private static String URL = "jdbc:mysql://databases.aii.avans.nl:3306/2014_soprj4_wordfeud"; // location of the database
+	final private static String USER = "42IN04SOj"; // is the database user
+	final private static String USERPASS = "7Tm16G3S0s"; // the password of the user
 
 	private PreparedStatement statement = null;
 	private ResultSet result = null;
@@ -1494,7 +1494,7 @@ public class DatabaseHandler
 
 		try
 		{
-			statement = con.prepareStatement("SELECT d.account_naam, rb.this_num_games, s.totaalscore, (s.totaalscore / rb.this_num_games), rw.wins, (rb.this_num_games - rw.wins) , r.bayesian_rating FROM rank_bayesian AS rb LEFT JOIN rank_winnerscore AS rws ON rb.competitie_id = rws.competitie_id LEFT JOIN score AS s ON rws.spel_id = s.spel_id AND rb.account_naam = s.account_naam LEFT JOIN rank_winner AS rw ON rb.competitie_id = rw.competitie_id AND rws.competitie_id = rw.competitie_id AND rb.account_naam = rw.account_naam AND s.account_naam = rw.account_naam LEFT JOIN ranking AS r ON rb.competitie_id = r.competitie_id AND rw.competitie_id = r. competitie_id AND rws.competitie_id AND rb.account_naam = r.account_naam AND rw.account_naam = r.account_naam AND s.account_naam = r.account_naam RIGHT JOIN deelnemer AS d ON d.competitie_id = rw.competitie_id AND d.competitie_id = rw.competitie_id AND d.competitie_id = rws.competitie_id  AND d.competitie_id = r.competitie_id AND d.account_naam = rb.account_naam AND d.account_naam = rw.account_naam AND d.account_naam = r.account_naam AND d.account_naam = s.account_naam WHERE d.competitie_id = '" + compID + "'");
+			statement = con.prepareStatement("SELECT d.account_naam, rb.this_num_games, SUM(distinct s.totaalscore) AS total_score,  (s.totaalscore / rb.this_num_games) AS avg_gamescore, SUM(rw.wins/2), (rb.this_num_games - SUM(rw.wins/2)) AS lost, r.bayesian_rating FROM rank_bayesian AS rb LEFT JOIN rank_winnerscore AS rws ON rb.competitie_id = rws.competitie_id LEFT JOIN score AS s ON rws.spel_id = s.spel_id AND rb.account_naam = s.account_naam LEFT JOIN ranking AS r ON rb.account_naam = r.account_naam AND rb.competitie_id = r.competitie_id AND rws.competitie_id = r.competitie_id AND s.account_naam = r.account_naam RIGHT JOIN deelnemer AS d ON rb.account_naam = d.account_naam AND rb.competitie_id = d.competitie_id AND rws.competitie_id = d.competitie_id AND s.account_naam = d.account_naam AND r.account_naam = d.account_naam AND r.competitie_id = d.competitie_id LEFT JOIN rank_winner AS rw ON rb.account_naam = rw.account_naam AND rb.competitie_id = rw.competitie_id AND rws.competitie_id = rw.competitie_id AND s.account_naam = rw.account_naam AND r.account_naam = rw.account_naam AND r.competitie_id = rw.competitie_id AND d.account_naam = rw.account_naam AND d.competitie_id = rw.competitie_id WHERE d.competitie_id = '" + compID + "' GROUP BY s.account_naam");
 		
 			result = statement.executeQuery();
 			
