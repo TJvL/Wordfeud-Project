@@ -120,29 +120,31 @@ public class GameChatPanel extends JPanel {
 			String[] parts = a.split("---");
 			String senderUserName = parts[0];
 			String dateTime = parts[1];
-			String message = parts[2];
-
-			if ((latestUpdatedMessageTimeDate.equals(""))) {
-				// if it IS the first incoming message since startup of
-				// application
-				chatArea.append(senderUserName);
-				chatArea.append("(" + dateTime + "):" + "\n");
-				chatArea.append("   \"" + message + "\"\n");
-
-				latestUpdatedMessageTimeDate = dateTime;
-				latestUpdatedMessage = message;
-
-			} else { // if it's NOT the first incoming message since startup of
-						// application
-				if (!latestUpdatedMessageTimeDate.equals(dateTime)) {
+			if (parts.length > 2) {
+				String message = parts[2];
+				if ((latestUpdatedMessageTimeDate.equals(""))) {
+					// if it IS the first incoming message since startup of
+					// application
 					chatArea.append(senderUserName);
-					chatArea.append(" (" + dateTime + "):" + "\n");
+					chatArea.append("(" + dateTime + "):" + "\n");
 					chatArea.append("   \"" + message + "\"\n");
 
 					latestUpdatedMessageTimeDate = dateTime;
 					latestUpdatedMessage = message;
 
-				} 
+				} else { // if it's NOT the first incoming message since startup
+							// of
+							// application
+					if (!latestUpdatedMessageTimeDate.equals(dateTime)) {
+						chatArea.append(senderUserName);
+						chatArea.append(" (" + dateTime + "):" + "\n");
+						chatArea.append("   \"" + message + "\"\n");
+
+						latestUpdatedMessageTimeDate = dateTime;
+						latestUpdatedMessage = message;
+
+					}
+				}
 			}
 		}
 	}

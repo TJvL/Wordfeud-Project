@@ -865,9 +865,7 @@ public class Match implements Observer {
 						JOptionPane.YES_NO_CANCEL_OPTION);
 
 				dbh.updateTurn(maxTurn, gameID, getOwnName(), getScore(),
-						"Word");
-
-				
+						"Word");	
 
 				board.setScore();
 				ArrayList<Tile> justPlayedTiles = board.addtilesToDatabase();

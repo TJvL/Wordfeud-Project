@@ -6,6 +6,7 @@ import java.util.Observer;
 import java.util.Set;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 import datalaag.WordFeudConstants;
 import domein.Administrator;
@@ -253,7 +254,8 @@ public class MainFrame extends JFrame {
 
 	public String callChallengePlayerAction(String competitionID,
 			String opponent, int privacy) {
-		return wordFeud.doChallengePlayerAction(competitionID, opponent, privacy);
+		return wordFeud.doChallengePlayerAction(competitionID, opponent,
+				privacy);
 	}
 
 	// Returns the gameScreen
@@ -290,9 +292,19 @@ public class MainFrame extends JFrame {
 		wordFeud.acceptRejectGame(string, competionID, gameID);
 	}
 
+	public boolean getContent() {
+		if (this.getContentPane() instanceof GameScreen
+				|| this.getContentPane() instanceof SpecScreen) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	public String callCreateCompAction(String summary, String compEnd,
 			String minPlayers, String maxPlayers) {
-		return wordFeud.doCreateCompAction(summary, compEnd, minPlayers, maxPlayers);
+		return wordFeud.doCreateCompAction(summary, compEnd, minPlayers,
+				maxPlayers);
 	}
 
 	public Set<Entry<String, Competition>> callGetAllCompetitionsAction() {
@@ -314,9 +326,8 @@ public class MainFrame extends JFrame {
 	public void callLoadAllCompetitionsAction() {
 		wordFeud.doLoadAllCompetitionsAction();
 	}
-	
-	public void adminCallLoadActiveCompetitionAction()
-	{
+
+	public void adminCallLoadActiveCompetitionAction() {
 		wordFeud.doAdminLoadActiveCompetitionsAction();
 	}
 
