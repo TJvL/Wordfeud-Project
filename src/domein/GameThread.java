@@ -164,7 +164,6 @@ public class GameThread extends Thread {
 
 					scorePanel.updatePanel();
 				} catch (NullPointerException e) {
-
 				}
 			}
 			try {
