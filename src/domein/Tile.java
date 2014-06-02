@@ -79,7 +79,7 @@ public class Tile {
 	// Returns the image
 	public BufferedImage getImage() {
 		if (blancoLetterValue != null) {
-			return fh.readImage("Plaatjes/" + blancoLetterValue + "J.png");
+			return fh.readImage("/" + blancoLetterValue + "J.png");
 		} else {
 			return image;
 		}

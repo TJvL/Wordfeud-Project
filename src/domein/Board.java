@@ -31,12 +31,12 @@ public class Board {
 		checkedWords = new ArrayList<String>();
 		requestableWords = new ArrayList<String>();
 		images = new HashMap<String, BufferedImage>();
-		images.put("DL", fh.readImage("Plaatjes/DL.png"));
-		images.put("TL", fh.readImage("Plaatjes/TL.png"));
-		images.put("DW", fh.readImage("Plaatjes/DW.png"));
-		images.put("TW", fh.readImage("Plaatjes/TW.png"));
-		images.put("*", fh.readImage("Plaatjes/star.png"));
-		images.put("--", fh.readImage("Plaatjes/board.png"));
+		images.put("DL", fh.readImage("/DL.png"));
+		images.put("TL", fh.readImage("/TL.png"));
+		images.put("DW", fh.readImage("/DW.png"));
+		images.put("TW", fh.readImage("/TW.png"));
+		images.put("*", fh.readImage("/star.png"));
+		images.put("--", fh.readImage("/board.png"));
 	}
 
 	// Methode voor aanmaken van een new board
