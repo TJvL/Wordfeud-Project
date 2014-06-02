@@ -18,20 +18,22 @@ public class Administrator extends Role {
 	public Administrator(boolean hasPermissions) {
 		super(hasPermissions);
 		adminActiveCompetitions = new HashMap<String, Competition>();
-//		adminCompetitions();
+		// adminCompetitions();
 	}
 
 	public String changeUsername(String username) {
 		String response = JOptionPane.showInputDialog(null,
 				"What is your desired name?", "Enter your desired name",
 				JOptionPane.QUESTION_MESSAGE);
-		if ((!response.equals("")) && (response != null)) {
+		if ((response != null) && (!response.equals(""))) {
 			System.out.println(response);
 			if (response.length() > 2 && response.length() < 16) {
 				System.out.println("good size");
-				if (DatabaseHandler.getInstance().changeUsername(username, response).equals(
-						"Your username has been succesfully changed")) {
-					DatabaseHandler.getInstance().changeUsername(username, response);
+				if (DatabaseHandler.getInstance()
+						.changeUsername(username, response)
+						.equals("Your username has been succesfully changed")) {
+					DatabaseHandler.getInstance().changeUsername(username,
+							response);
 				} else {
 					JOptionPane.showMessageDialog(null, DatabaseHandler
 							.getInstance().changeUsername(username, response),
@@ -55,10 +57,11 @@ public class Administrator extends Role {
 		String response = JOptionPane.showInputDialog(null,
 				"What is your desired password?",
 				"Enter your desired password", JOptionPane.QUESTION_MESSAGE);
-		if (!response.equals("")) {
+		if ((response != null) && (!response.equals(""))) {
 			System.out.println(response);
 			if (response.length() > 5) {
-				DatabaseHandler.getInstance().changePassword(username, response);
+				DatabaseHandler.getInstance()
+						.changePassword(username, response);
 			} else {
 				JOptionPane.showMessageDialog(null,
 						"Password must contain at least 6 characters.",
@@ -98,32 +101,38 @@ public class Administrator extends Role {
 
 		if (playerButton.isSelected()) {
 			if (!roles.contains(playerButton.getText())) {
-				DatabaseHandler.getInstance().setRole(username, playerButton.getText());
+				DatabaseHandler.getInstance().setRole(username,
+						playerButton.getText());
 			}
 			newRoles.add(playerButton.getText());
 		} else {
 			if (roles.contains(playerButton.getText())) {
-				DatabaseHandler.getInstance().revokeRole(username, playerButton.getText());
+				DatabaseHandler.getInstance().revokeRole(username,
+						playerButton.getText());
 			}
 		}
 		if (modButton.isSelected()) {
 			if (!roles.contains(modButton.getText())) {
-				DatabaseHandler.getInstance().setRole(username, modButton.getText());
+				DatabaseHandler.getInstance().setRole(username,
+						modButton.getText());
 			}
 			newRoles.add(modButton.getText());
 		} else {
 			if (roles.contains(modButton.getText())) {
-				DatabaseHandler.getInstance().revokeRole(username, modButton.getText());
+				DatabaseHandler.getInstance().revokeRole(username,
+						modButton.getText());
 			}
 		}
 		if (adminButton.isSelected()) {
 			if (!roles.contains(adminButton.getText())) {
-				DatabaseHandler.getInstance().setRole(username, adminButton.getText());
+				DatabaseHandler.getInstance().setRole(username,
+						adminButton.getText());
 			}
 			newRoles.add(adminButton.getText());
 		} else {
 			if (roles.contains(adminButton.getText())) {
-				DatabaseHandler.getInstance().revokeRole(username, adminButton.getText());
+				DatabaseHandler.getInstance().revokeRole(username,
+						adminButton.getText());
 			}
 		}
 
@@ -164,8 +173,9 @@ public class Administrator extends Role {
 					retValue = "The given passwords do not match.";
 				} else {
 					allFieldFilled = true;
-					DatabaseHandler.getInstance().adminRegister(username, password, adminSelected,
-							modSelected, playerSelected);
+					DatabaseHandler.getInstance().adminRegister(username,
+							password, adminSelected, modSelected,
+							playerSelected);
 					retValue = "Register confirmed";
 				}
 			} else {
@@ -178,7 +188,8 @@ public class Administrator extends Role {
 	public void adminCompetitions() {
 		adminActiveCompetitions.clear();
 		System.out.println("Admin: loading all active competitions...");
-		ArrayList<String> activeComps = DatabaseHandler.getInstance().activeCompetitions();
+		ArrayList<String> activeComps = DatabaseHandler.getInstance()
+				.activeCompetitions();
 		if (!activeComps.isEmpty()) {
 			for (String comp : activeComps) {
 				String[] compData = comp.split("---");
@@ -189,10 +200,11 @@ public class Administrator extends Role {
 								compData[4], Integer.parseInt(compData[5]),
 								Integer.parseInt(compData[6])));
 			}
-			System.out.println("Admin: Succesfully loaded active competitions.");
+			System.out
+					.println("Admin: Succesfully loaded active competitions.");
 		}
 		System.out.println("Admin: No active competitions to load.");
-//		return dbh.activeCompetitions();
+		// return dbh.activeCompetitions();
 	}
 
 	public Set<Entry<String, Competition>> getAllActiveCompEntries() {

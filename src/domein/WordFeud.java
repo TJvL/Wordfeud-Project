@@ -96,9 +96,8 @@ public class WordFeud {
 	public void doLoadAllCompetitionsAction() {
 		compMan.loadAllCompetitions(this.getCurrentUsername());
 	}
-	
-	public void doAdminLoadActiveCompetitionsAction()
-	{
+
+	public void doAdminLoadActiveCompetitionsAction() {
 		currentUser.getAdmin().adminCompetitions();
 	}
 
@@ -199,9 +198,9 @@ public class WordFeud {
 	public void doLoadPendingMatches() {
 		matchMan.loadPendingMatches(this.getCurrentUsername());
 	}
-	
+
 	// get contentPane
-	public boolean getContent(){
+	public boolean getContent() {
 		return mainFrame.getContent();
 	}
 }

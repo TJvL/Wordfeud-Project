@@ -677,7 +677,7 @@ public class Match implements Observer {
 					"Select your letter below...", "Choose you letter",
 					JOptionPane.QUESTION_MESSAGE, null, choices, choices[0]);
 			System.out.println(input);
-			if (!input.equals("")) {
+			if ((input != null) && (!input.equals(""))) {
 				t.setBlancoLetterValue(input);
 				t.setLetter(input);
 				t.setJustPlayed(true);
@@ -865,7 +865,7 @@ public class Match implements Observer {
 						JOptionPane.YES_NO_CANCEL_OPTION);
 
 				dbh.updateTurn(maxTurn, gameID, getOwnName(), getScore(),
-						"Word");	
+						"Word");
 
 				board.setScore();
 				ArrayList<Tile> justPlayedTiles = board.addtilesToDatabase();
@@ -876,7 +876,7 @@ public class Match implements Observer {
 				}
 
 				fillHand(null);
-				
+
 				board.setTilesPlayed();
 
 				// Tijdelijke reactie van de tegenstander
@@ -985,7 +985,7 @@ public class Match implements Observer {
 		}
 		dbh.updateTurn(maxTurn + 1, gameID, getEnemyName(), -handScore, "End");
 		dbh.updateTurn(maxTurn + 2, gameID, getOwnName(), handScore, "End");
-	
+
 		dbh.gameStatusUpdate(gameID, "Finished");
 	}
 
