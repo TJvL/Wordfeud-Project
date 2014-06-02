@@ -1,8 +1,10 @@
 package domein;
 
+import java.awt.List;
 import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
+import javax.swing.SwingWorker;
 
 import datalaag.DatabaseHandler;
 import gui.GameButtonPanel;
@@ -16,26 +18,26 @@ import gui.ScorePanel;
 // Checks who's turn it is for the GameFieldPanel
 public class GameThread extends Thread {
 	private Match match;
+	private Match storeMatch;
 	private GameButtonPanel buttonPanel;
 	private DatabaseHandler dbh;
 	private ScorePanel scorePanel;
 	private GameChatPanel chatPanel;
 	private MatchManager matchManager;
-	private MainFrame framePanel;
 	private int storeScore;
+	private updateTheGame updateTheGame;
 	private boolean running = true;
 	private boolean turnSwap = true;
 
 	public GameThread(GameChatPanel chatPanel, GameButtonPanel buttonPanel,
-			ScorePanel scorePanel, MatchManager matchManager,
-			MainFrame framePanel) {
+			ScorePanel scorePanel, MatchManager matchManager) {
 		super("thread");
 		this.chatPanel = chatPanel;
 		this.buttonPanel = buttonPanel;
 		this.scorePanel = scorePanel;
 		this.dbh = DatabaseHandler.getInstance();
 		this.matchManager = matchManager;
-		this.framePanel = framePanel;
+		updateTheGame = new domein.GameThread.updateTheGame();
 	}
 
 	// The method that will be running
@@ -48,27 +50,29 @@ public class GameThread extends Thread {
 		// While running it will run
 		while (running) {
 			if (match != null) {
+				storeMatch = match;
 				running = true;
 				// Gets the gameID;
-				match.getMaxTurnID();
-				int gameID = match.getGameID();
+				storeMatch.getMaxTurnID();
+				int gameID = storeMatch.getGameID();
 				// System.out.println("LOOK AT ME - THREAD " + gameID);
 				// Setting the scores
-				scorePanel
-						.setEnemyScore(dbh.score(gameID, match.getEnemyName()));
-				scorePanel.setOwnScore(dbh.score(gameID, match.getOwnName()));
-				if (match.getMyTurn()) {
-					scorePanel.setOwnName(match.getOwnName() + "**");
-					scorePanel.setEnemyName(match.getEnemyName());
+				scorePanel.setEnemyScore(dbh.score(gameID,
+						storeMatch.getEnemyName()));
+				scorePanel.setOwnScore(dbh.score(gameID,
+						storeMatch.getOwnName()));
+				if (storeMatch.getMyTurn()) {
+					scorePanel.setOwnName(storeMatch.getOwnName() + "**");
+					scorePanel.setEnemyName(storeMatch.getEnemyName());
 				} else {
-					scorePanel.setOwnName(match.getOwnName());
-					scorePanel.setEnemyName(match.getEnemyName() + "**");
+					scorePanel.setOwnName(storeMatch.getOwnName());
+					scorePanel.setEnemyName(storeMatch.getEnemyName() + "**");
 				}
 
 				// HERE HAS TO BE A METHOD TO CHECK SUBMITTED WORDS
 
 				// Prints the current wordValue
-				int currentScore = match.getScore();
+				int currentScore = storeMatch.getScore();
 				if (storeScore > currentScore || storeScore < currentScore) {
 					scorePanel.setWordValue(currentScore);
 					storeScore = currentScore;
@@ -77,32 +81,23 @@ public class GameThread extends Thread {
 				// Update chat
 				chatPanel.checkForMessages();
 
-				// A method to disable swap when fewer then 7 tiles
-				if (match.getJarSize() < 7) {
-					buttonPanel.disableSwap();
-				}
-
-				/*
-				 * String gameBegin; if (match.getMyTurn()) { gameBegin =
-				 * dbh.turnValue(gameID, match.getMaxTurn(),
-				 * match.getOwnName()); } else { gameBegin =
-				 * dbh.turnValue(gameID, match.getMaxTurn(),
-				 * match.getOwnName()); }
-				 */
-
 				// if (gameBegin.equals("Begin")) {
 				// a loop to see if the turn is swapped
 				try {
 					if (!dbh.getGameStatusValue(gameID).equals("Finished")
 							&& !dbh.getGameStatusValue(gameID).equals(
 									"Resigned")) {
-						if (match.getMyTurn()) {
-							buttonPanel.setTurn(true);
+						if (storeMatch.getMyTurn()) {
 							if (turnSwap) {
-								match.updateField();
+								updateTheGame.execute();
+								storeMatch.updateField();
 								JOptionPane.showMessageDialog(null,
 										"YOUR TURN!", "Turn info",
 										JOptionPane.INFORMATION_MESSAGE);
+							}
+							buttonPanel.setTurn(true);					
+							if (!match.swapAllowed()) {
+								buttonPanel.disableSwap();
 							}
 							turnSwap = false;
 						} else {
@@ -114,9 +109,9 @@ public class GameThread extends Thread {
 						if (dbh.getGameStatusValue(gameID).equals("Finished")) {
 
 							int enemyScore = dbh.score(gameID,
-									match.getEnemyName());
-							int ownScore = dbh
-									.score(gameID, match.getOwnName());
+									storeMatch.getEnemyName());
+							int ownScore = dbh.score(gameID,
+									storeMatch.getOwnName());
 							if (enemyScore > ownScore) {
 								JOptionPane.showMessageDialog(null,
 										"YOU LOST!", "Game over",
@@ -128,7 +123,7 @@ public class GameThread extends Thread {
 							}
 						}
 						if (dbh.getGameStatusValue(gameID).equals("Resigned")) {
-							if (match.getSurrender()) {
+							if (storeMatch.getSurrender()) {
 								JOptionPane.showMessageDialog(null,
 										"The game is over, you surrenderd!",
 										"Game over",
@@ -156,7 +151,7 @@ public class GameThread extends Thread {
 				e.printStackTrace();
 			}
 
-			// Method to start games afther both players accepted
+			// Method to start games after both players accepted
 			ArrayList<Integer> gamesToLoad = dbh.gameToLoad(matchManager
 					.getName());
 			if (gamesToLoad != null) {
@@ -164,14 +159,6 @@ public class GameThread extends Thread {
 					matchManager.startGame(game, false, true);
 				}
 			}
-
-			framePanel.updateNotificationList();
-
-			// } else {
-			// buttonPanel.setTurn(false);
-			// buttonPanel.disableSurrender();
-			// running = false;
-			// }
 		}
 	}
 
@@ -183,4 +170,19 @@ public class GameThread extends Thread {
 	public void stopRunning() {
 		this.match = null;
 	}
+
+	public class updateTheGame extends SwingWorker<Integer, String> {
+
+		@Override
+		protected Integer doInBackground() throws Exception {		
+			storeMatch.updateField();			
+			return 1;
+		}
+
+		protected void process(List chunks) {
+			// Messages received from the doInBackground() (when invoking the
+			// publish() method)
+		}
+	}
+
 }

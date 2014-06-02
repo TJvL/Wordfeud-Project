@@ -2,6 +2,10 @@ package domein;
 
 import java.util.ArrayList;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.DateTimeFormatterBuilder;
+
 import datalaag.DatabaseHandler;
 
 public class Competition {
@@ -15,6 +19,7 @@ public class Competition {
 	private int maxParticipants;
 	private int amountParticipants;
 	private ArrayList<CompetitionPlayer> participants;
+	private boolean canStartChallenging;
 
 	public Competition(int databaseID, String compOwner, String startDate,
 			String endDate, String summary, int minParticipants,
@@ -28,6 +33,7 @@ public class Competition {
 		this.maxParticipants = maxParticipants;
 		this.participants = new ArrayList<CompetitionPlayer>();
 		this.updateParticipants();
+		this.checkIfEndDateReached();
 	}
 
 	public int getCompID() {
@@ -66,6 +72,12 @@ public class Competition {
 		return participants;
 	}
 
+	public boolean canStartChallenging() {
+		this.updateParticipants();
+		this.checkIfEndDateReached();
+		return canStartChallenging;
+	}
+
 	public void updateParticipants() {
 		participants.clear();
 		ArrayList<String> parts = DatabaseHandler.getInstance()
@@ -80,17 +92,43 @@ public class Competition {
 					.parseDouble(data[6])));
 		}
 		amountParticipants = participants.size();
+		if (amountParticipants >= minParticipants) {
+			canStartChallenging = true;
+		} else {
+			canStartChallenging = false;
+		}
+	}
+
+	private void checkIfEndDateReached() {
+		DateTimeFormatterBuilder fmtb = new DateTimeFormatterBuilder()
+				.appendYear(4, 4)
+				.appendLiteral('-')
+				.appendMonthOfYear(2)
+				.appendLiteral('-')
+				.appendDayOfMonth(2)
+				.appendLiteral(' ')
+				.appendHourOfDay(2)
+				.appendLiteral(':')
+				.appendMinuteOfHour(2)
+				.appendLiteral(':')
+				.appendSecondOfMinute(2)
+				.appendLiteral('.')
+				.appendLiteral('0');
+		DateTimeFormatter fmt = fmtb.toFormatter();
+		DateTime endDateTime = fmt.parseDateTime(endDate);
+		if (endDateTime.isAfterNow()) {
+			canStartChallenging = true;
+		} else {
+			canStartChallenging = false;
+		}
 	}
 
 	public boolean isRoomForMore() {
 		boolean roomForMore = false;
-
 		this.updateParticipants();
-
 		if (amountParticipants < maxParticipants) {
 			roomForMore = true;
 		}
-
 		return roomForMore;
 	}
 

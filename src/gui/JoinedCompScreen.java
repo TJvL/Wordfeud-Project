@@ -10,6 +10,8 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -31,37 +33,30 @@ public class JoinedCompScreen extends JPanel {
 	private JScrollPane partiPane;
 	private String compSelection;
 	private String playerSelection;
-	private Boolean neverViewed;
+	private JLabel listLabel;
 
 	public JoinedCompScreen(MainFrame mainFrame) {
 		this.mainFrame = mainFrame;
 		buttonPanel = new JPanel();
 		buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 50, 20));
+		listLabel = new JLabel("Participant List:");
 		this.setLayout(null);
 		this.createButtons();
 		compSelection = defaultSelection;
 		playerSelection = defaultSelection;
-		neverViewed = true;
 	}
 
 	public void populateScreen() {
-		if (neverViewed) {
-			this.initCompTable();
-			this.initPartiTable();
-		}
-
-		compPane.setBounds(0, 0, 650, 700);
-		partiPane.setBounds(665, 50, 525, 500);
+		this.refreshLists();
+		
+		listLabel.setBounds(670, 20, 100, 20);
 		buttonPanel.setBounds(650, 550, 550, 150);
 
-		this.add(compPane);
-		this.add(partiPane);
+		this.add(listLabel);
 		this.add(buttonPanel);
-		neverViewed = false;
 	}
 
 	public void clearLists() {
-		this.neverViewed = true;
 		this.removeAll();
 		this.revalidate();
 	}
@@ -75,13 +70,13 @@ public class JoinedCompScreen extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				mainFrame.callLoadJoinedCompetitionsAction();
-				refreshCompetitionsList();
+				refreshLists();
 			}
 		});
 		challenge.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				challengeSelectedCompPlayer();
+				challengeButtonPressed();
 			}
 		});
 		back.addActionListener(new ActionListener() {
@@ -205,7 +200,7 @@ public class JoinedCompScreen extends JPanel {
 			partiTable.getColumnModel().getColumn(3).setPreferredWidth(70);
 			partiTable.getColumnModel().getColumn(4).setPreferredWidth(70);
 			partiTable.getColumnModel().getColumn(5).setPreferredWidth(70);
-			partiTable.getColumnModel().getColumn(5).setPreferredWidth(70);
+			partiTable.getColumnModel().getColumn(6).setPreferredWidth(72);
 
 			ForcedListSelectionModel selectModel = new ForcedListSelectionModel();
 			selectModel.addListSelectionListener(new ListSelectionListener() {
@@ -229,20 +224,42 @@ public class JoinedCompScreen extends JPanel {
 		this.initPartiTable();
 		partiPane.setBounds(665, 50, 520, 500);
 		this.add(partiPane);
-		this.revalidate();
-		System.out.println("Refreshed participant list!");
 	}
-
-	private void refreshCompetitionsList() {
+	
+	private void refreshCompetitionsList(){
 		this.initCompTable();
 		compPane.setBounds(0, 0, 650, 700);
 		this.add(compPane);
-		this.revalidate();
-		System.out.println("Refreshed competitions list!");
 	}
 
-	private void challengeSelectedCompPlayer() {
-		mainFrame.callChallengePlayerAction(compSelection, playerSelection);
+	private void refreshLists() {
+		mainFrame.callLoadJoinedCompetitionsAction();
+		this.refreshCompetitionsList();
+		this.refreshParticipantList();
+		this.revalidate();
+	}
+
+	private void challengeButtonPressed() {
+		if (playerSelection.equals(mainFrame.getCurrentUsername())) {
+			JOptionPane.showMessageDialog(mainFrame,
+					"You cannot challenge yourself.");
+		} else {
+			int retConfirm = JOptionPane.showConfirmDialog(mainFrame,
+					"Are you sure you want to challenge: " + playerSelection
+							+ "?", "Exit dialog", JOptionPane.YES_NO_OPTION);
+			if (retConfirm == JOptionPane.YES_OPTION) {
+				int retPublicPrivate = JOptionPane.showInternalOptionDialog(
+						this, "Do you want the game to be public or private?",
+						"Please choose", JOptionPane.DEFAULT_OPTION,
+						JOptionPane.QUESTION_MESSAGE, null, new String[] {
+								"Public", "Private" }, null);
+
+				String retValue = mainFrame.callChallengePlayerAction(
+						compSelection, playerSelection, retPublicPrivate);
+
+				JOptionPane.showMessageDialog(mainFrame, retValue);
+			}
+		}
 	}
 
 	private void backButtonPressed() {

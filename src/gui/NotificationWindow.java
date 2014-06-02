@@ -1,108 +1,170 @@
 package gui;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
+import datalaag.WordFeudConstants;
 import domein.PendingMatch;
 
 @SuppressWarnings("serial")
 public class NotificationWindow extends JDialog {
-	private JLabel title = new JLabel();
-	private JList<PendingMatch> notificationList;
-	private JButton refresh = new JButton();;
-	private ArrayList<PendingMatch> pendingGames;
+	private final String defaultSelection = "default";
+
+	private JButton refreshButton;
+	private JButton respondButton;
+	private JPanel buttonPanel;
+	private JTable notifTable;
+	private JScrollPane notifPane;
 	private MainFrame mainFrame;
+	private String currentSelection;
 	private int numberOfNotes;
 
 	public NotificationWindow(MainFrame mainFrame) {
+		super(mainFrame);
 		this.mainFrame = mainFrame;
+		currentSelection = defaultSelection;
 		this.numberOfNotes = 0;
+
+		buttonPanel = new JPanel();
+
+		refreshList();
+		createButtonPanel();
+
+		this.setTitle("You have: " + numberOfNotes + " notifications");
+		this.setLayout(null);
+		this.setModal(true);
+
+		buttonPanel.setBounds(10, 325, 600, 50);
+
+		this.add(buttonPanel);
+
+		this.setPreferredSize(new Dimension(600, 400));
+		this.setResizable(false);
+		this.pack();
+		this.setLocationRelativeTo(mainFrame);
+		this.setVisible(true);
 	}
 
-	public void openNotificationWindow() {
+	private void createButtonPanel() {
+		respondButton = new JButton("Respond");
+		refreshButton = new JButton("Refresh");
 
-		this.setModal(true);
-		// notificationList.setModel(listModel);
-		this.setPreferredSize(new Dimension(500, 500));
-		fillNotificationList();
-		this.setLayout(new BorderLayout());
+		buttonPanel.setLayout(null);
 
-		notificationList.setPreferredSize(new Dimension(300, 400));
-		this.add(notificationList, BorderLayout.CENTER);
+		respondButton.setBounds(25, 0, 100, 30);
+		refreshButton.setBounds(450, 0, 100, 30);
 
-		title.setPreferredSize(new Dimension(300, 100));
-		title.setText("You have : " + numberOfNotes + " notifications.");
-		this.add(title, BorderLayout.NORTH);
+		buttonPanel.add(respondButton);
+		buttonPanel.add(refreshButton);
 
-		// this.infoPane.setPreferredSize(new Dimension(100, 200));
-		// this.add(infoPane, BorderLayout.EAST);
-
-		refresh.addActionListener(new ActionListener() {
+		respondButton.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				// TODO Auto-generated method stub
-				numberOfNotes = fillNotificationList();
-				title.setText("You have : " + numberOfNotes + " notifications.");
+			public void actionPerformed(ActionEvent e) {
+				checkButtonPressed();
 			}
 		});
-
-		refresh.setText("Refresh list");
-		this.add(refresh, BorderLayout.SOUTH);
-
-		this.pack();
-		this.setLocationRelativeTo(null);
-		this.setVisible(true);
-
+		refreshButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				refreshList();
+				setTitle("You have: " + numberOfNotes + " notifications");
+			}
+		});
 	}
 
-	public synchronized int fillNotificationList() {
-		pendingGames = mainFrame.getPendingGames();
-		PendingMatch[] games = new PendingMatch[pendingGames.size()];
-		for (int i = 0; i < pendingGames.size(); i++) {
-			games[i] = pendingGames.get(i);
+	private void initNotifTable() {
+		if (notifPane != null) {
+			this.remove(notifPane);
 		}
-		if (notificationList != null) {
-			this.remove(notificationList);
+		notifTable = null;
+		notifPane = null;
+
+		String[] columnNames = { "ID", "Challenge description"};
+		Set<Entry<String, PendingMatch>> pendingGames = mainFrame.callGetPendingGamesAction();
+		String[][] tableData = new String[pendingGames.size()][6];
+		Iterator<Entry<String, PendingMatch>> it = pendingGames.iterator();
+		int i = 0;
+		while (it.hasNext()) {
+			Map.Entry<String, PendingMatch> pair = (Map.Entry<String, PendingMatch>) it
+					.next();
+			tableData[i][0] = Integer.toString(pair.getValue().getGameID());
+			tableData[i][1] = pair.getValue().getDiscription();
+			i++;
 		}
-		notificationList = new JList<PendingMatch>(games);
-		this.add(notificationList, BorderLayout.CENTER);
-		notificationList.addMouseListener(new MouseAdapter() {
+		
+		notifTable = new JTable(tableData, columnNames) {
 			@Override
-			public void mousePressed(MouseEvent e) {
-				// TODO Auto-generated method stub
-				PendingMatch input = notificationList.getSelectedValue();
-				if (input != null) {
-					if (input.getOwnGame()) {
-						JOptionPane.showMessageDialog(null, "Cant accept you own game!",
-								"Can't accept", JOptionPane.INFORMATION_MESSAGE);
-					} else {
-						int reply = JOptionPane.showConfirmDialog(null,
-								"Want to accept this game?", "Game accept",
-								JOptionPane.YES_NO_OPTION);
-						if (reply == JOptionPane.YES_OPTION) {
-							mainFrame.acceptRejectGame("Accepted", 2,
-									input.getGameID());
-						} else if (reply == JOptionPane.NO_OPTION) {
-							mainFrame.acceptRejectGame("Rejected", 2,
-									input.getGameID());
-						}
-					}
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
+		notifTable.getTableHeader().setResizingAllowed(false);
+		notifTable.getTableHeader().setReorderingAllowed(false);
+		notifTable.setColumnSelectionAllowed(false);
+		notifTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		notifTable.getColumnModel().getColumn(0).setPreferredWidth(35);
+		notifTable.getColumnModel().getColumn(1).setPreferredWidth(537);
+		
+		ForcedListSelectionModel selectModel = new ForcedListSelectionModel();
+		selectModel.addListSelectionListener(new ListSelectionListener() {
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				if (e.getValueIsAdjusting()) {
+					currentSelection = notifTable.getValueAt(
+							notifTable.getSelectedRow(), 0).toString();
 				}
 			}
 		});
-		this.repaint();
-		this.revalidate();
-		return pendingGames.size();
+		notifTable.setSelectionModel(selectModel);
+		notifTable.changeSelection(0, 0, false, false);
+		if (notifTable.getRowCount() > 0) {
+			currentSelection = notifTable.getValueAt(notifTable.getSelectedRow(),
+					0).toString();
+		}
+		notifPane = new JScrollPane(notifTable);
+	}
+
+	private void refreshList() {
+		mainFrame.callLoadPendingMatchesAction();
+		initNotifTable();
+		numberOfNotes = notifTable.getRowCount();
+		notifPane.setBounds(10, 10, 575, 300);
+		this.add(notifPane);
+	}
+
+	private void checkButtonPressed() {
+		if (mainFrame.callAskMatchOwnershipAction(currentSelection)) {
+			JOptionPane.showMessageDialog(mainFrame,
+					"Can't respond to your own challenge!", "Can't respond",
+					JOptionPane.INFORMATION_MESSAGE);
+		} else {
+			int reply = JOptionPane.showConfirmDialog(null,
+					"Do you want to accept this challenge?",
+					"Accept challenge?", JOptionPane.YES_NO_OPTION);
+			if (reply == JOptionPane.YES_OPTION) {
+				mainFrame.acceptRejectGame(
+						WordFeudConstants.CHALLENGE_ACCEPTED, 2,
+						Integer.parseInt(currentSelection));
+			} else if (reply == JOptionPane.NO_OPTION) {
+				mainFrame.acceptRejectGame(
+						WordFeudConstants.CHALLENGE_REJECTED, 2,
+						Integer.parseInt(currentSelection));
+			}
+			this.refreshList();
+		}
 	}
 }

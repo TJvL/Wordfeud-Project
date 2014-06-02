@@ -128,7 +128,7 @@ public class AdminCompScreen extends JPanel {
 		{
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				acw = new AdminCompWindow();
+				acw = new AdminCompWindow(mainFrame);
 			}});
 		
 		compScreenButton.addActionListener(new ActionListener(){

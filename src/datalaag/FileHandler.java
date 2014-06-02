@@ -33,6 +33,7 @@ public class FileHandler {
 				{
 					System.err.println(error.getMessage());
 					System.err.println(error.getStackTrace());
+					System.out.println(aFileName + " not loaded");
 					return null;
 				}
 		}

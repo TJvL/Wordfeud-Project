@@ -45,6 +45,7 @@ public class ScorePanel extends JPanel {
 		// Current word value
 		g.drawString("Current word value:", 15, 30);
 		g.drawString("" + wordValue, 15, 70);
+		updatePanel();
 
 	}
 

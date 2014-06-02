@@ -40,6 +40,10 @@ public class GameButtonPanel extends JPanel
 		observerButtons.addObserver(observer);
 	}
 
+	public boolean getSwapPressed(){
+		return swapPressed;
+	}
+	
 	// A method to disable the surrender button
 	public synchronized void disableSurrender() 
 	{
@@ -56,7 +60,7 @@ public class GameButtonPanel extends JPanel
 	{
 		if (turn)
 		{
-			swap.setEnabled(true);
+			swap.setEnabled(true);					
 			play.setEnabled(true);
 			pass.setEnabled(true);
 			surr.setEnabled(true);

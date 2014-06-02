@@ -1,12 +1,13 @@
 package gui;
 
 import java.awt.Dimension;
-import java.util.ArrayList;
 import java.util.Map.Entry;
 import java.util.Observer;
 import java.util.Set;
 
 import javax.swing.JFrame;
+
+import datalaag.WordFeudConstants;
 import domein.Administrator;
 import domein.Competition;
 import domein.PendingMatch;
@@ -15,132 +16,134 @@ import domein.WordFeud;
 
 @SuppressWarnings("serial")
 public class MainFrame extends JFrame {
-	private LoginScreen loginscreen;
-	private SpecScreen specscreen;
-	private RegScreen regscreen;
-	private PlayerScreen playerscreen;
+	private LoginScreen loginScreen;
+	private SpecScreen specScreen;
+	private RegScreen regScreen;
+	private PlayerScreen playerScreen;
 	private GameScreen gameScreen;
-	private GameSpecScreen specScreen;
-	private AdminAccScreen adminaccscreen;
-	private AdminCompScreen admincompscreen;
-	private JoinCompScreen joincompscreen;
-	private JoinedCompScreen joinedcompscreen;
-	private ModScreen modscreen;
+	private GameSpecScreen gameSpecScreen;
+	private AdminAccScreen adminAccScreen;
+	private AdminCompScreen adminCompScreen;
+	private JoinCompScreen joinCompScreen;
+	private JoinedCompScreen joinedCompScreen;
+	private ModScreen modScreen;
 	private StartMenuBar startMenuBar;
 	private StandardMenuBar standardMenuBar;
 	private SpecMenuBar specMenuBar;
 	private LoadingPanel loadingPanel;
 	private Thread t;
-	private WordFeud wf;
+	private WordFeud wordFeud;
 
-	public MainFrame(WordFeud wf) {
-		this.wf = wf;
-		startMenuBar = new StartMenuBar();
-		loginscreen = new LoginScreen(this);
-		standardMenuBar = new StandardMenuBar(this);
+	public MainFrame(WordFeud wordFeud) {
+		this.wordFeud = wordFeud;
+		startMenuBar = new StartMenuBar(this);
+		loginScreen = new LoginScreen(this);
+
 		this.setPreferredSize(new Dimension(1200, 700));
 		this.setResizable(false);
 		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		this.setTitle("WordFeud");
 
-		this.setContentPane(loginscreen);
+		this.setContentPane(loginScreen);
 		this.setJMenuBar(startMenuBar);
 
 		this.pack();
 		this.setLocationRelativeTo(null);
-	}
-	
-	public void init(){
-		specMenuBar = new SpecMenuBar(this);
-		specscreen = new SpecScreen(this);
-		regscreen = new RegScreen(this);
-		playerscreen = new PlayerScreen(this);
-		gameScreen = new GameScreen(this);
-		specScreen = new GameSpecScreen(this);
-		joincompscreen = new JoinCompScreen(this);
-		joinedcompscreen = new JoinedCompScreen(this);
-		adminaccscreen = new AdminAccScreen(this);
-		admincompscreen = new AdminCompScreen(this);
-		modscreen = new ModScreen();
-		loadingPanel = new LoadingPanel();
 		this.setVisible(true);
 	}
 
-	public void setLoadingScreen(){
+	public void init() {
+		specMenuBar = new SpecMenuBar(this);
+		specScreen = new SpecScreen(this);
+		regScreen = new RegScreen(this);
+		playerScreen = new PlayerScreen(this);
+		gameScreen = new GameScreen(this);
+		gameSpecScreen = new GameSpecScreen(this);
+		joinCompScreen = new JoinCompScreen(this);
+		joinedCompScreen = new JoinedCompScreen(this);
+		adminAccScreen = new AdminAccScreen(this);
+		adminCompScreen = new AdminCompScreen(this);
+		standardMenuBar = new StandardMenuBar(this);
+		modScreen = new ModScreen();
+		loadingPanel = new LoadingPanel();
+	}
+
+	public void setLoadingScreen() {
 		t = new Thread(loadingPanel);
 		loadingPanel.setRunning(true);
 		t.start();
 		this.setContentPane(loadingPanel);
 	}
-	
-	public void stopLoadingScreen(){
+
+	public void stopLoadingScreen() {
 		loadingPanel.setRunning(false);
 	}
-	
+
 	public void setRegScreen() {
-		this.setContentPane(regscreen);
-		wf.stopThread();
+		this.setContentPane(regScreen);
+		wordFeud.stopThread();
 		revalidate();
 	}
 
 	public void setLoginScreen() {
-		this.setContentPane(loginscreen);
-		wf.stopThread();
+		this.setContentPane(loginScreen);
+		wordFeud.stopThread();
 		revalidate();
 	}
 
 	public void setPlayerScreen() {
-		this.setContentPane(playerscreen);
-		playerscreen.setGameList(wf.myActiveGames(), this.getName());
-		wf.stopThread();
+		this.setContentPane(playerScreen);
+		playerScreen.setGameList(wordFeud.myActiveGames(), this.getName());
+		wordFeud.stopThread();
 		stopLoadingScreen();
 		revalidate();
 	}
 
 	public void setGameScreen() {
 		this.setContentPane(gameScreen);
-		wf.stopThread();
+		wordFeud.stopThread();
 		revalidate();
 	}
 
 	public void setSpecScreen() {
-		specscreen.setGameList(wf.getActiveGames());
-		this.setContentPane(specscreen);
-		wf.stopThread();
+		specScreen.setGameList(wordFeud.getActiveGames());
+		this.setContentPane(specScreen);
+		wordFeud.stopThread();
 		revalidate();
 	}
 
 	public void setJoinCompScreen() {
-		joincompscreen.populateScreen();
-		this.setContentPane(joincompscreen);
-		wf.stopThread();
+		joinCompScreen.populateScreen();
+		this.setContentPane(joinCompScreen);
+		wordFeud.stopThread();
 		revalidate();
 	}
 
 	public void setJoinedCompScreen() {
-		joinedcompscreen.populateScreen();
-		this.setContentPane(joinedcompscreen);
-		wf.stopThread();
+		joinedCompScreen.populateScreen();
+		this.setContentPane(joinedCompScreen);
+		wordFeud.stopThread();
 		revalidate();
 	}
+
 	public void setAdminAccScreen() {
-		this.setContentPane(adminaccscreen);
-		adminaccscreen.fillPlayerList();
-		wf.stopThread();
+		this.setContentPane(adminAccScreen);
+		adminAccScreen.fillPlayerList();
+		wordFeud.stopThread();
 		revalidate();
 	}
 
 	public void setAdminCompScreen() {
-		admincompscreen.populateScreen();
-		this.setContentPane(admincompscreen);
-		wf.stopThread();
+		adminCompScreen.populateScreen();
+		this.setContentPane(adminCompScreen);
+		wordFeud.stopThread();
 		revalidate();
 	}
 
 	public void setModScreen() {
-		this.setContentPane(modscreen);
-		modscreen.fillList();
-		wf.stopThread();
+		this.setContentPane(modScreen);
+		modScreen.fillList();
+		wordFeud.stopThread();
 		revalidate();
 	}
 
@@ -161,42 +164,42 @@ public class MainFrame extends JFrame {
 
 	public String callRegisterAction(String username, char[] passInput,
 			char[] passConfirm) {
-		return wf.doRegisterAction(username, passInput, passConfirm);
+		return wordFeud.doRegisterAction(username, passInput, passConfirm);
 	}
 
 	public boolean callLoginAction(String username, char[] password) {
-		return wf.doLoginAction(username, password);
+		return wordFeud.doLoginAction(username, password);
 	}
 
 	public boolean callChangeRoleAction(String result) {
-		return wf.doChangeRoleAction(result);
+		return wordFeud.doChangeRoleAction(result);
 	}
 
 	public void callLogoutAction() {
-		wf.doLogoutAction();
-		joincompscreen.clearLists();
-		joinedcompscreen.clearLists();
+		wordFeud.doLogoutAction();
+		joinCompScreen.clearLists();
+		joinedCompScreen.clearLists();
 	}
 
 	public void fillRoleWindow() {
-		standardMenuBar.fillRoleWindow(wf.getCurrentUserRoles());
+		standardMenuBar.fillRoleWindow(wordFeud.getCurrentUserRoles());
 	}
 
 	public void setAccDataValues() {
-		standardMenuBar.fillAccDataValues(wf.getCurrentUsername(),
-				wf.getCurrentPassword());
+		standardMenuBar.fillAccDataValues(wordFeud.getCurrentUsername(),
+				wordFeud.getCurrentPassword());
 	}
 
-	public String getName() {
-		return wf.getCurrentUsername();
+	public String getCurrentUsername() {
+		return wordFeud.getCurrentUsername();
 	}
 
 	public User getuser() {
-		return wf.getCurrentUser();
+		return wordFeud.getCurrentUser();
 	}
 
 	public Administrator getAdmin() {
-		return wf.getCurrentUser().getAdmin();
+		return wordFeud.getCurrentUser().getAdmin();
 	}
 
 	// PlayGame/Spectator part
@@ -205,10 +208,10 @@ public class MainFrame extends JFrame {
 	public void addObservers(Observer observer, boolean spectator) {
 		if (spectator) {
 			this.setJMenuBar(specMenuBar);
-			this.setContentPane(specScreen);
+			this.setContentPane(gameSpecScreen);
 			this.pack();
 			System.out.println("MainFRAMEPANEL - set content specScreen");
-			specScreen.addObserverToObserverButtons(observer);
+			gameSpecScreen.addObserverToObserverButtons(observer);
 			revalidate();
 		} else {
 			this.setJMenuBar(standardMenuBar);
@@ -221,12 +224,12 @@ public class MainFrame extends JFrame {
 	}
 
 	public void startGame(int gameToLoad, boolean spectating) {
-		//DatabaseHandler dbh = DatabaseHandler.getInstance();
+		// DatabaseHandler dbh = DatabaseHandler.getInstance();
 		if (gameToLoad != 0 && !spectating) {
-			wf.startGame(gameToLoad, false, false);
+			wordFeud.startGame(gameToLoad, false, false);
 			System.out.println("GAMEID IS " + gameToLoad);
 		} else if (spectating) {
-			wf.startGame(gameToLoad, true, false);
+			wordFeud.startGame(gameToLoad, true, false);
 			System.out.println("GAMEID IS " + gameToLoad);
 		}
 		/*
@@ -248,8 +251,9 @@ public class MainFrame extends JFrame {
 		 */
 	}
 
-	public void callChallengePlayerAction(String competitionID, String opponent) {
-		wf.doChallengePlayerAction(competitionID, opponent);
+	public String callChallengePlayerAction(String competitionID,
+			String opponent, int privacy) {
+		return wordFeud.doChallengePlayerAction(competitionID, opponent, privacy);
 	}
 
 	// Returns the gameScreen
@@ -259,78 +263,80 @@ public class MainFrame extends JFrame {
 
 	// Returns the specScreen
 	public GameSpecScreen getSpecScreen() {
-		return specScreen;
+		return gameSpecScreen;
 	}
 
 	public void setCorrectRoleMainMenu() {
-		String currentRole = wf.getCurrentUserRole();
+		String currentRole = wordFeud.getCurrentUserRole();
 
-		if (currentRole.equals(User.ROLE_ADMINISTRATOR)) {
+		if (currentRole.equals(WordFeudConstants.ROLE_ADMINISTRATOR)) {
 			this.setAdminCompScreen();
-		} else if (currentRole.equals(User.ROLE_MODERATOR)) {
+		} else if (currentRole.equals(WordFeudConstants.ROLE_MODERATOR)) {
 			this.setModScreen();
-		} else if (currentRole.equals(User.ROLE_PLAYER)) {
+		} else if (currentRole.equals(WordFeudConstants.ROLE_PLAYER)) {
 			this.setPlayerScreen();
-		} else if (currentRole.equals(User.ROLE_SPECTATOR)) {
+		} else if (currentRole.equals(WordFeudConstants.ROLE_SPECTATOR)) {
 			this.setSpecScreen();
 		}
 	}
+
 	// Update the mainscreen games from the player
 	public void updatePlayerGameList() {
-		playerscreen.setGameList(wf.myActiveGames(), this.getName());
-	}
-
-	// Returns a list of pending Games
-	public ArrayList<PendingMatch> getPendingGames() {
-		return wf.getPendingGames();
+		playerScreen.setGameList(wordFeud.myActiveGames(), this.getName());
 	}
 
 	// Method to accept/reject games
 	public void acceptRejectGame(String string, int competionID, int gameID) {
-		wf.acceptRejectGame(string, competionID, gameID);
-	}
-	
-	// Update notification list
-	public void updateNotificationList(){
-		standardMenuBar.updateNotificationList();
+		wordFeud.acceptRejectGame(string, competionID, gameID);
 	}
 
-	public void callCreateCompAction(String summaryString, String compEnd,
-			int i, int maxPlayersInt) {
-		wf.doCreateCompAction(summaryString, compEnd, i, maxPlayersInt);
+	public String callCreateCompAction(String summary, String compEnd,
+			String minPlayers, String maxPlayers) {
+		return wordFeud.doCreateCompAction(summary, compEnd, minPlayers, maxPlayers);
 	}
 
-	public  Set<Entry<String, Competition>> callGetAllCompetitionsAction() {
-		return wf.doGetAllCompetitionsAction();
+	public Set<Entry<String, Competition>> callGetAllCompetitionsAction() {
+		return wordFeud.doGetAllCompetitionsAction();
 	}
-	
-	public Set<Entry<String, Competition>> adminCallActiveCompetitionAction()
-	{
-		return wf.doGetActiveCompetitionsAction();
+
+	public Set<Entry<String, Competition>> adminCallActiveCompetitionAction() {
+		return wordFeud.doGetActiveCompetitionsAction();
 	}
-	
+
 	public Set<Entry<String, Competition>> callGetJoinedCompetitionsAction() {
-		return wf.doGetJoinedCompetitionsAction();
+		return wordFeud.doGetJoinedCompetitionsAction();
 	}
 
 	public Competition callGetOneCompetitionAction(String key) {
-		return wf.doGetOneCompetitionAction(key);
+		return wordFeud.doGetOneCompetitionAction(key);
 	}
-	
-	public void callLoadAllCompetitionsAction(){
-		wf.doLoadAllCompetitionsAction();
+
+	public void callLoadAllCompetitionsAction() {
+		wordFeud.doLoadAllCompetitionsAction();
 	}
 	
 	public void adminCallLoadActiveCompetitionAction()
 	{
-		wf.doAdminLoadActiveCompetitionsAction();
+		wordFeud.doAdminLoadActiveCompetitionsAction();
 	}
-	
-	public void callJoinCompetitionAction(String compID){
-		wf.doJoinCompAction(compID);
+
+	public void callJoinCompetitionAction(String compID) {
+		wordFeud.doJoinCompAction(compID);
 	}
 
 	public void callLoadJoinedCompetitionsAction() {
-		wf.doLoadJoinedCompetitionsAction();
+		wordFeud.doLoadJoinedCompetitionsAction();
+	}
+
+	public boolean callAskMatchOwnershipAction(String matchID) {
+		return wordFeud.doAskMatchOwnershipAction(matchID);
+	}
+
+	public Set<Entry<String, PendingMatch>> callGetPendingGamesAction() {
+		return wordFeud.doGetPendingGamesAction();
+	}
+
+	public void callLoadPendingMatchesAction() {
+		wordFeud.doLoadPendingMatches();
 	}
 }

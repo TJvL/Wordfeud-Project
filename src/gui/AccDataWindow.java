@@ -33,8 +33,7 @@ public class AccDataWindow extends JDialog {
 		this.setResizable(false);
 
 		rolesValue.setBackground(null);
-
-		createButtonPanel();
+		
 		createLabelPanel();
 	}
 
@@ -67,7 +66,7 @@ public class AccDataWindow extends JDialog {
 		this.add(labelPanel, BorderLayout.CENTER);
 
 		this.pack();
-		this.setLocationRelativeTo(null);
+		this.setLocationRelativeTo(mainFrame);
 		this.setVisible(true);
 	}
 
@@ -118,11 +117,8 @@ public class AccDataWindow extends JDialog {
 		this.add(labelPanel, BorderLayout.CENTER);
 
 		this.pack();
-		this.setLocationRelativeTo(null);
+		this.setLocationRelativeTo(mainFrame);
 		this.setVisible(true);
-	}
-
-	public void createButtonPanel() {
 	}
 
 	public void createLabelPanel() {

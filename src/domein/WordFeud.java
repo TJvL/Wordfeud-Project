@@ -1,5 +1,7 @@
 package domein;
 
+import gui.GameScreen;
+import gui.GameSpecScreen;
 import gui.MainFrame;
 
 import java.util.ArrayList;
@@ -10,23 +12,23 @@ import java.util.Set;
 public class WordFeud {
 	private User currentUser;
 	private CompetitionManager compMan;
-	private MainFrame framePanel;
-	private MatchManager matchManager;
+	private MainFrame mainFrame;
+	private MatchManager matchMan;
 
 	public WordFeud() {
 		currentUser = new User();
 		compMan = new CompetitionManager();
 	}
-	
+
 	public void init() {
-		framePanel = new MainFrame(this);
-		framePanel.init();
-		matchManager = new MatchManager(this, framePanel);
+		mainFrame = new MainFrame(this);
+		mainFrame.init();
+		matchMan = new MatchManager(this);
 	}
 
 	// Stops the Thread
 	public void stopThread() {
-		matchManager.stopThread();
+		matchMan.stopThread();
 	}
 
 	/*
@@ -45,7 +47,7 @@ public class WordFeud {
 			char[] passConfirm) {
 		return currentUser.register(username, passInput, passConfirm);
 	}
-	
+
 	public boolean doLoginAction(String username, char[] password) {
 
 		Boolean succesfulLogin = currentUser.login(username, password);
@@ -71,32 +73,27 @@ public class WordFeud {
 	 * te starten !!MOET >2 zijn!! maxParticipants = maximaal aantal deelnemers
 	 * dat in de compo mag zitten. - Thomas
 	 */
-	public void doCreateCompAction(String summary, String endDate,
-			int minParticipants, int maxParticipants) {
-		compMan.createCompetition(currentUser.getUsername(), summary, endDate,
-				minParticipants, maxParticipants);
-
+	public String doCreateCompAction(String summary, String endDate,
+			String minParticipants, String maxParticipants) {
+		return compMan.createCompetition(this.getCurrentUsername(), summary,
+				endDate, minParticipants, maxParticipants);
 	}
 
 	public boolean doJoinCompAction(String compID) {
-		return compMan.joinCompetition(compID, currentUser.getUsername());
+		return compMan.joinCompetition(compID, this.getCurrentUsername());
 	}
 
 	public void doLoadAllCompetitionsAction() {
-		compMan.loadAllCompetitions(currentUser.getUsername());
+		compMan.loadAllCompetitions(this.getCurrentUsername());
 	}
 	
 	public void doAdminLoadActiveCompetitionsAction()
 	{
 		currentUser.getAdmin().adminCompetitions();
 	}
-	
+
 	public void doLoadJoinedCompetitionsAction() {
-		compMan.loadJoinedCompetitions(currentUser.getUsername());
-	}
-	
-	public ArrayList<Competition> getJoinedCompetitions(){
-		return compMan.getJoinedCompetitions();
+		compMan.loadJoinedCompetitions(this.getCurrentUsername());
 	}
 
 	public String getCurrentUserRole() {
@@ -117,61 +114,79 @@ public class WordFeud {
 
 	// Returns active games
 	public ArrayList<ActiveMatch> getActiveGames() {
-		return matchManager.getActiveMatches();
-	}
-
-	// Returns the games for notifications
-	public ArrayList<PendingMatch> getPendingGames() {
-		return matchManager.getPendingMatchs();
+		return matchMan.getActiveMatches();
 	}
 
 	// Returns my active games
 	public ArrayList<ActiveMatch> myActiveGames() {
-		return matchManager.getMyActiveMatches();
+		return matchMan.getMyActiveMatches();
 	}
 
 	// Depends if someone is spectating - starting new game
 	// or want to load a game
 	public void startGame(int gameID, boolean spectate, boolean newGame) {
-		matchManager.startGame(gameID, spectate, newGame);
+		matchMan.startGame(gameID, spectate, newGame);
 	}
 
 	// Adds the observers
 	public void addObservers(Observer observer, boolean spectator) {
-		framePanel.addObservers(observer, spectator);
+		mainFrame.addObservers(observer, spectator);
 	}
 
 	// Method to accept/reject game in the database
 	public void acceptRejectGame(String string, int competionID, int gameID) {
-		matchManager.acceptRejectGame(competionID, gameID,
-				getCurrentUsername(), string);
+		matchMan.acceptRejectGame(competionID, gameID,
+				this.getCurrentUsername(), string);
 	}
 
 	// Method to start a game
-	public void doChallengePlayerAction(String competitionID, String opponent) {
-		matchManager.challengePlayer(Integer.parseInt(competitionID), currentUser.getUsername(), opponent,
-				"EN");
+	public String doChallengePlayerAction(String competitionID,
+			String opponent, int privacy) {
+		return matchMan.challengePlayer(competitionID,
+				this.getCurrentUsername(), opponent, "EN", privacy);
 	}
-	
-	public CompetitionManager getCompMan()
-	{
+
+	public CompetitionManager getCompMan() {
 		return compMan;
 	}
 
 	public Set<Entry<String, Competition>> doGetAllCompetitionsAction() {
 		return compMan.getAllCompEntries();
 	}
-	
-	public Set<Entry<String, Competition>> doGetActiveCompetitionsAction()
-	{
+
+	public Set<Entry<String, Competition>> doGetActiveCompetitionsAction() {
 		return currentUser.getAdmin().getAllActiveCompEntries();
 	}
-	
+
 	public Set<Entry<String, Competition>> doGetJoinedCompetitionsAction() {
 		return compMan.getJoinedCompEntries();
 	}
 
 	public Competition doGetOneCompetitionAction(String key) {
 		return compMan.getOneCompetition(key);
+	}
+
+	public GameScreen getGameScreen() {
+		return mainFrame.getGameScreen();
+	}
+
+	public void updatePlayerGameList() {
+		mainFrame.updatePlayerGameList();
+	}
+
+	public GameSpecScreen getSpecScreen() {
+		return mainFrame.getSpecScreen();
+	}
+
+	public boolean doAskMatchOwnershipAction(String matchID) {
+		return matchMan.askMatchOwnership(matchID);
+	}
+
+	public Set<Entry<String, PendingMatch>> doGetPendingGamesAction() {
+		return matchMan.getPendingMatches();
+	}
+
+	public void doLoadPendingMatches() {
+		matchMan.loadPendingMatches(this.getCurrentUsername());
 	}
 }
