@@ -216,7 +216,7 @@ public class User {
 		String response = JOptionPane.showInputDialog(null,
 				"What is your desired name?", "Enter your desired name",
 				JOptionPane.QUESTION_MESSAGE);
-		if (!response.equals("")) {
+		if ((response != null) && (!response.equals(""))) {
 			System.out.println(response);
 			if (response.length() > 2 && response.length() < 16) {
 				if (DatabaseHandler.getInstance()
@@ -249,7 +249,7 @@ public class User {
 		String response = JOptionPane.showInputDialog(null,
 				"What is your desired password?",
 				"Enter your desired password", JOptionPane.QUESTION_MESSAGE);
-		if (!response.equals("")) {
+		if ((response != null) && (!response.equals(""))) {
 			System.out.println(response);
 			if (response.length() > 5) {
 				DatabaseHandler.getInstance().changePassword(getUsername(),
