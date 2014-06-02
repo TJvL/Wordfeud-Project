@@ -96,7 +96,7 @@ public class StandardMenuBar extends JMenuBar {
 	}
 	
 	private void changeRoleItemChosen(){
-		String result = rolewindow.showChangeRole();
+		String result = rolewindow.showChangeRole(mainFrame);
 		boolean isSuccesful = mainFrame.callChangeRoleAction(result);
 		if (isSuccesful) {
 			JOptionPane.showMessageDialog(mainFrame, "Role changed succesfully.");
