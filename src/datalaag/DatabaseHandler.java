@@ -13,9 +13,9 @@ import java.util.HashMap;
 
 public class DatabaseHandler
 {
-	final private static String URL = "jdbc:mysql://databases.aii.avans.nl:3306/manschou_db2"; // location of the database
-	final private static String USER = "manschou"; // is the database user
-	final private static String USERPASS = "Mschouten92"; // the password of the user
+	final private static String URL = "jdbc:mysql://databases.aii.avans.nl:3306/2014_soprj4_wordfeud"; // location of the database
+	final private static String USER = "42IN04SOj"; // is the database user
+	final private static String USERPASS = "7Tm16G3S0s"; // the password of the user
 
 	private PreparedStatement statement = null;
 	private ResultSet result = null;
