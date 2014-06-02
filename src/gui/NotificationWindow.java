@@ -93,8 +93,9 @@ public class NotificationWindow extends JDialog {
 		notifTable = null;
 		notifPane = null;
 
-		String[] columnNames = { "ID", "Challenge description"};
-		Set<Entry<String, PendingMatch>> pendingGames = mainFrame.callGetPendingGamesAction();
+		String[] columnNames = { "ID", "Challenge description" };
+		Set<Entry<String, PendingMatch>> pendingGames = mainFrame
+				.callGetPendingGamesAction();
 		String[][] tableData = new String[pendingGames.size()][6];
 		Iterator<Entry<String, PendingMatch>> it = pendingGames.iterator();
 		int i = 0;
@@ -105,7 +106,7 @@ public class NotificationWindow extends JDialog {
 			tableData[i][1] = pair.getValue().getDiscription();
 			i++;
 		}
-		
+
 		notifTable = new JTable(tableData, columnNames) {
 			@Override
 			public boolean isCellEditable(int row, int column) {
@@ -118,7 +119,7 @@ public class NotificationWindow extends JDialog {
 		notifTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		notifTable.getColumnModel().getColumn(0).setPreferredWidth(35);
 		notifTable.getColumnModel().getColumn(1).setPreferredWidth(537);
-		
+
 		ForcedListSelectionModel selectModel = new ForcedListSelectionModel();
 		selectModel.addListSelectionListener(new ListSelectionListener() {
 			@Override
@@ -132,8 +133,8 @@ public class NotificationWindow extends JDialog {
 		notifTable.setSelectionModel(selectModel);
 		notifTable.changeSelection(0, 0, false, false);
 		if (notifTable.getRowCount() > 0) {
-			currentSelection = notifTable.getValueAt(notifTable.getSelectedRow(),
-					0).toString();
+			currentSelection = notifTable.getValueAt(
+					notifTable.getSelectedRow(), 0).toString();
 		}
 		notifPane = new JScrollPane(notifTable);
 	}
@@ -147,24 +148,26 @@ public class NotificationWindow extends JDialog {
 	}
 
 	private void checkButtonPressed() {
-		if (mainFrame.callAskMatchOwnershipAction(currentSelection)) {
-			JOptionPane.showMessageDialog(mainFrame,
-					"Can't respond to your own challenge!", "Can't respond",
-					JOptionPane.INFORMATION_MESSAGE);
-		} else {
-			int reply = JOptionPane.showConfirmDialog(null,
-					"Do you want to accept this challenge?",
-					"Accept challenge?", JOptionPane.YES_NO_OPTION);
-			if (reply == JOptionPane.YES_OPTION) {
-				mainFrame.acceptRejectGame(
-						WordFeudConstants.CHALLENGE_ACCEPTED, 2,
-						Integer.parseInt(currentSelection));
-			} else if (reply == JOptionPane.NO_OPTION) {
-				mainFrame.acceptRejectGame(
-						WordFeudConstants.CHALLENGE_REJECTED, 2,
-						Integer.parseInt(currentSelection));
+		if (!currentSelection.equals("default")) {
+			if (mainFrame.callAskMatchOwnershipAction(currentSelection)) {
+				JOptionPane.showMessageDialog(mainFrame,
+						"Can't respond to your own challenge!",
+						"Can't respond", JOptionPane.INFORMATION_MESSAGE);
+			} else {
+				int reply = JOptionPane.showConfirmDialog(null,
+						"Do you want to accept this challenge?",
+						"Accept challenge?", JOptionPane.YES_NO_OPTION);
+				if (reply == JOptionPane.YES_OPTION) {
+					mainFrame.acceptRejectGame(
+							WordFeudConstants.CHALLENGE_ACCEPTED, 2,
+							Integer.parseInt(currentSelection));
+				} else if (reply == JOptionPane.NO_OPTION) {
+					mainFrame.acceptRejectGame(
+							WordFeudConstants.CHALLENGE_REJECTED, 2,
+							Integer.parseInt(currentSelection));
+				}
+				this.refreshList();
 			}
-			this.refreshList();
 		}
 	}
 }
