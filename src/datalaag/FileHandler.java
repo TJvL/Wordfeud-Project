@@ -26,7 +26,7 @@ public class FileHandler {
 			BufferedImage image = null;
 			try
 				{
-					image = ImageIO.read(new File("src/" + aFileName));
+					image = ImageIO.read(new File(aFileName));
 					return image;
 				}
 			catch (IOException error)

@@ -168,10 +168,7 @@ public class GameButtonPanel extends JPanel {
 		}
 		// Warning to show that you are going to swap
 		else {
-			if (JOptionPane.showConfirmDialog(null,
-					"Are you sure you want to start swapping tiles?"
-							+ "\n Select the tiles you want to swap",
-					"WARNING", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+			if (JOptionPane.showConfirmDialog(null,"Are you sure you want to start swapping tiles?"+ "\n Select the tiles you want to swap","WARNING", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 				swap.setText("Confirm swap");
 				swap.setEnabled(true);
 				swapPressed = true;

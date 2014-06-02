@@ -16,10 +16,13 @@ public class RoleWindow extends JDialog {
 		String s = (String) JOptionPane.showInputDialog(mainFrame,
 				"What role would you like to choose?", null,
 				JOptionPane.PLAIN_MESSAGE, null, possibilities, "Player");
-
-		if ((s != null) && (s.length() > 0)) {
-			System.out.println("Attempting to change role to: " + s);
-			return s;
+		if (s != null) {
+			if (s.length() > 0) {
+				System.out.println("Attempting to change role to: " + s);
+				return s;
+			} else {
+				return null;
+			}
 		} else {
 			return null;
 		}
