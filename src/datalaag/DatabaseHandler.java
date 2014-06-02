@@ -1870,7 +1870,7 @@ public class DatabaseHandler
 			statement.close();
 			
 			statistics = competitionsWon + "---" + gamesWon + "---" + mostValuableWord + "---" + numberOfGamesPlayed + "---" + highestGameScore;
-			
+			System.out.println(statistics);
 		} catch (SQLException e)
 		{
 			e.printStackTrace();
