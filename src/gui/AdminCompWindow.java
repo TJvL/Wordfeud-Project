@@ -18,7 +18,7 @@ public class AdminCompWindow extends JDialog{
 	private Administrator admin = new Administrator(true);
 	private JPanel listPanel;
 	
-	public AdminCompWindow()
+	public AdminCompWindow(MainFrame mainFrame)
 	{
 		this.setTitle("Competition Participants");	
 		this.setLayout(new BorderLayout());
@@ -34,7 +34,7 @@ public class AdminCompWindow extends JDialog{
 //		this.add(radioButtonPanel, BorderLayout.CENTER);
 //		this.add(buttons, BorderLayout.SOUTH);
 		this.pack();
-		this.setLocationRelativeTo(null);
+		this.setLocationRelativeTo(mainFrame);
 		this.setVisible(true);
 	}
 	

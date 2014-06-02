@@ -20,11 +20,15 @@ public class StatWindow extends JDialog
 	private JLabel gamesWonValue = new JLabel();
 	private JLabel highScoreValue = new JLabel();
 	private JLabel compsWonValue = new JLabel();
+	private MainFrame mainFrame;
 	
 	
 
-	public void showStats(String playedGamesString, String gamesWonString, String compsWonString, String highScoreString)
+
+	public void showStats(String playedGamesString, String gamesWonString, String compsWonString, String highScoreString, MainFrame mainFrame)
 	{
+	
+this.mainFrame = mainFrame;
 		this.setModal(true);
 		this.setLayout(new GridLayout(4, 2, 10, 10));
 		this.setPreferredSize(new Dimension(600, 500));
@@ -36,7 +40,7 @@ public class StatWindow extends JDialog
 		highScoreValue.setText(highScoreString);
 		createLabels();
 		this.pack();
-		this.setLocationRelativeTo(null);
+		this.setLocationRelativeTo(mainFrame);
 		this.setVisible(true);
 
 	}

@@ -66,7 +66,7 @@ public class AccDataWindow extends JDialog {
 		this.add(labelPanel, BorderLayout.CENTER);
 
 		this.pack();
-		this.setLocationRelativeTo(null);
+		this.setLocationRelativeTo(mainFrame);
 		this.setVisible(true);
 	}
 
@@ -117,7 +117,7 @@ public class AccDataWindow extends JDialog {
 		this.add(labelPanel, BorderLayout.CENTER);
 
 		this.pack();
-		this.setLocationRelativeTo(null);
+		this.setLocationRelativeTo(mainFrame);
 		this.setVisible(true);
 	}
 
