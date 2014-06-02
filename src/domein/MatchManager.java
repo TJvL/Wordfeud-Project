@@ -151,25 +151,27 @@ public class MatchManager {
 	public void loadMatch(int gameID) {
 		boolean exists = false;
 		// Checks if the refrences already exist
-		for (Match match1 : matches) {
-			if (match.getGameID() == gameID) {
-				exists = true;
-				// Adds the observers
-				wordFeud.addObservers(match, false);
-			//	chatPanel.setChatVariables(match.getOwnName(),
-			//			match.getGameID());
-				this.match = match1;
-				SwingUtilities.invokeLater(new Runnable() {
-					@Override
-					public void run() {
-						chatPanel.setChatVariables(match.getOwnName(), match.getGameID());		
-						gameThread.setRunning(match);
-					}
-				});	
-				match.loadGame();
-			//	gameThread.setRunning(match);
-			}
-		}
+//		for (Match match1 : matches) {
+//			if (match.getGameID() == gameID) {
+//				exists = true;
+//				// Adds the observers
+//				wordFeud.addObservers(match, false);
+//			//	chatPanel.setChatVariables(match.getOwnName(),
+//			//			match.getGameID());
+//				this.match = match1;
+//				SwingUtilities.invokeLater(new Runnable() {
+//					@Override
+//					public void run() {
+//						buttonPanel.setTurn(false);
+//						buttonPanel.disableSurrender();
+//						chatPanel.setChatVariables(match.getOwnName(), match.getGameID());		
+//						gameThread.setRunning(match);
+//					}
+//				});	
+//				match.loadGame();
+//			//	gameThread.setRunning(match);
+//			}
+//		}
 		if (!exists) {
 			match = new Match(gameID, wordFeud.getUserPlayer(), gameField,
 					wordFeud.getCurrentUsername());
@@ -188,6 +190,8 @@ public class MatchManager {
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
+					buttonPanel.setTurn(false);
+					buttonPanel.disableSurrender();
 					chatPanel.setChatVariables(match.getOwnName(), match.getGameID());		
 					gameThread.setRunning(match);
 				}
