@@ -10,6 +10,7 @@ import gui.ScorePanel;
 
 import java.util.ArrayList;
 
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import java.util.HashMap;
@@ -142,67 +143,78 @@ public class MatchManager {
 
 	// This starts a Match that is made by me
 	public void newMatchStartedByMe(int gameID) {
-		match = new Match(gameID, wordFeud.getCurrentUsername());
-		match.startNewGame();
-		wordFeud.updatePlayerGameList();
+
+		if (!wordFeud.getContent()) {
+			match = new Match(gameID, wordFeud.getCurrentUsername());
+			match.startNewGame();
+			wordFeud.updatePlayerGameList();
+		}
 	}
 
 	// Loads a match
 	public void loadMatch(int gameID) {
 		boolean exists = false;
 		// Checks if the refrences already exist
-//		for (Match match1 : matches) {
-//			if (match.getGameID() == gameID) {
-//				exists = true;
-//				// Adds the observers
-//				wordFeud.addObservers(match, false);
-//			//	chatPanel.setChatVariables(match.getOwnName(),
-//			//			match.getGameID());
-//				this.match = match1;
-//				SwingUtilities.invokeLater(new Runnable() {
-//					@Override
-//					public void run() {
-//						buttonPanel.setTurn(false);
-//						buttonPanel.disableSurrender();
-//						chatPanel.setChatVariables(match.getOwnName(), match.getGameID());		
-//						gameThread.setRunning(match);
-//					}
-//				});	
-//				match.loadGame();
-//			//	gameThread.setRunning(match);
-//			}
-//		}
+		// for (Match match1 : matches) {
+		// if (match.getGameID() == gameID) {
+		// exists = true;
+		// // Adds the observers
+		// wordFeud.addObservers(match, false);
+		// // chatPanel.setChatVariables(match.getOwnName(),
+		// // match.getGameID());
+		// this.match = match1;
+		// SwingUtilities.invokeLater(new Runnable() {
+		// @Override
+		// public void run() {
+		// buttonPanel.setTurn(false);
+		// buttonPanel.disableSurrender();
+		// chatPanel.setChatVariables(match.getOwnName(), match.getGameID());
+		// gameThread.setRunning(match);
+		// }
+		// });
+		// match.loadGame();
+		// // gameThread.setRunning(match);
+		// }
+		// }
 		if (!exists) {
-			match = new Match(gameID, wordFeud.getUserPlayer(), gameField,
-					wordFeud.getCurrentUsername());
 
-			wordFeud.addObservers(match, false);
-			// SwingUtilities.invokeLater(new Runnable() {
-			// @Override
-			// public void run() {
-			// match1.loadGame();
-			// }
-			// });
+			if (DatabaseHandler.getInstance().getGameStatusValue(gameID)
+					.equals("Finished")
+					|| DatabaseHandler.getInstance().getGameStatusValue(gameID)
+							.equals("Resigned")) {
 
-			match.loadGame();
-			matches.add(match);
-			
-			SwingUtilities.invokeLater(new Runnable() {
-				@Override
-				public void run() {
-					buttonPanel.setTurn(false);
-					buttonPanel.disableSurrender();
-					chatPanel.setChatVariables(match.getOwnName(), match.getGameID());		
-					gameThread.setRunning(match);
+				JOptionPane.showMessageDialog(null, "This game is over, please refresh the list",
+						"Refresh list", JOptionPane.INFORMATION_MESSAGE);
+			} else {	
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-			});		
-		}
+				match = new Match(gameID, wordFeud.getUserPlayer(), gameField,
+						wordFeud.getCurrentUsername());
 
+				wordFeud.addObservers(match, false);
+				match.loadGame();
+
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						buttonPanel.setTurn(false);
+						// buttonPanel.disableSurrender();
+						chatPanel.setChatVariables(match.getOwnName(),
+								match.getGameID());
+						gameThread.setRunning(match);
+					}
+				});
+			}
+		}
 	}
 
 	// A method start spectating
 	public void spectateMatch(int gameID) {
-		System.out.println("GAMEID " + gameID);	
+		System.out.println("GAMEID " + gameID);
 		match = new Match(gameID);
 		wordFeud.addObservers(match, true);
 		match.loadSpecateGame(specScreen);

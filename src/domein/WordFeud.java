@@ -199,4 +199,9 @@ public class WordFeud {
 	public void doLoadPendingMatches() {
 		matchMan.loadPendingMatches(this.getCurrentUsername());
 	}
+	
+	// get contentPane
+	public boolean getContent(){
+		return mainFrame.getContent();
+	}
 }

@@ -25,7 +25,7 @@ public class GameThread extends Thread {
 	private GameChatPanel chatPanel;
 	private MatchManager matchManager;
 	private int storeScore;
-//	private updateTheGame updateTheGame;
+	// private updateTheGame updateTheGame;
 	private boolean running = true;
 	private boolean turnSwap = true;
 
@@ -37,21 +37,34 @@ public class GameThread extends Thread {
 		this.scorePanel = scorePanel;
 		this.dbh = DatabaseHandler.getInstance();
 		this.matchManager = matchManager;
-	//	updateTheGame = new domein.GameThread.updateTheGame();
+		// updateTheGame = new domein.GameThread.updateTheGame();
 	}
 
 	// The method that will be running
 	public void run() {
-//		try {
-//			Thread.sleep(500);
-//		} catch (InterruptedException e1) {
-//			e1.printStackTrace();
-//		}
+		// try {
+		// Thread.sleep(500);
+		// } catch (InterruptedException e1) {
+		// e1.printStackTrace();
+		// }
 		// While running it will run
 		while (running) {
 			if (match != null) {
-				if (storeMatch != match){
-					if (!match.getMyTurn()){
+				if (storeMatch != match) {
+
+					scorePanel.setEnemyScore(match.getScoreP2());
+					scorePanel.setOwnScore(match.getScoreP1());
+					if (match.getMyTurn()) {
+						scorePanel.setOwnName(match.getOwnName() + "**");
+						scorePanel.setEnemyName(match.getEnemyName());
+					} else {
+						scorePanel.setOwnName(match.getOwnName());
+						scorePanel.setEnemyName(match.getEnemyName() + "**");
+						buttonPanel.disableSwap();
+						turnSwap = false;
+					}
+
+					if (!match.getMyTurn()) {
 						turnSwap = false;
 					}
 				}
@@ -59,21 +72,9 @@ public class GameThread extends Thread {
 				storeMatch.getMaxTurnID();
 				running = true;
 				// Gets the gameID;
-		//		storeMatch.getMaxTurnID();
-			//	System.out.println("LOOK AT ME - THREAD " + gameID);
+				// storeMatch.getMaxTurnID();
+				// System.out.println("LOOK AT ME - THREAD " + gameID);
 
-//				scorePanel.setEnemyScore(match.getScoreP2());
-//				scorePanel.setOwnScore(match.getScoreP1());
-//				if (match.getMyTurn()) {
-//					scorePanel.setOwnName(match.getOwnName() + "**");
-//					scorePanel.setEnemyName(match.getEnemyName());
-//				} else {
-//					scorePanel.setOwnName(match.getOwnName());
-//					scorePanel.setEnemyName(match.getEnemyName() + "**");
-//					buttonPanel.disableSwap();
-//					turnSwap = false;
-//				}
-				
 				// Prints the current wordValue
 				int currentScore = storeMatch.getScore();
 				if (storeScore > currentScore || storeScore < currentScore) {
@@ -88,8 +89,7 @@ public class GameThread extends Thread {
 				// a loop to see if the turn is swapped
 				try {
 					if (!storeMatch.getGameStatus().equals("Finished")
-							&& !storeMatch.getGameStatus().equals(
-									"Resigned")) {
+							&& !storeMatch.getGameStatus().equals("Resigned")) {
 						if (storeMatch.getMyTurn()) {
 							if (turnSwap) {
 								try {
@@ -98,28 +98,33 @@ public class GameThread extends Thread {
 									// TODO Auto-generated catch block
 									e.printStackTrace();
 								}
-								scorePanel.setOwnName(storeMatch.getOwnName() + "**");
-								scorePanel.setEnemyName(storeMatch.getEnemyName());
-	//							updateTheGame.execute();
+								scorePanel.setOwnName(storeMatch.getOwnName()
+										+ "**");
+								scorePanel.setEnemyName(storeMatch
+										.getEnemyName());
+								// updateTheGame.execute();
 								storeMatch.updateField();
 								JOptionPane.showMessageDialog(null,
 										"YOUR TURN!", "Turn info",
 										JOptionPane.INFORMATION_MESSAGE);
-								scorePanel.setEnemyScore(storeMatch.getScoreP2());
+								scorePanel.setEnemyScore(storeMatch
+										.getScoreP2());
 								scorePanel.setOwnScore(storeMatch.getScoreP1());
 							}
-							buttonPanel.setTurn(true);					
+							buttonPanel.setTurn(true);
 							if (!match.swapAllowed()) {
 								buttonPanel.disableSwap();
 							}
 							turnSwap = false;
 						} else {
 							// System.out.println("NIET MIJN BEURT");
-							if (!turnSwap){
+							if (!turnSwap) {
 								buttonPanel.setTurn(false);
 								scorePanel.setOwnName(storeMatch.getOwnName());
-								scorePanel.setEnemyName(storeMatch.getEnemyName() + "**");
-								scorePanel.setEnemyScore(storeMatch.getScoreP2());
+								scorePanel.setEnemyName(storeMatch
+										.getEnemyName() + "**");
+								scorePanel.setEnemyScore(storeMatch
+										.getScoreP2());
 								scorePanel.setOwnScore(storeMatch.getScoreP1());
 							}
 							turnSwap = true;
@@ -188,19 +193,19 @@ public class GameThread extends Thread {
 		this.match = null;
 	}
 
-//	public class updateTheGame extends SwingWorker<Integer, String> {
-//	
-//		@Override
-//		protected Integer doInBackground() throws Exception {
-//			Thread.sleep(500);
-//			storeMatch.updateField();			
-//			return 1;
-//		}
-//
-//		protected void process(List chunks) {
-//			// Messages received from the doInBackground() (when invoking the
-//			// publish() method)
-//		}
-//	}
+	// public class updateTheGame extends SwingWorker<Integer, String> {
+	//
+	// @Override
+	// protected Integer doInBackground() throws Exception {
+	// Thread.sleep(500);
+	// storeMatch.updateField();
+	// return 1;
+	// }
+	//
+	// protected void process(List chunks) {
+	// // Messages received from the doInBackground() (when invoking the
+	// // publish() method)
+	// }
+	// }
 
 }
