@@ -25,7 +25,8 @@ public class FileHandler {
 			BufferedImage image = null;
 			try
 				{
-					image = ImageIO.read(getClass().getResourceAsStream(aFileName));
+					System.out.println(getClass().getResource(aFileName).getPath());
+					image = ImageIO.read(getClass().getResource(aFileName));
 					
 					return image;
 				}
