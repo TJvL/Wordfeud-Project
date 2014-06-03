@@ -15,7 +15,6 @@ public class Statistics {
 	{
 		
 		dbh = DatabaseHandler.getInstance();
-
 	}
 	
 	public void retrieveData(String userName)
@@ -28,9 +27,9 @@ public class Statistics {
 
 		compsWonString = dataAfter[0];
 		gamesWonString = dataAfter[3];
-		playedGamesString = dataAfter[9];
+		playedGamesString = dataAfter[12];
 		
-		highScoreString = dataAfter[12];
+		highScoreString = dataAfter[9];
 		
 	}
 
