@@ -25,8 +25,7 @@ public class Administrator extends Role {
 		String response = JOptionPane.showInputDialog(null,
 				"What is your desired name?", "Enter your desired name",
 				JOptionPane.QUESTION_MESSAGE);
-		if(response != null){
-		if ((!response.equals(""))) {
+		if ((response != null) && (!response.equals(""))) {
 			System.out.println(response);
 			if (response.length() > 2 && response.length() < 16) {
 				System.out.println("good size");
@@ -51,7 +50,6 @@ public class Administrator extends Role {
 		} else {
 			response = username;
 		}
-	}
 		return response;
 	}
 
@@ -86,6 +84,7 @@ public class Administrator extends Role {
 		radioButtonPanel.add(playerButton);
 		radioButtonPanel.add(modButton);
 		radioButtonPanel.add(adminButton);
+		boolean oneSelected = false;
 
 		for (int i = 0; i < roles.size(); i++) {
 			if (roles.get(i).equals(playerButton.getText())) {
@@ -97,45 +96,60 @@ public class Administrator extends Role {
 			}
 		}
 
-		JOptionPane.showOptionDialog(null, radioButtonPanel, "Select roles",
-				JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
-				null, null, null);
+		if (JOptionPane.showOptionDialog(null, radioButtonPanel,
+				"Select roles", JOptionPane.OK_CANCEL_OPTION,
+				JOptionPane.QUESTION_MESSAGE, null, null, null) == JOptionPane.OK_OPTION) {
 
-		if (playerButton.isSelected()) {
-			if (!roles.contains(playerButton.getText())) {
-				DatabaseHandler.getInstance().setRole(username,
-						playerButton.getText());
+			if (playerButton.isSelected() || modButton.isSelected()
+					|| adminButton.isSelected()) {
+				oneSelected = true;
 			}
-			newRoles.add(playerButton.getText());
-		} else {
-			if (roles.contains(playerButton.getText())) {
-				DatabaseHandler.getInstance().revokeRole(username,
-						playerButton.getText());
+
+			if (oneSelected) {
+				if (playerButton.isSelected()) {
+					if (!roles.contains(playerButton.getText())) {
+						DatabaseHandler.getInstance().setRole(username,
+								playerButton.getText());
+					}
+					newRoles.add(playerButton.getText());
+				} else {
+					if (roles.contains(playerButton.getText())) {
+						DatabaseHandler.getInstance().revokeRole(username,
+								playerButton.getText());
+					}
+				}
+				if (modButton.isSelected()) {
+					if (!roles.contains(modButton.getText())) {
+						DatabaseHandler.getInstance().setRole(username,
+								modButton.getText());
+					}
+					newRoles.add(modButton.getText());
+				} else {
+					if (roles.contains(modButton.getText())) {
+						DatabaseHandler.getInstance().revokeRole(username,
+								modButton.getText());
+					}
+				}
+				if (adminButton.isSelected()) {
+					if (!roles.contains(adminButton.getText())) {
+						DatabaseHandler.getInstance().setRole(username,
+								adminButton.getText());
+					}
+					newRoles.add(adminButton.getText());
+				} else {
+					if (roles.contains(adminButton.getText())) {
+						DatabaseHandler.getInstance().revokeRole(username,
+								adminButton.getText());
+					}
+				}
+			} else {
+				JOptionPane.showMessageDialog(null,
+						"Must select at least 1 role.", "ERROR",
+						JOptionPane.WARNING_MESSAGE);
+				newRoles = roles;
 			}
-		}
-		if (modButton.isSelected()) {
-			if (!roles.contains(modButton.getText())) {
-				DatabaseHandler.getInstance().setRole(username,
-						modButton.getText());
-			}
-			newRoles.add(modButton.getText());
-		} else {
-			if (roles.contains(modButton.getText())) {
-				DatabaseHandler.getInstance().revokeRole(username,
-						modButton.getText());
-			}
-		}
-		if (adminButton.isSelected()) {
-			if (!roles.contains(adminButton.getText())) {
-				DatabaseHandler.getInstance().setRole(username,
-						adminButton.getText());
-			}
-			newRoles.add(adminButton.getText());
-		} else {
-			if (roles.contains(adminButton.getText())) {
-				DatabaseHandler.getInstance().revokeRole(username,
-						adminButton.getText());
-			}
+		} else{
+			newRoles = roles;
 		}
 
 		return newRoles;
@@ -216,27 +230,23 @@ public class Administrator extends Role {
 	public ArrayList<String> adminCompetitionParticipants(int compID) {
 		return DatabaseHandler.getInstance().peopleInCompetition(compID);
 	}
-	
-	public Competition getOneActiveCompetition(String key)
-	{
-		if(adminActiveCompetitions.containsKey(key))
-		{
+
+	public Competition getOneActiveCompetition(String key) {
+		if (adminActiveCompetitions.containsKey(key)) {
 			return adminActiveCompetitions.get(key);
-		}else{
-		return null;
+		} else {
+			return null;
 		}
 	}
-	
-	
-	
-//	
-//	public Competition getOneCompetition(String key) {
-//		if (competitions.containsKey(key)) {
-//			return competitions.get(key);
-//		} else if (joinedCompetitions.containsKey(key)) {
-//			return joinedCompetitions.get(key);
-//		} else {
-//			return null;
-//		}
-//	}
+
+	//
+	// public Competition getOneCompetition(String key) {
+	// if (competitions.containsKey(key)) {
+	// return competitions.get(key);
+	// } else if (joinedCompetitions.containsKey(key)) {
+	// return joinedCompetitions.get(key);
+	// } else {
+	// return null;
+	// }
+	// }
 }
