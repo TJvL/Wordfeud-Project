@@ -7,6 +7,8 @@ import java.awt.Graphics;
 
 import javax.swing.JPanel;
 
+import datalaag.WordFeudConstants;
+
 // ScorePanel from a normal game
 @SuppressWarnings("serial")
 public class ScorePanel extends JPanel {
@@ -26,7 +28,7 @@ public class ScorePanel extends JPanel {
 
 	// A paintCompontent to paint everything
 	public void paintComponent(Graphics g) {
-		g.setColor(Color.yellow);
+		g.setColor(Color.cyan);
 		g.fillRect(0, 0, 500, 100);
 
 		// Sets the font and colour
