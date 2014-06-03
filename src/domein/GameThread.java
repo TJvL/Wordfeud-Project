@@ -173,14 +173,14 @@ public class GameThread extends Thread {
 				e.printStackTrace();
 			}
 
-			// Method to start games after both players accepted
-			ArrayList<Integer> gamesToLoad = dbh.gameToLoad(matchManager
-					.getName());
-			if (gamesToLoad != null) {
-				for (Integer game : gamesToLoad) {
-					matchManager.startGame(game, false, true);
-				}
-			}
+//			// Method to start games after both players accepted
+//			ArrayList<Integer> gamesToLoad = dbh.gameToLoad(matchManager
+//					.getName());
+//			if (gamesToLoad != null) {
+//				for (Integer game : gamesToLoad) {
+//					matchManager.startGame(game, false, true);
+//				}
+//			}
 		}
 	}
 

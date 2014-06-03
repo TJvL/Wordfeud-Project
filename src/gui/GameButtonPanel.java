@@ -11,6 +11,8 @@ import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import datalaag.WordFeudConstants;
+
 @SuppressWarnings("serial")
 public class GameButtonPanel extends JPanel {
 	private GameFieldPanel boardP;
@@ -27,7 +29,7 @@ public class GameButtonPanel extends JPanel {
 	public GameButtonPanel(GameFieldPanel boardP) {
 		this.boardP = boardP;
 		//this.setBackground(Color.green);
-		this.setBackground(Color.gray);
+		this.setBackground(Color.cyan);
 		this.addButtons();
 		this.swapPressed = false;
 		observerButtons = new ObserverButtons();

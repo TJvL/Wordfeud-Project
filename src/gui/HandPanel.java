@@ -2,16 +2,19 @@ package gui;
 
 import java.awt.Color;
 import java.awt.Dimension;
+
 import javax.swing.JPanel;
+
+import datalaag.WordFeudConstants;
 
 // A panel to show the tiles
 @SuppressWarnings("serial")
 public class HandPanel extends JPanel{
 	
 	public HandPanel(){
-		this.setBackground(Color.white);
+
 		this.setPreferredSize(new Dimension(500,50));
-		this.setBackground(Color.blue);
+		this.setBackground(WordFeudConstants.DARKBLUE);
 	}
 	
 	// Adds the tiles to the hand
