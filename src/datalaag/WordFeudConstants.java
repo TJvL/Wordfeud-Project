@@ -1,5 +1,7 @@
 package datalaag;
 
+import java.awt.Color;
+
 public final class WordFeudConstants {
 	public static final int PUBLIC_GAME = 0;
 	public static final int PRIVATE_GAME = 1;
@@ -29,6 +31,8 @@ public final class WordFeudConstants {
 	
 	public static final String NAMECHANGE_FAIL_DEFAULT = "Failed to change username.";
 	public static final String NAMECHANGE_SUCCESS = "Succesfully changed username.";
+	
+	public static final Color DARKBLUE = new Color(9, 57, 125);
 	
 	private WordFeudConstants(){		
 	}

@@ -7,6 +7,7 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JPanel;
 
+import datalaag.WordFeudConstants;
 import domein.Tile;
 
 @SuppressWarnings("serial")
@@ -21,7 +22,7 @@ public class TilePanel extends JPanel {
 		this.tile = tile;
 		this.image = tile.getImage();
 		this.setPreferredSize(new Dimension(PANEL_SIZE, PANEL_SIZE));
-		this.setBackground(Color.white);
+		this.setBackground(Color.gray);
 		this.setSelected(false);
 	}
 
@@ -46,7 +47,10 @@ public class TilePanel extends JPanel {
 
 	// Paints the tile img
 	public void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		g.setColor(WordFeudConstants.DARKBLUE);
 		g.clearRect(0, 0, 45, 45);
+		g.fillRect(0, 0, 45, 45);
 		g.drawImage(image, 0, 0, size, size, null);
 
 	}

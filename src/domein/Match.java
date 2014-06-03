@@ -459,7 +459,7 @@ public class Match implements Observer {
 		// Fills the player hands
 		fillHand(newJar);
 
-		dbh.gameStatusUpdate(gameID, "Playing");
+	
 	}
 
 	// Loads a game from the database
@@ -791,7 +791,7 @@ public class Match implements Observer {
 			dbh.addTileToHand(gameID, ownHand, 1);
 
 			// Player2
-			// dbh.updateTurn(2, gameID, getEnemyName(), 0, "Begin");
+			dbh.updateTurn(2, gameID, getEnemyName(), 0, "Begin");
 			ArrayList<Integer> enemyHand = new ArrayList<Integer>();
 			for (int i = 0; i < 7; i++) {
 				int id = (newJar.getNewTile()).getTileID();
