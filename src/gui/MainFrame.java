@@ -6,8 +6,6 @@ import java.util.Observer;
 import java.util.Set;
 
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-
 import datalaag.WordFeudConstants;
 import domein.Administrator;
 import domein.Competition;

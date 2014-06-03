@@ -1,16 +1,6 @@
 package gui;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.util.ArrayList;
-
-import javax.swing.BorderFactory;
 import javax.swing.JDialog;
-import javax.swing.JList;
-import javax.swing.JPanel;
-
-import domein.Administrator;
-import domein.User;
 
 @SuppressWarnings("serial")
 public class AdminCompWindow extends JDialog{

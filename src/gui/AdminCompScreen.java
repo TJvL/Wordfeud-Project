@@ -2,11 +2,9 @@ package gui;
 
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -36,12 +34,6 @@ public class AdminCompScreen extends JPanel {
 	private JScrollPane compPane;
 	private JScrollPane partiPane;
 	private String compSelection;
-	private String playerSelection;
-	
-	///////////////////// new ////////////////////////////////
-	private String currentSelection;//////////////////////////
-	private boolean neverViewed;//////////////////////////////
-	//////////////////////////////////////////////////////////
 	
 	public AdminCompScreen(MainFrame mainFrame) {
 		this.mainFrame = mainFrame;
@@ -49,9 +41,7 @@ public class AdminCompScreen extends JPanel {
 		buttonsPanel.setLayout(new FlowLayout (FlowLayout.CENTER, 50, 20));
 		this.setLayout(null);
 		this.createButtons();
-		neverViewed =  true;
 		compSelection = defaultSelection;
-		playerSelection = defaultSelection;
 	}
 
 
@@ -66,7 +56,6 @@ public class AdminCompScreen extends JPanel {
 		
 		this.add(compPane);
 		this.add(buttonsPanel);
-		neverViewed = false;
 	}
 	
 	public void clearLists() {
@@ -212,15 +201,13 @@ public class AdminCompScreen extends JPanel {
 				@Override
 				public void valueChanged(ListSelectionEvent e) {
 					if (e.getValueIsAdjusting()) {
-						playerSelection = partiTable.getValueAt(
-								partiTable.getSelectedRow(), 0).toString();
+						
 					}
 				}
 			});
 			partiTable.setSelectionModel(selectModel);
 			partiTable.changeSelection(0, 0, false, false);
-			playerSelection = partiTable.getValueAt(
-					partiTable.getSelectedRow(), 0).toString();
+
 		}
 		partiPane = new JScrollPane(partiTable);
 	}

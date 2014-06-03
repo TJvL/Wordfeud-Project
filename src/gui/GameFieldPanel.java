@@ -1,7 +1,5 @@
 package gui;
 
-import gui.GameButtonPanel.ObserverButtons;
-
 import java.awt.BorderLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -12,7 +10,6 @@ import java.util.Observer;
 
 import javax.swing.JPanel;
 
-import domein.Match;
 import domein.Square;
 import domein.Tile;
 

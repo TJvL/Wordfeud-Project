@@ -1,15 +1,11 @@
 package domein;
 
-import java.awt.List;
 import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
-import javax.swing.SwingWorker;
-
 import datalaag.DatabaseHandler;
 import gui.GameButtonPanel;
 import gui.GameChatPanel;
-import gui.MainFrame;
 import gui.ScorePanel;
 
 // Thread for updating ScorePanel
