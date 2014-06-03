@@ -236,14 +236,16 @@ public class Match implements Observer {
 			myTurn = true;
 			handTilesP1 = dbh.handContent(gameID, maxTurn - 1);
 			handTilesP2 = dbh.handContent(gameID, maxTurn - 2);
-			tScoreP1 = dbh.turnScore(gameID, maxTurn);
+			//tScoreP1 = dbh.turnScore(gameID, maxTurn);
 			tScoreP2 = dbh.turnScore(gameID, maxTurn - 1);
+			tScoreP1 = 0;
 			setTurn = false;
 		} else {
 			handTilesP1 = dbh.handContent(gameID, maxTurn - 2);
 			handTilesP2 = dbh.handContent(gameID, maxTurn - 1);
 			tScoreP1 = dbh.turnScore(gameID, maxTurn - 1);
-			tScoreP2 = dbh.turnScore(gameID, maxTurn);
+			tScoreP2 = 0;
+			//tScoreP2 = dbh.turnScore(gameID, maxTurn);
 			myTurn = false;
 			setTurn = true;
 		}
@@ -341,14 +343,16 @@ public class Match implements Observer {
 		if (myTurn) {
 			handTilesP1 = dbh.handContent(gameID, maxTurn - 1);
 			handTilesP2 = dbh.handContent(gameID, maxTurn - 2);
-			tScoreP1 = dbh.turnScore(gameID, maxTurn);
+			//tScoreP1 = dbh.turnScore(gameID, maxTurn);
 			tScoreP2 = dbh.turnScore(gameID, maxTurn - 1);
+			tScoreP1 = 0;
 			setTurn = false;
 		} else {
 			handTilesP1 = dbh.handContent(gameID, maxTurn - 2);
 			handTilesP2 = dbh.handContent(gameID, maxTurn - 1);
 			tScoreP1 = dbh.turnScore(gameID, maxTurn - 1);
-			tScoreP2 = dbh.turnScore(gameID, maxTurn);
+			tScoreP2 = 0;
+			//tScoreP2 = dbh.turnScore(gameID, maxTurn);
 			setTurn = true;
 		}
 
