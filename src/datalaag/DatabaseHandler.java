@@ -1312,7 +1312,7 @@ public class DatabaseHandler
 //	}
 //	
 	
-	public boolean gameInitialized(int gameID){
+	public synchronized boolean gameInitialized(int gameID){
 		connection();
 		boolean exists = false;
 		try
@@ -1342,7 +1342,7 @@ public class DatabaseHandler
 		return exists;
 	}
 	
-	public boolean gameOwner(String name, int gameID){
+	public synchronized boolean gameOwner(String name, int gameID){
 		connection();
 		boolean exists = false;
 		try
@@ -1671,7 +1671,6 @@ public class DatabaseHandler
 		return compJoiners;
 	}
 
-
 	public synchronized ArrayList<String> activeGames(String username)
 	{
 		connection();
@@ -1774,7 +1773,6 @@ public class DatabaseHandler
 		return spectateGames;
 	}
 	
-	
 	public synchronized ArrayList<String> userInfo(String username)
 	{
 		connection();
@@ -1870,7 +1868,7 @@ public class DatabaseHandler
 		
 		try
 		{
-			statement = con.prepareStatement("SELECT count(wins) FROM competitie AS c LEFT JOIN rank_winner AS rw ON c.id = rw.competitie_id WHERE rw.account_naam = '" + username + "' AND c.start < '" + getCurrentTimeStamp() + "' AND rw.wins = (SELECT max(wins) FROM rank_winner)");
+			statement = con.prepareStatement("SELECT count(wins) FROM competitie AS c LEFT JOIN rank_winner AS rw ON c.id = rw.competitie_id WHERE rw.account_naam = '" + username + "' AND c.einde < '" + getCurrentTimeStamp() + "' AND rw.wins = (SELECT max(wins) FROM rank_winner)");
 			
 			result = statement.executeQuery();
 			if(result.next())
@@ -1925,7 +1923,7 @@ public class DatabaseHandler
 			statement.close();
 			
 			statistics = competitionsWon + "---" + gamesWon + "---" + mostValuableWord + "---" + numberOfGamesPlayed + "---" + highestGameScore;
-		
+		System.out.println(statistics);
 		} catch (SQLException e)
 		{
 			e.printStackTrace();
