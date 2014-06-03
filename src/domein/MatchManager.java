@@ -5,7 +5,6 @@ import gui.GameChatPanel;
 import gui.GameFieldPanel;
 import gui.GameScreen;
 import gui.GameSpecScreen;
-import gui.MainFrame;
 import gui.ScorePanel;
 
 import java.util.ArrayList;
