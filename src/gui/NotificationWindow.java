@@ -149,6 +149,7 @@ public class NotificationWindow extends JDialog {
 
 	private void checkButtonPressed() {
 		if (!currentSelection.equals("default")) {
+			try{
 			if (mainFrame.callAskMatchOwnershipAction(currentSelection)) {
 				JOptionPane.showMessageDialog(mainFrame,
 						"Can't respond to your own challenge!",
@@ -168,6 +169,9 @@ public class NotificationWindow extends JDialog {
 				}
 				this.refreshList();
 			}
+		} catch (Exception e) {
+			System.out.println("nothing selected");
+		}
 		}
 	}
 }
