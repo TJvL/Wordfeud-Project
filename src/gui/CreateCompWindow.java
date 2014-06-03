@@ -70,15 +70,15 @@ public class CreateCompWindow extends JDialog {
 		buttonPanel.add(confirmButton);
 		confirmButton.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(ActionEvent e) {
 				confirmButtonPressed();
 			}
 		});
 	}
 
 	private void createInputPanel() {
-		maxPlayersLabel = new JLabel("Max Players(2-24)");
-		minPlayersLabel = new JLabel("Min Players(2-24)");
+		maxPlayersLabel = new JLabel("Max Players(0-24)");
+		minPlayersLabel = new JLabel("Min Players(0-24)");
 		endDateLabel = new JLabel("End date");
 		summaryLabel = new JLabel("Competition name");
 		maxPlayers = new JTextField();
