@@ -1015,9 +1015,9 @@ public class DatabaseHandler
 				}
 				playedWord.clear();
 				if (forward){
-					statement = con.prepareStatement("SELECT g.*, l.lettertype_karakter, lt.waarde FROM gelegdeletter AS g LEFT JOIN letter AS l ON g.letter_id = l.id LEFT JOIN lettertype AS lt ON l.lettertype_karakter = lt.karakter WHERE g.spel_id = '" + gameID + "' AND beurt_id > '" + turnID + "' GROUP BY g.beurt_id, g.tegel_x, g.tegel_y");
+					statement = con.prepareStatement("SELECT g.*, l.lettertype_karakter, lt.waarde FROM gelegdeletter AS g LEFT JOIN letter AS l ON g.letter_id = l.id AND g.spel_id = l.spel_id LEFT JOIN lettertype AS lt ON l.lettertype_karakter = lt.karakter WHERE g.spel_id = '" + gameID + "' AND beurt_id > '" + turnID + "' GROUP BY g.beurt_id, g.tegel_x, g.tegel_y");
 				} else {
-					statement = con.prepareStatement("SELECT g.*, l.lettertype_karakter, lt.waarde FROM gelegdeletter AS g LEFT JOIN letter AS l ON g.letter_id = l.id LEFT JOIN lettertype AS lt ON l.lettertype_karakter = lt.karakter WHERE g.spel_id = '" + gameID + "' AND beurt_id < '" + turnID + "' GROUP BY g.beurt_id, g.tegel_x, g.tegel_y");
+					statement = con.prepareStatement("SELECT g.*, l.lettertype_karakter, lt.waarde FROM gelegdeletter AS g LEFT JOIN letter AS l ON g.letter_id = l.id AND g.spel_id = l.spel_id LEFT JOIN lettertype AS lt ON l.lettertype_karakter = lt.karakter WHERE g.spel_id = '" + gameID + "' AND beurt_id < '" + turnID + "' GROUP BY g.beurt_id, g.tegel_x, g.tegel_y");
 				}
 				result = statement.executeQuery();
 
@@ -1311,7 +1311,6 @@ public class DatabaseHandler
 		}
 		return gameID;
 	}
-	
 	
 	public synchronized boolean inviteExists(String challenger, String opponent, int compID){
 		connection();
@@ -1616,7 +1615,6 @@ public class DatabaseHandler
 		return compJoiners;
 	}
 
-
 	public synchronized ArrayList<String> activeGames(String username)
 	{
 		connection();
@@ -1719,7 +1717,6 @@ public class DatabaseHandler
 		return spectateGames;
 	}
 	
-	
 	public synchronized ArrayList<String> userInfo(String username)
 	{
 		connection();
@@ -1815,7 +1812,7 @@ public class DatabaseHandler
 		
 		try
 		{
-			statement = con.prepareStatement("SELECT count(wins) FROM competitie AS c LEFT JOIN rank_winner AS rw ON c.id = rw.competitie_id WHERE rw.account_naam = '" + username + "' AND c.start < '" + getCurrentTimeStamp() + "' AND rw.wins = (SELECT max(wins) FROM rank_winner)");
+			statement = con.prepareStatement("SELECT count(wins) FROM competitie AS c LEFT JOIN rank_winner AS rw ON c.id = rw.competitie_id WHERE rw.account_naam = '" + username + "' AND c.einde < '" + getCurrentTimeStamp() + "' AND rw.wins = (SELECT max(wins) FROM rank_winner)");
 			
 			result = statement.executeQuery();
 			if(result.next())
@@ -1870,7 +1867,7 @@ public class DatabaseHandler
 			statement.close();
 			
 			statistics = competitionsWon + "---" + gamesWon + "---" + mostValuableWord + "---" + numberOfGamesPlayed + "---" + highestGameScore;
-		
+		System.out.println(statistics);
 		} catch (SQLException e)
 		{
 			e.printStackTrace();

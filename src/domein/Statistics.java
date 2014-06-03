@@ -24,13 +24,13 @@ public class Statistics {
 		
 		String dataBefore = dbh.playerStatistics(userName);
 		
-		String[] dataAfter = dataBefore.split("-");
+		String[] dataAfter = dataBefore.split("---");
 
 		compsWonString = dataAfter[0];
-		gamesWonString = dataAfter[3];
-		playedGamesString = dataAfter[9];
+		gamesWonString = dataAfter[1];
+		playedGamesString = dataAfter[4];
 		
-		highScoreString = dataAfter[12];
+		highScoreString = dataAfter[5];
 		
 	}
 
