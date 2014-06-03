@@ -1,15 +1,11 @@
 package domein;
 
-import java.awt.List;
 import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
-import javax.swing.SwingWorker;
-
 import datalaag.DatabaseHandler;
 import gui.GameButtonPanel;
 import gui.GameChatPanel;
-import gui.MainFrame;
 import gui.ScorePanel;
 
 // Thread for updating ScorePanel
@@ -177,14 +173,14 @@ public class GameThread extends Thread {
 				e.printStackTrace();
 			}
 
-			// Method to start games after both players accepted
-			ArrayList<Integer> gamesToLoad = dbh.gameToLoad(matchManager
-					.getName());
-			if (gamesToLoad != null) {
-				for (Integer game : gamesToLoad) {
-					matchManager.startGame(game, false, true);
-				}
-			}
+//			// Method to start games after both players accepted
+//			ArrayList<Integer> gamesToLoad = dbh.gameToLoad(matchManager
+//					.getName());
+//			if (gamesToLoad != null) {
+//				for (Integer game : gamesToLoad) {
+//					matchManager.startGame(game, false, true);
+//				}
+//			}
 		}
 	}
 

@@ -6,8 +6,6 @@ import java.util.Observer;
 import java.util.Set;
 
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-
 import datalaag.WordFeudConstants;
 import domein.Administrator;
 import domein.Competition;
@@ -42,7 +40,7 @@ public class MainFrame extends JFrame {
 
 		this.setPreferredSize(new Dimension(1200, 700));
 		this.setResizable(false);
-		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setTitle("WordFeud");
 
 		this.setContentPane(loginScreen);

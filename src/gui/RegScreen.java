@@ -12,7 +12,6 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import datalaag.WordFeudConstants;
-import domein.User;
 
 @SuppressWarnings("serial")
 public class RegScreen extends JPanel {

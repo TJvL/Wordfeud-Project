@@ -28,13 +28,11 @@ public class GameChatPanel extends JPanel {
 	private String user1;
 	private int gameID;
 	private String latestUpdatedMessageTimeDate;
-	private String latestUpdatedMessage;
 
 	private DatabaseHandler dbh = DatabaseHandler.getInstance();
 
 	public void setChatVariables(String ownName, int gameID) {
 		latestUpdatedMessageTimeDate = "";
-		latestUpdatedMessage = "";
 		if (input != null) {
 			input.setText(null);
 		}
@@ -83,7 +81,6 @@ public class GameChatPanel extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
 				sendMessage();
 			}
 		});
@@ -130,7 +127,6 @@ public class GameChatPanel extends JPanel {
 					chatArea.append("   \"" + message + "\"\n");
 
 					latestUpdatedMessageTimeDate = dateTime;
-					latestUpdatedMessage = message;
 
 				} else { // if it's NOT the first incoming message since startup
 							// of
@@ -141,7 +137,6 @@ public class GameChatPanel extends JPanel {
 						chatArea.append("   \"" + message + "\"\n");
 
 						latestUpdatedMessageTimeDate = dateTime;
-						latestUpdatedMessage = message;
 
 					}
 				}

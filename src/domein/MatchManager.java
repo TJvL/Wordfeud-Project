@@ -5,7 +5,6 @@ import gui.GameChatPanel;
 import gui.GameFieldPanel;
 import gui.GameScreen;
 import gui.GameSpecScreen;
-import gui.MainFrame;
 import gui.ScorePanel;
 
 import java.util.ArrayList;
@@ -153,30 +152,7 @@ public class MatchManager {
 
 	// Loads a match
 	public void loadMatch(int gameID) {
-		boolean exists = false;
-		// Checks if the refrences already exist
-		// for (Match match1 : matches) {
-		// if (match.getGameID() == gameID) {
-		// exists = true;
-		// // Adds the observers
-		// wordFeud.addObservers(match, false);
-		// // chatPanel.setChatVariables(match.getOwnName(),
-		// // match.getGameID());
-		// this.match = match1;
-		// SwingUtilities.invokeLater(new Runnable() {
-		// @Override
-		// public void run() {
-		// buttonPanel.setTurn(false);
-		// buttonPanel.disableSurrender();
-		// chatPanel.setChatVariables(match.getOwnName(), match.getGameID());
-		// gameThread.setRunning(match);
-		// }
-		// });
-		// match.loadGame();
-		// // gameThread.setRunning(match);
-		// }
-		// }
-		if (!exists) {
+		if (DatabaseHandler.getInstance().gameInitialized(gameID)){
 
 			if (DatabaseHandler.getInstance().getGameStatusValue(gameID)
 					.equals("Finished")
@@ -209,6 +185,37 @@ public class MatchManager {
 					}
 				});
 			}
+		} else {
+			if (DatabaseHandler.getInstance().gameOwner(wordFeud.getCurrentUsername(), gameID)){
+				newMatchStartedByMe(gameID);
+				
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				match = new Match(gameID, wordFeud.getUserPlayer(), gameField,
+						wordFeud.getCurrentUsername());
+
+				wordFeud.addObservers(match, false);
+				match.loadGame();
+
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						buttonPanel.setTurn(false);
+						// buttonPanel.disableSurrender();
+						chatPanel.setChatVariables(match.getOwnName(),
+								match.getGameID());
+						gameThread.setRunning(match);
+					}
+				});
+				
+			} else {
+			JOptionPane.showMessageDialog(null, "This game is not inintialized",
+					"Notice", JOptionPane.INFORMATION_MESSAGE);
+			}
 		}
 	}
 
@@ -225,6 +232,9 @@ public class MatchManager {
 			String string) {
 		DatabaseHandler.getInstance().acceptRejectGame(competitionID, gameID,
 				name, string);
+		if (string.equals("Accepted")){
+			DatabaseHandler.getInstance().gameStatusUpdate(gameID, "Playing");
+		}
 	}
 
 	// Method to start a new game

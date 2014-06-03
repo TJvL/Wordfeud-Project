@@ -368,16 +368,16 @@ public class DatabaseHandler
 			// closes the statement
 			statement.close();
 
-			statement = con.prepareStatement("INSERT INTO beurt(id, spel_id, account_naam, aktie_type)VALUES(?,?,?,?)");
-
-			statement.setInt(1, 1);
-			statement.setInt(2, gameID);
-			statement.setString(3, username);
-			statement.setString(4, "Begin");
-
-			statement.executeUpdate();
-
-			statement.close();
+//			statement = con.prepareStatement("INSERT INTO beurt(id, spel_id, account_naam, aktie_type)VALUES(?,?,?,?)");
+//
+//			statement.setInt(1, 1);
+//			statement.setInt(2, gameID);
+//			statement.setString(3, username);
+//			statement.setString(4, "Begin");
+//
+//			statement.executeUpdate();
+//
+//			statement.close();
 
 		} catch (SQLException e)
 		{
@@ -747,9 +747,8 @@ public class DatabaseHandler
 		connection();
 		try
 		{
-			statement = con
-					.prepareStatement("INSERT INTO gelegdeletter(letter_id, spel_id, beurt_id, tegel_x, tegel_y, tegel_bord_naam, blancoletterkarakter)VALUES(?,?,?,?,?,?,?)");
-
+			statement = con.prepareStatement("INSERT INTO gelegdeletter(letter_id, spel_id, beurt_id, tegel_x, tegel_y, tegel_bord_naam, blancoletterkarakter)VALUES(?,?,?,?,?,?,?)");
+			System.out.println(tileID);
 			statement.setInt(1, tileID);
 			statement.setInt(2, gameID);
 			statement.setInt(3, turnID);
@@ -1245,16 +1244,16 @@ public class DatabaseHandler
 				statement.executeUpdate();
 				statement.close();
 
-				statement = con
-						.prepareStatement("INSERT INTO beurt(id, spel_id, account_naam, aktie_type)VALUES(?,?,?,?)");
-
-				statement.setInt(1, turnID);
-				statement.setInt(2, gameID);
-				statement.setString(3, username);
-				statement.setString(4, "Begin");
-
-				statement.executeUpdate();
-				statement.close();
+//				statement = con
+//						.prepareStatement("INSERT INTO beurt(id, spel_id, account_naam, aktie_type)VALUES(?,?,?,?)");
+//
+//				statement.setInt(1, turnID);
+//				statement.setInt(2, gameID);
+//				statement.setString(3, username);
+//				statement.setString(4, "Begin");
+//
+//				statement.executeUpdate();
+//				statement.close();
 			}
 			else if (reaction.equalsIgnoreCase("Rejected"))
 			{
@@ -1265,16 +1264,16 @@ public class DatabaseHandler
 				statement.executeUpdate();
 				statement.close();
 
-				statement = con
-						.prepareStatement("INSERT INTO beurt(id, spel_id, account_naam, aktie_type)VALUES(?,?,?,?)");
-
-				statement.setInt(1, turnID);
-				statement.setInt(2, gameID);
-				statement.setString(3, username);
-				statement.setString(4, "resign");
-
-				statement.executeUpdate();
-				statement.close();
+//				statement = con
+//						.prepareStatement("INSERT INTO beurt(id, spel_id, account_naam, aktie_type)VALUES(?,?,?,?)");
+//
+//				statement.setInt(1, turnID);
+//				statement.setInt(2, gameID);
+//				statement.setString(3, username);
+//				statement.setString(4, "resign");
+//
+//				statement.executeUpdate();
+//				statement.close();
 			}
 		} catch (SQLException e)
 		{
@@ -1286,30 +1285,87 @@ public class DatabaseHandler
 		}
 	}
 	
-	public synchronized ArrayList<Integer> gameToLoad(String name){
-		ArrayList<Integer> gameID = new ArrayList<Integer>();
+//	public synchronized ArrayList<Integer> gameToLoad(String name){
+//		ArrayList<Integer> gameID = new ArrayList<Integer>();
+//		connection();
+//		try
+//		{
+//			statement = con.prepareStatement("SELECT id FROM spel WHERE account_naam_uitdager = '" + name + "' AND reaktie_type = 'Accepted' AND toestand_type = 'Request'");
+//
+//			result = statement.executeQuery();
+//			
+//			if (result.next())
+//			{
+//				gameID.add(result.getInt(1));
+//			}
+//			result.close();
+//			statement.close();
+//		} catch (SQLException e)
+//		{
+//			e.printStackTrace();
+//			System.out.println("QUERRY ERROR!!!");
+//		} finally
+//		{
+//			closeConnection();
+//		}
+//		return gameID;
+//	}
+//	
+	
+	public synchronized boolean gameInitialized(int gameID){
 		connection();
+		boolean exists = false;
 		try
 		{
-			statement = con.prepareStatement("SELECT id FROM spel WHERE account_naam_uitdager = '" + name + "' AND reaktie_type = 'Accepted' AND toestand_type = 'Request'");
+			statement = con.prepareStatement("SELECT COUNT(id) as count FROM beurt WHERE spel_id ='" + gameID + "'");
 
 			result = statement.executeQuery();
-			
+
 			if (result.next())
 			{
-				gameID.add(result.getInt(1));
+				//System.out.println(result.getInt(0) > 1);
+				System.out.println(result.getInt(1) > 1);
+				if (result.getInt(1) > 1){
+					exists = true;
+				}
 			}
 			result.close();
 			statement.close();
 		} catch (SQLException e)
 		{
 			e.printStackTrace();
-			System.out.println("QUERRY ERROR!!!");
+			System.out.println("QUERRY ERROR");
 		} finally
 		{
 			closeConnection();
 		}
-		return gameID;
+		return exists;
+	}
+	
+	public synchronized boolean gameOwner(String name, int gameID){
+		connection();
+		boolean exists = false;
+		try
+		{
+			statement = con.prepareStatement("SELECT * FROM spel WHERE id ='" + gameID + "' AND account_naam_uitdager = '" + name + "'");
+
+			result = statement.executeQuery();
+
+			if (result.next())
+			{
+				exists = true;
+			}
+			result.close();
+			statement.close();
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+			System.out.println("QUERRY ERROR");
+		} finally
+		{
+			closeConnection();
+		}
+		return exists;
 	}
 	
 	public synchronized boolean inviteExists(String challenger, String opponent, int compID){
