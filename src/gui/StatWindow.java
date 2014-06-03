@@ -20,6 +20,7 @@ public class StatWindow extends JDialog
 	private JLabel gamesWonValue = new JLabel();
 	private JLabel highScoreValue = new JLabel();
 	private JLabel compsWonValue = new JLabel();
+	@SuppressWarnings("unused")
 	private MainFrame mainFrame;
 	
 	

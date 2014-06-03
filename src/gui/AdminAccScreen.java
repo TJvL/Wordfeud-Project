@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -61,7 +62,8 @@ public class AdminAccScreen extends JPanel {
 		buttonsPanel = new JPanel();
 		JPanel composedButtons = new JPanel();
 
-		composedButtons.setLayout(new GridLayout(4, 1, 0, 50));
+		composedButtons.setLayout(new GridLayout(8, 1, 0, 30));
+		composedButtons.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0));
 		buttonsPanel.setLayout(new BorderLayout());
 
 		buttonsPanel.setPreferredSize(new Dimension(300, 300));
@@ -69,6 +71,7 @@ public class AdminAccScreen extends JPanel {
 		JButton getDataButton = new JButton("Player data");
 		JButton compScreenButton = new JButton("Competitions screen");
 		JButton addAccButton = new JButton("Create account");
+		JButton refreshButton = new JButton("Refresh player list");
 
 		getDataButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -95,10 +98,16 @@ public class AdminAccScreen extends JPanel {
 				mainFrame.setAdminCompScreen();
 			}
 		});
+		
+		refreshButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent arg0) {
+				fillPlayerList();
+			}});
 
 		composedButtons.add(getDataButton);
 		composedButtons.add(addAccButton);
 		composedButtons.add(compScreenButton);
+		composedButtons.add(refreshButton);
 
 		buttonsPanel.add(composedButtons, BorderLayout.WEST);
 	}

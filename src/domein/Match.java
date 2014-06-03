@@ -675,7 +675,7 @@ public class Match implements Observer {
 					"J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U",
 					"V", "W", "X", "Y", "Z" };
 			String input = (String) JOptionPane.showInputDialog(null,
-					"Select your letter below...", "Choose you letter",
+					"Select your letter below...", "Choose your letter(s)",
 					JOptionPane.QUESTION_MESSAGE, null, choices, choices[0]);
 			System.out.println(input);
 			if (input != null) {

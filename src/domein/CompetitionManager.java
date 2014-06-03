@@ -117,7 +117,7 @@ public class CompetitionManager {
 			return retValue;
 		}
 		
-		if ((maxParts >= minParts) && (minParts >= 2) && (maxParts <= 24)) {
+		if ((maxParts >= minParts) && (minParts >= 0) && (maxParts <= 24)) {
 			DatabaseHandler.getInstance().createCompetition(currentUsername,
 					formatedDateTime, summary, minParts, maxParts);
 			this.loadJoinedCompetitions(currentUsername);
