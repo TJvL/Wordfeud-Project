@@ -42,7 +42,7 @@ public class MainFrame extends JFrame {
 
 		this.setPreferredSize(new Dimension(1200, 700));
 		this.setResizable(false);
-		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setTitle("WordFeud");
 
 		this.setContentPane(loginScreen);
