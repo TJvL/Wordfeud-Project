@@ -368,16 +368,16 @@ public class DatabaseHandler
 			// closes the statement
 			statement.close();
 
-			statement = con.prepareStatement("INSERT INTO beurt(id, spel_id, account_naam, aktie_type)VALUES(?,?,?,?)");
-
-			statement.setInt(1, 1);
-			statement.setInt(2, gameID);
-			statement.setString(3, username);
-			statement.setString(4, "Begin");
-
-			statement.executeUpdate();
-
-			statement.close();
+//			statement = con.prepareStatement("INSERT INTO beurt(id, spel_id, account_naam, aktie_type)VALUES(?,?,?,?)");
+//
+//			statement.setInt(1, 1);
+//			statement.setInt(2, gameID);
+//			statement.setString(3, username);
+//			statement.setString(4, "Begin");
+//
+//			statement.executeUpdate();
+//
+//			statement.close();
 
 		} catch (SQLException e)
 		{
@@ -747,9 +747,8 @@ public class DatabaseHandler
 		connection();
 		try
 		{
-			statement = con
-					.prepareStatement("INSERT INTO gelegdeletter(letter_id, spel_id, beurt_id, tegel_x, tegel_y, tegel_bord_naam, blancoletterkarakter)VALUES(?,?,?,?,?,?,?)");
-
+			statement = con.prepareStatement("INSERT INTO gelegdeletter(letter_id, spel_id, beurt_id, tegel_x, tegel_y, tegel_bord_naam, blancoletterkarakter)VALUES(?,?,?,?,?,?,?)");
+			System.out.println(tileID);
 			statement.setInt(1, tileID);
 			statement.setInt(2, gameID);
 			statement.setInt(3, turnID);
@@ -1015,9 +1014,9 @@ public class DatabaseHandler
 				}
 				playedWord.clear();
 				if (forward){
-					statement = con.prepareStatement("SELECT g.*, l.lettertype_karakter, lt.waarde FROM gelegdeletter AS g LEFT JOIN letter AS l ON g.letter_id = l.id LEFT JOIN lettertype AS lt ON l.lettertype_karakter = lt.karakter WHERE g.spel_id = '" + gameID + "' AND beurt_id > '" + turnID + "' GROUP BY g.beurt_id, g.tegel_x, g.tegel_y");
+					statement = con.prepareStatement("SELECT g.*, l.lettertype_karakter, lt.waarde FROM gelegdeletter AS g LEFT JOIN letter AS l ON g.letter_id = l.id AND g.spel_id = l.spel_id LEFT JOIN lettertype AS lt ON l.lettertype_karakter = lt.karakter WHERE g.spel_id = '" + gameID + "' AND beurt_id > '" + turnID + "' GROUP BY g.beurt_id, g.tegel_x, g.tegel_y");
 				} else {
-					statement = con.prepareStatement("SELECT g.*, l.lettertype_karakter, lt.waarde FROM gelegdeletter AS g LEFT JOIN letter AS l ON g.letter_id = l.id LEFT JOIN lettertype AS lt ON l.lettertype_karakter = lt.karakter WHERE g.spel_id = '" + gameID + "' AND beurt_id < '" + turnID + "' GROUP BY g.beurt_id, g.tegel_x, g.tegel_y");
+					statement = con.prepareStatement("SELECT g.*, l.lettertype_karakter, lt.waarde FROM gelegdeletter AS g LEFT JOIN letter AS l ON g.letter_id = l.id AND g.spel_id = l.spel_id LEFT JOIN lettertype AS lt ON l.lettertype_karakter = lt.karakter WHERE g.spel_id = '" + gameID + "' AND beurt_id < '" + turnID + "' GROUP BY g.beurt_id, g.tegel_x, g.tegel_y");
 				}
 				result = statement.executeQuery();
 

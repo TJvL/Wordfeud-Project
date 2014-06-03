@@ -666,7 +666,8 @@ public class Match implements Observer {
 	// Takes the tile selected and move it to the board
 	// Sets the tile on just played
 	// Add the tile to the board
-	public void moveTileFromHandToBoard(Tile t, int x, int y) {
+	public void moveTileFromHandToBoard(final Tile t, int x, int y) {
+		boolean possible = true;
 		if (t.getValue() == 0) {
 
 			// This allows you to pick your Joker value
@@ -677,14 +678,18 @@ public class Match implements Observer {
 					"Select your letter below...", "Choose your letter(s)",
 					JOptionPane.QUESTION_MESSAGE, null, choices, choices[0]);
 			System.out.println(input);
-			if ((input != null) && (!input.equals(""))) {
-				t.setBlancoLetterValue(input);
-				t.setLetter(input);
-				t.setJustPlayed(true);
-				player.removeTileFromHand(t);
-				board.addTileToSquare(t, x, y);
-				board.startCalculating();
-				// gameField.repaintBoard();
+			if (input != null) {
+				if (!input.equals("")) {
+					t.setBlancoLetterValue(input);
+					t.setLetter(input);
+					t.setJustPlayed(true);
+					player.removeTileFromHand(t);
+					board.addTileToSquare(t, x, y);
+					board.startCalculating();
+					// gameField.repaintBoard();
+				}
+			} else {
+				possible = false;
 			}
 		} else {
 			t.setJustPlayed(true);
@@ -693,13 +698,25 @@ public class Match implements Observer {
 			board.startCalculating();
 			// gameField.repaintBoard();
 		}
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				gameField.repaintBoard();
+		if (!possible) {
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					gameField.removeImageSquare(t.getXValue(), t.getYValue());		
+					gameField.addTileToHand(player.getHand());
+					gameField.repaintBoard();
 
-			}
-		});
+				}
+			});
+		} else {
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					gameField.repaintBoard();
+
+				}
+			});
+		}
 	}
 
 	// Takes a tile from the board and puts it back in the hand
@@ -765,6 +782,7 @@ public class Match implements Observer {
 		// Method to fill the hands for a new game
 		if (newJar != null) {
 			// Player1
+			dbh.updateTurn(1, gameID, getOwnName(), 0, "Begin");
 			ArrayList<Integer> ownHand = new ArrayList<Integer>();
 			for (int i = 0; i < 7; i++) {
 				int id = (newJar.getNewTile()).getTileID();
@@ -773,6 +791,7 @@ public class Match implements Observer {
 			dbh.addTileToHand(gameID, ownHand, 1);
 
 			// Player2
+			// dbh.updateTurn(2, gameID, getEnemyName(), 0, "Begin");
 			ArrayList<Integer> enemyHand = new ArrayList<Integer>();
 			for (int i = 0; i < 7; i++) {
 				int id = (newJar.getNewTile()).getTileID();
