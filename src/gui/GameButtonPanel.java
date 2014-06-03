@@ -26,7 +26,8 @@ public class GameButtonPanel extends JPanel {
 	// This uses a gameFieldPanel
 	public GameButtonPanel(GameFieldPanel boardP) {
 		this.boardP = boardP;
-		this.setBackground(Color.green);
+		//this.setBackground(Color.green);
+		this.setBackground(Color.gray);
 		this.addButtons();
 		this.swapPressed = false;
 		observerButtons = new ObserverButtons();
