@@ -29,12 +29,12 @@ public class StatWindow extends JDialog
 	public void showStats(String playedGamesString, String gamesWonString, String compsWonString, String highScoreString, MainFrame mainFrame)
 	{
 	
-this.mainFrame = mainFrame;
+		this.mainFrame = mainFrame;
 		this.setModal(true);
 		this.setLayout(new GridLayout(4, 2, 10, 10));
 		this.setPreferredSize(new Dimension(600, 500));
 		this.setResizable(false);
-		this.setTitle(" PlayerName's Statistics");
+		this.setTitle("Statistics");
 		playedGamesValue.setText(playedGamesString);
 		gamesWonValue.setText(gamesWonString);
 		compsWonValue.setText(compsWonString);
