@@ -4,15 +4,11 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.image.BufferedImage;
-import java.net.URL;
 import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-
-import datalaag.FileHandler;
 
 @SuppressWarnings("serial")
 public class LoadingPanel extends JPanel implements Runnable {
