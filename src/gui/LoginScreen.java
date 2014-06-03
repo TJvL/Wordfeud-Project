@@ -20,6 +20,7 @@ public class LoginScreen extends JPanel
 		private JTextField usernameField;
 		private JPasswordField passwordField;
 
+		
 		public LoginScreen(MainFrame mainFrame)
 			{
 				this.mainFrame = mainFrame;
