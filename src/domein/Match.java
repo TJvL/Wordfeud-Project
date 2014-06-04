@@ -835,6 +835,13 @@ public class Match implements Observer {
 
 	// Swapping tiles from the hand back to the jar
 	public void swapTiles(ArrayList<TilePanel> tilesToSwap) {
+		clearTilesFromBoard();
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		this.tilesToSwap = tilesToSwap;
 		for (TilePanel tile : tilesToSwap) {
 			player.removeTileFromHand(tile.getTile());
