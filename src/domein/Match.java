@@ -964,6 +964,7 @@ public class Match implements Observer {
 		System.out.println("JE HEBT GESURRENDERD!");
 		surrenderd = true;
 		dbh.gameStatusUpdate(gameID, "Resigned");
+		this.gameStatus = "Resigned";
 	}
 
 	public boolean getSurrender() {
