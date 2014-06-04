@@ -25,8 +25,8 @@ public class Statistics {
 
 		compsWonString = dataAfter[0];
 		gamesWonString = dataAfter[1];
-		playedGamesString = dataAfter[4];
-		highScoreString = dataAfter[5];		
+		highScoreString = dataAfter[3];
+		playedGamesString = dataAfter[4];		
 	}
 
 	public String getGamesWonString()
