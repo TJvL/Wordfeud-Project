@@ -324,15 +324,15 @@ public class Match implements Observer {
 
 		// If forward it will increase maxTurn
 		if (forward) {
-			if (maxTurn < Integer.parseInt(splits[1])) {
-				maxTurn += 1;
+			if (maxTurn - 1 < Integer.parseInt(splits[1])) {
+				maxTurn ++;
 				myTurn = !myTurn;
 			}
 		}
 		// Els it will decrease it by 1
 		else {
 			if (maxTurn - 1 > 1) {
-				maxTurn -= 1;
+				maxTurn --;
 				myTurn = !myTurn;
 			}
 		}
